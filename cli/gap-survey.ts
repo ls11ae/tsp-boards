@@ -42,7 +42,11 @@ interface Row {
   level2: number;
   archive: number;
   bestBoundMm: number | null;
-  verified: (VerificationSummary & { boundMm: number; difficulty: number; recognizability: number })[];
+  verified: (VerificationSummary & {
+    boundMm: number;
+    difficulty: number;
+    recognizability: number;
+  })[];
 }
 const rows: Row[] = [];
 const lines: string[] = [];
@@ -91,7 +95,9 @@ for (const [mode, overrides] of Object.entries(modes)) {
 }
 
 log('');
-log('| mode | n | runs | max verified gap (mm) | median of run maxima (mm) | bound overestimates |');
+log(
+  '| mode | n | runs | max verified gap (mm) | median of run maxima (mm) | bound overestimates |',
+);
 log('|---|---|---|---|---|---|');
 for (const mode of Object.keys(modes)) {
   for (const n of sizes) {
@@ -100,7 +106,9 @@ for (const mode of Object.keys(modes)) {
       .map((r) => Math.max(...r.verified.map((v) => v.stringGapMm ?? 0), 0))
       .sort((a, b) => a - b);
     const all = runs.flatMap((r) => r.verified);
-    const over = all.filter((v) => v.stringGapMm !== null && v.stringGapMm < v.boundMm - 0.001).length;
+    const over = all.filter(
+      (v) => v.stringGapMm !== null && v.stringGapMm < v.boundMm - 0.001,
+    ).length;
     log(
       `| ${mode} | ${n} | ${runs.length} | ${Math.max(...maxima).toFixed(2)} | ${maxima[Math.floor(maxima.length / 2)]?.toFixed(2)} | ${over}/${all.length} |`,
     );
