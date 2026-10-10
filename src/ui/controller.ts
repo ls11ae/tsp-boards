@@ -1,0 +1,325 @@
+// Glue between the store and the workers: data loading, search runs (throttled UI updates)
+// and the queue of exact verifications.
+
+import { parseCountryFile, type Manifest } from '../core/data';
+import {
+  DEFAULT_SEARCH,
+  type Evaluation,
+  type SearchParams,
+  type TracePoint,
+} from '../core/search/search';
+import type {
+  ExactWorkerRequest,
+  ExactWorkerResponse,
+  SearchRequest,
+  SearchResponse,
+} from '../workers/protocol';
+import { getBoard } from './board';
+import { decodePermalink } from './permalink';
+import { useStore, type UiParams } from './store';
+
+const UI_INTERVAL_MS = 100;
+/** Exact checks per run: the best candidates of the archive. */
+const VERIFY_TOP = 3;
+const VERIFY_TIME_LIMIT_SEC = 120;
+
+// --- data ----------------------------------------------------------------------------------
+
+export async function loadData(): Promise<void> {
+  const base = import.meta.env.BASE_URL;
+  try {
+    const manifest = (await (await fetch(`${base}data/manifest.json`)).json()) as Manifest;
+    const entry = manifest.countries[0];
+    if (!entry) throw new Error('empty manifest');
+    const country = parseCountryFile(await (await fetch(`${base}data/${entry.file}`)).json());
+    useStore.setState({ manifest, country });
+    applyPermalink(window.location.hash);
+  } catch (error) {
+    useStore.setState({ loadError: error instanceof Error ? error.message : String(error) });
+  }
+}
+
+function applyPermalink(hash: string): void {
+  const link = decodePermalink(hash);
+  const { country } = useStore.getState();
+  if (!link || !country) return;
+  const warnings: string[] = [];
+  if (link.data && link.data.version !== country.dataVersion) {
+    warnings.push(`data:${link.data.version}:${country.dataVersion}`);
+  }
+  useStore.setState({ params: link.params, linkWarnings: warnings });
+  if (!link.selected) return;
+  const board = getBoard(country, link.params);
+  const members = link.selected.map((id) => board.index.get(id)).filter((i) => i !== undefined);
+  const missing = link.selected.filter((id) => !board.index.has(id));
+  if (missing.length > 0) warnings.push(`missing:${missing.join(',')}`);
+  if (members.length < 3) return;
+  members.sort((a, b) => a - b);
+  const key = members.join(',');
+  useStore.setState({
+    loaded: { key, members },
+    shown: { kind: 'key', key },
+    linkWarnings: warnings,
+  });
+  enqueueVerification(key, members, null);
+}
+
+// --- search --------------------------------------------------------------------------------
+
+export function rEffMm(p: UiParams): number {
+  return p.nailDiameterMm / 2 + p.stringThicknessMm / 2;
+}
+
+export function searchParams(p: UiParams): SearchParams {
+  return {
+    ...DEFAULT_SEARCH,
+    n: p.n,
+    minDistanceMm: p.minDistanceMm,
+    targetGapMm: p.targetGapMm,
+    rEffMm: rEffMm(p),
+    iterations: p.iterations,
+    seed: p.seed,
+    weights: {
+      gap: p.weightGap,
+      difficulty: p.weightDifficulty,
+      recognizability: p.weightRecognizability,
+    },
+  };
+}
+
+let searchWorker: Worker | null = null;
+let pending: Extract<SearchResponse, { type: 'progress' | 'done' }> | null = null;
+let pendingTrace: TracePoint[] = [];
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
+let lastFlush = 0;
+
+function getSearchWorker(): Worker {
+  if (searchWorker) return searchWorker;
+  const worker = new Worker(new URL('../workers/search.worker.ts', import.meta.url), {
+    type: 'module',
+  });
+  worker.onmessage = (event: MessageEvent<SearchResponse>) => onSearchMessage(event.data);
+  worker.onerror = (event) => {
+    const { run } = useStore.getState();
+    useStore.setState({ run: { ...run, status: 'error', error: event.message } });
+  };
+  searchWorker = worker;
+  return worker;
+}
+
+function onSearchMessage(message: SearchResponse): void {
+  const { run } = useStore.getState();
+  if (message.runId !== run.runId) return;
+  if (message.type === 'error') {
+    useStore.setState({ run: { ...run, status: 'error', error: message.message } });
+    return;
+  }
+  pending = message;
+  pendingTrace.push(...message.trace);
+  if (message.type === 'done') {
+    flush();
+    return;
+  }
+  const wait = Math.max(0, UI_INTERVAL_MS - (performance.now() - lastFlush));
+  // A timer, not requestAnimationFrame: rAF pauses in hidden tabs, and React batches anyway.
+  flushTimer ??= setTimeout(flush, wait);
+}
+
+function flush(): void {
+  if (flushTimer) clearTimeout(flushTimer);
+  flushTimer = null;
+  const message = pending;
+  if (!message) return;
+  pending = null;
+  lastFlush = performance.now();
+  const { run } = useStore.getState();
+  if (message.runId !== run.runId) return;
+  const trace = [...run.trace, ...pendingTrace];
+  pendingTrace = [];
+  useStore.setState({
+    run: {
+      ...run,
+      status: message.type === 'done' ? 'done' : run.status,
+      progress: message,
+      trace,
+    },
+  });
+  syncVerifications(message.archive.slice(0, VERIFY_TOP));
+}
+
+export function startSearch(): void {
+  const state = useStore.getState();
+  if (!state.country) return;
+  const board = getBoard(state.country, state.params);
+  const runId = state.run.runId + 1;
+  resetVerifications();
+  pending = null;
+  pendingTrace = [];
+  useStore.setState({
+    run: { status: 'running', runId, progress: null, trace: [], error: null },
+    shown: { kind: 'auto' },
+    loaded: null,
+    linkWarnings: [],
+  });
+  const message: SearchRequest = {
+    type: 'start',
+    runId,
+    pool: {
+      points: board.points,
+      population: board.pool.map((c) => c.pop),
+      pinned: [],
+    },
+    params: searchParams(state.params),
+  };
+  getSearchWorker().postMessage(message);
+}
+
+export function stopSearch(): void {
+  const { run } = useStore.getState();
+  if (run.status !== 'running') return;
+  getSearchWorker().postMessage({ type: 'stop', runId: run.runId } satisfies SearchRequest);
+  useStore.setState({ run: { ...run, status: 'stopped' } });
+}
+
+// --- verification --------------------------------------------------------------------------
+
+interface QueuedJob {
+  readonly key: string;
+  readonly members: readonly number[];
+  readonly tour: readonly number[] | null;
+}
+
+let exactWorker: Worker | null = null;
+let queue: QueuedJob[] = [];
+let busy: { jobId: number; key: string } | null = null;
+let jobCounter = 0;
+
+function getExactWorker(): Worker {
+  if (exactWorker) return exactWorker;
+  const worker = new Worker(new URL('../workers/exact.worker.ts', import.meta.url), {
+    type: 'module',
+  });
+  worker.onmessage = (event: MessageEvent<ExactWorkerResponse>) => onExactMessage(event.data);
+  worker.onerror = (event) => {
+    if (busy) setVerification(busy.key, { status: 'error', message: event.message });
+    busy = null;
+    exactWorker?.terminate();
+    exactWorker = null;
+    pump();
+  };
+  exactWorker = worker;
+  return worker;
+}
+
+function setVerification(
+  key: string,
+  value: ReturnType<typeof useStore.getState>['verifications'][string],
+): void {
+  useStore.setState((s) => ({ verifications: { ...s.verifications, [key]: value } }));
+}
+
+function onExactMessage(message: ExactWorkerResponse): void {
+  if (message.type === 'verified' && busy?.jobId === message.jobId) {
+    setVerification(message.key, {
+      status: 'done',
+      verification: message.verification,
+      ms: message.ms,
+    });
+    busy = null;
+    pump();
+  } else if (message.type === 'error' && busy && message.jobId === busy.jobId) {
+    setVerification(busy.key, { status: 'error', message: message.message });
+    busy = null;
+    pump();
+  }
+}
+
+/**
+ * Queues an exact check of a candidate (members: pool indices, tour: pool indices or null).
+ * `first` puts it at the front (a candidate the user is looking at).
+ */
+export function enqueueVerification(
+  key: string,
+  members: readonly number[],
+  evaluation: Evaluation | null,
+  first = false,
+): void {
+  const { verifications } = useStore.getState();
+  const queued = queue.findIndex((j) => j.key === key);
+  if (queued >= 0) {
+    if (first) queue.unshift(...queue.splice(queued, 1));
+    return;
+  }
+  if (verifications[key]) return;
+  const job = { key, members, tour: evaluation?.tour ?? null };
+  if (first) queue.unshift(job);
+  else queue.push(job);
+  setVerification(key, { status: 'queued' });
+  pump();
+}
+
+/**
+ * Keeps the queue to the given candidates (in this order) plus the candidate on display:
+ * candidates that dropped out of the archive's top stop waiting.
+ */
+function syncVerifications(top: readonly Evaluation[]): void {
+  const { shown } = useStore.getState();
+  const keep = new Set(top.map((e) => e.key));
+  if (shown.kind === 'key') keep.add(shown.key);
+  const dropped = queue.filter((j) => !keep.has(j.key));
+  queue = queue.filter((j) => keep.has(j.key));
+  if (dropped.length > 0) {
+    useStore.setState((s) => {
+      const verifications = { ...s.verifications };
+      for (const j of dropped) delete verifications[j.key];
+      return { verifications };
+    });
+  }
+  for (const e of top) enqueueVerification(e.key, e.members, e);
+  const rank = new Map(top.map((e, i) => [e.key, i]));
+  queue.sort((a, b) => (rank.get(a.key) ?? -1) - (rank.get(b.key) ?? -1));
+}
+
+/** Shows a candidate and checks it exactly with priority. */
+export function showCandidate(evaluation: Evaluation | null): void {
+  if (!evaluation) {
+    useStore.getState().setShown({ kind: 'auto' });
+    return;
+  }
+  useStore.getState().setShown({ kind: 'key', key: evaluation.key });
+  enqueueVerification(evaluation.key, evaluation.members, evaluation, true);
+}
+
+function pump(): void {
+  if (busy) return;
+  const job = queue.shift();
+  if (!job) return;
+  const { country, params } = useStore.getState();
+  if (!country) return;
+  const board = getBoard(country, params);
+  const slot = new Map(job.members.map((c, s) => [c, s]));
+  const jobId = ++jobCounter;
+  busy = { jobId, key: job.key };
+  setVerification(job.key, { status: 'running' });
+  const request: ExactWorkerRequest = {
+    type: 'verify',
+    jobId,
+    key: job.key,
+    points: job.members.map((c) => board.points[c]!),
+    tour: job.tour ? job.tour.map((c) => slot.get(c)!) : [],
+    rEffMm: rEffMm(params),
+    timeLimitSec: VERIFY_TIME_LIMIT_SEC,
+  };
+  getExactWorker().postMessage(request);
+}
+
+/** Cancels running and queued checks (they belong to an old pool). */
+function resetVerifications(): void {
+  queue = [];
+  if (busy) {
+    exactWorker?.terminate();
+    exactWorker = null;
+    busy = null;
+  }
+  useStore.setState({ verifications: {} });
+}

@@ -1,53 +1,83 @@
-import { useEffect, useState } from 'react';
-import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
+import { useEffect } from 'react';
+import { useBoard } from './board';
+import { BoardMap } from './components/BoardMap';
+import { ParamsPanel } from './components/ParamsPanel';
+import { SidePanel } from './components/SidePanel';
+import { loadData } from './controller';
+import { useT } from './i18n';
+import { usePuzzle } from './puzzle';
+import { useStore, type Language } from './store';
 
-type SolverStatus =
-  | { readonly kind: 'loading' }
-  | { readonly kind: 'ready'; readonly version: string; readonly loadMs: number }
-  | { readonly kind: 'failed'; readonly message: string };
+function Header() {
+  const t = useT();
+  const lang = useStore((s) => s.lang);
+  const setLang = useStore((s) => s.setLang);
+  return (
+    <header className="header">
+      <div>
+        <h1>{t.appTitle}</h1>
+        <p className="tagline">{t.appTagline}</p>
+      </div>
+      <div className="lang" role="group" aria-label={t.language}>
+        {(['en', 'de'] as const satisfies readonly Language[]).map((l) => (
+          <button
+            key={l}
+            type="button"
+            className={l === lang ? 'selected' : undefined}
+            aria-pressed={l === lang}
+            onClick={() => setLang(l)}
+          >
+            {l.toUpperCase()}
+          </button>
+        ))}
+      </div>
+    </header>
+  );
+}
 
-function useSolverSelfTest(): SolverStatus {
-  const [status, setStatus] = useState<SolverStatus>({ kind: 'loading' });
-  useEffect(() => {
-    const worker = new Worker(new URL('../workers/exact.worker.ts', import.meta.url), {
-      type: 'module',
-    });
-    worker.onmessage = (event: MessageEvent<ExactWorkerResponse>) => {
-      const message = event.data;
-      if (message.type === 'error') {
-        setStatus({ kind: 'failed', message: message.message });
-      } else if (message.type !== 'selftest-result') {
-        return;
-      } else if (message.ok) {
-        setStatus({ kind: 'ready', version: message.highsVersion, loadMs: message.loadMs });
-      } else {
-        setStatus({
-          kind: 'failed',
-          message: `self-test returned ${message.status} with objective ${message.objective}`,
-        });
-      }
-    };
-    worker.onerror = (event) => setStatus({ kind: 'failed', message: event.message });
-    worker.postMessage({ type: 'selftest' } satisfies ExactWorkerRequest);
-    return () => worker.terminate();
-  }, []);
-  return status;
+function Footer() {
+  const t = useT();
+  const lang = useStore((s) => s.lang);
+  const country = useStore((s) => s.country);
+  return (
+    <footer className="footer">
+      {country && <p>{country.attribution[lang]}</p>}
+      <p>{t.credits}</p>
+    </footer>
+  );
 }
 
 export function App() {
-  const solver = useSolverSelfTest();
+  const t = useT();
+  const lang = useStore((s) => s.lang);
+  const loadError = useStore((s) => s.loadError);
+  const board = useBoard();
+  const puzzle = usePuzzle();
+
+  useEffect(() => {
+    void loadData();
+  }, []);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   return (
-    <main>
-      <h1>TSP Boards</h1>
-      <p>
-        Exact solver (HiGHS, WebAssembly): {solver.kind === 'loading' && <span>loading…</span>}
-        {solver.kind === 'ready' && (
-          <span className="ok">
-            ready (HiGHS {solver.version}, loaded in {Math.round(solver.loadMs)} ms)
-          </span>
+    <div className="app">
+      <Header />
+      <ParamsPanel board={board} puzzle={puzzle} />
+      <main className="stage">
+        {loadError ? (
+          <p className="error">
+            {t.loadFailed} ({loadError})
+          </p>
+        ) : board ? (
+          <BoardMap board={board} puzzle={puzzle} />
+        ) : (
+          <p className="hint">{t.loading}</p>
         )}
-        {solver.kind === 'failed' && <span className="error">failed: {solver.message}</span>}
-      </p>
-    </main>
+      </main>
+      <SidePanel board={board} puzzle={puzzle} />
+      <Footer />
+    </div>
   );
 }
