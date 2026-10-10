@@ -1,0 +1,10 @@
+{
+  "_comment": "Manual corrections for the German data build, keyed by GeoNames id of the city. 'names' sets name, label and/or nameEn; 'exclude' drops cities. See docs/data/de-report.md.",
+  "names": {
+    "2810284": {
+      "nameEn": "Sylt",
+      "_why": "GeoNames' English name is Westerland, a town on the island"
+    }
+  },
+  "exclude": []
+}
