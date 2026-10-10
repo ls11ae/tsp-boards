@@ -4,8 +4,10 @@
 import { parseCountryFile, type Manifest } from '../core/data';
 import {
   DEFAULT_SEARCH,
+  greedySelection,
   type Evaluation,
   type SearchParams,
+  type SearchPool,
   type TracePoint,
 } from '../core/search/search';
 import type {
@@ -16,7 +18,7 @@ import type {
 } from '../workers/protocol';
 import { getBoard } from './board';
 import { decodePermalink } from './permalink';
-import { useStore, type UiParams } from './store';
+import { useStore, type RunState, type UiParams } from './store';
 
 const UI_INTERVAL_MS = 100;
 /** Exact checks per run: the best candidates of the archive. */
@@ -47,7 +49,12 @@ function applyPermalink(hash: string): void {
   if (link.data && link.data.version !== country.dataVersion) {
     warnings.push(`data:${link.data.version}:${country.dataVersion}`);
   }
-  useStore.setState({ params: link.params, linkWarnings: warnings });
+  useStore.setState({
+    params: link.params,
+    pinned: link.pinned,
+    excluded: link.excluded,
+    linkWarnings: warnings,
+  });
   if (!link.selected) return;
   const board = getBoard(country, link.params);
   const members = link.selected.map((id) => board.index.get(id)).filter((i) => i !== undefined);
@@ -101,7 +108,9 @@ function getSearchWorker(): Worker {
   worker.onmessage = (event: MessageEvent<SearchResponse>) => onSearchMessage(event.data);
   worker.onerror = (event) => {
     const { run } = useStore.getState();
-    useStore.setState({ run: { ...run, status: 'error', error: event.message } });
+    useStore.setState({
+      run: { ...run, status: 'error', error: { kind: 'other', message: event.message } },
+    });
   };
   searchWorker = worker;
   return worker;
@@ -111,7 +120,9 @@ function onSearchMessage(message: SearchResponse): void {
   const { run } = useStore.getState();
   if (message.runId !== run.runId) return;
   if (message.type === 'error') {
-    useStore.setState({ run: { ...run, status: 'error', error: message.message } });
+    useStore.setState({
+      run: { ...run, status: 'error', error: { kind: 'other', message: message.message } },
+    });
     return;
   }
   pending = message;
@@ -147,11 +158,47 @@ function flush(): void {
   syncVerifications(message.archive.slice(0, VERIFY_TOP));
 }
 
+/** Search pool of the current board with pins and exclusions as pool indices. */
+function searchPool(): SearchPool | null {
+  const { country, params, pinned, excluded } = useStore.getState();
+  if (!country) return null;
+  const board = getBoard(country, params);
+  const indices = (ids: readonly number[]) =>
+    ids.map((id) => board.index.get(id)).filter((i): i is number => i !== undefined);
+  return {
+    points: board.points,
+    population: board.pool.map((c) => c.pop),
+    pinned: indices(pinned),
+    excluded: indices(excluded),
+  };
+}
+
 export function startSearch(): void {
   const state = useStore.getState();
-  if (!state.country) return;
+  const pool = searchPool();
+  if (!state.country || !pool) return;
   const board = getBoard(state.country, state.params);
   const runId = state.run.runId + 1;
+  const { selection, conflictingPins } = greedySelection(
+    pool,
+    state.params.n,
+    state.params.minDistanceMm,
+  );
+  const fail = (error: NonNullable<RunState['error']>) =>
+    useStore.setState({
+      run: { status: 'error', runId, progress: null, trace: [], error },
+    });
+  if (conflictingPins.length > 0) {
+    const names = conflictingPins
+      .map(([a, b]) => `${board.pool[a]!.name} – ${board.pool[b]!.name}`)
+      .join(', ');
+    fail({ kind: 'pin-conflict', names });
+    return;
+  }
+  if (selection.length < state.params.n) {
+    fail({ kind: 'too-few', placed: selection.length, n: state.params.n });
+    return;
+  }
   resetVerifications();
   pending = null;
   pendingTrace = [];
@@ -164,11 +211,7 @@ export function startSearch(): void {
   const message: SearchRequest = {
     type: 'start',
     runId,
-    pool: {
-      points: board.points,
-      population: board.pool.map((c) => c.pop),
-      pinned: [],
-    },
+    pool,
     params: searchParams(state.params),
   };
   getSearchWorker().postMessage(message);
@@ -322,4 +365,22 @@ function resetVerifications(): void {
     busy = null;
   }
   useStore.setState({ verifications: {} });
+}
+
+// --- pins and exclusions -------------------------------------------------------------------
+
+/** Click cycle on a city: neutral → pinned → excluded → neutral. */
+export function cycleCity(id: number): void {
+  const { pinned, excluded } = useStore.getState();
+  if (pinned.includes(id)) {
+    useStore.setState({ pinned: pinned.filter((x) => x !== id), excluded: [...excluded, id] });
+  } else if (excluded.includes(id)) {
+    useStore.setState({ excluded: excluded.filter((x) => x !== id) });
+  } else {
+    useStore.setState({ pinned: [...pinned, id] });
+  }
+}
+
+export function clearMarks(): void {
+  useStore.setState({ pinned: [], excluded: [] });
 }

@@ -63,12 +63,17 @@ export interface LoadedPuzzle {
   readonly members: readonly number[];
 }
 
+export type RunError =
+  | { readonly kind: 'too-few'; readonly placed: number; readonly n: number }
+  | { readonly kind: 'pin-conflict'; readonly names: string }
+  | { readonly kind: 'other'; readonly message: string };
+
 export interface RunState {
   readonly status: RunStatus;
   readonly runId: number;
   readonly progress: SearchProgress | null;
   readonly trace: readonly TracePoint[];
-  readonly error: string | null;
+  readonly error: RunError | null;
 }
 
 export interface AppState {
@@ -82,6 +87,10 @@ export interface AppState {
   readonly loaded: LoadedPuzzle | null;
   readonly verifications: Readonly<Record<string, VerificationState>>;
   readonly showTour: boolean;
+  /** GeoNames ids the next search must include. */
+  readonly pinned: readonly number[];
+  /** GeoNames ids the next search must not use. */
+  readonly excluded: readonly number[];
   /** Warnings from opening a permalink (data version, missing cities). */
   readonly linkWarnings: readonly string[];
   readonly setLang: (lang: Language) => void;
@@ -115,6 +124,8 @@ export const useStore = create<AppState>()((set) => ({
   loaded: null,
   verifications: {},
   showTour: true,
+  pinned: [],
+  excluded: [],
   linkWarnings: [],
   setLang: (lang) => {
     try {

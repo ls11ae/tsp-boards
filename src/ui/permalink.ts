@@ -9,16 +9,37 @@ export const PERMALINK_VERSION = 1;
 
 export interface PermalinkData {
   readonly params: UiParams;
+  /** GeoNames ids of pinned and excluded cities. */
+  readonly pinned: readonly number[];
+  readonly excluded: readonly number[];
   /** GeoNames ids of the selected cities, if the link contains a puzzle. */
   readonly selected: readonly number[] | null;
   /** 'de@1' style data version, if present. */
   readonly data: { readonly country: string; readonly version: number } | null;
 }
 
+const encodeIds = (ids: readonly number[]) =>
+  [...ids]
+    .sort((a, b) => a - b)
+    .map((id) => id.toString(36))
+    .join('.');
+
+const decodeIds = (text: string | null): number[] =>
+  text
+    ? text
+        .split('.')
+        .map((s) => parseInt(s, 36))
+        .filter((x) => Number.isInteger(x) && x > 0)
+    : [];
+
 export function encodePermalink(
   params: UiParams,
   dataVersion: { country: string; version: number },
   selectedIds: readonly number[] | null,
+  marks: { readonly pinned: readonly number[]; readonly excluded: readonly number[] } = {
+    pinned: [],
+    excluded: [],
+  },
 ): string {
   const q = new URLSearchParams();
   q.set('v', String(PERMALINK_VERSION));
@@ -34,15 +55,9 @@ export function encodePermalink(
   q.set('s', String(params.seed));
   q.set('it', String(params.iterations));
   q.set('w', [params.weightGap, params.weightDifficulty, params.weightRecognizability].join(','));
-  if (selectedIds && selectedIds.length > 0) {
-    q.set(
-      'sel',
-      [...selectedIds]
-        .sort((a, b) => a - b)
-        .map((id) => id.toString(36))
-        .join('.'),
-    );
-  }
+  if (marks.pinned.length > 0) q.set('pin', encodeIds(marks.pinned));
+  if (marks.excluded.length > 0) q.set('ex', encodeIds(marks.excluded));
+  if (selectedIds && selectedIds.length > 0) q.set('sel', encodeIds(selectedIds));
   return `#${q.toString()}`;
 }
 
@@ -76,14 +91,14 @@ export function decodePermalink(hash: string): PermalinkData | null {
     weightDifficulty: num(wd ?? null, d.weightDifficulty, 0, 100),
     weightRecognizability: num(wr ?? null, d.weightRecognizability, 0, 100),
   };
-  const sel = q.get('sel');
-  const selected = sel
-    ? sel
-        .split('.')
-        .map((s) => parseInt(s, 36))
-        .filter((x) => Number.isInteger(x) && x > 0)
-    : null;
+  const selected = q.get('sel') ? decodeIds(q.get('sel')) : null;
   const match = /^([a-z]{2})@(\d+)$/.exec(q.get('d') ?? '');
   const data = match ? { country: match[1]!.toUpperCase(), version: Number(match[2]) } : null;
-  return { params, selected, data };
+  return {
+    params,
+    pinned: decodeIds(q.get('pin')),
+    excluded: decodeIds(q.get('ex')),
+    selected,
+    data,
+  };
 }

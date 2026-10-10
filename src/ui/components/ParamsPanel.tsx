@@ -60,10 +60,12 @@ export function ParamsPanel({
     const { params } = useStore.getState();
     if (!country || !board) return;
     const ids = puzzle ? puzzle.members.map((c) => board.pool[c]!.id) : null;
+    const { pinned, excluded } = useStore.getState();
     const hash = encodePermalink(
       params,
       { country: country.country, version: country.dataVersion },
       ids,
+      { pinned, excluded },
     );
     window.history.replaceState(null, '', hash);
     const url = window.location.href;

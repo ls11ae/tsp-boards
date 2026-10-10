@@ -1,6 +1,6 @@
 import type { Evaluation } from '../../core/search/search';
 import type { BoardModel } from '../board';
-import { showCandidate } from '../controller';
+import { clearMarks, showCandidate } from '../controller';
 import { useFormat, useT } from '../i18n';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
@@ -22,7 +22,15 @@ function SearchStatus() {
     <section>
       <h2>{t.search}</h2>
       <p className={`status status-${run.status}`}>{label}</p>
-      {run.error && <p className="error">{run.error}</p>}
+      {run.error && (
+        <p className="error">
+          {run.error.kind === 'too-few'
+            ? t.tooFew(fmt.integer(run.error.placed), fmt.integer(run.error.n))
+            : run.error.kind === 'pin-conflict'
+              ? t.pinConflict(run.error.names)
+              : run.error.message}
+        </p>
+      )}
       {p && (
         <>
           <progress value={p.iteration} max={p.iterations} />
@@ -129,6 +137,12 @@ function PuzzleMetrics({
             <dd>{fmt.integer(e.difficulty.score * 100)} %</dd>
             <dt>{t.recognizability}</dt>
             <dd>{fmt.integer(e.recognizability * 100)} %</dd>
+            <dt className="sub">{t.nearestNeighbor}</dt>
+            <dd>{t.excess(fmt.number(e.difficulty.nearestNeighborBest * 100, 1))}</dd>
+            <dt className="sub">{t.greedyEdge}</dt>
+            <dd>{t.excess(fmt.number(e.difficulty.greedyEdge * 100, 1))}</dd>
+            <dt className="sub">{t.hullInsertion}</dt>
+            <dd>{t.excess(fmt.number(e.difficulty.hullInsertion * 100, 1))}</dd>
           </>
         )}
       </dl>
@@ -185,6 +199,75 @@ function Candidates() {
   );
 }
 
+function Marks() {
+  const t = useT();
+  const fmt = useFormat();
+  const pinned = useStore((s) => s.pinned);
+  const excluded = useStore((s) => s.excluded);
+  return (
+    <section>
+      <h2>{t.marks}</h2>
+      <p className="hint">{t.marksHint}</p>
+      {(pinned.length > 0 || excluded.length > 0) && (
+        <div className="marks">
+          <span>{t.marksSummary(fmt.integer(pinned.length), fmt.integer(excluded.length))}</span>
+          <button type="button" onClick={clearMarks}>
+            {t.clearMarks}
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** Sparklines: gap of the current state and quality of the best candidate over iterations. */
+function Traces() {
+  const t = useT();
+  const trace = useStore((s) => s.run.trace);
+  const total = useStore((s) => s.run.progress?.iterations ?? 0);
+  if (trace.length < 2 || total === 0) return null;
+  const width = 280;
+  const height = 48;
+  const line = (values: readonly (number | null)[], cap: number) => {
+    const max = Math.max(cap, ...values.map((v) => v ?? 0));
+    return trace
+      .map((p, i) => {
+        const v = values[i];
+        if (v === null || v === undefined) return null;
+        const x = (p.iteration / total) * width;
+        const y = height - 2 - (Math.max(0, v) / (max || 1)) * (height - 4);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .filter((s) => s !== null)
+      .join(' ');
+  };
+  return (
+    <section>
+      <h2>{t.trace}</h2>
+      <svg className="trace" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t.trace}>
+        <polyline
+          className="trace-gap"
+          points={line(
+            trace.map((p) => p.gapMm),
+            1,
+          )}
+        />
+        <polyline
+          className="trace-quality"
+          points={line(
+            trace.map((p) => p.bestQuality),
+            0.1,
+          )}
+        />
+      </svg>
+      <p className="legend">
+        <span className="swatch trace-gap" /> {t.traceGap} <span className="swatch trace-quality" />{' '}
+        {t.traceQuality}
+      </p>
+    </section>
+  );
+}
+
 function LinkWarnings() {
   const t = useT();
   const warnings = useStore((s) => s.linkWarnings);
@@ -214,6 +297,7 @@ export function SidePanel({
     <aside className="panel side">
       <LinkWarnings />
       <SearchStatus />
+      <Traces />
       {board && puzzle ? (
         <PuzzleMetrics board={board} puzzle={puzzle} />
       ) : (
@@ -223,6 +307,7 @@ export function SidePanel({
         </section>
       )}
       <Candidates />
+      <Marks />
     </aside>
   );
 }

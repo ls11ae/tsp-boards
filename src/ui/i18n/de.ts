@@ -37,6 +37,12 @@ export const de: Messages = {
   evaluations: 'Bewertungen',
   exactChecks: 'Exakte Prüfungen',
   temperature: 'Temperatur',
+  tooFew: (placed, n) =>
+    `Mit diesem Mindestabstand passen nur ${placed} Städte (nötig: ${n}). Weniger Städte, einen kleineren Mindestabstand, eine größere Region oder ein größeres Brett wählen.`,
+  pinConflict: (pairs) => `Gepinnte Städte liegen näher als der Mindestabstand: ${pairs}`,
+  trace: 'Verlauf der Suche',
+  traceGap: 'Lücke des aktuellen Zustands (mm)',
+  traceQuality: 'Qualität des besten Kandidaten',
 
   puzzle: 'Puzzle',
   showing: 'Angezeigt',
@@ -53,6 +59,10 @@ export const de: Messages = {
   euclideanLength: 'Tourlänge (Nagelmitten)',
   difficulty: 'Schwierigkeit',
   recognizability: 'Bekannte Städte',
+  nearestNeighbor: 'Nächster Nachbar (bester Start)',
+  greedyEdge: 'Kürzeste Kanten zuerst',
+  hullInsertion: 'Konvexe Hülle + Einfügen',
+  excess: (value) => `+${value} %`,
   verification: 'Prüfung',
   verifying: 'Exakte Prüfung läuft …',
   queued: 'Exakte Prüfung in der Warteschlange',
@@ -65,6 +75,11 @@ export const de: Messages = {
   showTour: 'Tour anzeigen',
   candidates: 'Kandidaten',
   candidateRow: (rank, gap) => `#${rank} · ${gap} mm`,
+  marks: 'Gepinnte und ausgeschlossene Städte',
+  marksHint:
+    'Klick auf eine Stadt im Brett: pinnen → ausschließen → wieder neutral. Gilt für die nächste Suche.',
+  marksSummary: (pinned, excluded) => `${pinned} gepinnt · ${excluded} ausgeschlossen`,
+  clearMarks: 'Zurücksetzen',
 
   permalink: 'Link kopieren',
   linkCopied: 'Link kopiert',

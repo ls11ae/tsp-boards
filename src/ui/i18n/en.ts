@@ -40,6 +40,12 @@ export const en = {
   evaluations: 'Evaluations',
   exactChecks: 'Exact checks',
   temperature: 'Temperature',
+  tooFew: (placed: string, n: string) =>
+    `Only ${placed} cities fit at this minimum distance (need ${n}). Lower the number of cities or the minimum distance, or choose a larger region or board.`,
+  pinConflict: (pairs: string) => `Pinned cities are closer than the minimum distance: ${pairs}`,
+  trace: 'Progress of the search',
+  traceGap: 'gap of the current state (mm)',
+  traceQuality: 'quality of the best candidate',
 
   // Candidate metrics
   puzzle: 'Puzzle',
@@ -57,6 +63,10 @@ export const en = {
   euclideanLength: 'Tour length (nail centres)',
   difficulty: 'Difficulty',
   recognizability: 'Well-known cities',
+  nearestNeighbor: 'Nearest neighbour (best start)',
+  greedyEdge: 'Shortest edges first',
+  hullInsertion: 'Convex hull + insertion',
+  excess: (value: string) => `+${value} %`,
   verification: 'Verification',
   verifying: 'Exact check running…',
   queued: 'Exact check queued',
@@ -69,6 +79,11 @@ export const en = {
   showTour: 'Show tour',
   candidates: 'Candidates',
   candidateRow: (rank: string, gap: string) => `#${rank} · ${gap} mm`,
+  marks: 'Pinned and excluded cities',
+  marksHint:
+    'Click a city on the board: pin it → exclude it → back to neutral. Applies to the next search.',
+  marksSummary: (pinned: string, excluded: string) => `${pinned} pinned · ${excluded} excluded`,
+  clearMarks: 'Clear',
 
   // Permalink and data
   permalink: 'Copy link',
