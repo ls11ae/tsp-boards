@@ -4,7 +4,13 @@ import { distance } from '../geometry';
 import { randomPoints } from '../test-utils';
 import type { MipBackend } from '../tsp/exact';
 import { ConflictGraph, Selection } from './conflicts';
-import { DEFAULT_SEARCH, Search, type SearchParams, type SearchPool } from './search';
+import {
+  DEFAULT_SEARCH,
+  Search,
+  greedySelection,
+  type SearchParams,
+  type SearchPool,
+} from './search';
 
 let backend: MipBackend;
 beforeAll(async () => {
@@ -96,5 +102,34 @@ describe('Search', () => {
 
   it('reports when the region cannot hold n cities', () => {
     expect(() => new Search(pool(10, 4), { ...params, n: 15 })).toThrow(/only/);
+  });
+
+  it('never selects excluded cities', () => {
+    const base = pool(120, 5);
+    const excluded = [...base.points.keys()].filter((i) => i % 3 === 0);
+    const search = new Search({ ...base, excluded }, params, backend);
+    search.step(params.iterations);
+    for (const e of [search.current, ...search.archive]) {
+      for (const c of e.members) expect(c % 3).not.toBe(0);
+    }
+  }, 120_000);
+});
+
+describe('greedySelection', () => {
+  it('places pinned cities first and reports pinned conflicts', () => {
+    const p: SearchPool = {
+      points: [
+        [0, 0],
+        [10, 0],
+        [100, 0],
+        [200, 0],
+      ],
+      population: [10, 20, 30, 40],
+      pinned: [0, 1],
+    };
+    const result = greedySelection(p, 3, 50);
+    expect(result.conflictingPins).toEqual([[0, 1]]);
+    expect(result.selection).toEqual([0, 3, 2]);
+    expect(greedySelection({ ...p, pinned: [] }, 4, 50).selection).toHaveLength(3);
   });
 });

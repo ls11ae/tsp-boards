@@ -275,3 +275,11 @@ Short entries: decision; alternatives considered; reason. Newest last.
   search optimises difficulty and recognisability.
 - **2026-10-10 Double bridge = A D C B.** The often quoted "A C B D" keeps the closing edge and
   is only a 3-opt segment exchange; the true non-sequential 4-opt double bridge is A D C B.
+- **2026-10-11 Difficulty score made smooth**: 1 − exp(−combined excess / 0.15) instead of a
+  linear score capped at 1. Optimised puzzles reached the cap (all top candidates scored 1.0),
+  so the term stopped discriminating. Typical random subsets score ≈ 0.5.
+- **2026-10-11 Pinned and excluded cities** are GeoNames ids in the store and the permalink
+  (`pin`, `ex`); the search gets them as pool indices. Excluded cities stay in the pool with
+  proposal weight 0, so pool indices (and the results on display) stay valid. A greedy
+  placement (pinned first, then by population) checks before a run whether n cities fit at
+  the minimum distance and whether pins conflict.

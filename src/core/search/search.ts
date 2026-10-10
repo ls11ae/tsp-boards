@@ -81,6 +81,43 @@ export interface SearchPool {
   readonly population: readonly number[];
   /** Pool indices that must be selected. */
   readonly pinned: readonly number[];
+  /** Pool indices that must not be selected. */
+  readonly excluded?: readonly number[];
+}
+
+export interface Feasibility {
+  /** Cities placed greedily (pinned first, then by population) at the minimum distance. */
+  readonly selection: number[];
+  /** Pinned cities closer than the minimum distance to each other (pool indices). */
+  readonly conflictingPins: [number, number][];
+}
+
+/**
+ * Greedy start selection; also answers whether n cities fit at the minimum distance (if fewer
+ * than n are placed, the region is too small or the distance too large for n cities).
+ */
+export function greedySelection(
+  pool: SearchPool,
+  n: number,
+  minDistanceMm: number,
+  graph: ConflictGraph = new ConflictGraph(pool.points, minDistanceMm),
+): Feasibility {
+  const excluded = new Set(pool.excluded ?? []);
+  const selection = new Selection(graph, pool.points.length);
+  const conflictingPins: [number, number][] = [];
+  for (const p of pool.pinned) {
+    if (selection.selected[p]) continue;
+    for (const q of selection.members) if (graph.near[p]!.includes(q)) conflictingPins.push([q, p]);
+    if (selection.eligible(p)) selection.add(p);
+  }
+  const byPopulation = pool.population
+    .map((_, i) => i)
+    .sort((a, b) => pool.population[b]! - pool.population[a]! || a - b);
+  for (const c of byPopulation) {
+    if (selection.members.length >= n) break;
+    if (!excluded.has(c) && selection.eligible(c)) selection.add(c);
+  }
+  return { selection: [...selection.members], conflictingPins };
 }
 
 export interface Evaluation {
@@ -186,7 +223,11 @@ export class Search {
     this.saturationUm = (params.gapSaturationMm ?? GAP_HEADROOM * params.targetGapMm) * 1000;
     this.capUm = Math.max(this.saturationUm, GAP_HEADROOM * this.targetUm);
     this.graph = new ConflictGraph(pool.points, params.minDistanceMm);
-    this.weights = Float64Array.from(pool.population, (p) => Math.pow(Math.max(p, 1), params.beta));
+    // Excluded cities get weight 0, so they are never proposed.
+    const excluded = new Set(pool.excluded ?? []);
+    this.weights = Float64Array.from(pool.population, (p, i) =>
+      excluded.has(i) ? 0 : Math.pow(Math.max(p, 1), params.beta),
+    );
     this.pinned = new Set(pool.pinned);
     this.popMin = Math.min(...pool.population);
     this.popMax = Math.max(...pool.population);
@@ -249,23 +290,20 @@ export class Search {
 
   private initialState(): State {
     const { n } = this.params;
-    const selection = new Selection(this.graph, this.pool.points.length);
-    for (const p of this.pinned) {
-      if (!selection.eligible(p)) throw new Error('pinned cities violate the minimum distance');
-      selection.add(p);
-    }
-    const byPopulation = this.pool.population
-      .map((_, i) => i)
-      .sort((a, b) => this.pool.population[b]! - this.pool.population[a]! || a - b);
-    for (const c of byPopulation) {
-      if (selection.members.length >= n) break;
-      if (selection.eligible(c)) selection.add(c);
-    }
-    if (selection.members.length < n) {
+    const { selection: chosen, conflictingPins } = greedySelection(
+      this.pool,
+      n,
+      this.params.minDistanceMm,
+      this.graph,
+    );
+    if (conflictingPins.length > 0) throw new Error('pinned cities violate the minimum distance');
+    if (chosen.length < n) {
       throw new Error(
-        `only ${selection.members.length} cities fit at minimum distance ${this.params.minDistanceMm} mm (need ${n})`,
+        `only ${chosen.length} cities fit at minimum distance ${this.params.minDistanceMm} mm (need ${n})`,
       );
     }
+    const selection = new Selection(this.graph, this.pool.points.length);
+    for (const c of chosen) selection.add(c);
     const slots = [...selection.members];
     const inst = new Instance(
       slots.map((c) => this.pool.points[c]!),

@@ -91,7 +91,7 @@ export function sampleWeighted(
   let r = rng.float() * total;
   let last = -1;
   for (let i = 0; i < weights.length; i++) {
-    if (!ok(i)) continue;
+    if (!ok(i) || weights[i]! <= 0) continue;
     last = i;
     r -= weights[i]!;
     if (r < 0) return i;

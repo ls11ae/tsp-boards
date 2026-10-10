@@ -14,15 +14,18 @@ export interface Difficulty {
   readonly nearestNeighborMean: number;
   readonly greedyEdge: number;
   readonly hullInsertion: number;
-  /** Combined score in [0, 1]: mean of best NN, greedy and hull insertion, / reference. */
+  /** Mean of best NN, greedy and hull insertion excess. */
+  readonly combined: number;
+  /** Score in [0, 1): 1 − exp(−combined / DIFFICULTY_SCALE); smooth, never saturates. */
   readonly score: number;
 }
 
 /**
- * Excess at which the difficulty score saturates. For random German 40-city subsets the
- * combined excess is 5–20 % (median 11 %), so typical instances score about 0.45.
+ * Scale of the difficulty score. Random German 40-city subsets have a combined excess of
+ * 5–20 % (median 11 %, score ≈ 0.5); optimised puzzles reach 25 % and more (score ≈ 0.8).
+ * A linear score capped at 1 saturated under optimisation and stopped discriminating.
  */
-export const DIFFICULTY_REFERENCE = 0.25;
+export const DIFFICULTY_SCALE = 0.15;
 
 export function difficulty(inst: Instance, optimalLength: number): Difficulty {
   const excess = (tour: number[]) => stringLength(inst, tour) / optimalLength - 1;
@@ -41,7 +44,8 @@ export function difficulty(inst: Instance, optimalLength: number): Difficulty {
     nearestNeighborMean: sum / inst.n,
     greedyEdge: greedy,
     hullInsertion: hull,
-    score: Math.min(1, Math.max(0, combined / DIFFICULTY_REFERENCE)),
+    combined,
+    score: 1 - Math.exp(-Math.max(0, combined) / DIFFICULTY_SCALE),
   };
 }
 
