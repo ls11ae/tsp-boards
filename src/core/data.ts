@@ -120,18 +120,18 @@ export interface City {
 
 export function citiesFromColumns(columns: CityColumns, states: readonly StateInfo[]): City[] {
   return columns.id.map((id, i) => {
-    const name = columns.name[i];
+    const name = columns.name[i]!;
     return {
       id,
       name,
       label: columns.label[i] ?? name,
       nameEn: columns.nameEn[i] ?? name,
-      lat: columns.lat[i],
-      lon: columns.lon[i],
-      pop: columns.pop[i],
-      state: states[columns.state[i]].id,
+      lat: columns.lat[i]!,
+      lon: columns.lon[i]!,
+      pop: columns.pop[i]!,
+      state: states[columns.state[i]!]!.id,
       wikidata: columns.wikidata[i] ?? null,
-      flags: columns.flags[i],
+      flags: columns.flags[i]!,
     };
   });
 }

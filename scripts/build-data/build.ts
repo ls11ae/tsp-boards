@@ -163,7 +163,10 @@ async function buildCountry(config: CountryConfig): Promise<void> {
     nameSources.set(r.id, r.nameSource);
   }
 
-  const statesGeo = feature(regions.topology, regions.topology.objects.states) as FeatureCollection;
+  const statesGeo = feature(
+    regions.topology,
+    regions.topology.objects.states!,
+  ) as FeatureCollection;
   const stateFeature = new Map(statesGeo.features.map((f) => [f.properties!.id as string, f]));
   const outsideState = cities.filter(
     (c) => !geoContains(stateFeature.get(c.state)!, [c.lon, c.lat]),

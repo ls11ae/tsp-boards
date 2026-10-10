@@ -54,7 +54,7 @@ function bboxOf(features: readonly Feature<Geometry>[]): [number, number, number
 }
 
 function overlaps(a: readonly number[], b: readonly number[]): boolean {
-  return a[0] <= b[2] && b[0] <= a[2] && a[1] <= b[3] && b[1] <= a[3];
+  return a[0]! <= b[2]! && b[0]! <= a[2]! && a[1]! <= b[3]! && b[1]! <= a[3]!;
 }
 
 export async function buildRegions(

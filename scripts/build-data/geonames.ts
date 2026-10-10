@@ -54,18 +54,18 @@ export function parseGeoNames(text: string): GeoNameRow[] {
     if (!line) continue;
     const c = line.split('\t');
     if (c.length < 19) throw new Error(`GeoNames: expected 19 columns, got ${c.length}`);
-    const featureClass = c[6];
-    const featureCode = c[7];
+    const featureClass = c[6]!;
+    const featureCode = c[7]!;
     if (featureClass !== 'P' && featureCode !== 'ADM4') continue;
     rows.push({
       id: Number(c[0]),
-      name: c[1],
+      name: c[1]!,
       lat: Number(c[4]),
       lon: Number(c[5]),
       featureClass,
       featureCode,
-      admin1: c[10],
-      admin4: c[13],
+      admin1: c[10]!,
+      admin4: c[13]!,
       population: Number(c[14]) || 0,
     });
   }
@@ -87,8 +87,8 @@ export function parseAlternateNames(
     let list = result.get(id);
     if (!list) result.set(id, (list = []));
     list.push({
-      lang: c[2],
-      name: c[3],
+      lang: c[2]!,
+      name: c[3]!,
       preferred: c[4] === '1',
       short: c[5] === '1',
       colloquial: c[6] === '1',
@@ -142,7 +142,7 @@ export function isAbbreviated(name: string): boolean {
 }
 
 function firstWord(name: string): string {
-  return name.split(/[\s/]/u)[0];
+  return name.split(/[\s/]/u)[0]!;
 }
 
 /** Letters that mark the Sorbian part of bilingual names such as "Bautzen/Budyšin". */
@@ -360,7 +360,7 @@ function flagNearLarger(cities: readonly CityRecord[], options: CleaningOptions)
   // Cities are sorted by population, so all sufficiently larger candidates come first.
   return cities.map((c, i) => {
     for (let j = 0; j < i; j++) {
-      const big = cities[j];
+      const big = cities[j]!;
       if (big.pop < options.nearLargerFactor * c.pop) break;
       if (approxKm(big, c) < options.nearLargerKm) {
         return { ...c, flags: c.flags | CityFlag.NearLarger };
