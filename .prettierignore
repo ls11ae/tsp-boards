@@ -1,0 +1,6 @@
+dist/
+coverage/
+data/
+public/data/
+docs/experiments/
+package-lock.json
