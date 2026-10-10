@@ -189,3 +189,22 @@ Short entries: decision; alternatives considered; reason. Newest last.
   exact solver should keep a persistent model and add cuts incrementally (Model API).
 - **2026-10-10 Working mode**: autonomous; decisions recorded here; push to `main` after green
   tests; stop only if the gap measurement for n = 40 gives an achievable gap below ~3 mm.
+- **2026-10-10 One city per municipality.** GeoNames codes many districts as PPL (e.g.
+  Brackel, Lütgendortmund in Dortmund), but they share the municipality key admin4 (AGS). The
+  build groups populated places by (admin1, admin4); population from the ADM4 feature,
+  coordinates from the place named like the municipality, else the highest seat code.
+  Alternative: distance-based district detection. Reason: exact, and every place with
+  population ≥ 1000 has an admin4 code. A "near a much larger city" flag remains for review.
+- **2026-10-10 Names from the official municipality name (ADM4), cleaned**, not from GeoNames'
+  alternate names: those differ in only 38 cases and about half are wrong ("Leinfelden" for
+  Leinfelden-Echterdingen, "Ramstein+afb"). Cleaning drops designations after a comma, a
+  leading "Stadt ", the Sorbian part of bilingual names, and expands official abbreviations
+  ("Kahl a.Main" -> "Kahl am Main"). Short labels only as prefixes of the name; English names
+  only for genuine exonyms (Munich, Cologne, Nuremberg, Hanover).
+- **2026-10-10 Neighbouring countries from Natural Earth admin-1** (dissolved by country)
+  instead of the admin-0 file: borders then share arcs with the German states exactly, and one
+  download less.
+- **2026-10-10 Country file format**: columnar JSON, rare values sparse, state as index,
+  coordinates with 4 decimals (~10 m, the board scale is ~1 km/mm), minimum population 1000:
+  453 KB for Germany (6951 cities). The data version increases only when the content hash
+  changes; review report in `docs/data/<cc>-report.md`.
