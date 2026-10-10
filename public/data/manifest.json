@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "countries": [
+    {
+      "country": "DE",
+      "name": {
+        "en": "Germany",
+        "de": "Deutschland"
+      },
+      "file": "countries/de.json",
+      "dataVersion": 1,
+      "cityCount": 6951,
+      "bbox": [
+        5.8525,
+        47.2711,
+        15.0221,
+        55.0653
+      ]
+    }
+  ]
+}
