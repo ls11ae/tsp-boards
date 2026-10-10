@@ -108,6 +108,39 @@ same V8 engine as Chrome). Five instances each, unit square:
 (The naive 2-opt/Or-opt heuristic in that script is deliberately simple and not representative
 of a proper implementation.)
 
+### 6.1 Phase 1 implementation (2026-10-10)
+
+`cli/bench-exact.ts`, raw output in `docs/experiments/bench-exact-2026-10-10.txt` (Node 24,
+highs 1.15.3, integer µm costs, r_eff = 1.5 mm, board 600 × 800 mm; "germany" = random
+subsets of towns ≥ 5000 inhabitants at ≥ 25 mm). Times for optimum + second-best tour,
+with MIP starts from the heuristic; three instances each:
+
+| n   | ILS (150 kicks) | gap scan (+ double bridge) | Euclidean exact | string (turn-cost) exact |
+| --- | --------------- | -------------------------- | --------------- | ------------------------ |
+| 20  | 50–100 ms       | 0–4 ms                     | 14–313 ms       | 0.13–1.1 s               |
+| 30  | 80–140 ms       | 1–6 ms                     | 27–157 ms       | 1.1–2.6 s                |
+| 40  | 110–130 ms      | 2–8 ms                     | 37–307 ms       | 3–11 s                   |
+| 50  | 130–180 ms      | 5–14 ms                    | 65–389 ms       | 3.4–17 s                 |
+
+Later improvements (presolve off, reusable SEC pool) cut the Euclidean solves inside the
+search by a further ~3×. The exact string model is fast enough to verify a handful of final
+candidates (also in the browser: same V8/WASM engine), not for every search step.
+
+### 6.2 Tightness of the local gap bound
+
+`cli/ub-tightness.ts`, output in `docs/experiments/ub-tightness-2026-10-10.txt`.
+
+- Euclidean (200 instances per row): the local bound (2-opt, all pure 3-opt, double bridge)
+  equals the exact gap in 75–89 % of instances. Among instances whose bound is ≥ 3 mm, the
+  true gap is smaller in 9–21 % ("false accepts"); the exact second-best tour changes ≥ 4
+  edges in 10–20 % of instances. Germany is worse than uniform (clustered towns).
+- String length (20 instances per row): local bound tight in 80–100 %; combined with the
+  string lengths of the exact Euclidean optimum and runner-up: tight in 95–100 %, one false
+  accept in 80 instances.
+- Consequence: a search that maximises the local bound selects exactly the instances where it
+  overestimates. The search therefore refines promising candidates (level 2, Section 11) and
+  the final candidates are verified with the exact string model.
+
 ## 7. Interaction and features (ideas)
 
 - Region: country, federal state, or a drawn polygon/rectangle.
@@ -208,3 +241,27 @@ Short entries: decision; alternatives considered; reason. Newest last.
   coordinates with 4 decimals (~10 m, the board scale is ~1 km/mm), minimum population 1000:
   453 KB for Germany (6951 cities). The data version increases only when the content hash
   changes; review report in `docs/data/<cc>-report.md`.
+- **2026-10-10 Exact string model with turn costs**: one continuous variable per node and
+  neighbour pair (n·C(n−1,2) columns, 29,640 for n = 40) linked to the binary edge variables;
+  integral edges force integral pair variables. 3–11 s for optimum + runner-up at n = 40, so it
+  verifies final candidates ("string exact"); on a time limit verification falls back to
+  "Euclidean exact, string checked locally". Alternative: Euclidean exact plus local string
+  check only. Reason: exact is affordable and the local check misses ~5 %.
+- **2026-10-10 Two-level evaluation in the search.** Level 1: warm-started ILS + local gap scan.
+  Level 2 (only when the local bound reaches the target): exact Euclidean optimum and runner-up
+  (deterministic, synchronous), whose string lengths may reveal a better tour or a closer
+  alternative, plus the double-bridge scan. The SA acceptance draw is made before level 2:
+  level 2 can only lower the gap, so candidates rejected at level 1 skip the exact solve.
+  Alternative: level 1 only, verify afterwards. Reason: Section 6.2 (selection bias).
+- **2026-10-10 Reusable SEC pool.** Subtour elimination constraints depend only on node
+  indices, not on costs, so cuts found for one subset stay valid for every other subset on the
+  same instance slots; the search keeps the 300 most recent. With presolve off this made the
+  search ~3.6× faster.
+- **2026-10-10 Difficulty score** = mean excess of best nearest neighbour, greedy edge and hull
+  insertion over the optimum, divided by 0.25 (capped at 1). Random German 40-subsets have
+  5–20 % excess (median 11 %). Hull insertion alone is nearly optimal (4 % excess).
+- **2026-10-10 Gap objective**: hard target (feasibility, penalty growing over the run) and a
+  separate saturation point of the gap term (default 1.2 × target). Beyond saturation the
+  search optimises difficulty and recognisability.
+- **2026-10-10 Double bridge = A D C B.** The often quoted "A C B D" keeps the closing edge and
+  is only a 3-opt segment exchange; the true non-sequential 4-opt double bridge is A D C B.
