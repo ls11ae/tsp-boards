@@ -141,6 +141,28 @@ candidates (also in the browser: same V8/WASM engine), not for every search step
   overestimates. The search therefore refines promising candidates (level 2, Section 11) and
   the final candidates are verified with the exact string model.
 
+### 6.3 Achievable gaps (Germany)
+
+`cli/gap-survey.ts`, output in `docs/experiments/gap-survey-2026-10-10.md`. Three seeds per row,
+1500 iterations, top three candidates per run verified with the exact string model:
+
+| mode                                     | n   | max. verified gap | median of run maxima |
+| ---------------------------------------- | --- | ----------------- | -------------------- |
+| max gap (target 3 mm, saturation 40 mm)  | 30  | 43.8 mm           | 43.2 mm              |
+|                                          | 40  | 44.1 mm           | 41.2 mm              |
+|                                          | 50  | 41.5 mm           | 41.4 mm              |
+| default (target 5 mm, weights 1/0.5/0.5) | 30  | 20.8 mm           | 18.2 mm              |
+|                                          | 40  | 24.6 mm           | 13.1 mm              |
+|                                          | 50  | 23.7 mm           | 17.4 mm              |
+
+- The gap is far from the bottleneck it seemed to be for random instances (0–5 mm): the
+  search reaches ≥ 40 mm (the saturation point, so the true maximum is higher) for all sizes.
+  Gap-only puzzles tend to be easy (difficulty often < 0.3), so the default mode matters.
+- With default weights every verified top candidate had ≥ 6 mm (the saturation point).
+- The search value overestimated the exact gap in 4 of 54 verified candidates, by at most
+  1.6 mm (19.03 → 17.41 mm); never below the target.
+- Stop criterion of the working mode (achievable gap below ~3 mm at n = 40): not met.
+
 ## 7. Interaction and features (ideas)
 
 - Region: country, federal state, or a drawn polygon/rectangle.
