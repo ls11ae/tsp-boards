@@ -27,6 +27,33 @@ npm run check     # format check, lint, typecheck, tests, production build
 Individual steps: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`,
 `npm run format`.
 
+### City data
+
+The generated data in `public/data/` is committed; rebuilding is only needed to update it.
+
+```bash
+npm run data:download -- de
+```
+
+```bash
+npm run data:build -- de
+```
+
+The download goes to `data/raw/` (gitignored, about 52 MB). The build writes
+`public/data/countries/de.json`, updates `public/data/manifest.json` and writes a review report
+to `docs/data/de-report.md`. The data version only increases when the content changes.
+
+### Experiments (Node)
+
+```bash
+npx tsx cli/search.ts --n 40 --seed 1 --iterations 2000 --verify 3
+```
+
+Runs the puzzle search for Germany and prints the result as JSON; options are listed in the
+header comment of each script. Further scripts: `cli/bench-exact.ts` (exact solver
+timings), `cli/ub-tightness.ts` (quality of the local gap bound), `cli/gap-survey.ts`
+(achievable gaps). Results are recorded in `docs/experiments/` and `docs/design-notes.md`.
+
 ## Layout
 
 - `src/core/`: pure TypeScript (no DOM, no Node APIs): geometry, projection, TSP heuristics,
