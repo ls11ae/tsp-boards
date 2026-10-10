@@ -9,5 +9,7 @@ Thumbs.db
 # raw downloads for the data build (large, re-downloadable)
 data/raw/
 
-# personal Claude Code notes
+# personal Claude Code notes and settings
 CLAUDE.local.md
+.claude/settings.local.json
+.claude/worktrees/
