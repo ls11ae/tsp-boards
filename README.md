@@ -11,8 +11,26 @@ The app is a static web app: all computation, including exact TSP solves with
 [HiGHS](https://highs.dev/) compiled to WebAssembly, runs in the browser (Web Workers). The same
 TypeScript core also runs in Node for batch experiments.
 
-Status: early development. Design notes, benchmarks and open questions are in
-[`docs/design-notes.md`](docs/design-notes.md).
+Status: Phase 1 (map puzzle MVP for Germany) is complete. Design notes, benchmarks and open
+questions are in [`docs/design-notes.md`](docs/design-notes.md).
+
+## Using the app
+
+1. Choose a region (Germany or a federal state), the number of cities and the board: size,
+   margin, nail diameter, string thickness and minimum distance between nails (all in mm).
+2. Set the target gap: how much longer (in mm of string) the second-best round trip must be
+   than the optimal one, so that players can check their solution with the string.
+3. Start the search. The board shows the best candidate so far; the side panel shows
+   progress, the gap, difficulty and how well-known the cities are. The best candidates are
+   checked exactly (✓) in the background.
+4. Click a city on the board to pin it (it must be included), click again to exclude it, a
+   third time to make it neutral again; then search again.
+5. "Copy link" stores parameters, pins and the selected cities in the URL, so the puzzle can be
+   shared and reopened. The interface is in English and German.
+
+The string length includes the wrap around each nail: S = L + r·Σ|θ| with r = nail radius +
+half the string thickness and θ the turning angle at each nail. Default board dimensions are
+placeholders until the measurements of the prototype boards are known.
 
 ## Development
 

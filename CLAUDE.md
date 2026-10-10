@@ -16,8 +16,11 @@ what we change and why, benchmark results, and open questions.
 
 - Repository `ls11ae/tsp-boards` (GitHub, private for now, will become public later).
   Keep secrets and personal data out of the repo.
-- Phase 1 in progress. Scaffold, CI and HiGHS in a worker done (M1). Milestone plan M2–M7:
-  data, TSP core, search + gap measurement (CLI), browser slice, interaction, permalinks/docs.
+- Phase 1 (MVP map puzzle, Germany) complete: data build, TSP core with string length, exact
+  solvers (Euclidean and turn-cost MIP), search with two-level evaluation, browser app (EN/DE)
+  with live search, exact verification in a worker, pin/exclude, permalinks. Measurements in
+  `docs/design-notes.md` (Sections 6, 11) and `docs/experiments/`.
+- Next: Phase 2 (board export). Open: prototype board dimensions, code license.
 - Code license not chosen yet (decide before going public).
 
 ## Agreed direction
@@ -50,6 +53,13 @@ what we change and why, benchmark results, and open questions.
 - Exact solves in WASM take ~0.15–0.7 s per tour for n = 40–60. Do not run them in every search
   step: use fast heuristics plus a cheap upper bound on the second-best tour (best local
   modification of the optimal tour), and verify exactly only for promising candidates.
+- The local gap bound (all 2-opt, pure 3-opt and double-bridge alternatives of the optimum)
+  overestimates the true gap in 10–20 % of instances, and a search maximising it selects
+  exactly those. Combined with the string lengths of the exact Euclidean optimum and
+  runner-up it is tight in 95–100 %; final candidates are verified with the exact turn-cost
+  MIP (3–11 s at n = 40, 3–17 s at n = 50 in WASM).
+- Achievable gaps (Germany, exact string model): ≥ 40 mm for n = 30–50 when only the gap is
+  optimised; 6–25 mm with default weights (difficulty and well-known cities).
 - Do not compute distances in Web Mercator (EPSG:3857); the thesis did, which distorts
   Germany by ~18 % north vs. south.
 - Do not use population^2 as "recognizability" (Berlin alone dominates). Prefer log/rank-based
