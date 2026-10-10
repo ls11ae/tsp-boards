@@ -16,6 +16,8 @@ function useSolverSelfTest(): SolverStatus {
       const message = event.data;
       if (message.type === 'error') {
         setStatus({ kind: 'failed', message: message.message });
+      } else if (message.type !== 'selftest-result') {
+        return;
       } else if (message.ok) {
         setStatus({ kind: 'ready', version: message.highsVersion, loadMs: message.loadMs });
       } else {
