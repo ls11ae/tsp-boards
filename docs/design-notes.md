@@ -5,7 +5,7 @@ reading the MSc thesis below. Internal working notes: review before the reposito
 
 ## 1. Background
 
-**Thesis:** Nick Tchang, *Generating Challenging TSP Instances*, MSc thesis, TU Dortmund,
+**Thesis:** Nick Tchang, _Generating Challenging TSP Instances_, MSc thesis, TU Dortmund,
 Chair 11 Algorithm Engineering, 26 Feb 2026 (supervisors Kevin Buchin, Anja Fischer).
 The original code was never published; we reimplement and improve.
 
@@ -94,16 +94,16 @@ interactive editing, privacy is trivial, scales for free, works offline at schoo
 
 ## 6. Benchmark: HiGHS in WebAssembly
 
-Script: `docs/experiments/highs-wasm-bench.js` (npm package `highs@1.8.0`, Node 22, i.e. the
+Script: `docs/experiments/highs-wasm-bench.cjs` (npm package `highs@1.8.0`, Node 22, i.e. the
 same V8 engine as Chrome). Five instances each, unit square:
 
-| instance | optimal tour | second-best tour | gap OPT -> 2nd best |
-|---|---|---|---|
-| n = 40 uniform | 528 ms | 131 ms | 0.01–0.17 % |
-| n = 50 uniform | 561 ms | 558 ms | 0.01–0.17 % |
-| n = 60 uniform | 730 ms | 473 ms | 0.02–0.06 % |
-| n = 40 clustered | 148 ms | 151 ms | 0.00–0.08 % |
-| n = 50 clustered | 315 ms | 178 ms | 0.03–0.09 % |
+| instance         | optimal tour | second-best tour | gap OPT -> 2nd best |
+| ---------------- | ------------ | ---------------- | ------------------- |
+| n = 40 uniform   | 528 ms       | 131 ms           | 0.01–0.17 %         |
+| n = 50 uniform   | 561 ms       | 558 ms           | 0.01–0.17 %         |
+| n = 60 uniform   | 730 ms       | 473 ms           | 0.02–0.06 %         |
+| n = 40 clustered | 148 ms       | 151 ms           | 0.00–0.08 %         |
+| n = 50 clustered | 315 ms       | 178 ms           | 0.03–0.09 %         |
 
 (The naive 2-opt/Or-opt heuristic in that script is deliberately simple and not representative
 of a proper implementation.)

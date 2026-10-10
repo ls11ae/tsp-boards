@@ -1,5 +1,6 @@
 // Feasibility benchmark (2026-10-09): exact TSP + exact second-best tour with HiGHS compiled to WebAssembly.
-// Run: npm install highs@1.8.0 && node docs/experiments/highs-wasm-bench.js
+// Originally run with highs@1.8.0; kept as a historical record. With the repository's pinned highs:
+// node docs/experiments/highs-wasm-bench.cjs
 
 // Feasibility check: exact TSP + exact second-best tour in WebAssembly (HiGHS),
 // DFJ with iterative subtour elimination, plus a fast 2-opt/Or-opt heuristic.
