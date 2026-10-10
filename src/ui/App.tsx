@@ -42,7 +42,9 @@ function Footer() {
   return (
     <footer className="footer">
       {country && <p>{country.attribution[lang]}</p>}
-      <p>{t.credits}</p>
+      <p>
+        {t.credits} {t.version(__APP_VERSION__, String(country?.dataVersion ?? '–'))}
+      </p>
     </footer>
   );
 }

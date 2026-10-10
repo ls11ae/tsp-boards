@@ -96,6 +96,7 @@ export const en = {
 
   // Footer
   credits: 'Based on the MSc thesis of Nick Tchang, TU Dortmund (2026). Exact solver: HiGHS.',
+  version: (app: string, data: string) => `Version ${app}, data version ${data}.`,
 };
 
 export type Messages = {

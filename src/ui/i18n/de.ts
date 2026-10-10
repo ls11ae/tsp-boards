@@ -90,4 +90,5 @@ export const de: Messages = {
   loadFailed: 'Die Städtedaten konnten nicht geladen werden.',
 
   credits: 'Nach der Masterarbeit von Nick Tchang, TU Dortmund (2026). Exakter Löser: HiGHS.',
+  version: (app, data) => `Version ${app}, Datenversion ${data}.`,
 };

@@ -1,5 +1,5 @@
 // Permalinks in the URL hash (never sent to the server):
-//   #v=1&d=de@1&r=DE&n=40&b=600x800x30&nail=2&str=1&md=25&g=5&p=5000&s=1&it=1000&w=1,0.5,0.5&sel=…
+//   #v=1&d=de@1&app=0.0.0+abc1234&r=DE&n=40&b=600x800x30&nail=2&str=1&md=25&g=5&p=5000&s=1&it=1000&w=1,0.5,0.5&sel=…
 // `sel` holds the GeoNames ids of the selected cities in base 36 and restores the puzzle
 // exactly; parameters + seed reproduce the search only within the same JS engine.
 
@@ -44,6 +44,8 @@ export function encodePermalink(
   const q = new URLSearchParams();
   q.set('v', String(PERMALINK_VERSION));
   q.set('d', `${dataVersion.country.toLowerCase()}@${dataVersion.version}`);
+  // Informational: the seed reproduces a search only with the same app version and engine.
+  q.set('app', __APP_VERSION__);
   q.set('r', params.region);
   q.set('n', String(params.n));
   q.set('b', `${params.boardWidthMm}x${params.boardHeightMm}x${params.marginMm}`);
@@ -62,7 +64,8 @@ export function encodePermalink(
 }
 
 function num(value: string | null, fallback: number, min = -Infinity, max = Infinity): number {
-  const x = value === null ? NaN : Number(value);
+  // Empty means missing (Number('') would be 0).
+  const x = value === null || value.trim() === '' ? NaN : Number(value);
   return Number.isFinite(x) && x >= min && x <= max ? x : fallback;
 }
 
