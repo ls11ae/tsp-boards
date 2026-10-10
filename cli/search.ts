@@ -14,7 +14,11 @@ const arg = (name: string, fallback: string) => {
   return i >= 0 ? args[i + 1]! : fallback;
 };
 const region = arg('region', 'DE');
-const [wGap, wDiff, wRec] = arg('weights', '1,0.5,0.5').split(',').map(Number) as [number, number, number];
+const [wGap, wDiff, wRec] = arg('weights', '1,0.5,0.5').split(',').map(Number) as [
+  number,
+  number,
+  number,
+];
 const params: SearchParams = {
   ...DEFAULT_SEARCH,
   n: Number(arg('n', String(DEFAULT_SEARCH.n))),
