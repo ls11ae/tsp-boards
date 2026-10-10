@@ -69,6 +69,12 @@ export interface ExactTour {
 export interface ExactOptions {
   /** Time limit per MIP run in seconds. */
   readonly timeLimitSec: number;
+  /**
+   * Subtour elimination constraints known in advance, as node sets. SECs are combinatorial:
+   * valid for every instance on the same node indices, whatever the costs, so a search can
+   * reuse the cuts of earlier, similar instances.
+   */
+  readonly cuts?: readonly (readonly number[])[];
 }
 
 export const DEFAULT_EXACT: ExactOptions = { timeLimitSec: 60 };
@@ -108,6 +114,8 @@ function components(n: number, edges: readonly (readonly [number, number])[]): n
 
 /** A persistent MIP for one instance; cuts accumulate across solves. */
 export class ExactTsp {
+  /** SECs added by this model's solves (node sets), for reuse. */
+  readonly newCuts: number[][] = [];
   readonly kind: ExactModelKind;
   private readonly inst: Instance;
   private readonly model: MipModel;
@@ -129,6 +137,8 @@ export class ExactTsp {
     this.pairs = ((n - 1) * (n - 2)) / 2;
     this.numCols = kind === 'euclidean' ? this.m : this.m + n * this.pairs;
     this.build();
+    for (const cut of options.cuts ?? [])
+      if (cut.length >= 2 && cut.length <= n - 2) this.addSec(cut);
   }
 
   /** Column of y_{j,{i,k}} in the string model. */
@@ -224,10 +234,12 @@ export class ExactTsp {
       },
       integrality,
     });
+    // Presolve off: about a third faster on these small models, results identical.
     this.model.options.set({
       output_flag: false,
       mip_rel_gap: 0,
       mip_abs_gap: 0.5,
+      presolve: 'off',
     });
   }
 
@@ -301,7 +313,10 @@ export class ExactTsp {
       }
       // Subtours: one SEC per component except the largest (equivalent by the degree rows).
       comps.sort((a, b) => a.length - b.length);
-      for (const comp of comps.slice(0, -1)) this.addSec(comp);
+      for (const comp of comps.slice(0, -1)) {
+        this.addSec(comp);
+        this.newCuts.push(comp);
+      }
     }
   }
 }
@@ -310,6 +325,8 @@ export interface OptimalAndSecond {
   readonly optimal: ExactTour;
   /** Best tour different from the optimal one (null if the optimum was not found). */
   readonly second: ExactTour | null;
+  /** SECs found during the solves (node sets), for reuse on similar instances. */
+  readonly newCuts: readonly number[][];
 }
 
 /** Optimal and second-best tour under one model. Starts must be feasible tours. */
@@ -323,9 +340,9 @@ export function optimalAndSecond(
   return backend.withModel((model) => {
     const tsp = new ExactTsp(model, inst, kind, options);
     const optimal = tsp.solve(starts.optimal);
-    if (optimal.status !== 'optimal') return { optimal, second: null };
+    if (optimal.status !== 'optimal') return { optimal, second: null, newCuts: tsp.newCuts };
     tsp.exclude(optimal.tour!);
     const second = tsp.solve(starts.second);
-    return { optimal, second };
+    return { optimal, second, newCuts: tsp.newCuts };
   });
 }

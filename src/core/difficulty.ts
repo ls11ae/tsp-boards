@@ -18,8 +18,11 @@ export interface Difficulty {
   readonly score: number;
 }
 
-/** Excess at which the difficulty score saturates. */
-export const DIFFICULTY_REFERENCE = 0.1;
+/**
+ * Excess at which the difficulty score saturates. For random German 40-city subsets the
+ * combined excess is 5–20 % (median 11 %), so typical instances score about 0.45.
+ */
+export const DIFFICULTY_REFERENCE = 0.25;
 
 export function difficulty(inst: Instance, optimalLength: number): Difficulty {
   const excess = (tour: number[]) => stringLength(inst, tour) / optimalLength - 1;

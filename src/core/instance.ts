@@ -45,6 +45,19 @@ export class Instance {
     return new Instance(this.pointsMm(), 0);
   }
 
+  /** Independent copy (cheaper than rebuilding: no trigonometry). */
+  clone(): Instance {
+    const copy = Object.create(Instance.prototype) as Instance;
+    return Object.assign(copy, {
+      n: this.n,
+      rEffUm: this.rEffUm,
+      x: this.x.slice(),
+      y: this.y.slice(),
+      d: this.d.slice(),
+      t: this.t.slice(),
+    });
+  }
+
   pointsMm(): Point[] {
     return Array.from(
       { length: this.n },
