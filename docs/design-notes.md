@@ -152,3 +152,40 @@ of a proper implementation.)
 - Dimensions, nail diameter and string of existing prototype boards (for defaults/calibration).
 - Is the string-length self-check the only verification mechanism, given the tiny gaps?
 - Hosting details on the chair server.
+
+## 11. Decision log
+
+Short entries: decision; alternatives considered; reason. Newest last.
+
+- **2026-10-10 UI framework: React** (state via Zustand or `useReducer`, no Redux; UI updates
+  throttled to ≤ 10 Hz; d3 computes, React renders the SVG). Alternatives: Svelte 5, Preact,
+  vanilla TS. Reason: most widely known, so easiest for future student assistants; stable.
+- **2026-10-10 UI language: bilingual English/German with a switch**, own typed dictionaries
+  (no i18n library). Board labels are a separate parameter (German in Phase 1).
+- **2026-10-10 Data build in Node/TypeScript**, per-country GeoNames dumps. Alternative: Python
+  (geopandas). Reason: one toolchain for CI, tests and lint; can reuse core code.
+- **2026-10-10 Generated data is committed**, one file per country, with a data version in a
+  manifest and in permalinks; the app warns on mismatch. Alternative: build data in CI.
+  Reason: no GeoNames download in CI, reviewable diffs, stable permalinks.
+- **2026-10-10 String length is the primary objective**: S = L + r_eff·Σ|θ|, r_eff = nail
+  radius + half string thickness, in the heuristics, the gap bound and the exact check.
+  Alternative: optimise Euclidean length and enumerate tours in a window afterwards. Reason:
+  Σ|θ| ≥ 2π for every tour, so the window would be target + r_eff·(Σ|θ|(OPT) − 2π) ≈ 35–40 mm
+  for n = 40, far too wide to enumerate. If an exact turn-cost model (triple variables) is too
+  slow in HiGHS, results are labelled "Euclidean exact, string checked locally".
+- **2026-10-10 Integer costs in µm** (coordinates rounded to µm, `Math.round(Math.sqrt(...))`,
+  turn costs rounded per triple). Reason: exact comparisons and deltas, genuine ties, integer
+  objective for HiGHS.
+- **2026-10-10 Reproducibility contract**: a permalink restores the puzzle from the selected
+  city IDs (`sel`); parameters + seed reproduce the search only within the same JS engine,
+  because `Math.sin`, `cos`, `exp`, `atan2` are not bit-identical across engines. Exact
+  verification results only annotate the archive and never influence the search.
+- **2026-10-10 Gap bound scan excludes moves that reproduce the same tour** (compared via the
+  edge set) but keeps genuine ties (different edge set, same length).
+- **2026-10-10 TypeScript 6.0, not 7**: typescript-eslint (8.70) supports TypeScript < 6.1
+  only; TypeScript 7 is the native compiler. Revisit when typescript-eslint supports it.
+- **2026-10-10 highs ≥ 1.15.1** (pinned 1.15.3). 1.8.0 throws on `output_flag` (#51), 1.14.2
+  can report non-optimal MIPs as optimal (#53). Each MIP run has ~9 ms fixed overhead, so the
+  exact solver should keep a persistent model and add cuts incrementally (Model API).
+- **2026-10-10 Working mode**: autonomous; decisions recorded here; push to `main` after green
+  tests; stop only if the gap measurement for n = 40 gives an achievable gap below ~3 mm.

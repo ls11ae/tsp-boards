@@ -16,7 +16,8 @@ what we change and why, benchmark results, and open questions.
 
 - Repository `ls11ae/tsp-boards` (GitHub, private for now, will become public later).
   Keep secrets and personal data out of the repo.
-- Nothing implemented yet. Next step: Phase 1 (see Roadmap).
+- Phase 1 in progress. Scaffold, CI and HiGHS in a worker done (M1). Milestone plan M2–M7:
+  data, TSP core, search + gap measurement (CLI), browser slice, interaction, permalinks/docs.
 - Code license not chosen yet (decide before going public).
 
 ## Agreed direction
@@ -29,8 +30,8 @@ what we change and why, benchmark results, and open questions.
 - **Exact TSP:** HiGHS compiled to WebAssembly (npm package `highs`), DFJ model with iterative
   subtour elimination; second-best tour via a no-good cut on the optimal edge set.
   Keep the solver behind an interface so a server-side solver could be added later.
-- **Offline data build** (script, Python or Node): GeoNames (+ later Wikidata, Natural Earth)
-  -> compact per-country JSON used by the app.
+- **Offline data build** (Node/TypeScript): GeoNames + Natural Earth (+ later Wikidata)
+  -> compact per-country JSON used by the app, committed, with a data version.
 - **Board-first:** one region-fitted conformal projection (e.g. conic conformal via d3-geo) is
   used for the screen, for all metrics, and for the printed/lasered board. All physical
   parameters in millimetres (board size, nail diameter, min city distance, min gap in string).
@@ -41,6 +42,11 @@ what we change and why, benchmark results, and open questions.
   (0.00–0.17 % of tour length for random 40–60 point sets; ~3 m string -> 0.1 % ≈ 3 mm).
   It is THE critical constraint for the physical self-check. Treat it as a hard constraint in
   mm of string and optimize for it explicitly.
+- The string wraps around the nails: string length S = L + r_eff·Σ|θ| (r_eff = nail radius +
+  half the string thickness, θ = turning angle at each nail). S, not L, is the primary objective
+  in heuristics and the gap bound. Every closed tour has Σ|θ| ≥ 2π, and near-optimal 40-point
+  tours have Σ|θ| ≈ 40–48 rad, so "Euclidean-near" windows that would cover all
+  string-shorter tours are ~35–40 mm wide and cannot be enumerated.
 - Exact solves in WASM take ~0.15–0.7 s per tour for n = 40–60. Do not run them in every search
   step: use fast heuristics plus a cheap upper bound on the second-best tour (best local
   modification of the optimal tour), and verify exactly only for promising candidates.
@@ -57,18 +63,28 @@ what we change and why, benchmark results, and open questions.
   metrics, search. Runs in browser and Node.
 - `src/workers/` Web Worker entry points (search, exact solves).
 - `src/ui/` the web app.
-- `scripts/` offline data build; `public/data/` generated data (decide whether to commit it).
+- `scripts/` offline data build; `public/data/` generated data (committed, one file per country).
 - `cli/` Node entry points for experiments.
 - `docs/` design notes, experiments.
 
 ## Conventions
 
 - npm, Vite, Vitest, strict TypeScript, ESLint + Prettier. CI on GitHub Actions (build + test).
-- Seeded RNG everywhere; a puzzle must be reproducible from parameters + seed (permalinks).
+- Seeded RNG everywhere. Permalinks restore a puzzle from its selected city IDs (`sel`); the same
+  parameters + seed reproduce the same search only within the same JS engine (`Math.sin`, `cos`,
+  `exp` are not bit-identical across engines).
 - Tests: exact solver against brute force for n <= 9; heuristics against the exact solver;
   metrics on hand-made instances.
 - Code, comments, commit messages and docs in English.
-- Small, focused commits. Ask before pushing to the remote.
+- Small, focused commits.
+
+## Working mode
+
+- Work autonomously, without asking. Decide by best judgement and record each decision briefly
+  in the "Decision log" section of `docs/design-notes.md` (decision, alternatives, reason).
+- Commit in small steps and push to `main` yourself once tests are green.
+- Stop only if the gap measurement (Germany, string length) gives an achievable gap below
+  about 3 mm for n = 40, or if genuinely blocked.
 - Data attribution: GeoNames is CC BY 4.0 -> credit in UI and README. Natural Earth is public
   domain, Wikidata CC0.
 - Credit the thesis in the README: Nick Tchang, "Generating Challenging TSP Instances",
