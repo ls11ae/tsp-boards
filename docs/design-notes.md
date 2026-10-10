@@ -253,10 +253,20 @@ Short entries: decision; alternatives considered; reason. Newest last.
   alternative, plus the double-bridge scan. The SA acceptance draw is made before level 2:
   level 2 can only lower the gap, so candidates rejected at level 1 skip the exact solve.
   Alternative: level 1 only, verify afterwards. Reason: Section 6.2 (selection bias).
-- **2026-10-10 Reusable SEC pool.** Subtour elimination constraints depend only on node
-  indices, not on costs, so cuts found for one subset stay valid for every other subset on the
-  same instance slots; the search keeps the 300 most recent. With presolve off this made the
-  search ~3.6× faster.
+- **2026-10-10 Reusable SEC pool: tried and dropped.** Subtour elimination constraints depend
+  only on node indices, so cuts of one subset stay valid for others on the same slots. Measured
+  on a search run (n = 40, 80 iterations): pool 0 → 40 s, 50 → 48 s, 300 → 63 s; the larger
+  LPs cost more than the saved rounds. The search no longer uses it (`ExactOptions.cuts`
+  remains available). Presolve off is kept (≈ 30 % faster solves).
+- **2026-10-10 Level 2 only for archive candidates.** The exact Euclidean runner-up matters
+  (string bound tight in 96 % with it vs. 84 % with the Euclidean optimum alone, n = 40), but
+  it is the expensive part (proving the runner-up with a no-good cut needs much branching when
+  the gap is large). Level 2 now runs only for candidates whose level 1 quality could enter
+  the archive; the walk may use level 1 values, the archive and the best are always refined.
+  Together with capping the gap scan at the saturation point: 3× faster.
+- **2026-10-10 Gap scan cap.** The scan stops resolving gaps above the objective's saturation
+  point (pruning is weak for large gaps, e.g. 40 mm); the search reports "≥ cap" and the exact
+  verification gives the true value.
 - **2026-10-10 Difficulty score** = mean excess of best nearest neighbour, greedy edge and hull
   insertion over the optimum, divided by 0.25 (capped at 1). Random German 40-subsets have
   5–20 % excess (median 11 %). Hull insertion alone is nearly optimal (4 % excess).

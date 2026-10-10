@@ -74,8 +74,6 @@ const PENALTY_START = 0.5;
 const PENALTY_END = 4;
 /** Archive entries with a Jaccard similarity at or above this are the same family. */
 const SIMILARITY = 0.8;
-/** Subtour cuts kept for reuse in later exact solves (most recent first out). */
-const CUT_POOL_SIZE = 300;
 
 export interface SearchPool {
   /** Board coordinates in mm. */
@@ -95,8 +93,10 @@ export interface Evaluation {
   readonly lengthUm: number;
   /** Local gap bound in µm. */
   readonly gapEstUm: number;
-  /** Gap used by the search in µm: gapEst, refined at level 2. */
+  /** Gap used by the search in µm: gapEst, refined at level 2; at most the cap. */
   readonly gapUm: number;
+  /** The gap reached the cap (saturation of the objective): it is at least gapUm. */
+  readonly gapCapped: boolean;
   readonly level: 1 | 2;
   /** Exact Euclidean gap in µm (level 2 only). */
   readonly euclideanGapUm: number | null;
@@ -164,14 +164,14 @@ export class Search {
   private readonly weights: Float64Array;
   private readonly pinned: Set<number>;
   private readonly cache = new Map<string, Evaluation>();
-  /** SECs over instance slots from earlier exact solves; valid for every slot assignment. */
-  private readonly cutPool = new Map<string, number[]>();
   private readonly moveRng: Rng;
   private readonly acceptRng: Rng;
   private readonly popMin: number;
   private readonly popMax: number;
   private readonly targetUm: number;
   private readonly saturationUm: number;
+  /** Gaps are only resolved up to this value (µm); larger gaps are reported as the cap. */
+  private readonly capUm: number;
   private state: State;
   private bestEvaluation: Evaluation | null = null;
   private archiveList: Evaluation[] = [];
@@ -184,6 +184,7 @@ export class Search {
     this.backend = backend;
     this.targetUm = params.targetGapMm * 1000;
     this.saturationUm = (params.gapSaturationMm ?? GAP_HEADROOM * params.targetGapMm) * 1000;
+    this.capUm = Math.max(this.saturationUm, GAP_HEADROOM * this.targetUm);
     this.graph = new ConflictGraph(pool.points, params.minDistanceMm);
     this.weights = Float64Array.from(pool.population, (p) => Math.pow(Math.max(p, 1), params.beta));
     this.pinned = new Set(pool.pinned);
@@ -366,7 +367,7 @@ export class Search {
       start,
       neighborLists(inst, 10),
     );
-    const scan = scanSecondBest(inst, ils.tour);
+    const scan = scanSecondBest(inst, ils.tour, { doubleBridge: false, cap: this.capUm });
     const alternative = scan.best ? alternativeTour(scan.tour, scan.best) : null;
     return this.finish(inst, slots, scan, scan.gap, scan.gap, alternative, 1, null);
   }
@@ -377,6 +378,17 @@ export class Search {
   }
 
   /**
+   * Whether a candidate could enter the archive (by its level 1 quality, an upper bound on the
+   * refined one). Only such candidates get the costly level 2; the walk itself may use level 1
+   * values, but the archive and the best only hold refined candidates.
+   */
+  private couldArchive(e: Evaluation): boolean {
+    const list = this.archiveList;
+    if (list.length < this.params.archiveSize) return true;
+    return e.quality > list[list.length - 1]!.quality;
+  }
+
+  /**
    * Level 2: the exact Euclidean optimum and runner-up are further candidates for the string
    * optimum and for the closest alternative; the scan is repeated with double bridges.
    */
@@ -384,29 +396,17 @@ export class Search {
     this.stats.level2++;
     const slotTour = e.tour.map((c) => slots.indexOf(c));
     const eInst = inst.euclidean();
-    const eScan = scanSecondBest(eInst, slotTour, { doubleBridge: true });
-    const exact = optimalAndSecond(
-      this.backend!,
-      eInst,
-      'euclidean',
-      {
-        optimal: eScan.tour,
-        second: eScan.best ? alternativeTour(eScan.tour, eScan.best) : undefined,
-      },
-      { timeLimitSec: 60, cuts: [...this.cutPool.values()] },
-    );
-    for (const cut of exact.newCuts) {
-      const key = [...cut].sort((a, b) => a - b).join(',');
-      this.cutPool.delete(key);
-      this.cutPool.set(key, cut);
-      if (this.cutPool.size > CUT_POOL_SIZE) this.cutPool.delete(this.cutPool.keys().next().value!);
-    }
+    const eScan = scanSecondBest(eInst, slotTour, { doubleBridge: true, cap: this.capUm });
+    const exact = optimalAndSecond(this.backend!, eInst, 'euclidean', {
+      optimal: eScan.tour,
+      second: eScan.best ? alternativeTour(eScan.tour, eScan.best) : undefined,
+    });
     const known = [exact.optimal.tour, exact.second?.tour].filter((t): t is number[] => !!t);
     const euclideanGap =
       exact.optimal.tour && exact.second?.tour ? exact.second.cost - exact.optimal.cost : null;
     let best = slotTour;
     for (const t of known) if (stringLength(inst, t) < stringLength(inst, best)) best = t;
-    const scan = scanSecondBest(inst, best, { doubleBridge: true });
+    const scan = scanSecondBest(inst, best, { doubleBridge: true, cap: this.capUm });
     let gap = scan.gap;
     let alternative = scan.best ? alternativeTour(scan.tour, scan.best) : null;
     for (const t of [slotTour, ...known]) {
@@ -447,6 +447,7 @@ export class Search {
       lengthUm: scan.length,
       gapEstUm: gapEst,
       gapUm: gap,
+      gapCapped: gap >= this.capUm,
       level,
       euclideanGapUm: euclideanGap,
       alternativeCities: alternative ? this.changedCities(scan.tour, alternative, slots) : [],
@@ -521,7 +522,11 @@ export class Search {
       const slotTour = cur.evaluation.tour.map((c) => cur.slots.indexOf(c));
       candidate = this.evaluate(instance(), slots, { tour: slotTour, changed });
     }
-    if (this.score(candidate) >= threshold && this.needsRefinement(candidate)) {
+    if (
+      this.score(candidate) >= threshold &&
+      this.needsRefinement(candidate) &&
+      this.couldArchive(candidate)
+    ) {
       candidate = this.refine(instance(), slots, candidate);
     }
     if (this.score(candidate) >= threshold) {

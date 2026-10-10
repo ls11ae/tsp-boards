@@ -38,12 +38,18 @@ interface Sample {
   readonly est: number;
   readonly exact: number;
   readonly combined?: number;
+  /** Combined with the Euclidean optimum only (no runner-up solve). */
+  readonly combinedOpt?: number;
   readonly kind: MoveKind | null;
   readonly edgesChanged: number;
   readonly heuristicOptimal: boolean;
 }
 
-function summarize(label: string, samples: readonly Sample[], key: 'est' | 'combined' = 'est') {
+function summarize(
+  label: string,
+  samples: readonly Sample[],
+  key: 'est' | 'combined' | 'combinedOpt' = 'est',
+) {
   const valid = samples.filter((s) => s[key] !== undefined);
   const tight = valid.filter((s) => s[key] === s.exact).length;
   const kinds = new Map<string, number>();
@@ -110,14 +116,20 @@ for (const n of sizes.filter((s) => s <= stringMax)) {
       const eInst = inst.euclidean();
       const eExact = optimalAndSecond(backend, eInst, 'euclidean', { optimal: scan.tour });
       let combined = scan.gap;
+      let combinedOpt = scan.gap;
       for (const t of [eExact.optimal.tour, eExact.second?.tour]) {
         if (t && !sameTour(t, exact.optimal.tour!, n))
           combined = Math.min(combined, stringLength(inst, t) - opt);
+      }
+      const eOpt = eExact.optimal.tour;
+      if (eOpt && !sameTour(eOpt, exact.optimal.tour!, n)) {
+        combinedOpt = Math.min(combinedOpt, stringLength(inst, eOpt) - opt);
       }
       samples.push({
         est: scan.gap,
         exact: exact.second.cost - opt,
         combined,
+        combinedOpt,
         kind: scan.best?.kind ?? null,
         edgesChanged: edgeDifference(exact.optimal.tour!, exact.second.tour!, n),
         heuristicOptimal: scan.length === opt,
@@ -125,5 +137,10 @@ for (const n of sizes.filter((s) => s <= stringMax)) {
     }
     summarize(`string n=${n} ${source} (local bound)`, samples);
     summarize(`string n=${n} ${source} (combined with Euclidean exact)`, samples, 'combined');
+    summarize(
+      `string n=${n} ${source} (combined with Euclidean optimum only)`,
+      samples,
+      'combinedOpt',
+    );
   }
 }

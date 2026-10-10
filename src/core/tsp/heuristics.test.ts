@@ -125,6 +125,17 @@ describe('second-best scan', () => {
     expect(tight / total).toBeGreaterThan(0.8);
   });
 
+  it('reports min(gap, cap) when capped', () => {
+    const inst = new Instance(randomPoints(9, 31), 1.5);
+    const opt = allTours(inst)[0]!.tour;
+    const full = scanSecondBest(inst, opt, { doubleBridge: true }).gap;
+    expect(full).toBeGreaterThan(2);
+    const low = Math.floor(full / 2);
+    expect(scanSecondBest(inst, opt, { doubleBridge: true, cap: low }).gap).toBe(low);
+    expect(scanSecondBest(inst, opt, { doubleBridge: true, cap: low }).best).toBeNull();
+    expect(scanSecondBest(inst, opt, { doubleBridge: true, cap: full + 1 }).gap).toBe(full);
+  });
+
   it('improves a non-optimal tour before reporting the gap', () => {
     const inst = new Instance(randomPoints(9, 7), 1);
     const ranked = allTours(inst);

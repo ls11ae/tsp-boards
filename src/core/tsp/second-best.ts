@@ -32,6 +32,12 @@ export interface Alternative {
 
 export interface GapScanOptions {
   readonly doubleBridge: boolean;
+  /**
+   * Only alternatives with ΔS below this are of interest (µm): the scan then reports
+   * min(gap, cap). Large gaps weaken the pruning, so a cap keeps the scan fast when the caller
+   * only needs to know whether the gap reaches a threshold.
+   */
+  readonly cap?: number;
 }
 
 export interface GapScanResult {
@@ -41,7 +47,7 @@ export interface GapScanResult {
   readonly length: number;
   /** Number of improving moves applied before the final scan. */
   readonly improvements: number;
-  /** Smallest ΔS over all non-identical alternatives (Infinity if there are none). */
+  /** Smallest ΔS over all non-identical alternatives, at most the cap (Infinity if none). */
   readonly gap: number;
   readonly best: Alternative | null;
 }
@@ -63,7 +69,7 @@ function scanOnce(inst: Instance, state: TourState, options: GapScanOptions): Sc
   const oldTurn = new Int32Array(n);
   for (let v = 0; v < n; v++) oldTurn[v] = inst.turn(state.prev(v), v, state.next(v));
   const d = (u: number, v: number) => inst.dist(u, v);
-  const s: ScanState = { best: Infinity, bestAlt: null, improving: null };
+  const s: ScanState = { best: options.cap ?? Infinity, bestAlt: null, improving: null };
 
   const rem = new Int32Array(8);
   const add = new Int32Array(8);
