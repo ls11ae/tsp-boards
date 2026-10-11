@@ -1,11 +1,12 @@
 // Runs the puzzle search in Node and prints the result as JSON (progress goes to stderr).
 // Usage: npx tsx cli/search.ts [--region DE] [--n 40] [--seed 1] [--iterations 2000]
 //   [--target 5] [--min-dist 25] [--min-pop 5000] [--r-eff 1.5] [--weights 1,0.5,0.5]
-//   [--pin id,id] [--verify 3] [--no-level2] [--out file.json]
+//   [--pin id,id] [--verify 3] [--no-level2] [--labels 8] [--nail 2] [--out file.json]
+// --labels: font size in mm of the board labels that must fit (default 0: no label constraint).
 
 import { writeFileSync } from 'node:fs';
 import { DEFAULT_SEARCH, type SearchParams } from '../src/core/search/search';
-import { boardPool, loadBackend, loadCountry } from './lib/country';
+import { boardPool, loadBackend, loadCountry, poolLabels } from './lib/country';
 import { runSearch, summarize, verify } from './lib/run-search';
 
 const args = process.argv.slice(2);
@@ -32,6 +33,8 @@ const params: SearchParams = {
 const minPop = Number(arg('min-pop', '5000'));
 const verifyCount = Number(arg('verify', '0'));
 const pinnedIds = arg('pin', '').split(',').filter(Boolean).map(Number);
+const labelSize = Number(arg('labels', '0'));
+const nailDiameter = Number(arg('nail', '2'));
 
 const file = loadCountry(region.slice(0, 2));
 const pool = boardPool(file, region, minPop);
@@ -42,12 +45,14 @@ const { search, elapsedMs } = runSearch({
   pool,
   backend: args.includes('--no-level2') ? undefined : backend,
   pinnedIds,
+  labels: labelSize > 0 ? poolLabels(pool, labelSize, nailDiameter) : undefined,
   progressEvery: 100,
   onProgress: (s, ms) => {
     const best = s.best;
     process.stderr.write(
       `it ${s.iteration} T ${s.temperature.toFixed(4)} cur gap ${(s.current.gapUm / 1000).toFixed(2)} mm` +
         ` best ${best ? `${(best.gapUm / 1000).toFixed(2)} mm q ${best.quality.toFixed(3)}` : '-'}` +
+        ` unplaced ${s.current.unplacedLabels}` +
         ` | evals ${s.stats.evaluations} hits ${s.stats.cacheHits} L2 ${s.stats.level2} acc ${s.stats.accepted}` +
         ` | ${(ms / 1000).toFixed(1)} s\n`,
     );

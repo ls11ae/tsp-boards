@@ -2,16 +2,16 @@
 // d3 computed the path strings; React renders the SVG. Clicking near a city cycles it through
 // pinned → excluded → neutral.
 
-import { memo, useRef, type MouseEvent } from 'react';
+import { memo, useMemo, useRef, type MouseEvent } from 'react';
 import type { Point } from '../../core/geometry';
 import type { BoardModel } from '../board';
 import { cycleCity } from '../controller';
+import { getLabels, placeBoardLabels } from '../labels';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 
 /** Nails are drawn at least this large (mm) so they stay visible on screen. */
 const MIN_VISUAL_RADIUS_MM = 3;
-const LABEL_SIZE_MM = 9;
 /** A click selects the nearest city within this distance (board mm). */
 const CLICK_RADIUS_MM = 8;
 
@@ -76,8 +76,15 @@ export function BoardMap({
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const showTour = useStore((s) => s.showTour);
-  const nailDiameter = useStore((s) => s.params.nailDiameterMm);
+  const params = useStore((s) => s.params);
+  const nailDiameter = params.nailDiameterMm;
   const lang = useStore((s) => s.lang);
+  const labels = getLabels(board, params);
+  const members = puzzle?.members;
+  const placed = useMemo(
+    () => (labels && members ? placeBoardLabels(board, labels, members).labels : []),
+    [board, labels, members],
+  );
   const { widthMm, heightMm } = board.projection.board;
   const nailRadius = nailDiameter / 2;
   const tourPoints =
@@ -115,6 +122,12 @@ export function BoardMap({
       <PoolDots points={board.points} />
       {tourPoints && <polygon className="tour" points={tourPoints} />}
       <Marks board={board} />
+      {/* Board labels are a board property (label language), not the UI language. */}
+      <g className="labels">
+        {placed.map((l) => (
+          <path key={l.city} className={l.fits ? 'label' : 'label label-misfit'} d={l.path} />
+        ))}
+      </g>
       {puzzle?.members.map((c) => {
         const [x, y] = board.points[c]!;
         const city = board.pool[c]!;
@@ -128,10 +141,6 @@ export function BoardMap({
               r={Math.max(MIN_VISUAL_RADIUS_MM, nailRadius)}
             />
             <circle className="nail" cx={x} cy={y} r={nailRadius} />
-            {/* Board labels are a board property, not a UI-language choice: German in Phase 1. */}
-            <text className="label" x={x + 5} y={y + LABEL_SIZE_MM * 0.35} fontSize={LABEL_SIZE_MM}>
-              {city.label}
-            </text>
           </g>
         );
       })}

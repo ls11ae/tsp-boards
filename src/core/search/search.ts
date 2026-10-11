@@ -11,7 +11,17 @@
 //   level 2 (only if gapEst ≥ target and a MIP backend is given): exact Euclidean optimum and
 //            runner-up; their string lengths can reveal a better tour or a closer non-local
 //            alternative, so gap = min(gapEst, S(those tours) − S*), plus the double-bridge scan.
+// Labels (if the pool has label metrics): every city name must fit next to its nail
+// (board/labels.ts); labels that do not fit count as infeasible, like a gap below the target.
 
+import {
+  SEARCH_NODE_LIMIT,
+  labelCandidates,
+  placeLabels,
+  type LabelCandidate,
+  type LabelOptions,
+} from '../board/labels';
+import type { TextMetrics } from '../board/text';
 import { difficulty, type Difficulty } from '../difficulty';
 import type { Point } from '../geometry';
 import { Instance } from '../instance';
@@ -83,6 +93,17 @@ export interface SearchPool {
   readonly pinned: readonly number[];
   /** Pool indices that must not be selected. */
   readonly excluded?: readonly number[];
+  /** Board labels that must fit (omit for no label constraint). */
+  readonly labels?: PoolLabels;
+}
+
+export interface PoolLabels {
+  /** Ink metrics of each pool city's label. */
+  readonly metrics: readonly TextMetrics[];
+  readonly options: LabelOptions;
+  /** Board size in mm. */
+  readonly width: number;
+  readonly height: number;
 }
 
 export interface Feasibility {
@@ -141,7 +162,9 @@ export interface Evaluation {
   readonly alternativeCities: readonly number[];
   readonly difficulty: Difficulty;
   readonly recognizability: number;
-  /** Gap ≥ target. */
+  /** Labels without a place (0 without a label constraint). */
+  readonly unplacedLabels: number;
+  /** Gap ≥ target and all labels placed. */
   readonly feasible: boolean;
   /** Objective without the time-dependent penalty (used for the archive and the best). */
   readonly quality: number;
@@ -200,6 +223,8 @@ export class Search {
   private readonly graph: ConflictGraph;
   private readonly weights: Float64Array;
   private readonly pinned: Set<number>;
+  /** Label candidates per pool city (computed on first use), or null without labels. */
+  private readonly labelCandidates: (LabelCandidate[] | undefined)[] | null;
   private readonly cache = new Map<string, Evaluation>();
   private readonly moveRng: Rng;
   private readonly acceptRng: Rng;
@@ -229,6 +254,9 @@ export class Search {
       excluded.has(i) ? 0 : Math.pow(Math.max(p, 1), params.beta),
     );
     this.pinned = new Set(pool.pinned);
+    this.labelCandidates = pool.labels
+      ? new Array<LabelCandidate[] | undefined>(pool.points.length)
+      : null;
     this.popMin = Math.min(...pool.population);
     this.popMax = Math.max(...pool.population);
     const rng = new Rng(params.seed);
@@ -279,7 +307,8 @@ export class Search {
   /** Objective at the current point of the run. */
   score(e: Evaluation): number {
     const shortfall = Math.max(0, 1 - e.gapUm / (GAP_HEADROOM * this.targetUm));
-    return e.quality - this.penalty * shortfall;
+    const labels = Math.min(1, e.unplacedLabels / 2);
+    return e.quality - this.penalty * (shortfall + labels);
   }
 
   step(count: number): void {
@@ -412,7 +441,31 @@ export class Search {
 
   /** Level 2 is due for a level 1 evaluation whose local gap bound reaches the target. */
   private needsRefinement(e: Evaluation): boolean {
-    return this.backend !== undefined && e.level === 1 && e.gapEstUm >= this.targetUm;
+    return (
+      this.backend !== undefined &&
+      e.level === 1 &&
+      e.gapEstUm >= this.targetUm &&
+      e.unplacedLabels === 0
+    );
+  }
+
+  /** Number of labels that do not fit for the given cities (0 without labels). */
+  private unplacedLabels(members: readonly number[]): number {
+    const labels = this.pool.labels;
+    const cache = this.labelCandidates;
+    if (!labels || !cache) return 0;
+    const candidates = members.map(
+      (c) =>
+        (cache[c] ??= labelCandidates(this.pool.points[c]!, labels.metrics[c]!, labels.options)),
+    );
+    return placeLabels({
+      points: members.map((c) => this.pool.points[c]!),
+      candidates,
+      width: labels.width,
+      height: labels.height,
+      options: labels.options,
+      nodeLimit: SEARCH_NODE_LIMIT,
+    }).unplaced;
   }
 
   /**
@@ -455,7 +508,7 @@ export class Search {
         alternative = t;
       }
     }
-    return this.finish(inst, slots, scan, e.gapEstUm, gap, alternative, 2, euclideanGap);
+    return this.finish(inst, slots, scan, e.gapEstUm, gap, alternative, 2, euclideanGap, e);
   }
 
   private finish(
@@ -467,9 +520,11 @@ export class Search {
     alternative: number[] | null,
     level: 1 | 2,
     euclideanGap: number | null,
+    previous?: Evaluation,
   ): Evaluation {
     const key = this.keyOf(slots);
     const members = [...slots].sort((a, b) => a - b);
+    const unplacedLabels = previous ? previous.unplacedLabels : this.unplacedLabels(members);
     const d = difficulty(inst, scan.length);
     const r = recognizability(
       members.map((c) => this.pool.population[c]!),
@@ -491,7 +546,9 @@ export class Search {
       alternativeCities: alternative ? this.changedCities(scan.tour, alternative, slots) : [],
       difficulty: d,
       recognizability: r,
-      feasible: gap >= this.targetUm && (this.backend === undefined || level === 2),
+      unplacedLabels,
+      feasible:
+        gap >= this.targetUm && unplacedLabels === 0 && (this.backend === undefined || level === 2),
       quality: weights.gap * gapTerm + weights.difficulty * d.score + weights.recognizability * r,
     };
     this.cache.set(key, evaluation);

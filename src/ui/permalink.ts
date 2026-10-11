@@ -1,5 +1,5 @@
 // Permalinks in the URL hash (never sent to the server):
-//   #v=1&d=de@1&app=0.0.0+abc1234&r=DE&n=40&b=600x800x30&nail=2&str=1&md=25&g=5&p=5000&s=1&it=1000&w=1,0.5,0.5&sel=…
+//   #v=1&d=de@1&app=0.0.0+abc1234&r=DE&n=40&b=600x800x30&nail=2&str=1&md=25&g=5&p=5000&s=1&it=1000&w=1,0.5,0.5&lf=8&ll=de&sel=…
 // `sel` holds the GeoNames ids of the selected cities in base 36 and restores the puzzle
 // exactly; parameters + seed reproduce the search only within the same JS engine.
 
@@ -57,6 +57,8 @@ export function encodePermalink(
   q.set('s', String(params.seed));
   q.set('it', String(params.iterations));
   q.set('w', [params.weightGap, params.weightDifficulty, params.weightRecognizability].join(','));
+  q.set('lf', String(params.labelSizeMm));
+  q.set('ll', params.labelLanguage);
   if (marks.pinned.length > 0) q.set('pin', encodeIds(marks.pinned));
   if (marks.excluded.length > 0) q.set('ex', encodeIds(marks.excluded));
   if (selectedIds && selectedIds.length > 0) q.set('sel', encodeIds(selectedIds));
@@ -93,6 +95,9 @@ export function decodePermalink(hash: string): PermalinkData | null {
     weightGap: num(wg ?? null, d.weightGap, 0, 100),
     weightDifficulty: num(wd ?? null, d.weightDifficulty, 0, 100),
     weightRecognizability: num(wr ?? null, d.weightRecognizability, 0, 100),
+    // Links from before labels were a constraint have no 'lf': they keep the default.
+    labelSizeMm: num(q.get('lf'), d.labelSizeMm, 0, 100),
+    labelLanguage: q.get('ll') === 'en' ? 'en' : d.labelLanguage,
   };
   const selected = q.get('sel') ? decodeIds(q.get('sel')) : null;
   const match = /^([a-z]{2})@(\d+)$/.exec(q.get('d') ?? '');

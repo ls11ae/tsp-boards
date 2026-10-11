@@ -118,6 +118,13 @@ export interface City {
   readonly flags: number;
 }
 
+export type LabelLanguage = 'de' | 'en';
+
+/** Text on the board: the short label, or the English exonym (Munich) for English boards. */
+export function boardLabel(city: City, language: LabelLanguage): string {
+  return language === 'en' && city.nameEn !== city.name ? city.nameEn : city.label;
+}
+
 export function citiesFromColumns(columns: CityColumns, states: readonly StateInfo[]): City[] {
   return columns.id.map((id, i) => {
     const name = columns.name[i]!;

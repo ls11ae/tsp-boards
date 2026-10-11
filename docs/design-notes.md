@@ -316,3 +316,15 @@ Short entries: decision; alternatives considered; reason. Newest last.
   machine, many laser tools ignore text), Hershey stroke fonts (no ß/umlauts), opentype.js at
   runtime (170 KB, async). Condensed, because label space limits n. No kerning (the subset
   carries none).
+- **2026-10-11 Label placement as a feasibility constraint**: 8-position model (E, NE, SE, W, NW,
+  SW, N, S in this order of preference) around a keep-out circle of nail radius + 2.5 mm; labels
+  must not overlap each other (1.5 mm spacing), nails, obstacles or the board edge (5 mm).
+  Exact backtracking with forward checking and smallest-domain-first, node limit 2000 in the
+  search (200,000 for display/export, same first solution), then a greedy pass towards
+  preferred positions. In the search, unplaced labels make a candidate infeasible and are
+  penalised like a gap shortfall (min(1, unplaced/2) × penalty). Alternatives: greedy only (no
+  feasibility proof), MIP (overkill: n ≤ 60, 8 positions), sliding labels (later, if needed).
+  Measured (`docs/experiments/label-survey-2026-10-11.md`): on 600 × 800 mm with 8–10 mm
+  labels random subsets almost always fit, so the constraint costs nothing there (identical
+  search trajectory, +1 % time); on 400 × 533 mm or with 12–14 mm labels it binds strongly.
+  Labels are drawn as outlines in the app too, so the screen shows exactly the checked boxes.

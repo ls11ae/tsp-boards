@@ -4,7 +4,15 @@ import { DEFAULT_PARAMS } from './store';
 
 describe('permalinks', () => {
   it('round-trip parameters, marks, selection and data version', () => {
-    const params = { ...DEFAULT_PARAMS, region: 'DE-NW', n: 30, seed: 42, weightDifficulty: 0.8 };
+    const params = {
+      ...DEFAULT_PARAMS,
+      region: 'DE-NW',
+      n: 30,
+      seed: 42,
+      weightDifficulty: 0.8,
+      labelSizeMm: 10,
+      labelLanguage: 'en' as const,
+    };
     const hash = encodePermalink(params, { country: 'DE', version: 3 }, [2935517, 2950159], {
       pinned: [2935517],
       excluded: [2867714],

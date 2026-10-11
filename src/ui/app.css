@@ -342,9 +342,13 @@ progress {
 .label {
   fill: var(--label);
   stroke: var(--label-halo);
-  stroke-width: 2.5;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
   paint-order: stroke;
-  font-family: system-ui, sans-serif;
+}
+
+.label-misfit {
+  fill: var(--error);
 }
 
 .board {

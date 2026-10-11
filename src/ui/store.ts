@@ -2,7 +2,7 @@
 // store at most ~10 times per second.
 
 import { create } from 'zustand';
-import type { CountryFile, Manifest } from '../core/data';
+import type { CountryFile, LabelLanguage, Manifest } from '../core/data';
 import type { TracePoint } from '../core/search/search';
 import type { Verification } from '../core/verify';
 import type { SearchProgress } from '../workers/protocol';
@@ -25,6 +25,9 @@ export interface UiParams {
   readonly weightGap: number;
   readonly weightDifficulty: number;
   readonly weightRecognizability: number;
+  /** Font size of the board labels in mm; 0 = no labels (and no label constraint). */
+  readonly labelSizeMm: number;
+  readonly labelLanguage: LabelLanguage;
 }
 
 /** Placeholders until the dimensions of the prototype boards are known. */
@@ -44,6 +47,8 @@ export const DEFAULT_PARAMS: UiParams = {
   weightGap: 1,
   weightDifficulty: 0.5,
   weightRecognizability: 0.5,
+  labelSizeMm: 8,
+  labelLanguage: 'de',
 };
 
 export type RunStatus = 'idle' | 'running' | 'done' | 'stopped' | 'error';

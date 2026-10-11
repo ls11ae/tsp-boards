@@ -41,6 +41,24 @@ function NumberField({
   );
 }
 
+function LabelLanguageField() {
+  const t = useT();
+  const value = useStore((s) => s.params.labelLanguage);
+  const setParams = useStore((s) => s.setParams);
+  return (
+    <label className="field">
+      <span>{t.labelLanguage}</span>
+      <select
+        value={value}
+        onChange={(e) => setParams({ labelLanguage: e.target.value === 'en' ? 'en' : 'de' })}
+      >
+        <option value="de">{t.labelsGerman}</option>
+        <option value="en">{t.labelsEnglish}</option>
+      </select>
+    </label>
+  );
+}
+
 export function ParamsPanel({
   board,
   puzzle,
@@ -103,6 +121,8 @@ export function ParamsPanel({
         <NumberField label={t.nailDiameter} field="nailDiameterMm" step={0.1} />
         <NumberField label={t.stringThickness} field="stringThicknessMm" step={0.1} />
         <NumberField label={t.minDistance} field="minDistanceMm" />
+        <NumberField label={t.labelSize} field="labelSizeMm" step={0.5} />
+        <LabelLanguageField />
       </fieldset>
       <NumberField label={t.targetGap} field="targetGapMm" step={0.5} />
       <fieldset>

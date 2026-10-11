@@ -1,5 +1,7 @@
 import loadHighs from 'highs';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { labelCandidates, labelOptions, placeLabels } from '../board/labels';
+import { measureText } from '../board/text';
 import { distance } from '../geometry';
 import { randomPoints } from '../test-utils';
 import type { MipBackend } from '../tsp/exact';
@@ -97,6 +99,32 @@ describe('Search', () => {
       expect(e.level).toBe(2);
       expect(e.gapUm).toBeGreaterThanOrEqual(params.targetGapMm * 1000);
       expect(e.gapUm).toBeLessThanOrEqual(e.gapEstUm);
+    }
+  }, 120_000);
+
+  it('keeps only candidates whose labels fit', () => {
+    const base = pool(150, 6);
+    const options = labelOptions(12, 2);
+    const names = ['Recklinghausen', 'Ulm', 'Mönchengladbach', 'Gera', 'Wilhelmshaven'];
+    const metrics = base.points.map((_, i) => measureText(names[i % names.length]!, 12));
+    const labels = { metrics, options, width: 600, height: 800 };
+    const search = new Search(
+      { ...base, labels },
+      { ...params, minDistanceMm: 30, iterations: 80 },
+      backend,
+    );
+    search.step(80);
+    expect(search.archive.length).toBeGreaterThan(0);
+    for (const e of search.archive) {
+      expect(e.unplacedLabels).toBe(0);
+      const placement = placeLabels({
+        points: e.members.map((c) => base.points[c]!),
+        candidates: e.members.map((c) => labelCandidates(base.points[c]!, metrics[c]!, options)),
+        width: 600,
+        height: 800,
+        options,
+      });
+      expect(placement.complete).toBe(true);
     }
   }, 120_000);
 

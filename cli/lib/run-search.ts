@@ -2,7 +2,12 @@
 
 import type { City } from '../../src/core/data';
 import { Instance } from '../../src/core/instance';
-import { Search, type Evaluation, type SearchParams } from '../../src/core/search/search';
+import {
+  Search,
+  type Evaluation,
+  type PoolLabels,
+  type SearchParams,
+} from '../../src/core/search/search';
 import type { MipBackend } from '../../src/core/tsp/exact';
 import { verifyCandidate, type Verification } from '../../src/core/verify';
 import type { BoardPool } from './country';
@@ -12,6 +17,7 @@ export interface RunOptions {
   readonly pool: BoardPool;
   readonly backend: MipBackend | undefined;
   readonly pinnedIds?: readonly number[];
+  readonly labels?: PoolLabels;
   readonly onProgress?: (search: Search, elapsedMs: number) => void;
   readonly progressEvery?: number;
 }
@@ -26,7 +32,12 @@ export function runSearch(options: RunOptions): { search: Search; elapsedMs: num
   });
   const t0 = performance.now();
   const search = new Search(
-    { points: pool.points, population: pool.cities.map((c) => c.pop), pinned },
+    {
+      points: pool.points,
+      population: pool.cities.map((c) => c.pop),
+      pinned,
+      labels: options.labels,
+    },
     params,
     options.backend,
   );

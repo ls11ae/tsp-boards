@@ -3,11 +3,20 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import loadHighs from 'highs';
-import { parseCountryFile, type City, type CountryFile } from '../../src/core/data';
+import { labelOptions } from '../../src/core/board/labels';
+import { measureText } from '../../src/core/board/text';
+import {
+  boardLabel,
+  parseCountryFile,
+  type City,
+  type CountryFile,
+  type LabelLanguage,
+} from '../../src/core/data';
 import { distance, type Point } from '../../src/core/geometry';
 import { boardProjection, type BoardProjection, type BoardSpec } from '../../src/core/projection';
 import { boardPoints, cityPool, regionOutline, type RegionId } from '../../src/core/region';
 import { Rng } from '../../src/core/rng';
+import type { PoolLabels } from '../../src/core/search/search';
 import type { MipBackend } from '../../src/core/tsp/exact';
 
 const DATA = path.resolve(import.meta.dirname, '../../public/data');
@@ -38,6 +47,21 @@ export function boardPool(
   const projection = boardProjection(regionOutline(file, region), board);
   const cities = cityPool(file, region, { minPopulation });
   return { projection, cities, points: boardPoints(cities, projection) };
+}
+
+/** Label constraint for the search: board labels of the pool cities at the given font size. */
+export function poolLabels(
+  pool: BoardPool,
+  sizeMm: number,
+  nailDiameterMm: number,
+  language: LabelLanguage = 'de',
+): PoolLabels {
+  return {
+    metrics: pool.cities.map((c) => measureText(boardLabel(c, language), sizeMm)),
+    options: labelOptions(sizeMm, nailDiameterMm),
+    width: pool.projection.board.widthMm,
+    height: pool.projection.board.heightMm,
+  };
 }
 
 /** Random subset of n pool indices with pairwise board distance ≥ minDistMm (greedy). */

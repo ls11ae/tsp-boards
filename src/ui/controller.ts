@@ -17,6 +17,7 @@ import type {
   SearchResponse,
 } from '../workers/protocol';
 import { getBoard } from './board';
+import { getLabels, poolLabels } from './labels';
 import { decodePermalink } from './permalink';
 import { useStore, type RunState, type UiParams } from './store';
 
@@ -165,11 +166,13 @@ function searchPool(): SearchPool | null {
   const board = getBoard(country, params);
   const indices = (ids: readonly number[]) =>
     ids.map((id) => board.index.get(id)).filter((i): i is number => i !== undefined);
+  const labels = getLabels(board, params);
   return {
     points: board.points,
     population: board.pool.map((c) => c.pop),
     pinned: indices(pinned),
     excluded: indices(excluded),
+    labels: labels ? poolLabels(board, labels) : undefined,
   };
 }
 
