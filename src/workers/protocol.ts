@@ -8,6 +8,7 @@ import type {
   SearchStats,
   TracePoint,
 } from '../core/search/search';
+import type { BoardPlan, PlanData } from '../core/board/plan';
 import type { Verification } from '../core/verify';
 
 // --- search worker ---------------------------------------------------------------------------
@@ -53,8 +54,17 @@ export interface VerifyJob {
   readonly timeLimitSec: number;
 }
 
+export interface PlanJob {
+  readonly jobId: number;
+  readonly key: string;
+  readonly data: PlanData;
+  readonly timeLimitSec: number;
+}
+
 export type ExactWorkerRequest =
-  { readonly type: 'selftest' } | ({ readonly type: 'verify' } & VerifyJob);
+  | { readonly type: 'selftest' }
+  | ({ readonly type: 'verify' } & VerifyJob)
+  | ({ readonly type: 'plan' } & PlanJob);
 
 export type ExactWorkerResponse =
   | {
@@ -71,6 +81,14 @@ export type ExactWorkerResponse =
       readonly jobId: number;
       readonly key: string;
       readonly verification: Verification;
+      readonly ms: number;
+    }
+  | {
+      readonly type: 'planned';
+      readonly jobId: number;
+      readonly key: string;
+      /** null: no start nail has room for the scale. */
+      readonly plan: BoardPlan | null;
       readonly ms: number;
     }
   | { readonly type: 'error'; readonly jobId?: number; readonly message: string };

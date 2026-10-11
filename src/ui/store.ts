@@ -2,6 +2,8 @@
 // store at most ~10 times per second.
 
 import { create } from 'zustand';
+import type { BoardPlan } from '../core/board/plan';
+import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
 import { DEFAULT_PARAMS as DEFAULT_PARAMS_VALUE, type PuzzleParams } from '../core/params';
 import type { TracePoint } from '../core/search/search';
@@ -43,6 +45,21 @@ export interface RunState {
   readonly error: RunError | null;
 }
 
+export type BoardPlanState =
+  | { readonly status: 'running' }
+  | { readonly status: 'done'; readonly plan: BoardPlan | null; readonly ms: number }
+  | { readonly status: 'error'; readonly message: string };
+
+export interface ExportOptions {
+  readonly paper: Paper;
+  /** Cut the nail holes (laser) or mark them for drilling. */
+  readonly holes: 'cut' | 'mark';
+  /** Line width in the SVG, mm. */
+  readonly strokeMm: number;
+  /** Show the planned board (scale, title, final labels) instead of the map view. */
+  readonly preview: boolean;
+}
+
 export interface AppState {
   readonly lang: Language;
   readonly manifest: Manifest | null;
@@ -60,6 +77,10 @@ export interface AppState {
   readonly excluded: readonly number[];
   /** Warnings from opening a permalink (data version, missing cities). */
   readonly linkWarnings: readonly string[];
+  /** Board plans by plan key (puzzle key and the parameters the plan depends on). */
+  readonly boardPlans: Readonly<Record<string, BoardPlanState>>;
+  readonly exportOptions: ExportOptions;
+  readonly setExportOptions: (update: Partial<ExportOptions>) => void;
   readonly setLang: (lang: Language) => void;
   readonly setParams: (update: Partial<UiParams>) => void;
   readonly setShown: (shown: Shown) => void;
@@ -96,6 +117,9 @@ export const useStore = create<AppState>()((set) => ({
   pinned: [],
   excluded: [],
   linkWarnings: [],
+  boardPlans: {},
+  exportOptions: { paper: 'A4', holes: 'cut', strokeMm: 0.1, preview: true },
+  setExportOptions: (update) => set((s) => ({ exportOptions: { ...s.exportOptions, ...update } })),
   setLang: (lang) => {
     try {
       localStorage.setItem(LANG_KEY, lang);

@@ -189,7 +189,7 @@ export class PdfDocument {
     return this.pageIds.length;
   }
 
-  toBytes(): Uint8Array {
+  toBytes(): Uint8Array<ArrayBuffer> {
     this.objects[this.catalogId - 1]!.dict = `<< /Type /Catalog /Pages ${this.pagesId} 0 R >>`;
     this.objects[this.pagesId - 1]!.dict =
       `<< /Type /Pages /Kids [${this.pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${this.pageIds.length} >>`;

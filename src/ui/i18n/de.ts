@@ -85,6 +85,36 @@ export const de: Messages = {
   marksSummary: (pinned, excluded) => `${pinned} gepinnt · ${excluded} ausgeschlossen`,
   clearMarks: 'Zurücksetzen',
 
+  exportTitle: 'Brett exportieren',
+  exportNeedsCheck: 'Verfügbar, sobald die exakte Prüfung dieses Puzzles fertig ist.',
+  prepareBoard: 'Brett planen',
+  planning:
+    'Startnagel, Skala und Beschriftung werden platziert, die Lücke an der Skala exakt geprüft …',
+  planFailed: 'Planung fehlgeschlagen',
+  noScaleSpace:
+    'Kein Startnagel hat Platz für die Messskala. Einen größeren Rand oder weniger Städte am Rand wählen.',
+  startNail: 'Startnagel',
+  measuredGap: 'Lücke an der Skala',
+  lowerBound: (value) => `≥ ${value} mm (Schranke)`,
+  warnLabels: (count) => `${count} Beschriftungen passen nicht.`,
+  warnTitle: 'Für den Titel ist kein Platz.',
+  warnGap: (value) => `Die Lücke an der Skala (${value} mm) liegt unter dem Ziel.`,
+  warnOptimum:
+    'An der Skala gemessen wäre eine andere Rundreise am kürzesten. Bitte einen anderen Kandidaten wählen.',
+  warnUnverified:
+    'Die Lücke an der Skala ist nur abgeschätzt: Die exakte Prüfung wurde nicht fertig.',
+  paper: 'Papier (Druckvorlage)',
+  holes: 'Nagellöcher',
+  holesCut: 'schneiden (Laser)',
+  holesMark: 'zum Bohren markieren',
+  strokeWidth: 'Linienbreite im SVG (mm)',
+  previewBoard: 'Brett wie exportiert anzeigen',
+  downloadSvg: 'SVG für den Lasercutter',
+  downloadTemplate: 'Druckvorlage (PDF)',
+  downloadSolution: 'Lösungsblatt (PDF)',
+  exportHint:
+    'SVG-Farben: Rot = schneiden, Blau = ritzen, Grün = Umriss (mehr Leistung), Schwarz = gravieren. Texte sind in Pfade umgewandelt. Das Lösungsblatt erklärt, wie der Faden kalibriert wird.',
+
   permalink: 'Link kopieren',
   linkCopied: 'Link kopiert',
   dataVersionMismatch: (linked, current) =>

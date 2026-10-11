@@ -1,6 +1,8 @@
-// Exact verification of candidates (exact string model, fallback to the local check).
-// One job at a time; the UI cancels stale jobs by terminating and recreating this worker.
+// Exact verification of candidates (exact string model, fallback to the local check) and board
+// plans (start nail with the exact measured gap). One job at a time; the UI cancels stale jobs
+// by terminating and recreating this worker, and runs plans in a second instance.
 
+import { planBoard } from '../core/board/plan';
 import { Instance } from '../core/instance';
 import { runLpSelfTest } from '../core/lp/selftest';
 import { Rng } from '../core/rng';
@@ -32,6 +34,26 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
         loadMs,
         solveMs: performance.now() - start,
       });
+      break;
+    }
+    case 'plan': {
+      const start = performance.now();
+      const { points, rEffMm, ...rest } = request.data;
+      try {
+        const plan = planBoard({ ...rest, inst: new Instance(points, rEffMm) }, highs, {
+          exact: { timeLimitSec: request.timeLimitSec },
+        });
+        reply({
+          type: 'planned',
+          jobId: request.jobId,
+          key: request.key,
+          plan,
+          ms: performance.now() - start,
+        });
+      } catch (error) {
+        highsReady = loadHighsInWorker().then((h) => ({ highs: h, loadMs: 0 }));
+        throw error;
+      }
       break;
     }
     case 'verify': {
@@ -68,7 +90,7 @@ self.onmessage = (event: MessageEvent<ExactWorkerRequest>) => {
   handle(request).catch((error: unknown) => {
     reply({
       type: 'error',
-      jobId: request.type === 'verify' ? request.jobId : undefined,
+      jobId: request.type === 'selftest' ? undefined : request.jobId,
       message: error instanceof Error ? error.message : String(error),
     });
   });

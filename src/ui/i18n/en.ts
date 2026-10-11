@@ -89,6 +89,35 @@ export const en = {
   marksSummary: (pinned: string, excluded: string) => `${pinned} pinned · ${excluded} excluded`,
   clearMarks: 'Clear',
 
+  // Board export
+  exportTitle: 'Board export',
+  exportNeedsCheck: 'Available once the exact check of this puzzle has finished.',
+  prepareBoard: 'Plan the board',
+  planning: 'Placing start nail, scale and labels; checking the gap at the scale exactly…',
+  planFailed: 'Planning failed',
+  noScaleSpace:
+    'No start nail has room for the measuring scale. Try a larger board margin or fewer cities near the edge.',
+  startNail: 'Start nail',
+  measuredGap: 'Gap at the scale',
+  lowerBound: (value: string) => `≥ ${value} mm (bound)`,
+  warnLabels: (count: string) => `${count} labels do not fit.`,
+  warnTitle: 'There is no room for the title.',
+  warnGap: (value: string) => `The gap at the scale (${value} mm) is below the target.`,
+  warnOptimum:
+    'Measured at the scale, another round trip would be shortest. Choose another candidate.',
+  warnUnverified: 'The gap at the scale is only bounded: the exact check did not finish.',
+  paper: 'Paper (print template)',
+  holes: 'Nail holes',
+  holesCut: 'cut (laser)',
+  holesMark: 'mark for drilling',
+  strokeWidth: 'SVG line width (mm)',
+  previewBoard: 'Show the board as exported',
+  downloadSvg: 'SVG for the laser cutter',
+  downloadTemplate: 'Print template (PDF)',
+  downloadSolution: 'Solution sheet (PDF)',
+  exportHint:
+    'SVG colours: red = cut, blue = score, green = outline (more power), black = engrave. Text is converted to outlines. The solution sheet explains how to calibrate the string.',
+
   // Permalink and data
   permalink: 'Copy link',
   linkCopied: 'Link copied',

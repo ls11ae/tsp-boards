@@ -154,7 +154,7 @@ export interface TemplateInput {
 }
 
 /** Print template: overview page with instructions, then the 1:1 tiles. */
-export function templatePdf(input: TemplateInput): Uint8Array {
+export function templatePdf(input: TemplateInput): Uint8Array<ArrayBuffer> {
   const { drawing, texts } = input;
   const layout = tileLayout(drawing.width, drawing.height, input.paper);
   const doc = new PdfDocument(input.texts.templateTitle(input.region));
@@ -271,7 +271,7 @@ export interface SolutionInput {
 }
 
 /** One A4 page: the board with the tour, the order of cities, figures and calibration. */
-export function solutionPdf(input: SolutionInput): Uint8Array {
+export function solutionPdf(input: SolutionInput): Uint8Array<ArrayBuffer> {
   const { drawing, texts, plan, points, tour } = input;
   const doc = new PdfDocument(texts.solutionTitle(input.region));
   doc.addForm('Board', drawing.width, drawing.height, (c) => drawForPrint(c, drawing, 2.5));

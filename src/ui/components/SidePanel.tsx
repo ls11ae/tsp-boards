@@ -5,6 +5,7 @@ import { useFormat, useT } from '../i18n';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 import { distance } from '../../core/geometry';
+import { ExportPanel } from './ExportPanel';
 
 function SearchStatus() {
   const t = useT();
@@ -306,6 +307,7 @@ export function SidePanel({
           <p className="hint">{t.noPuzzle}</p>
         </section>
       )}
+      {board && puzzle && <ExportPanel board={board} puzzle={puzzle} />}
       <Candidates />
       <Marks />
     </aside>

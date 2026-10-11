@@ -60,6 +60,17 @@ export interface PlanInput {
   readonly edgeMm?: number;
 }
 
+/** PlanInput as plain data (for workers): the instance is rebuilt from points and r_eff. */
+export type PlanData = Omit<PlanInput, 'inst'> & {
+  readonly points: readonly Point[];
+  readonly rEffMm: number;
+};
+
+export function planData(input: PlanInput, rEffMm: number): PlanData {
+  const { inst, ...rest } = input;
+  return { ...rest, points: inst.pointsMm(), rEffMm };
+}
+
 export interface ScalePlan {
   readonly slot: number;
   readonly origin: Point;
@@ -136,6 +147,35 @@ function insideBoard(points: readonly Point[], width: number, height: number, ed
 interface Candidate {
   readonly scale: ScalePlan;
   readonly boundUm: number;
+  /** Edges of the optimal tour crossing the scale (the rest of the string would lie on them). */
+  readonly crossings: number;
+}
+
+/** Whether segment pq meets the convex polygon (endpoint inside or edge intersection). */
+function segmentMeetsPolygon(p: Point, q: Point, polygon: readonly Point[]): boolean {
+  const cross = (a: Point, b: Point, c: Point) =>
+    (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  const inside = (x: Point) => {
+    let sign = 0;
+    for (let i = 0; i < polygon.length; i++) {
+      const c = cross(polygon[i]!, polygon[(i + 1) % polygon.length]!, x);
+      if (c === 0) continue;
+      if (sign === 0) sign = Math.sign(c);
+      else if (Math.sign(c) !== sign) return false;
+    }
+    return true;
+  };
+  if (inside(p) || inside(q)) return true;
+  for (let i = 0; i < polygon.length; i++) {
+    const a = polygon[i]!;
+    const b = polygon[(i + 1) % polygon.length]!;
+    if (
+      Math.sign(cross(p, q, a)) !== Math.sign(cross(p, q, b)) &&
+      Math.sign(cross(a, b, p)) !== Math.sign(cross(a, b, q))
+    )
+      return true;
+  }
+  return false;
 }
 
 /** Start nails whose scale fits, best bound first. */
@@ -176,9 +216,22 @@ export function scaleCandidates(input: PlanInput): Candidate[] {
         band,
       },
       boundUm: measuredGapBound(inst, tour, slot, u, input.stringGapUm),
+      crossings: tour.filter((v, i) => {
+        const w = tour[(i + 1) % tour.length]!;
+        return v !== slot && w !== slot && segmentMeetsPolygon(points[v]!, points[w]!, band);
+      }).length,
     });
   }
-  return result.sort((a, b) => b.boundUm - a.boundUm || a.scale.slot - b.scale.slot);
+  // Start nails whose bound reaches the target first, among them those whose scale crosses no
+  // tour edge, then the largest bound.
+  const target = input.targetGapUm;
+  return result.sort(
+    (a, b) =>
+      Number(b.boundUm >= target) - Number(a.boundUm >= target) ||
+      a.crossings - b.crossings ||
+      b.boundUm - a.boundUm ||
+      a.scale.slot - b.scale.slot,
+  );
 }
 
 interface Layout {

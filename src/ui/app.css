@@ -347,6 +347,32 @@ progress {
   paint-order: stroke;
 }
 
+.preview .lay-score {
+  fill: none;
+  stroke: var(--map-line);
+  stroke-width: 0.5;
+}
+
+.preview .lay-outline {
+  fill: none;
+  stroke: var(--map-country);
+  stroke-width: 1;
+}
+
+.preview .lay-engrave {
+  fill: var(--label);
+}
+
+.preview .lay-cut {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 0.6;
+}
+
+.actions.column {
+  flex-direction: column;
+}
+
 .label-misfit {
   fill: var(--error);
 }

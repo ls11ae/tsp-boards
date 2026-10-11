@@ -6,6 +6,7 @@ import { memo, useMemo, useRef, type MouseEvent } from 'react';
 import type { Point } from '../../core/geometry';
 import type { BoardModel } from '../board';
 import { cycleCity } from '../controller';
+import { planKey, previewPaths } from '../export';
 import { getLabels, placeBoardLabels } from '../labels';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
@@ -81,6 +82,15 @@ export function BoardMap({
   const lang = useStore((s) => s.lang);
   const labels = getLabels(board, params);
   const members = puzzle?.members;
+  const exportOptions = useStore((s) => s.exportOptions);
+  const planState = useStore((s) =>
+    puzzle ? s.boardPlans[planKey(puzzle.key, s.params)] : undefined,
+  );
+  const plan = planState?.status === 'done' ? planState.plan : null;
+  const preview =
+    plan && puzzle && exportOptions.preview
+      ? previewPaths(board, puzzle, plan, exportOptions.holes)
+      : null;
   const placed = useMemo(
     () => (labels && members ? placeBoardLabels(board, labels, members).labels : []),
     [board, labels, members],
@@ -118,16 +128,30 @@ export function BoardMap({
       aria-label={puzzle ? puzzle.members.map((c) => board.pool[c]!.name).join(', ') : undefined}
       onClick={onClick}
     >
-      <MapLayers board={board} />
-      <PoolDots points={board.points} />
+      {preview ? (
+        <g className="preview">
+          <rect className="board-bg" width={widthMm} height={heightMm} />
+          <path className="lay-score" d={preview.score} />
+          <path className="lay-outline" d={preview.outline} />
+          <path className="lay-engrave" d={preview.engrave} />
+          <path className="lay-cut" d={preview.cut} />
+        </g>
+      ) : (
+        <>
+          <MapLayers board={board} />
+          <PoolDots points={board.points} />
+        </>
+      )}
       {tourPoints && <polygon className="tour" points={tourPoints} />}
       <Marks board={board} />
       {/* Board labels are a board property (label language), not the UI language. */}
-      <g className="labels">
-        {placed.map((l) => (
-          <path key={l.city} className={l.fits ? 'label' : 'label label-misfit'} d={l.path} />
-        ))}
-      </g>
+      {!preview && (
+        <g className="labels">
+          {placed.map((l) => (
+            <path key={l.city} className={l.fits ? 'label' : 'label label-misfit'} d={l.path} />
+          ))}
+        </g>
+      )}
       {puzzle?.members.map((c) => {
         const [x, y] = board.points[c]!;
         const city = board.pool[c]!;

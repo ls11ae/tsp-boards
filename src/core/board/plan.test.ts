@@ -60,6 +60,15 @@ describe('board plan', () => {
     }
   });
 
+  it('prefers start nails whose scale crosses no tour edge', () => {
+    const p = input(32, 16);
+    const ranked = scaleCandidates(p);
+    const reaching = ranked.filter((c) => c.boundUm >= p.targetGapUm);
+    for (let i = 1; i < reaching.length; i++)
+      expect(reaching[i]!.crossings).toBeGreaterThanOrEqual(reaching[i - 1]!.crossings);
+    expect(ranked[0]!.crossings).toBe(0);
+  });
+
   it('places title, footer and labels around the scale with an exact measured gap', () => {
     for (const seed of [41, 42, 43]) {
       const p = input(seed);
