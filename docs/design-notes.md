@@ -347,3 +347,10 @@ Short entries: decision; alternatives considered; reason. Newest last.
 - **2026-10-11 Map line work from topojson meshes**, each segment once across all layers
   (region outline, country outline, inner borders, neighbours): a laser engraves doubled lines
   twice. Lines are clipped to the board and interrupted under text, the scale and nails.
+- **2026-10-11 Own minimal PDF writer** (pages, form XObjects, paths, clipping, Flate via
+  fflate, now a runtime dependency) instead of jsPDF/pdf-lib: text is already outlines, so
+  only vector paths are needed; ~250 lines, no font handling, runs in the core (worker, Node).
+  The print template tiles the board at 1:1 over A4 or A3 (portrait or landscape, whichever
+  needs fewer pages; 10 mm overlap with dashed cut lines, a 50 mm check bar per page) after an
+  overview page with instructions; the solution sheet (one A4 page) shows the tour, the order
+  of cities, lengths, the measured gap and the calibration steps.

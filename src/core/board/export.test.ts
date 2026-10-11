@@ -10,7 +10,10 @@ import { boardProjection } from '../projection';
 import type { MipBackend } from '../tsp/exact';
 import { iteratedLocalSearch } from '../tsp/ils';
 import { Rng } from '../rng';
-import { verifyCandidate } from '../verify';
+import { euclideanLength, stringLength } from '../tsp/tour';
+import { verifyCandidate, type Verification } from '../verify';
+import { measuredLength } from './measure';
+import { solutionPdf, templatePdf, tileLayout } from './print';
 import { pathBounds } from './shapes';
 import { planBoard, type BoardPlan } from './plan';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from './setup';
@@ -28,6 +31,7 @@ const file = parseCountryFile(
 let backend: MipBackend;
 let setup: BoardSetup;
 let plan: BoardPlan;
+let verification: Verification;
 const params: PuzzleParams = { ...DEFAULT_PARAMS, n: 25, minDistanceMm: 40 };
 
 beforeAll(async () => {
@@ -52,6 +56,7 @@ beforeAll(async () => {
   );
   const heuristic = iteratedLocalSearch(setup.inst, new Rng(1)).tour;
   const v = verifyCandidate(backend, setup.inst, heuristic, 'string-exact', { timeLimitSec: 60 });
+  verification = v;
   plan = planBoard(
     boardPlanInput(setup, {
       tour: v.string!.optimal,
@@ -105,4 +110,64 @@ describe('board export (Germany, 25 cities)', () => {
     expect(svg.length).toBeLessThan(3_000_000);
     if (process.env.BOARD_SVG) writeFileSync(process.env.BOARD_SVG, svg);
   });
+
+  it('tiles the board over the fewest pages', () => {
+    // A4 landscape (3 × 5) beats portrait (4 × 4).
+    expect(tileLayout(600, 800, 'A4')).toMatchObject({ cols: 3, rows: 5, pageWidth: 297 });
+    expect(tileLayout(600, 800, 'A3')).toMatchObject({ cols: 2, rows: 4, pageWidth: 420 });
+    const small = tileLayout(180, 250, 'A4');
+    expect(small.cols * small.rows).toBe(1);
+  });
+
+  it('writes a valid print template and solution sheet', () => {
+    const template = templatePdf({
+      drawing: drawPuzzleBoard(setup, plan, { holes: 'mark' }),
+      texts: setup.texts,
+      region: 'Deutschland',
+      nailDiameterMm: 2,
+      paper: 'A4',
+    });
+    checkPdf(template, 1 + 15);
+    const optimal = verification.string!.optimal;
+    const start = optimal.indexOf(plan.scale.slot);
+    const tour = optimal.map((_, i) => optimal[(start + i) % optimal.length]!);
+    const solution = solutionPdf({
+      drawing: drawPuzzleBoard(setup, plan, { holes: 'mark' }),
+      texts: setup.texts,
+      region: 'Deutschland',
+      plan,
+      points: setup.points,
+      tour,
+      names: setup.cities.map((c) => c.name),
+      stringLengthUm: stringLength(setup.inst, tour),
+      centreLengthUm: euclideanLength(setup.inst, tour),
+      measuredLengthUm: measuredLength(setup.inst, tour, plan.scale.slot, plan.scale.direction),
+      stringGapUm: verification.string!.gap,
+      link: '#v=1&d=de@1&sel=abc',
+      formatNumber: (v, d) => v.toFixed(d),
+    });
+    checkPdf(solution, 1);
+    if (process.env.BOARD_PDF) {
+      writeFileSync(`${process.env.BOARD_PDF}-template.pdf`, template);
+      writeFileSync(`${process.env.BOARD_PDF}-solution.pdf`, solution);
+    }
+  });
 });
+
+/** Structure check: header, object offsets in the xref table, page count, trailer. */
+function checkPdf(bytes: Uint8Array, pages: number): void {
+  const text = Buffer.from(bytes).toString('latin1');
+  expect(text.startsWith('%PDF-1.4')).toBe(true);
+  expect(text.trimEnd().endsWith('%%EOF')).toBe(true);
+  const startxref = Number(/startxref\n(\d+)/.exec(text)![1]);
+  expect(text.slice(startxref, startxref + 4)).toBe('xref');
+  const entries = [...text.slice(startxref).matchAll(/^(\d{10}) 00000 n $/gm)].map((m) =>
+    Number(m[1]),
+  );
+  expect(entries.length).toBeGreaterThan(pages);
+  entries.forEach((offset, i) =>
+    expect(text.slice(offset).startsWith(`${i + 1} 0 obj`)).toBe(true),
+  );
+  expect(Number(/\/Count (\d+)/.exec(text)![1])).toBe(pages);
+  expect(text).not.toContain('NaN');
+}
