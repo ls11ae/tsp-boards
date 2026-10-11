@@ -214,6 +214,14 @@ Board files: the SVG of a 40-city board is ~0.4 MB (text as outlines), the A4 te
     boundary; re-check δ after the nail correction.
   - Algorithm 3 tests L2 − |OPT| < ε; presumably L1 was intended.
 
+Implemented (2026-10-12, see the decision log): Held–Karp with two best values, raster
+evaluation of the insertion field, depth-first search with backtracking over the whole
+sequence (dead ends penalised by backtracking), exact checks with the turn-cost MIP including
+the measured gap at the track, the change rule from k = 5, mark spacing ε, clearance of later
+points from earlier optimal tours, board drawing and export, app and CLI. Open: play mode for
+the incremental puzzle, a "prefer candidates far from the filter boundary" score beyond the
+weakest slack, larger N (Held–Karp limits N to 16).
+
 ## 9. Licenses and attribution
 
 - GeoNames: CC BY 4.0 (attribution required). Natural Earth: public domain. Wikidata: CC0.

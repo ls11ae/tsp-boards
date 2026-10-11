@@ -5,14 +5,15 @@ which players look for the shortest round trip.
 
 - **Map puzzle** (current focus): real cities on a map of a country or region; find the
   optimal tour.
-- **Incremental puzzle** (later): numbered points; solve the nested instances {1..3}, {1..4}, ...
+- **Incremental puzzle** ("step by step"): numbered points; solve the nested instances
+  {1..3}, {1..4}, ...
 
 The app is a static web app: all computation, including exact TSP solves with
 [HiGHS](https://highs.dev/) compiled to WebAssembly, runs in the browser (Web Workers). The same
 TypeScript core also runs in Node for batch experiments.
 
-Status: Phase 1 (map puzzle MVP for Germany), Phase 2 (board export: laser SVG, print template,
-solution sheet) and Phase 3 (play mode in the browser) are complete. Design notes, benchmarks and open questions are in
+Status: the map puzzle (search, board export, play mode) and the incremental puzzle (generator,
+board export) are implemented; deployment is prepared (see below). Design notes, benchmarks and open questions are in
 [`docs/design-notes.md`](docs/design-notes.md).
 
 ## Using the app
@@ -40,6 +41,21 @@ solution sheet) and Phase 3 (play mode in the browser) are complete. Design note
 
 City labels must fit next to their nails without overlaps (8 positions per label); the search
 treats labels that do not fit like a gap below the target. Label size 0 switches labels off.
+
+### Step by step (incremental puzzle)
+
+Switch to "Step by step" in the header. Set the number of nails (up to 16), the board, the gap
+and the spacing of the marks, and generate: the app searches a sequence of points such that
+every instance {1..k} has a unique shortest round trip (gap at least the target, also as read
+on the board), its optimum is not just the previous one with the new nail inserted (from k = 5),
+and the marks for consecutive k are apart. On the board, the string returns to nail 1 and runs
+around the corner nails along the edge; mark k shows where its end lies for the shortest round
+trip through 1..k. Click an instance to highlight its nails and (optionally) its optimum;
+"Copy link" stores the points; the downloads are the same as for map boards.
+
+```bash
+npx tsx cli/incremental.ts --n 12 --seed 1 --export boards
+```
 
 ### The self-check on the board
 
@@ -99,7 +115,7 @@ Runs the puzzle search for Germany and prints the result as JSON; options are li
 header comment of each script. Further scripts: `cli/bench-exact.ts` (exact solver
 timings), `cli/ub-tightness.ts` (quality of the local gap bound), `cli/gap-survey.ts`
 (achievable gaps), `cli/label-survey.ts` (label feasibility), `cli/start-nail-survey.ts`
-(gap at the scale). Results are recorded in `docs/experiments/` and `docs/design-notes.md`.
+(gap at the scale), `cli/incremental-survey.ts` (incremental puzzle). Results are recorded in `docs/experiments/` and `docs/design-notes.md`.
 
 ```bash
 npx tsx cli/export-board.ts --link '<permalink>' --out boards --paper A3

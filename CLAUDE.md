@@ -4,7 +4,7 @@ Generator for **TSP puzzle boards**: physical puzzles (wooden board, nails, a st
 players look for the shortest round trip. Two puzzle types:
 
 - **Map puzzle** (current focus): real cities on a map of a country/region; find the optimal tour.
-- **Incremental puzzle** (later): numbered points; solve nested instances {1..3}, {1..4}, ...
+- **Incremental puzzle** ("step by step"): numbered points; solve nested instances {1..3}, {1..4}, ...
 
 This project reimplements and improves the generators from an MSc thesis whose code is not
 available. The thesis is guidance, not a specification: deviations and improvements are welcome.
@@ -27,8 +27,14 @@ what we change and why, benchmark results, and open questions.
 - Phase 3 (play mode) complete: play links without search settings or solution, tour building
   by clicks, judging against the exact string optimum, opt-in play records (off unless the
   build sets `VITE_PLAY_DATA_URL`).
-- Next: Phase 4 (deployment, then the incremental puzzle). Open: prototype board dimensions
-  (and calibrating the string model on a real board), code license, play data endpoint.
+- Phase 4: deployment prepared (CI artifact `tsp-boards-dist`, `docs/deployment.md`,
+  `.htaccess`, reference play data endpoint `server/play-data.mjs`); the actual upload to the
+  chair server needs access and is the maintainers' step. Incremental puzzle implemented
+  (`src/core/incremental/`: Held–Karp with two best values, insertion field, sequence search
+  with exact checks, measuring track around the board edge; app mode and `cli/incremental.ts`).
+- Open: prototype board dimensions (and calibrating the string model on a real board), code
+  license, deploying to the chair server, play data endpoint, play mode for the incremental
+  puzzle.
 - Code license not chosen yet (decide before going public).
 
 ## Agreed direction
@@ -81,11 +87,13 @@ what we change and why, benchmark results, and open questions.
 ## Proposed layout
 
 - `src/core/` pure TS, no DOM: geometry, projection, TSP heuristics, exact solver wrapper,
-  metrics, search. Runs in browser and Node.
+  metrics, search; `src/core/board/` board export (font, labels, start nail and scale,
+  drawing, SVG, PDF); `src/core/incremental/` the incremental puzzle. Runs in browser and Node.
 - `src/workers/` Web Worker entry points (search, exact solves).
 - `src/ui/` the web app.
 - `scripts/` offline data build; `public/data/` generated data (committed, one file per country).
-- `cli/` Node entry points for experiments.
+- `cli/` Node entry points for experiments and exports.
+- `server/` optional reference endpoint for opt-in play data.
 - `docs/` design notes, experiments.
 
 ## Conventions
