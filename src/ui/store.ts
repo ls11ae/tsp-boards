@@ -6,6 +6,8 @@ import type { BoardPlan } from '../core/board/plan';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
 import { EMPTY_PLAY, type PlayAttempt, type PlayState } from '../core/play';
+import type { IncrementalPuzzle, SequenceCheck } from '../core/incremental/generate';
+import { DEFAULT_INCREMENTAL_UI, type IncrementalUiParams } from '../core/incremental/params';
 import { DEFAULT_PARAMS as DEFAULT_PARAMS_VALUE, type PuzzleParams } from '../core/params';
 import type { TracePoint } from '../core/search/search';
 import type { Verification } from '../core/verify';
@@ -62,6 +64,23 @@ export interface ExportOptions {
 }
 
 export type Mode = 'design' | 'play';
+export type PuzzleType = 'map' | 'incremental';
+
+export interface IncrementalUi {
+  readonly params: IncrementalUiParams;
+  readonly status: 'idle' | 'running' | 'done' | 'failed' | 'error';
+  readonly puzzle: IncrementalPuzzle | null;
+  /** Conditions a puzzle from a link violates (empty for generated puzzles). */
+  readonly violations: SequenceCheck['violations'];
+  readonly marksFit: boolean;
+  readonly reached: number;
+  readonly checks: number;
+  readonly ms: number;
+  readonly message: string | null;
+  /** Instance shown on the board (null: the whole board). */
+  readonly shownK: number | null;
+  readonly showSolution: boolean;
+}
 
 /** A game in play mode; slots index the puzzle's members (ascending pool index). */
 export interface PlayUi {
@@ -91,6 +110,11 @@ export interface AppState {
   readonly lang: Language;
   readonly mode: Mode;
   readonly play: PlayUi;
+  readonly puzzleType: PuzzleType;
+  readonly inc: IncrementalUi;
+  readonly setPuzzleType: (type: PuzzleType) => void;
+  readonly setIncParams: (update: Partial<IncrementalUiParams>) => void;
+  readonly setInc: (update: Partial<IncrementalUi>) => void;
   readonly manifest: Manifest | null;
   readonly country: CountryFile | null;
   readonly loadError: string | null;
@@ -140,6 +164,27 @@ export const useStore = create<AppState>()((set) => ({
       ? 'play'
       : 'design',
   play: NEW_GAME,
+  puzzleType:
+    typeof window !== 'undefined' && /[#&]m=inc(&|$)/.test(window.location.hash)
+      ? 'incremental'
+      : 'map',
+  inc: {
+    params: DEFAULT_INCREMENTAL_UI,
+    status: 'idle',
+    puzzle: null,
+    violations: [],
+    marksFit: true,
+    reached: 0,
+    checks: 0,
+    ms: 0,
+    message: null,
+    shownK: null,
+    showSolution: false,
+  },
+  setPuzzleType: (puzzleType) => set({ puzzleType, mode: 'design' }),
+  setIncParams: (update) =>
+    set((s) => ({ inc: { ...s.inc, params: { ...s.inc.params, ...update } } })),
+  setInc: (update) => set((s) => ({ inc: { ...s.inc, ...update } })),
   manifest: null,
   country: null,
   loadError: null,

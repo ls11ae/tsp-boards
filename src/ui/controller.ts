@@ -17,6 +17,7 @@ import type {
   SearchResponse,
 } from '../workers/protocol';
 import { getBoard } from './board';
+import { applyIncrementalLink } from './incremental';
 import { getLabels, poolLabels } from './labels';
 import { useStore, type RunState } from './store';
 
@@ -29,13 +30,15 @@ const VERIFY_TIME_LIMIT_SEC = 120;
 
 export async function loadData(): Promise<void> {
   const base = import.meta.env.BASE_URL;
+  // Incremental puzzles need no city data; their links are handled right away.
+  const incremental = applyIncrementalLink(window.location.hash);
   try {
     const manifest = (await (await fetch(`${base}data/manifest.json`)).json()) as Manifest;
     const entry = manifest.countries[0];
     if (!entry) throw new Error('empty manifest');
     const country = parseCountryFile(await (await fetch(`${base}data/${entry.file}`)).json());
     useStore.setState({ manifest, country });
-    applyPermalink(window.location.hash);
+    if (!incremental) applyPermalink(window.location.hash);
   } catch (error) {
     useStore.setState({ loadError: error instanceof Error ? error.message : String(error) });
   }

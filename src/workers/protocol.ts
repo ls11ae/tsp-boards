@@ -9,6 +9,11 @@ import type {
   TracePoint,
 } from '../core/search/search';
 import type { BoardPlan, PlanData } from '../core/board/plan';
+import type {
+  IncrementalParams,
+  IncrementalPuzzle,
+  SequenceCheck,
+} from '../core/incremental/generate';
 import type { Verification } from '../core/verify';
 
 // --- search worker ---------------------------------------------------------------------------
@@ -92,3 +97,31 @@ export type ExactWorkerResponse =
       readonly ms: number;
     }
   | { readonly type: 'error'; readonly jobId?: number; readonly message: string };
+
+// --- incremental worker ------------------------------------------------------------------------
+
+export type IncrementalRequest =
+  | { readonly type: 'generate'; readonly id: number; readonly params: IncrementalParams }
+  | {
+      readonly type: 'check';
+      readonly id: number;
+      readonly params: IncrementalParams;
+      readonly points: readonly Point[];
+    };
+
+export type IncrementalResponse =
+  | {
+      readonly type: 'generated';
+      readonly id: number;
+      readonly puzzle: IncrementalPuzzle | null;
+      readonly reached: number;
+      readonly checks: number;
+      readonly ms: number;
+    }
+  | {
+      readonly type: 'checked';
+      readonly id: number;
+      readonly result: SequenceCheck;
+      readonly ms: number;
+    }
+  | { readonly type: 'error'; readonly id: number; readonly message: string };

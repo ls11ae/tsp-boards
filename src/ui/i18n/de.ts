@@ -136,6 +136,41 @@ export const de: Messages = {
   playDesigner: 'Im Puzzle-Designer öffnen',
   playLink: 'Spiel-Link kopieren',
 
+  puzzleType: 'Puzzle-Art',
+  mapPuzzle: 'Karten-Puzzle',
+  incrementalPuzzle: 'Schritt für Schritt',
+  incTagline:
+    'Nummerierte Nägel: Finde die kürzeste Rundreise durch die Nägel 1–3, dann 1–4 und so weiter. Jeder Schritt hat eine eindeutige Lösung mit deutlichem Abstand.',
+  incPoints: 'Nägel (N)',
+  incSpacing: 'Markenabstand (mm Faden)',
+  generate: 'Erzeugen',
+  generating: 'Punktfolge wird gesucht …',
+  incFound: (n, checks, seconds) => `${n} Nägel, ${checks} exakte Prüfungen, ${seconds} s`,
+  incFailed: (reached) =>
+    `Keine Folge gefunden (beste: ${reached} Nägel). Lücke oder Nagelzahl verringern, anderen Seed oder größeres Brett wählen.`,
+  incNoPuzzle: 'Noch kein Puzzle. Parameter wählen und erzeugen.',
+  incSteps: 'Instanzen',
+  incStepHint:
+    'Klick auf eine Instanz zeigt ihre Nägel; mit dem Häkchen auch ihre kürzeste Rundreise.',
+  incShowSolution: 'Kürzeste Rundreise zeigen',
+  incColK: 'k',
+  incColString: 'Faden',
+  incColGap: 'Lücke',
+  incColTrack: 'an der Strecke',
+  incAll: 'alle',
+  incViolations: 'Diese Folge verletzt Bedingungen:',
+  incViolation: (k, list) => `k = ${k}: ${list}`,
+  violation: (kind) =>
+    ({
+      solver: 'exakter Löser fehlgeschlagen',
+      'string-gap': 'Lücke unter dem Ziel',
+      change: 'Optimum fügt nur den neuen Nagel ein',
+      'measured-optimum': 'an der Strecke wäre eine andere Rundreise am kürzesten',
+      'measured-gap': 'Lücke an der Strecke unter dem Ziel',
+      spacing: 'Marke zu nah an der vorigen',
+    })[kind] ?? kind,
+  incMarksDontFit: 'Nicht alle Marken passen auf die Messstrecke.',
+
   permalink: 'Link kopieren',
   linkCopied: 'Link kopiert',
   dataVersionMismatch: (linked, current) =>

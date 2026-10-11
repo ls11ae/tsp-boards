@@ -117,14 +117,31 @@ interface Context {
   track: Track | null;
 }
 
-/** Exact evaluation of instance {1..k}; null if it violates a condition. */
-function checkStep(
-  ctx: Context,
+export type Violation =
+  'solver' | 'string-gap' | 'change' | 'measured-optimum' | 'measured-gap' | 'spacing';
+
+interface StepAnalysis {
+  readonly step: IncrementalStep | null;
+  readonly violations: readonly Violation[];
+}
+
+/**
+ * Exact evaluation of instance {1..k}. With `stopEarly` (the search) it returns at the first
+ * violated condition; otherwise it evaluates everything (checking a given sequence).
+ */
+function analyzeStep(
+  backend: MipBackend,
+  params: IncrementalParams,
+  track: Track,
   points: readonly Point[],
   previous: IncrementalStep | null,
-): IncrementalStep | null {
-  ctx.checks++;
-  const { params } = ctx;
+  stopEarly: boolean,
+): StepAnalysis {
+  const violations: Violation[] = [];
+  const fail = (v: Violation) => {
+    violations.push(v);
+    return stopEarly;
+  };
   const k = points.length;
   const inst = new Instance(points, params.rEffMm);
   let tour = [0, 1, 2];
@@ -132,43 +149,103 @@ function checkStep(
   let stringGap = Infinity;
   if (k > 3) {
     const start = iteratedLocalSearch(inst, new Rng(k)).tour;
-    const exact = optimalAndSecond(ctx.backend, inst, 'string', { optimal: start });
-    if (exact.optimal.status !== 'optimal' || !exact.optimal.tour) return null;
+    const exact = optimalAndSecond(backend, inst, 'string', { optimal: start });
+    if (exact.optimal.status !== 'optimal' || !exact.optimal.tour)
+      return { step: null, violations: ['solver'] };
     tour = rotateToStart(exact.optimal.tour);
     stringUm = exact.optimal.cost;
     stringGap = exact.second?.tour ? exact.second.cost - exact.optimal.cost : Infinity;
-    if (stringGap < params.targetGapMm * 1000) return null;
+    if (stringGap < params.targetGapMm * 1000 && fail('string-gap'))
+      return { step: null, violations };
   }
   // Change: removing point k from the optimum must not give the previous optimum. Every tour
   // of four points is the triangle with one point inserted, so this starts at k = 5.
   if (previous && k >= 5) {
     const shortcut = tour.filter((v) => v !== k - 1);
-    if (sameTour(shortcut, previous.tour, k - 1)) return null;
+    if (sameTour(shortcut, previous.tour, k - 1) && fail('change'))
+      return { step: null, violations };
   }
-  const u = trackDirection(ctx.track!);
+  const u = trackDirection(track);
   const forward = measuredLength(inst, tour, 0, u);
   const backward = measuredLength(inst, tour, 0, u, true);
   let other = Infinity;
   if (k > 3) {
-    const m = checkMeasurement(ctx.backend, inst, tour, 0, u, {}, { timeLimitSec: 60 });
-    if (m.status !== 'optimal') return null;
+    const m = checkMeasurement(backend, inst, tour, 0, u, {}, { timeLimitSec: 60 });
+    if (m.status !== 'optimal') return { step: null, violations: [...violations, 'solver'] };
     // The measured optimum must be the string optimum; else the board certifies another tour.
-    if (!m.sameOptimum) return null;
-    other = m.lengthUm + m.gapUm;
-    if (other - Math.max(forward, backward) < params.targetGapMm * 1000) return null;
+    if (!m.sameOptimum && fail('measured-optimum')) return { step: null, violations };
+    other = m.sameOptimum ? m.lengthUm + m.gapUm : m.lengthUm;
+    if (other - Math.max(forward, backward) < params.targetGapMm * 1000 && fail('measured-gap'))
+      return { step: null, violations };
   }
   if (previous) {
     const growth = Math.min(forward, backward) - Math.max(previous.forwardUm, previous.backwardUm);
-    if (growth < params.spacingMm * 1000) return null;
+    if (growth < params.spacingMm * 1000 && fail('spacing')) return { step: null, violations };
   }
   return {
-    k,
-    tour,
-    stringUm,
-    stringGapUm: stringGap,
-    forwardUm: forward,
-    backwardUm: backward,
-    otherUm: other,
+    step: {
+      k,
+      tour,
+      stringUm,
+      stringGapUm: stringGap,
+      forwardUm: forward,
+      backwardUm: backward,
+      otherUm: other,
+    },
+    violations,
+  };
+}
+
+/** Exact evaluation of instance {1..k} in the search; null if it violates a condition. */
+function checkStep(
+  ctx: Context,
+  points: readonly Point[],
+  previous: IncrementalStep | null,
+): IncrementalStep | null {
+  ctx.checks++;
+  return analyzeStep(ctx.backend, ctx.params, ctx.track!, points, previous, true).step;
+}
+
+export interface SequenceCheck {
+  /** The puzzle with all steps (null if the solver failed). */
+  readonly puzzle: IncrementalPuzzle | null;
+  /** Violated conditions per instance k (empty: all fine). */
+  readonly violations: readonly { readonly k: number; readonly violations: readonly Violation[] }[];
+  readonly marksFit: boolean;
+}
+
+/** Checks a given point sequence (e.g. from a link) against the parameters. */
+export function checkSequence(
+  params: IncrementalParams,
+  points: readonly Point[],
+  backend: MipBackend,
+): SequenceCheck {
+  const track = makeTrack(points[0]!, params.widthMm, params.heightMm, params.trackInsetMm);
+  const steps: IncrementalStep[] = [];
+  const violations: { k: number; violations: Violation[] }[] = [];
+  for (let k = 3; k <= points.length; k++) {
+    const result = analyzeStep(
+      backend,
+      params,
+      track,
+      points.slice(0, k),
+      steps.at(-1) ?? null,
+      false,
+    );
+    if (!result.step) return { puzzle: null, violations, marksFit: false };
+    steps.push(result.step);
+    if (result.violations.length > 0) violations.push({ k, violations: [...result.violations] });
+  }
+  return {
+    puzzle: {
+      params: { ...params, n: points.length },
+      points,
+      steps,
+      track,
+      stats: { checks: steps.length, restarts: 0 },
+    },
+    violations,
+    marksFit: marksFit(steps, track),
   };
 }
 

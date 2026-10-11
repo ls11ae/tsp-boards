@@ -24,7 +24,7 @@ export interface PermalinkData {
  * Minimal query string (the core has no URLSearchParams type): same encoding as
  * URLSearchParams for the characters used here, '+' decodes to a space.
  */
-class Query {
+export class Query {
   private readonly entries = new Map<string, string>();
 
   constructor(text = '') {

@@ -8,6 +8,7 @@ import type { MipBackend } from '../tsp/exact';
 import { sameTour } from '../tsp/tour';
 import {
   DEFAULT_INCREMENTAL,
+  checkSequence,
   generateIncremental,
   stepGapUm,
   trackMarks,
@@ -95,6 +96,19 @@ describe('incremental puzzle generator', () => {
     expect(a.points).toEqual(b.points);
     const c = generateIncremental({ ...params, seed: 4 }, backend).puzzle!;
     expect(c.points).not.toEqual(a.points);
+  }, 120_000);
+
+  it('checks a given sequence: the generated one passes, a reordered one does not', () => {
+    const { puzzle } = generateIncremental(params, backend);
+    const check = checkSequence(params, puzzle!.points, backend);
+    expect(check.violations).toEqual([]);
+    expect(check.marksFit).toBe(true);
+    expect(check.puzzle!.steps).toEqual(puzzle!.steps);
+    const swapped = [...puzzle!.points];
+    [swapped[3], swapped[6]] = [swapped[6]!, swapped[3]!];
+    const bad = checkSequence(params, swapped, backend);
+    expect(bad.puzzle!.steps).toHaveLength(6);
+    expect(bad.violations.length).toBeGreaterThan(0);
   }, 120_000);
 
   it('reports how far it got when the conditions are too strict', () => {

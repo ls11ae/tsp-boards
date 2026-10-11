@@ -139,6 +139,42 @@ export const en = {
   playDesigner: 'Open in the puzzle designer',
   playLink: 'Copy play link',
 
+  // Puzzle types and the incremental puzzle
+  puzzleType: 'Puzzle type',
+  mapPuzzle: 'Map puzzle',
+  incrementalPuzzle: 'Step by step',
+  incTagline:
+    'Numbered nails: find the shortest round trip through nails 1–3, then 1–4, and so on. Every step has a unique solution with a clear gap.',
+  incPoints: 'Nails (N)',
+  incSpacing: 'Mark spacing (mm of string)',
+  generate: 'Generate',
+  generating: 'Searching for a point sequence…',
+  incFound: (n: string, checks: string, seconds: string) =>
+    `${n} nails, ${checks} exact checks, ${seconds} s`,
+  incFailed: (reached: string) =>
+    `No sequence found (best: ${reached} nails). Lower the gap or the number of nails, try another seed or a larger board.`,
+  incNoPuzzle: 'No puzzle yet. Set the parameters and generate one.',
+  incSteps: 'Instances',
+  incStepHint: 'Click an instance to show its nails; tick the box to see its shortest round trip.',
+  incShowSolution: 'Show the shortest round trip',
+  incColK: 'k',
+  incColString: 'String',
+  incColGap: 'Gap',
+  incColTrack: 'At the track',
+  incAll: 'all',
+  incViolations: 'This sequence violates conditions:',
+  incViolation: (k: string, list: string) => `k = ${k}: ${list}`,
+  violation: (kind: string) =>
+    ({
+      solver: 'exact solver failed',
+      'string-gap': 'gap below target',
+      change: 'optimum only inserts the new nail',
+      'measured-optimum': 'another round trip is shortest at the track',
+      'measured-gap': 'gap at the track below target',
+      spacing: 'mark too close to the previous one',
+    })[kind] ?? kind,
+  incMarksDontFit: 'The marks do not all fit on the track.',
+
   // Permalink and data
   permalink: 'Copy link',
   linkCopied: 'Link copied',

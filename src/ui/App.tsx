@@ -1,24 +1,47 @@
 import { useEffect } from 'react';
 import { useBoard } from './board';
 import { BoardMap } from './components/BoardMap';
+import { IncrementalBoard, IncrementalParams, IncrementalSide } from './components/IncrementalView';
 import { ParamsPanel } from './components/ParamsPanel';
 import { PlayPanel } from './components/PlayPanel';
 import { SidePanel } from './components/SidePanel';
 import { loadData } from './controller';
 import { useT } from './i18n';
 import { usePuzzle } from './puzzle';
-import { useStore, type Language } from './store';
+import { useStore, type Language, type PuzzleType } from './store';
 
 function Header() {
   const t = useT();
   const lang = useStore((s) => s.lang);
   const setLang = useStore((s) => s.setLang);
+  const mode = useStore((s) => s.mode);
+  const puzzleType = useStore((s) => s.puzzleType);
+  const setPuzzleType = useStore((s) => s.setPuzzleType);
+  const types: [PuzzleType, string][] = [
+    ['map', t.mapPuzzle],
+    ['incremental', t.incrementalPuzzle],
+  ];
   return (
     <header className="header">
       <div>
         <h1>{t.appTitle}</h1>
         <p className="tagline">{t.appTagline}</p>
       </div>
+      {mode === 'design' && (
+        <div className="lang" role="group" aria-label={t.puzzleType}>
+          {types.map(([type, label]) => (
+            <button
+              key={type}
+              type="button"
+              className={type === puzzleType ? 'selected' : undefined}
+              aria-pressed={type === puzzleType}
+              onClick={() => setPuzzleType(type)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="lang" role="group" aria-label={t.language}>
         {(['en', 'de'] as const satisfies readonly Language[]).map((l) => (
           <button
@@ -57,6 +80,7 @@ export function App() {
   const board = useBoard();
   const puzzle = usePuzzle();
   const mode = useStore((s) => s.mode);
+  const puzzleType = useStore((s) => s.puzzleType);
 
   useEffect(() => {
     void loadData();
@@ -64,6 +88,20 @@ export function App() {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  if (puzzleType === 'incremental' && mode === 'design') {
+    return (
+      <div className="app">
+        <Header />
+        <IncrementalParams />
+        <main className="stage">
+          <IncrementalBoard />
+        </main>
+        <IncrementalSide />
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className={mode === 'play' ? 'app play' : 'app'}>

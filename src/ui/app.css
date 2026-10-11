@@ -409,6 +409,49 @@ progress {
   color: var(--ok);
 }
 
+.inc-nail {
+  fill: none;
+}
+
+.inc-nail.active {
+  fill: var(--tour);
+  opacity: 0.6;
+}
+
+table.steps {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+table.steps th,
+table.steps td {
+  text-align: right;
+  padding: 2px 4px;
+}
+
+table.steps th:first-child,
+table.steps td:first-child {
+  text-align: left;
+}
+
+table.steps tbody tr {
+  cursor: pointer;
+}
+
+table.steps tbody tr:hover {
+  background: var(--bg);
+}
+
+table.steps tr.selected {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.header {
+  flex-wrap: wrap;
+}
+
 .actions.column {
   flex-direction: column;
 }
