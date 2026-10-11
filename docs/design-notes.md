@@ -328,3 +328,22 @@ Short entries: decision; alternatives considered; reason. Newest last.
   labels random subsets almost always fit, so the constraint costs nothing there (identical
   search trajectory, +1 % time); on 400 × 533 mm or with 12–14 mm labels it binds strongly.
   Labels are drawn as outlines in the app too, so the screen shows exactly the checked boxes.
+- **2026-10-11 Self-check: start nail, loose loop and measuring scale.** The string is tied to
+  the start nail s with a loose loop (no wrap when leaving), runs the tour, comes back to s,
+  wraps around it and lies along a scale engraved from s in the direction u of the optimum's
+  outward bisector at s. Measured length M = L + r·Σ_{j≠s} θ_j + r·φ(last city) with φ the
+  angle between the arrival direction and u; u makes both directions of the optimum end at
+  the same mark. The board certifies min over directions of M, so the measured gap is
+  computed exactly with the turn-cost MIP after replacing the turn costs at s by
+  r·min(φ(i), φ(k)) (`Instance.withTurnCosts`), and bounded cheaply over all neighbour pairs
+  at s to rank start nails. The builder calibrates the string by winding the optimum and
+  marking the end at the target, so model errors common to all tours cancel. Alternatives:
+  absolute string length cut to measure (tolerances ≫ gap), a mark on the string at the start
+  nail (same start-nail effect, no reading of "how far off"), measuring the closed loop (needs
+  a knot-free closing). Reason: the start-nail effect is up to 1.5·r·(π − θ_s), several mm, the
+  size of the gap itself. Measured (`docs/experiments/start-nail-survey-2026-10-11.md`, n = 40):
+  with the best start nail the measured gap is 96–112 % of the string gap; 32–37 of 40 nails
+  have room for the scale; plan incl. MIP 1–10 s.
+- **2026-10-11 Map line work from topojson meshes**, each segment once across all layers
+  (region outline, country outline, inner borders, neighbours): a laser engraves doubled lines
+  twice. Lines are clipped to the board and interrupted under text, the scale and nails.

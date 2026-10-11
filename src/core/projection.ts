@@ -1,6 +1,7 @@
 // Board projection: one region-fitted conformal conic projection, used for the screen, all
 // metrics and the physical board. Output coordinates are millimetres on the board, y down.
 
+import type { Point } from './geometry';
 import {
   geoBounds,
   geoConicConformal,
@@ -28,6 +29,11 @@ export interface BoardProjection {
   project(lon: number, lat: number): [number, number];
   /** SVG path data in board mm (2 decimals). */
   path(object: GeoPermissibleObjects): string;
+  /**
+   * Polylines in board mm, clipped to the rectangle [x0, y0, x1, y1] (closed rings end at their
+   * start). Pass line geometry (e.g. a topojson mesh): polygons would gain clip-edge segments.
+   */
+  lines(object: GeoPermissibleObjects, clip: readonly [number, number, number, number]): Point[][];
 }
 
 export function boardProjection(region: GeoPermissibleObjects, board: BoardSpec): BoardProjection {
@@ -58,6 +64,39 @@ export function boardProjection(region: GeoPermissibleObjects, board: BoardSpec)
   const km = geoDistance(centre, nearby) * EARTH_RADIUS_KM;
   const mmPerKm = Math.hypot(x2 - x1, y2 - y1) / km;
   const pathGenerator = geoPath(projection).digits(2);
+  const lines = (
+    object: GeoPermissibleObjects,
+    [x0, y0, x1, y1]: readonly [number, number, number, number],
+  ): Point[][] => {
+    const out: Point[][] = [];
+    let current: [number, number][] = [];
+    const context = {
+      moveTo(x: number, y: number) {
+        current = [[x, y]];
+        out.push(current);
+      },
+      lineTo(x: number, y: number) {
+        current.push([x, y]);
+      },
+      closePath() {
+        if (current.length > 0) current.push(current[0]!);
+      },
+      arc() {},
+      beginPath() {},
+    };
+    // d3-geo projections cannot be copied: rebuild the fitted one with a clip extent.
+    const clipped = geoConicConformal()
+      .parallels(parallels)
+      .rotate([-centralMeridian, 0])
+      .scale(projection.scale())
+      .translate(projection.translate())
+      .clipExtent([
+        [x0, y0],
+        [x1, y1],
+      ]);
+    geoPath(clipped, context)(object);
+    return out.filter((line) => line.length >= 2);
+  };
   return {
     board,
     parallels,
@@ -65,6 +104,7 @@ export function boardProjection(region: GeoPermissibleObjects, board: BoardSpec)
     mmPerKm,
     project,
     path: (object) => pathGenerator(object) ?? '',
+    lines,
   };
 }
 

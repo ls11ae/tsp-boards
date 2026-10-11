@@ -58,6 +58,22 @@ export class Instance {
     });
   }
 
+  /**
+   * Copy in which the turn cost at node j for the neighbour pair {i, k} is cost(i, k) (µm,
+   * rounded; must be symmetric). Models a node where the string does not simply turn, such as
+   * the start nail (board/measure.ts).
+   */
+  withTurnCosts(j: number, cost: (i: number, k: number) => number): Instance {
+    const copy = this.clone();
+    const n = this.n;
+    for (let i = 0; i < n; i++) {
+      for (let k = 0; k < n; k++) {
+        if (i !== j && k !== j && i !== k) copy.t[(j * n + i) * n + k] = Math.round(cost(i, k));
+      }
+    }
+    return copy;
+  }
+
   pointsMm(): Point[] {
     return Array.from(
       { length: this.n },
