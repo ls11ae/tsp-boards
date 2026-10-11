@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useBoard } from './board';
 import { BoardMap } from './components/BoardMap';
 import { ParamsPanel } from './components/ParamsPanel';
+import { PlayPanel } from './components/PlayPanel';
 import { SidePanel } from './components/SidePanel';
 import { loadData } from './controller';
 import { useT } from './i18n';
@@ -55,6 +56,7 @@ export function App() {
   const loadError = useStore((s) => s.loadError);
   const board = useBoard();
   const puzzle = usePuzzle();
+  const mode = useStore((s) => s.mode);
 
   useEffect(() => {
     void loadData();
@@ -64,9 +66,9 @@ export function App() {
   }, [lang]);
 
   return (
-    <div className="app">
+    <div className={mode === 'play' ? 'app play' : 'app'}>
       <Header />
-      <ParamsPanel board={board} puzzle={puzzle} />
+      {mode === 'design' && <ParamsPanel board={board} puzzle={puzzle} />}
       <main className="stage">
         {loadError ? (
           <p className="error">
@@ -78,7 +80,11 @@ export function App() {
           <p className="hint">{t.loading}</p>
         )}
       </main>
-      <SidePanel board={board} puzzle={puzzle} />
+      {mode === 'play' ? (
+        board && <PlayPanel board={board} puzzle={puzzle} />
+      ) : (
+        <SidePanel board={board} puzzle={puzzle} />
+      )}
       <Footer />
     </div>
   );

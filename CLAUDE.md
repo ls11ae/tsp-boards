@@ -24,8 +24,11 @@ what we change and why, benchmark results, and open questions.
   search constraint, start nail + measuring scale with the exact gap at the scale, laser SVG,
   print template and solution sheet (PDF), export in the app and `cli/export-board.ts`.
   Measurements in `docs/design-notes.md` (Section 6.4) and `docs/experiments/`.
-- Next: Phase 3 (play mode). Open: prototype board dimensions (and calibrating the string
-  model on a real board), code license.
+- Phase 3 (play mode) complete: play links without search settings or solution, tour building
+  by clicks, judging against the exact string optimum, opt-in play records (off unless the
+  build sets `VITE_PLAY_DATA_URL`).
+- Next: Phase 4 (deployment, then the incremental puzzle). Open: prototype board dimensions
+  (and calibrating the string model on a real board), code license, play data endpoint.
 - Code license not chosen yet (decide before going public).
 
 ## Agreed direction

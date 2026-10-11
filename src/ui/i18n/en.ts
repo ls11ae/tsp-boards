@@ -118,6 +118,27 @@ export const en = {
   exportHint:
     'SVG colours: red = cut, blue = score, green = outline (more power), black = engrave. Text is converted to outlines. The solution sheet explains how to calibrate the string.',
 
+  // Play mode
+  playTitle: (n: string) => `Find the shortest round trip through ${n} cities`,
+  playHint:
+    'Click the nails in the order of your round trip and click the first nail again to close it. Click a visited nail to go back to it. The string wraps around the nails, so sharp turns cost a little extra string.',
+  playVisited: 'Nails visited',
+  playTime: 'Time',
+  playAttempts: 'Round trips checked',
+  playComputing: 'Computing the shortest round trip…',
+  playOptimal: 'Optimal! This is the shortest round trip.',
+  playLonger: (mm: string) => `Not yet: ${mm} mm of string longer than the shortest round trip.`,
+  playRevealed: (mm: string) => `The shortest round trip needs ${mm} mm of string.`,
+  playUndo: 'Undo',
+  playRestart: 'Start over',
+  playReveal: 'Show solution',
+  playRevealConfirm: 'Really show it?',
+  playShare: 'Share my anonymous results (time and attempts) to help calibrate puzzle difficulty',
+  playShareHint:
+    'Nothing is sent without this tick. No name, no location, no cookies: only the results for this puzzle.',
+  playDesigner: 'Open in the puzzle designer',
+  playLink: 'Copy play link',
+
   // Permalink and data
   permalink: 'Copy link',
   linkCopied: 'Link copied',

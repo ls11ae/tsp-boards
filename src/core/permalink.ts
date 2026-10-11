@@ -16,6 +16,8 @@ export interface PermalinkData {
   readonly selected: readonly number[] | null;
   /** 'de@1' style data version, if present. */
   readonly data: { readonly country: string; readonly version: number } | null;
+  /** 'play': open the puzzle for playing (no search settings, no solution). */
+  readonly mode: 'design' | 'play';
 }
 
 /**
@@ -104,6 +106,32 @@ export function encodePermalink(
   return `#${q.toString()}`;
 }
 
+/**
+ * Link for players: the cities and what shapes the board (region, board, nails, string,
+ * labels), but no search settings; like every link, no tour.
+ */
+export function encodePlayLink(
+  params: PuzzleParams,
+  dataVersion: { country: string; version: number },
+  selectedIds: readonly number[],
+  appVersion = '',
+): string {
+  const q = new Query();
+  q.set('v', String(PERMALINK_VERSION));
+  q.set('m', 'play');
+  q.set('d', `${dataVersion.country.toLowerCase()}@${dataVersion.version}`);
+  if (appVersion) q.set('app', appVersion);
+  q.set('r', params.region);
+  q.set('b', `${params.boardWidthMm}x${params.boardHeightMm}x${params.marginMm}`);
+  q.set('nail', String(params.nailDiameterMm));
+  q.set('str', String(params.stringThicknessMm));
+  q.set('p', String(params.minPopulation));
+  q.set('lf', String(params.labelSizeMm));
+  q.set('ll', params.labelLanguage);
+  q.set('sel', encodeIds(selectedIds));
+  return `#${q.toString()}`;
+}
+
 function num(value: string | null, fallback: number, min = -Infinity, max = Infinity): number {
   // Empty means missing (Number('') would be 0).
   const x = value === null || value.trim() === '' ? NaN : Number(value);
@@ -118,7 +146,7 @@ export function decodePermalink(hash: string): PermalinkData | null {
   const d = DEFAULT_PARAMS;
   const [bw, bh, bm] = (q.get('b') ?? '').split('x');
   const [wg, wd, wr] = (q.get('w') ?? '').split(',');
-  const params: PuzzleParams = {
+  let params: PuzzleParams = {
     region: /^[A-Z]{2}(-[A-Z0-9]{1,3})?$/.test(q.get('r') ?? '') ? q.get('r')! : d.region,
     n: Math.round(num(q.get('n'), d.n, 5, 120)),
     boardWidthMm: num(bw ?? null, d.boardWidthMm, 50, 5000),
@@ -139,6 +167,8 @@ export function decodePermalink(hash: string): PermalinkData | null {
     labelLanguage: q.get('ll') === 'en' ? 'en' : d.labelLanguage,
   };
   const selected = q.get('sel') ? decodeIds(q.get('sel')) : null;
+  // Play links carry no 'n': the puzzle has as many cities as it selects.
+  if (selected && q.get('n') === null) params = { ...params, n: selected.length };
   const match = /^([a-z]{2})@(\d+)$/.exec(q.get('d') ?? '');
   const data = match ? { country: match[1]!.toUpperCase(), version: Number(match[2]) } : null;
   return {
@@ -147,5 +177,6 @@ export function decodePermalink(hash: string): PermalinkData | null {
     excluded: decodeIds(q.get('ex')),
     selected,
     data,
+    mode: q.get('m') === 'play' && selected ? 'play' : 'design',
   };
 }

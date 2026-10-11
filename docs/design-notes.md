@@ -183,13 +183,15 @@ Board files: the SVG of a 40-city board is ~0.4 MB (text as outlines), the A4 te
 
 - Region: country, federal state, or a drawn polygon/rectangle.
 - Watch the search live (progress, metric traces); pin/exclude cities and re-optimize around them.
-- Designer mode vs. play mode; shared play links must not reveal the solution.
+- Designer mode vs. play mode; shared play links must not reveal the solution: done (play
+  links, judging against the exact optimum, opt-in play data).
 - Permalinks: parameters + seed + city IDs in the URL; no database needed.
 - Label placement as a feasibility constraint: done (8-position model, exact backtracking).
   Later: sliding labels, labels avoiding the tour strings, leader lines.
 - Export: done (laser SVG with cut/score/outline/engrave layers, 1:1 print template, solution
   sheet). Later: calibration of the string model on a real board (nail correction, start nail).
-- Play mode in the browser doubles as a measurement tool for empirical difficulty.
+- Play mode in the browser doubles as a measurement tool for empirical difficulty (records
+  are ready; an endpoint and an analysis are still to come).
 
 ## 8. Incremental puzzle (later)
 
@@ -373,3 +375,18 @@ Short entries: decision; alternatives considered; reason. Newest last.
   needs fewer pages; 10 mm overlap with dashed cut lines, a 50 mm check bar per page) after an
   overview page with instructions; the solution sheet (one A4 page) shows the tour, the order
   of cities, lengths, the measured gap and the calibration steps.
+- **2026-10-12 Play mode in the browser.** A play link (`m=play`) carries only the cities and
+  what shapes the board (region, board, nails, string, labels), no search settings and, like
+  every link, no tour; the app computes the optimum in the exact worker. Players click nails in
+  order (a visited nail cuts the trip back to it, the start nail closes a complete trip); the
+  trip is judged by string length S against the exact string optimum and the excess is shown
+  in mm of string, as the board's scale would. Alternatives: drag-and-drop editing (2-opt
+  moves), judging by Euclidean length. Reason: click-to-extend works on touch screens and
+  matches winding the string; S is what the board measures.
+- **2026-10-12 Opt-in play data, off by default.** A game record (schema 1: app and data
+  version, puzzle hash of the sorted city ids, region, n, r_eff, attempts with time and
+  excess, time to solve, whether the solution was shown, difficulty score) is POSTed once per
+  game only if the build sets `VITE_PLAY_DATA_URL` and the player ticks the consent box
+  (stored in localStorage). No ids, names, cookies or location. The endpoint (Phase 4) is not
+  part of this repository yet. Reason: calibrating difficulty needs real data, but privacy by
+  default; a static build without the variable never sends anything.

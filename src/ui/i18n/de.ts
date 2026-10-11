@@ -115,6 +115,27 @@ export const de: Messages = {
   exportHint:
     'SVG-Farben: Rot = schneiden, Blau = ritzen, Grün = Umriss (mehr Leistung), Schwarz = gravieren. Texte sind in Pfade umgewandelt. Das Lösungsblatt erklärt, wie der Faden kalibriert wird.',
 
+  playTitle: (n) => `Finde die kürzeste Rundreise durch ${n} Städte`,
+  playHint:
+    'Klicke die Nägel in der Reihenfolge deiner Rundreise an und zum Schluss wieder den ersten Nagel. Ein Klick auf einen besuchten Nagel geht zu ihm zurück. Der Faden legt sich um die Nägel, scharfe Kurven kosten also etwas mehr Faden.',
+  playVisited: 'Besuchte Nägel',
+  playTime: 'Zeit',
+  playAttempts: 'Geprüfte Rundreisen',
+  playComputing: 'Die kürzeste Rundreise wird berechnet …',
+  playOptimal: 'Optimal! Das ist die kürzeste Rundreise.',
+  playLonger: (mm) => `Noch nicht: ${mm} mm Faden länger als die kürzeste Rundreise.`,
+  playRevealed: (mm) => `Die kürzeste Rundreise braucht ${mm} mm Faden.`,
+  playUndo: 'Zurück',
+  playRestart: 'Neu anfangen',
+  playReveal: 'Lösung zeigen',
+  playRevealConfirm: 'Wirklich zeigen?',
+  playShare:
+    'Meine anonymen Ergebnisse (Zeit und Versuche) teilen, um die Schwierigkeit der Puzzles zu kalibrieren',
+  playShareHint:
+    'Ohne dieses Häkchen wird nichts gesendet. Kein Name, kein Ort, keine Cookies: nur die Ergebnisse zu diesem Puzzle.',
+  playDesigner: 'Im Puzzle-Designer öffnen',
+  playLink: 'Spiel-Link kopieren',
+
   permalink: 'Link kopieren',
   linkCopied: 'Link kopiert',
   dataVersionMismatch: (linked, current) =>

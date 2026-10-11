@@ -5,6 +5,7 @@ import { create } from 'zustand';
 import type { BoardPlan } from '../core/board/plan';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
+import { EMPTY_PLAY, type PlayAttempt, type PlayState } from '../core/play';
 import { DEFAULT_PARAMS as DEFAULT_PARAMS_VALUE, type PuzzleParams } from '../core/params';
 import type { TracePoint } from '../core/search/search';
 import type { Verification } from '../core/verify';
@@ -60,8 +61,36 @@ export interface ExportOptions {
   readonly preview: boolean;
 }
 
+export type Mode = 'design' | 'play';
+
+/** A game in play mode; slots index the puzzle's members (ascending pool index). */
+export interface PlayUi {
+  readonly state: PlayState;
+  /** performance.now() of the first click. */
+  readonly startedAt: number | null;
+  readonly attempts: readonly PlayAttempt[];
+  /** Path (slots joined) of the last judged round trip, so each trip counts once. */
+  readonly judged: string | null;
+  readonly solvedMs: number | null;
+  readonly revealed: boolean;
+  /** The record of this game was sent (with consent). */
+  readonly sent: boolean;
+}
+
+export const NEW_GAME: PlayUi = {
+  state: EMPTY_PLAY,
+  startedAt: null,
+  attempts: [],
+  judged: null,
+  solvedMs: null,
+  revealed: false,
+  sent: false,
+};
+
 export interface AppState {
   readonly lang: Language;
+  readonly mode: Mode;
+  readonly play: PlayUi;
   readonly manifest: Manifest | null;
   readonly country: CountryFile | null;
   readonly loadError: string | null;
@@ -105,6 +134,12 @@ export { DEFAULT_PARAMS } from '../core/params';
 
 export const useStore = create<AppState>()((set) => ({
   lang: initialLanguage(),
+  // Known before the data loads, so a play link never flashes the designer.
+  mode:
+    typeof window !== 'undefined' && /[#&]m=play(&|$)/.test(window.location.hash)
+      ? 'play'
+      : 'design',
+  play: NEW_GAME,
   manifest: null,
   country: null,
   loadError: null,

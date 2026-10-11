@@ -11,8 +11,8 @@ The app is a static web app: all computation, including exact TSP solves with
 [HiGHS](https://highs.dev/) compiled to WebAssembly, runs in the browser (Web Workers). The same
 TypeScript core also runs in Node for batch experiments.
 
-Status: Phase 1 (map puzzle MVP for Germany) and Phase 2 (board export: laser SVG, print
-template, solution sheet) are complete. Design notes, benchmarks and open questions are in
+Status: Phase 1 (map puzzle MVP for Germany), Phase 2 (board export: laser SVG, print template,
+solution sheet) and Phase 3 (play mode in the browser) are complete. Design notes, benchmarks and open questions are in
 [`docs/design-notes.md`](docs/design-notes.md).
 
 ## Using the app
@@ -32,6 +32,11 @@ template, solution sheet) are complete. Design notes, benchmarks and open questi
    the measuring scale, places title and labels and computes the gap as read at the scale.
    Then download the SVG for a laser cutter, a print template (1:1 on A4/A3 tiles, for boards
    built without a laser) and the solution sheet (tour, lengths, string calibration).
+
+7. "Copy play link" makes a link for players: it opens the puzzle without search settings and
+   without the solution. Players click the nails in order to build their round trip; the app
+   computes the shortest round trip in the background and tells them whether theirs is optimal
+   or how many mm of string longer it is.
 
 City labels must fit next to their nails without overlaps (8 positions per label); the search
 treats labels that do not fit like a gap below the target. Label size 0 switches labels off.
@@ -118,6 +123,13 @@ extracted into `src/core/board/font-data.ts` (generated, committed) by `npm run 
 - `scripts/`: offline data build and font extraction. `public/data/`: generated data.
 - `cli/`: Node entry points for experiments.
 - `docs/`: design notes and experiments.
+
+### Play data (optional)
+
+Builds with `VITE_PLAY_DATA_URL` set show players a consent box; with consent, one anonymous
+record per game (times, attempts, excess in mm, puzzle hash; no names or ids) is POSTed to that
+URL to calibrate difficulty. Without the variable (the default) nothing is ever sent. The format
+is `PlayRecord` in `src/core/play.ts`.
 
 ## Credits
 

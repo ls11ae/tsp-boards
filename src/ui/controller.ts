@@ -54,6 +54,7 @@ function applyPermalink(hash: string): void {
     pinned: link.pinned,
     excluded: link.excluded,
     linkWarnings: warnings,
+    mode: link.mode,
   });
   if (!link.selected) return;
   const board = getBoard(country, link.params);

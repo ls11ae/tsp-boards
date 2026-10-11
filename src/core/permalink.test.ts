@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decodePermalink, encodePermalink } from './permalink';
+import { decodePermalink, encodePermalink, encodePlayLink } from './permalink';
 import { DEFAULT_PARAMS } from './params';
 
 describe('permalinks', () => {
@@ -31,6 +31,18 @@ describe('permalinks', () => {
     expect(link!.excluded).toEqual([2867714]);
     expect(link!.data).toEqual({ country: 'DE', version: 3 });
     expect(hash).toContain('app=');
+  });
+
+  it('writes play links without search settings', () => {
+    const params = { ...DEFAULT_PARAMS, seed: 99, labelSizeMm: 9 };
+    const hash = encodePlayLink(params, { country: 'DE', version: 1 }, [2935517, 2950159]);
+    const link = decodePermalink(hash)!;
+    expect(link.mode).toBe('play');
+    expect(link.selected).toEqual([2935517, 2950159]);
+    expect(link.params.labelSizeMm).toBe(9);
+    expect(link.params.n).toBe(2);
+    expect(hash).not.toContain('s=99');
+    expect(decodePermalink('#v=1&m=play')!.mode).toBe('design');
   });
 
   it('falls back to defaults for missing or invalid values', () => {

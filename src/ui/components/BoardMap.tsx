@@ -7,6 +7,7 @@ import type { Point } from '../../core/geometry';
 import type { BoardModel } from '../board';
 import { cycleCity } from '../controller';
 import { planKey, previewPaths } from '../export';
+import { playClick } from '../play';
 import { getLabels, placeBoardLabels } from '../labels';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
@@ -78,6 +79,9 @@ export function BoardMap({
   const svgRef = useRef<SVGSVGElement>(null);
   const showTour = useStore((s) => s.showTour);
   const params = useStore((s) => s.params);
+  const mode = useStore((s) => s.mode);
+  const play = useStore((s) => s.play);
+  const playing = mode === 'play';
   const nailDiameter = params.nailDiameterMm;
   const lang = useStore((s) => s.lang);
   const labels = getLabels(board, params);
@@ -97,16 +101,39 @@ export function BoardMap({
   );
   const { widthMm, heightMm } = board.projection.board;
   const nailRadius = nailDiameter / 2;
+  const showSolution = playing ? play.revealed : showTour;
   const tourPoints =
-    puzzle?.tour && showTour
+    puzzle?.tour && showSolution
       ? puzzle.tour.map((c) => board.points[c]!.map((v) => v.toFixed(2)).join(',')).join(' ')
       : null;
+  const pathPoints =
+    playing && puzzle
+      ? play.state.path
+          .map((s) => board.points[puzzle.members[s]!]!.map((v) => v.toFixed(2)).join(','))
+          .join(' ')
+      : null;
+  const visited = new Set(playing ? play.state.path : []);
 
   const onClick = (event: MouseEvent<SVGSVGElement>) => {
     const svg = svgRef.current;
     const matrix = svg?.getScreenCTM();
     if (!svg || !matrix) return;
     const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
+    if (playing) {
+      if (!puzzle) return;
+      let slot = -1;
+      let nearest = CLICK_RADIUS_MM * 1.5;
+      puzzle.members.forEach((c, s) => {
+        const [x, y] = board.points[c]!;
+        const d = Math.hypot(x - p.x, y - p.y);
+        if (d < nearest) {
+          nearest = d;
+          slot = s;
+        }
+      });
+      if (slot >= 0) playClick(puzzle, slot);
+      return;
+    }
     let best = -1;
     let bestDist = CLICK_RADIUS_MM;
     board.points.forEach(([x, y], i) => {
@@ -139,11 +166,17 @@ export function BoardMap({
       ) : (
         <>
           <MapLayers board={board} />
-          <PoolDots points={board.points} />
+          {!playing && <PoolDots points={board.points} />}
         </>
       )}
       {tourPoints && <polygon className="tour" points={tourPoints} />}
-      <Marks board={board} />
+      {pathPoints &&
+        (play.state.closed ? (
+          <polygon className="play-path" points={pathPoints} />
+        ) : (
+          <polyline className="play-path" points={pathPoints} />
+        ))}
+      {!playing && <Marks board={board} />}
       {/* Board labels are a board property (label language), not the UI language. */}
       {!preview && (
         <g className="labels">
@@ -152,11 +185,13 @@ export function BoardMap({
           ))}
         </g>
       )}
-      {puzzle?.members.map((c) => {
+      {puzzle?.members.map((c, slot) => {
         const [x, y] = board.points[c]!;
         const city = board.pool[c]!;
+        const state =
+          playing && play.state.path[0] === slot ? ' start' : visited.has(slot) ? ' visited' : '';
         return (
-          <g key={c} className="city">
+          <g key={c} className={`city${state}`}>
             <title>{`${city.name} (${city.pop.toLocaleString(lang === 'de' ? 'de-DE' : 'en-GB')})`}</title>
             <circle
               className="nail-halo"

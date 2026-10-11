@@ -4,6 +4,7 @@ import type { BoardModel } from '../board';
 import { startSearch, stopSearch } from '../controller';
 import { useFormat, useT } from '../i18n';
 import { encodePermalink } from '../../core/permalink';
+import { playLink } from '../play';
 import type { PuzzleView } from '../puzzle';
 import { useStore, type UiParams } from '../store';
 
@@ -72,7 +73,16 @@ export function ParamsPanel({
   const region = useStore((s) => s.params.region);
   const setParams = useStore((s) => s.setParams);
   const status = useStore((s) => s.run.status);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<'link' | 'play' | null>(null);
+  const copy = (text: string, which: 'link' | 'play') => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(which);
+        setTimeout(() => setCopied(null), 2000);
+      })
+      .catch(() => setCopied(null));
+  };
 
   const copyLink = () => {
     const { params } = useStore.getState();
@@ -87,14 +97,7 @@ export function ParamsPanel({
       __APP_VERSION__,
     );
     window.history.replaceState(null, '', hash);
-    const url = window.location.href;
-    navigator.clipboard
-      .writeText(url)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      })
-      .catch(() => setCopied(false));
+    copy(window.location.href, 'link');
   };
 
   return (
@@ -145,7 +148,17 @@ export function ParamsPanel({
           </button>
         )}
         <button type="button" onClick={copyLink} disabled={!country}>
-          {copied ? t.linkCopied : t.permalink}
+          {copied === 'link' ? t.linkCopied : t.permalink}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const url = puzzle ? playLink(puzzle) : null;
+            if (url) copy(url, 'play');
+          }}
+          disabled={!country || !puzzle}
+        >
+          {copied === 'play' ? t.linkCopied : t.playLink}
         </button>
       </div>
     </aside>
