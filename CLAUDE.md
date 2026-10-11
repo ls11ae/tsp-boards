@@ -20,7 +20,12 @@ what we change and why, benchmark results, and open questions.
   solvers (Euclidean and turn-cost MIP), search with two-level evaluation, browser app (EN/DE)
   with live search, exact verification in a worker, pin/exclude, permalinks. Measurements in
   `docs/design-notes.md` (Sections 6, 11) and `docs/experiments/`.
-- Next: Phase 2 (board export). Open: prototype board dimensions, code license.
+- Phase 2 (board export) complete: embedded board font (text as outlines), label placement as
+  search constraint, start nail + measuring scale with the exact gap at the scale, laser SVG,
+  print template and solution sheet (PDF), export in the app and `cli/export-board.ts`.
+  Measurements in `docs/design-notes.md` (Section 6.4) and `docs/experiments/`.
+- Next: Phase 3 (play mode). Open: prototype board dimensions (and calibrating the string
+  model on a real board), code license.
 - Code license not chosen yet (decide before going public).
 
 ## Agreed direction
@@ -53,6 +58,9 @@ what we change and why, benchmark results, and open questions.
 - Exact solves in WASM take ~0.15–0.7 s per tour for n = 40–60. Do not run them in every search
   step: use fast heuristics plus a cheap upper bound on the second-best tour (best local
   modification of the optimal tour), and verify exactly only for promising candidates.
+- The self-check reads the string end on a scale at the start nail; the wrap around the start
+  nail changes the measured gap by up to 1.5·r·(π − θ_s). The board certifies the measured
+  optimum (turn costs at s replaced by the end wrap, `board/measure.ts`), computed exactly.
 - The local gap bound (all 2-opt, pure 3-opt and double-bridge alternatives of the optimum)
   overestimates the true gap in 10–20 % of instances, and a search maximising it selects
   exactly those. Combined with the string lengths of the exact Euclidean optimum and

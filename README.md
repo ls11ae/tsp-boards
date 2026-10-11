@@ -11,8 +11,9 @@ The app is a static web app: all computation, including exact TSP solves with
 [HiGHS](https://highs.dev/) compiled to WebAssembly, runs in the browser (Web Workers). The same
 TypeScript core also runs in Node for batch experiments.
 
-Status: Phase 1 (map puzzle MVP for Germany) is complete. Design notes, benchmarks and open
-questions are in [`docs/design-notes.md`](docs/design-notes.md).
+Status: Phase 1 (map puzzle MVP for Germany) and Phase 2 (board export: laser SVG, print
+template, solution sheet) are complete. Design notes, benchmarks and open questions are in
+[`docs/design-notes.md`](docs/design-notes.md).
 
 ## Using the app
 
@@ -27,6 +28,28 @@ questions are in [`docs/design-notes.md`](docs/design-notes.md).
    third time to make it neutral again; then search again.
 5. "Copy link" stores parameters, pins and the selected cities in the URL, so the puzzle can be
    shared and reopened. The interface is in English and German.
+6. Board export: once a puzzle is checked exactly, "Plan the board" chooses the start nail and
+   the measuring scale, places title and labels and computes the gap as read at the scale.
+   Then download the SVG for a laser cutter, a print template (1:1 on A4/A3 tiles, for boards
+   built without a laser) and the solution sheet (tour, lengths, string calibration).
+
+City labels must fit next to their nails without overlaps (8 positions per label); the search
+treats labels that do not fit like a gap below the target. Label size 0 switches labels off.
+
+### The self-check on the board
+
+The string is tied to the start nail with a loose loop, wound around all nails, brought back
+to the start nail and laid along the engraved scale. Whoever builds the board calibrates the
+string once: wind the optimal tour from the solution sheet and mark the string at the target
+mark "0". For the shortest round trip the string end then reaches 0; every other round trip
+ends at least the gap shown on the solution sheet before it, and the scale shows how many mm of
+string a solution uses too many. The gap at the scale is computed exactly, including the wrap
+around the start nail.
+
+SVG colours: red = cut through (outline, nail holes), blue = score (thin lines, scale), green =
+outline (score with more power), black = engrave (text, marks). All text is converted to
+outlines. Many laser drivers expect hairlines for cutting (e.g. 0.025 mm): set the SVG line
+width in the export options.
 
 The string length includes the wrap around each nail: S = L + r·Σ|θ| with r = nail radius +
 half the string thickness and θ the turning angle at each nail. Default board dimensions are
@@ -70,15 +93,29 @@ npx tsx cli/search.ts --n 40 --seed 1 --iterations 2000 --verify 3
 Runs the puzzle search for Germany and prints the result as JSON; options are listed in the
 header comment of each script. Further scripts: `cli/bench-exact.ts` (exact solver
 timings), `cli/ub-tightness.ts` (quality of the local gap bound), `cli/gap-survey.ts`
-(achievable gaps). Results are recorded in `docs/experiments/` and `docs/design-notes.md`.
+(achievable gaps), `cli/label-survey.ts` (label feasibility), `cli/start-nail-survey.ts`
+(gap at the scale). Results are recorded in `docs/experiments/` and `docs/design-notes.md`.
+
+```bash
+npx tsx cli/export-board.ts --link '<permalink>' --out boards --paper A3
+```
+
+Exports a puzzle from a permalink (it must contain the selected cities) as laser SVG, print
+template and solution sheet.
+
+### Board font
+
+Board text uses Fira Sans Condensed Medium (SIL Open Font License 1.1). Its outlines are
+extracted into `src/core/board/font-data.ts` (generated, committed) by `npm run font:build`.
 
 ## Layout
 
 - `src/core/`: pure TypeScript (no DOM, no Node APIs): geometry, projection, TSP heuristics,
-  exact solver wrapper, metrics, search. Runs in browser and Node.
+  exact solver wrapper, metrics, search, board export (`src/core/board/`: font, labels, start
+  nail and scale, drawing, SVG and PDF). Runs in browser and Node.
 - `src/workers/`: Web Worker entry points (search, exact solves).
 - `src/ui/`: the React web app.
-- `scripts/`: offline data build. `public/data/`: generated data.
+- `scripts/`: offline data build and font extraction. `public/data/`: generated data.
 - `cli/`: Node entry points for experiments.
 - `docs/`: design notes and experiments.
 
@@ -89,6 +126,9 @@ TU Dortmund, Chair 11 Algorithm Engineering, 2026.
 
 Exact solves use [HiGHS](https://highs.dev/) (MIT license) via the
 [`highs`](https://github.com/lovasoa/highs-js) npm package (MIT license).
+
+Board text: [Fira Sans Condensed](https://github.com/mozilla/Fira) by The Mozilla Foundation and
+Telefonica S.A., licensed under the [SIL Open Font License 1.1](https://openfontlicense.org).
 
 ## Data attribution
 

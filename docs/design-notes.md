@@ -163,15 +163,32 @@ candidates (also in the browser: same V8/WASM engine), not for every search step
   1.6 mm (19.03 → 17.41 mm); never below the target.
 - Stop criterion of the working mode (achievable gap below ~3 mm at n = 40): not met.
 
+### 6.4 Board export (Phase 2, 2026-10-11)
+
+Labels (`cli/label-survey.ts`, `docs/experiments/label-survey-2026-10-11.md`, 200 random
+subsets per row): on 600 × 800 mm, 8–10 mm labels fit for 98–100 % of random subsets (n = 40–60);
+on 400 × 533 mm with 10–12 mm labels only 3–87 %. The exact placement needs about n backtracking
+nodes when a placement exists. Optimised puzzles on the default board were never limited by
+labels.
+
+Gap at the scale (`cli/start-nail-survey.ts`, `docs/experiments/start-nail-survey-2026-10-11.md`,
+top three candidates of three runs, n = 40): 32–37 of 40 nails have room for the scale; with the
+chosen start nail the exact measured gap is 95–112 % of the string gap (7.9–18.2 mm); the
+cheap bound is 1–2 mm below. Planning including the MIP: 1–10 s.
+
+Board files: the SVG of a 40-city board is ~0.4 MB (text as outlines), the A4 template
+(1 + 15 pages) and the solution sheet ~0.35–0.5 MB each.
+
 ## 7. Interaction and features (ideas)
 
 - Region: country, federal state, or a drawn polygon/rectangle.
 - Watch the search live (progress, metric traces); pin/exclude cities and re-optimize around them.
 - Designer mode vs. play mode; shared play links must not reveal the solution.
 - Permalinks: parameters + seed + city IDs in the URL; no database needed.
-- Label placement as a feasibility constraint (e.g. 4-position model); fits the chair's research.
-- Export: laser-ready SVG (separate cut/engrave layers, nail holes, labels, markings incl. nail
-  correction) and a printable PDF for schools without a laser cutter.
+- Label placement as a feasibility constraint: done (8-position model, exact backtracking).
+  Later: sliding labels, labels avoiding the tour strings, leader lines.
+- Export: done (laser SVG with cut/score/outline/engrave layers, 1:1 print template, solution
+  sheet). Later: calibration of the string model on a real board (nail correction, start nail).
 - Play mode in the browser doubles as a measurement tool for empirical difficulty.
 
 ## 8. Incremental puzzle (later)
@@ -205,6 +222,8 @@ candidates (also in the browser: same V8/WASM engine), not for every search step
 
 - Code license.
 - Dimensions, nail diameter and string of existing prototype boards (for defaults/calibration).
+- Calibration of the string model on a real board: does the measured gap match? (Wind the
+  optimum and the runner-up on a board and compare the string ends at the scale.)
 - Is the string-length self-check the only verification mechanism, given the tiny gaps?
 - Hosting details on the chair server.
 
@@ -342,7 +361,7 @@ Short entries: decision; alternatives considered; reason. Newest last.
   nail (same start-nail effect, no reading of "how far off"), measuring the closed loop (needs
   a knot-free closing). Reason: the start-nail effect is up to 1.5·r·(π − θ_s), several mm, the
   size of the gap itself. Measured (`docs/experiments/start-nail-survey-2026-10-11.md`, n = 40):
-  with the best start nail the measured gap is 96–112 % of the string gap; 32–37 of 40 nails
+  with the chosen start nail the measured gap is 95–112 % of the string gap; 32–37 of 40 nails
   have room for the scale; plan incl. MIP 1–10 s.
 - **2026-10-11 Map line work from topojson meshes**, each segment once across all layers
   (region outline, country outline, inner borders, neighbours): a laser engraves doubled lines
