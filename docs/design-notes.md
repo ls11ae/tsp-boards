@@ -305,3 +305,14 @@ Short entries: decision; alternatives considered; reason. Newest last.
   proposal weight 0, so pool indices (and the results on display) stay valid. A greedy
   placement (pinned first, then by population) checks before a run whether n cities fit at
   the minimum distance and whether pins conflict.
+- **2026-10-11 Roadmap source**: `docs/roadmap.md` does not exist (neither in the repository nor
+  on `origin`), so work follows the roadmap in `CLAUDE.md`. "Point 0" = re-establish the
+  baseline on a fresh checkout (`npm ci`, `npm run check`: green), then Phase 2.
+- **2026-10-11 Board text as outlines from an embedded font**: Fira Sans Condensed Medium (OFL),
+  glyph outlines and metrics extracted at build time (`npm run font:build`, opentype.js as dev
+  dependency) into a generated core module (56 KB). The core measures labels exactly (needed
+  for label placement during the search) and writes text as paths, which laser software
+  (Glowforge, LightBurn) and the PDF writer need. Alternatives: SVG `<text>` (fonts differ per
+  machine, many laser tools ignore text), Hershey stroke fonts (no ß/umlauts), opentype.js at
+  runtime (170 KB, async). Condensed, because label space limits n. No kerning (the subset
+  carries none).

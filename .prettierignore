@@ -5,3 +5,4 @@ public/data/
 docs/experiments/
 package-lock.json
 docs/data/
+src/core/board/font-data.ts
