@@ -14,5 +14,3 @@ CLAUDE.local.md
 .claude/settings.local.json
 .claude/worktrees/
 
-# local previews of exported boards
-public/_scratch/
