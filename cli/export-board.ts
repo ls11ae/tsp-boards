@@ -8,7 +8,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { measuredLength } from '../src/core/board/measure';
 import { planBoard } from '../src/core/board/plan';
-import { solutionPdf, templatePdf, type Paper } from '../src/core/board/print';
+import { mapTemplateText, solutionPdf, templatePdf, type Paper } from '../src/core/board/print';
 import { boardPlanInput, boardSetup, drawPuzzleBoard } from '../src/core/board/setup';
 import { boardSvg } from '../src/core/board/svg';
 import { decodePermalink } from '../src/core/permalink';
@@ -88,9 +88,7 @@ writeFileSync(
   `${base}-template-${paper}.pdf`,
   templatePdf({
     drawing: marked,
-    texts: setup.texts,
-    region,
-    nailDiameterMm: link.params.nailDiameterMm,
+    ...mapTemplateText(setup.texts, region, link.params.nailDiameterMm),
     paper,
   }),
 );

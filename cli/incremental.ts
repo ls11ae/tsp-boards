@@ -1,8 +1,15 @@
 // Generates an incremental puzzle and prints its points and per-instance figures as JSON.
 // Usage: npx tsx cli/incremental.ts [--n 10] [--seed 1] [--board 400x400] [--gap 5]
-//   [--spacing 10] [--min-dist 30] [--out file.json]
+//   [--spacing 10] [--min-dist 30] [--out file.json] [--export dir] [--lang de|en]
+// --export writes the laser SVG, the print template (A4) and the solution sheet.
 
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { templatePdf } from '../src/core/board/print';
+import { boardSvg } from '../src/core/board/svg';
+import { drawIncremental } from '../src/core/incremental/drawing';
+import { incrementalSolutionPdf, incrementalTemplateText } from '../src/core/incremental/print';
+import { INCREMENTAL_TEXTS } from '../src/core/incremental/texts';
 import {
   DEFAULT_INCREMENTAL,
   generateIncremental,
@@ -62,3 +69,46 @@ const json = JSON.stringify(out, null, 2) + '\n';
 const file = arg('out', '');
 if (file) writeFileSync(file, json);
 else process.stdout.write(json);
+
+const dir = arg('export', '');
+if (dir && puzzle) {
+  const lang = arg('lang', 'de') === 'en' ? 'en' : 'de';
+  const texts = INCREMENTAL_TEXTS[lang];
+  const options = {
+    nailDiameterMm: 2,
+    labelSizeMm: 8,
+    holes: 'cut' as const,
+    cornerRadiusMm: 5,
+    line: texts.boardLine(params.n),
+  };
+  mkdirSync(dir, { recursive: true });
+  const base = path.join(dir, `tsp-incremental-${params.n}-s${params.seed}`);
+  writeFileSync(
+    `${base}.svg`,
+    boardSvg(drawIncremental(puzzle, options).drawing, {
+      strokeMm: 0.1,
+      title: texts.templateTitle,
+    }),
+  );
+  const marked = drawIncremental(puzzle, { ...options, holes: 'mark' }).drawing;
+  writeFileSync(
+    `${base}-template-A4.pdf`,
+    templatePdf({ drawing: marked, ...incrementalTemplateText(texts, 2), paper: 'A4' }),
+  );
+  writeFileSync(
+    `${base}-solution.pdf`,
+    incrementalSolutionPdf({
+      puzzle,
+      drawing: marked,
+      texts,
+      link: '',
+      formatNumber: (v, d) =>
+        v.toLocaleString(lang === 'de' ? 'de-DE' : 'en-GB', {
+          minimumFractionDigits: d,
+          maximumFractionDigits: d,
+        }),
+    }),
+  );
+  process.stderr.write(`wrote ${base}.svg, -template-A4.pdf, -solution.pdf
+`);
+}

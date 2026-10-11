@@ -13,7 +13,7 @@ import { Rng } from '../rng';
 import { euclideanLength, stringLength } from '../tsp/tour';
 import { verifyCandidate, type Verification } from '../verify';
 import { measuredLength } from './measure';
-import { solutionPdf, templatePdf, tileLayout } from './print';
+import { mapTemplateText, solutionPdf, templatePdf, tileLayout } from './print';
 import { pathBounds } from './shapes';
 import { planBoard, type BoardPlan } from './plan';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from './setup';
@@ -122,9 +122,7 @@ describe('board export (Germany, 25 cities)', () => {
   it('writes a valid print template and solution sheet', () => {
     const template = templatePdf({
       drawing: drawPuzzleBoard(setup, plan, { holes: 'mark' }),
-      texts: setup.texts,
-      region: 'Deutschland',
-      nailDiameterMm: 2,
+      ...mapTemplateText(setup.texts, 'Deutschland', 2),
       paper: 'A4',
     });
     checkPdf(template, 1 + 15);

@@ -182,6 +182,18 @@ function tourLengthMm(points: readonly Point[], tour: readonly number[]): number
   return sum;
 }
 
+/** Smallest interior angle of a triangle (radians). */
+function minAngle([a, b, c]: readonly [Point, Point, Point]): number {
+  const angle = (p: Point, q: Point, r: Point) => {
+    const ux = q[0] - p[0];
+    const uy = q[1] - p[1];
+    const vx = r[0] - p[0];
+    const vy = r[1] - p[1];
+    return Math.abs(Math.atan2(ux * vy - uy * vx, ux * vx + uy * vy));
+  };
+  return Math.min(angle(a, b, c), angle(b, c, a), angle(c, a, b));
+}
+
 /** Raster of candidate positions inside the margins. */
 function raster(params: IncrementalParams): Point[] {
   const { widthMm: w, heightMm: h, marginMm: m, rasterMm: g } = params;
@@ -292,12 +304,16 @@ export function generateIncremental(
   const grid = raster(params);
   let restarts = 0;
   while (ctx.checks < params.maxChecks && restarts < 100) {
-    // Initial triangle: random raster points at the minimum distance.
+    // Initial triangle: random raster points at the minimum distance, no sliver (all angles
+    // at least 25°), so the first instance reads as a triangle on the board.
     const points: Point[] = [];
     for (let attempt = 0; points.length < 3 && attempt < 1000; attempt++) {
       const p = ctx.rng.pick(grid);
-      if (points.every((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) >= params.minDistanceMm))
-        points.push(p);
+      if (!points.every((q) => Math.hypot(p[0] - q[0], p[1] - q[1]) >= params.minDistanceMm))
+        continue;
+      if (points.length === 2 && minAngle([points[0]!, points[1]!, p]) < (25 * Math.PI) / 180)
+        continue;
+      points.push(p);
     }
     ctx.track = makeTrack(points[0]!, params.widthMm, params.heightMm, params.trackInsetMm);
     const leg: [Point, Point] = [ctx.track.polyline[0]!, ctx.track.polyline[1]!];

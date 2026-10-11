@@ -2,7 +2,7 @@
 // drawings and files are made on the main thread from the shared core pipeline.
 
 import { planData, type BoardPlan } from '../core/board/plan';
-import { solutionPdf, templatePdf } from '../core/board/print';
+import { mapTemplateText, solutionPdf, templatePdf } from '../core/board/print';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import { boardSvg } from '../core/board/svg';
 import type { Layer } from '../core/board/drawing';
@@ -205,9 +205,7 @@ export function downloadBoard(
   if (kind === 'template') {
     const pdf = templatePdf({
       drawing,
-      texts: setup.texts,
-      region: regionName(setup),
-      nailDiameterMm: params.nailDiameterMm,
+      ...mapTemplateText(setup.texts, regionName(setup), params.nailDiameterMm),
       paper: exportOptions.paper,
     });
     save(pdf, 'application/pdf', `tsp-board-${name}-template-${exportOptions.paper}.pdf`);

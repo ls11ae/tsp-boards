@@ -22,10 +22,10 @@ export const PAPER_SIZES: Record<Paper, readonly [number, number]> = {
   A3: [297, 420],
 };
 
-const BLACK: Rgb = [0, 0, 0];
-const GREY: Rgb = [0.45, 0.45, 0.45];
+export const BLACK: Rgb = [0, 0, 0];
+export const GREY: Rgb = [0.45, 0.45, 0.45];
 const LIGHT: Rgb = [0.75, 0.75, 0.75];
-const RED: Rgb = [0.8, 0.1, 0.05];
+export const RED: Rgb = [0.8, 0.1, 0.05];
 
 const PRINT_STYLE: Record<Layer, { color: Rgb; width: number }> = {
   cut: { color: BLACK, width: 0.35 },
@@ -35,7 +35,7 @@ const PRINT_STYLE: Record<Layer, { color: Rgb; width: number }> = {
 };
 
 /** Draws the board drawing with print styles (black and grey). */
-function drawForPrint(c: PdfCanvas, drawing: BoardDrawing, lineScale = 1): void {
+export function drawForPrint(c: PdfCanvas, drawing: BoardDrawing, lineScale = 1): void {
   for (const layer of ['score', 'outline', 'cut', 'engrave'] as const) {
     const style = PRINT_STYLE[layer];
     for (const item of drawing.items) {
@@ -46,12 +46,19 @@ function drawForPrint(c: PdfCanvas, drawing: BoardDrawing, lineScale = 1): void 
   }
 }
 
-function text(c: PdfCanvas, value: string, x: number, y: number, size: number, color = BLACK) {
+export function text(
+  c: PdfCanvas,
+  value: string,
+  x: number,
+  y: number,
+  size: number,
+  color = BLACK,
+): void {
   c.fill(textPath(value, x, y, size), color);
 }
 
 /** Wrapped paragraphs from (x, y) (top), returns the y below the last line. */
-function paragraphs(
+export function paragraphs(
   c: PdfCanvas,
   list: readonly string[],
   x: number,
@@ -87,7 +94,7 @@ export interface TileLayout {
   readonly top: number;
 }
 
-const MARGIN = 10;
+export const MARGIN = 10;
 const HEADER = 10;
 const OVERLAP = 10;
 
@@ -144,20 +151,39 @@ function checkBar(c: PdfCanvas, x: number, y: number, label: string): void {
   text(c, label, x + 52, y + 1.8, 3);
 }
 
-export interface TemplateInput {
+export interface TemplateText {
+  readonly title: string;
+  /** Instructions for the overview page. */
+  readonly steps: (pages: number, paper: Paper) => string[];
+  readonly tile: (name: string, row: number, col: number) => string;
+  readonly checkBar: string;
+}
+
+export interface TemplateInput extends TemplateText {
   /** The board drawn with drill marks (holes: 'mark'). */
   readonly drawing: BoardDrawing;
-  readonly texts: BoardTexts;
-  readonly region: string;
-  readonly nailDiameterMm: number;
   readonly paper: Paper;
+}
+
+/** Template texts of a map puzzle board. */
+export function mapTemplateText(
+  texts: BoardTexts,
+  region: string,
+  nailDiameterMm: number,
+): TemplateText {
+  return {
+    title: texts.templateTitle(region),
+    steps: (pages, paper) => texts.templateSteps({ nailMm: nailDiameterMm, pages, paper }),
+    tile: texts.tile,
+    checkBar: texts.checkBar,
+  };
 }
 
 /** Print template: overview page with instructions, then the 1:1 tiles. */
 export function templatePdf(input: TemplateInput): Uint8Array<ArrayBuffer> {
-  const { drawing, texts } = input;
+  const { drawing } = input;
   const layout = tileLayout(drawing.width, drawing.height, input.paper);
-  const doc = new PdfDocument(input.texts.templateTitle(input.region));
+  const doc = new PdfDocument(input.title);
   doc.addForm('Board', drawing.width, drawing.height, (c) => drawForPrint(c, drawing));
   const pages = layout.cols * layout.rows;
 
@@ -166,19 +192,12 @@ export function templatePdf(input: TemplateInput): Uint8Array<ArrayBuffer> {
   doc.addPage(pw, ph, (c) => {
     let y = MARGIN;
     const width = pw - 2 * MARGIN;
-    for (const line of wrapText(texts.templateTitle(input.region), 6, width)) {
+    for (const line of wrapText(input.title, 6, width)) {
       text(c, line, MARGIN, y + FONT_METRICS.ascender * 6, 6);
       y += 7.5;
     }
     y += 2;
-    y = paragraphs(
-      c,
-      texts.templateSteps({ nailMm: input.nailDiameterMm, pages, paper: input.paper }),
-      MARGIN,
-      y,
-      width,
-      3.6,
-    );
+    y = paragraphs(c, input.steps(pages, input.paper), MARGIN, y, width, 3.6);
     const avail = ph - MARGIN - y - 4;
     const scale = Math.min(width / drawing.width, avail / drawing.height);
     const ox = MARGIN + (width - drawing.width * scale) / 2;
@@ -207,8 +226,8 @@ export function templatePdf(input: TemplateInput): Uint8Array<ArrayBuffer> {
         const bx = col * layout.stepX;
         const by = row * layout.stepY;
         const name = tileName(row, col);
-        text(c, texts.tile(name, row + 1, col + 1), MARGIN, MARGIN + 4, 4);
-        checkBar(c, layout.pageWidth - MARGIN - 62, MARGIN + 1.5, texts.checkBar);
+        text(c, input.tile(name, row + 1, col + 1), MARGIN, MARGIN + 4, 4);
+        checkBar(c, layout.pageWidth - MARGIN - 62, MARGIN + 1.5, input.checkBar);
         c.save()
           .clip(rectPath(layout.left, layout.top, layout.tileWidth, layout.tileHeight))
           .transform(translate(layout.left - bx, layout.top - by))

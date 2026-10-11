@@ -398,3 +398,24 @@ Short entries: decision; alternatives considered; reason. Newest last.
   A dependency-free reference endpoint for play data (`server/play-data.mjs`, Node) validates
   records strictly and stores them with the day only; alternatives (PHP script, hosted form
   services) depend on the server and were not built.
+- **2026-10-12 Incremental puzzle: exact sequence search with a measuring track.** Held–Karp
+  keeping the two best values per state (n ≤ 16) gives the two shortest Hamiltonian paths
+  between all pairs of the points so far; every raster position (5 mm) for the next point is
+  evaluated in O(k²) (the thesis' weighted detour diagram without Vorosketch). Candidates
+  pass Euclidean proxies (gap ≥ 1.2 δ, growth ≥ 1.2 ε, no "inserted only" optimum, minimum
+  distance, clearance from earlier optimal tours and the string's first leg), are ranked by
+  their weakest slack, and the best few are checked exactly with the turn-cost MIP; a step
+  without candidates is a dead end and the depth-first search backtracks, with restarts from
+  a new triangle. Alternatives: greedy look-ahead (thesis; dead ends unpenalised), Euclidean
+  only. Measured (`docs/experiments/incremental-survey-2026-10-12.md`, 400 × 400 mm): N = 16
+  with δ = 10 mm in ~7 s, δ = 15 mm only sometimes within 400 checks.
+- **2026-10-12 Incremental board: one track for all instances.** The lengths of the instances
+  differ by up to ~1 m, so a straight scale does not fit: the string, back at nail 1, runs to
+  the nearest corner peg and clockwise along the board edge around the corner pegs; mark k
+  sits where the string end lies for the optimum of {1..k} (calibrated with the full instance
+  in the listed direction). The end wrap at nail 1 differs between the two directions of an
+  optimum (the track direction is fixed), so each mark is a field covering both, and the
+  required gap is measured from the far end of the field. The change rule ("not only
+  inserted") starts at k = 5: every four-point tour is the triangle with one point inserted.
+  Later points keep 4 mm clear of earlier optimal tours, since their nails stand on the board
+  while earlier instances are played.
