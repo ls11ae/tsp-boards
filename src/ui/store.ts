@@ -2,54 +2,16 @@
 // store at most ~10 times per second.
 
 import { create } from 'zustand';
-import type { CountryFile, LabelLanguage, Manifest } from '../core/data';
+import type { CountryFile, Manifest } from '../core/data';
+import { DEFAULT_PARAMS as DEFAULT_PARAMS_VALUE, type PuzzleParams } from '../core/params';
 import type { TracePoint } from '../core/search/search';
 import type { Verification } from '../core/verify';
 import type { SearchProgress } from '../workers/protocol';
 
 export type Language = 'en' | 'de';
 
-export interface UiParams {
-  readonly region: string;
-  readonly n: number;
-  readonly boardWidthMm: number;
-  readonly boardHeightMm: number;
-  readonly marginMm: number;
-  readonly nailDiameterMm: number;
-  readonly stringThicknessMm: number;
-  readonly minDistanceMm: number;
-  readonly targetGapMm: number;
-  readonly minPopulation: number;
-  readonly seed: number;
-  readonly iterations: number;
-  readonly weightGap: number;
-  readonly weightDifficulty: number;
-  readonly weightRecognizability: number;
-  /** Font size of the board labels in mm; 0 = no labels (and no label constraint). */
-  readonly labelSizeMm: number;
-  readonly labelLanguage: LabelLanguage;
-}
-
-/** Placeholders until the dimensions of the prototype boards are known. */
-export const DEFAULT_PARAMS: UiParams = {
-  region: 'DE',
-  n: 40,
-  boardWidthMm: 600,
-  boardHeightMm: 800,
-  marginMm: 30,
-  nailDiameterMm: 2,
-  stringThicknessMm: 1,
-  minDistanceMm: 25,
-  targetGapMm: 5,
-  minPopulation: 5000,
-  seed: 1,
-  iterations: 1000,
-  weightGap: 1,
-  weightDifficulty: 0.5,
-  weightRecognizability: 0.5,
-  labelSizeMm: 8,
-  labelLanguage: 'de',
-};
+/** Puzzle parameters (core); the UI edits them as they are. */
+export type UiParams = PuzzleParams;
 
 export type RunStatus = 'idle' | 'running' | 'done' | 'stopped' | 'error';
 
@@ -118,12 +80,14 @@ function initialLanguage(): Language {
     : 'en';
 }
 
+export { DEFAULT_PARAMS } from '../core/params';
+
 export const useStore = create<AppState>()((set) => ({
   lang: initialLanguage(),
   manifest: null,
   country: null,
   loadError: null,
-  params: DEFAULT_PARAMS,
+  params: DEFAULT_PARAMS_VALUE,
   run: { status: 'idle', runId: 0, progress: null, trace: [], error: null },
   shown: { kind: 'auto' },
   loaded: null,

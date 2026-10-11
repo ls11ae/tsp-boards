@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { decodePermalink, encodePermalink } from './permalink';
-import { DEFAULT_PARAMS } from './store';
+import { DEFAULT_PARAMS } from './params';
 
 describe('permalinks', () => {
   it('round-trip parameters, marks, selection and data version', () => {
@@ -13,10 +13,16 @@ describe('permalinks', () => {
       labelSizeMm: 10,
       labelLanguage: 'en' as const,
     };
-    const hash = encodePermalink(params, { country: 'DE', version: 3 }, [2935517, 2950159], {
-      pinned: [2935517],
-      excluded: [2867714],
-    });
+    const hash = encodePermalink(
+      params,
+      { country: 'DE', version: 3 },
+      [2935517, 2950159],
+      {
+        pinned: [2935517],
+        excluded: [2867714],
+      },
+      '0.0.0+abc1234',
+    );
     const link = decodePermalink(hash);
     expect(link).not.toBeNull();
     expect(link!.params).toEqual(params);

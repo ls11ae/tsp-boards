@@ -3,12 +3,12 @@
 // `sel` holds the GeoNames ids of the selected cities in base 36 and restores the puzzle
 // exactly; parameters + seed reproduce the search only within the same JS engine.
 
-import { DEFAULT_PARAMS, type UiParams } from './store';
+import { DEFAULT_PARAMS, type PuzzleParams } from './params';
 
 export const PERMALINK_VERSION = 1;
 
 export interface PermalinkData {
-  readonly params: UiParams;
+  readonly params: PuzzleParams;
   /** GeoNames ids of pinned and excluded cities. */
   readonly pinned: readonly number[];
   readonly excluded: readonly number[];
@@ -16,6 +16,44 @@ export interface PermalinkData {
   readonly selected: readonly number[] | null;
   /** 'de@1' style data version, if present. */
   readonly data: { readonly country: string; readonly version: number } | null;
+}
+
+/**
+ * Minimal query string (the core has no URLSearchParams type): same encoding as
+ * URLSearchParams for the characters used here, '+' decodes to a space.
+ */
+class Query {
+  private readonly entries = new Map<string, string>();
+
+  constructor(text = '') {
+    for (const part of text.split('&')) {
+      if (!part) continue;
+      const eq = part.indexOf('=');
+      const decode = (s: string) => {
+        try {
+          return decodeURIComponent(s.replaceAll('+', ' '));
+        } catch {
+          return '';
+        }
+      };
+      const key = decode(eq < 0 ? part : part.slice(0, eq));
+      if (!this.entries.has(key)) this.entries.set(key, decode(eq < 0 ? '' : part.slice(eq + 1)));
+    }
+  }
+
+  get(key: string): string | null {
+    return this.entries.get(key) ?? null;
+  }
+
+  set(key: string, value: string): void {
+    this.entries.set(key, value);
+  }
+
+  toString(): string {
+    return [...this.entries]
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+      .join('&');
+  }
 }
 
 const encodeIds = (ids: readonly number[]) =>
@@ -33,19 +71,20 @@ const decodeIds = (text: string | null): number[] =>
     : [];
 
 export function encodePermalink(
-  params: UiParams,
+  params: PuzzleParams,
   dataVersion: { country: string; version: number },
   selectedIds: readonly number[] | null,
   marks: { readonly pinned: readonly number[]; readonly excluded: readonly number[] } = {
     pinned: [],
     excluded: [],
   },
+  appVersion = '',
 ): string {
-  const q = new URLSearchParams();
+  const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
   q.set('d', `${dataVersion.country.toLowerCase()}@${dataVersion.version}`);
   // Informational: the seed reproduces a search only with the same app version and engine.
-  q.set('app', __APP_VERSION__);
+  if (appVersion) q.set('app', appVersion);
   q.set('r', params.region);
   q.set('n', String(params.n));
   q.set('b', `${params.boardWidthMm}x${params.boardHeightMm}x${params.marginMm}`);
@@ -74,12 +113,12 @@ function num(value: string | null, fallback: number, min = -Infinity, max = Infi
 export function decodePermalink(hash: string): PermalinkData | null {
   const text = hash.startsWith('#') ? hash.slice(1) : hash;
   if (!text) return null;
-  const q = new URLSearchParams(text);
+  const q = new Query(text);
   if (q.get('v') !== String(PERMALINK_VERSION)) return null;
   const d = DEFAULT_PARAMS;
   const [bw, bh, bm] = (q.get('b') ?? '').split('x');
   const [wg, wd, wr] = (q.get('w') ?? '').split(',');
-  const params: UiParams = {
+  const params: PuzzleParams = {
     region: /^[A-Z]{2}(-[A-Z0-9]{1,3})?$/.test(q.get('r') ?? '') ? q.get('r')! : d.region,
     n: Math.round(num(q.get('n'), d.n, 5, 120)),
     boardWidthMm: num(bw ?? null, d.boardWidthMm, 50, 5000),

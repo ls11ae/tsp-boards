@@ -2,11 +2,11 @@
 // and the queue of exact verifications.
 
 import { parseCountryFile, type Manifest } from '../core/data';
+import { rEffMm, searchParams } from '../core/params';
+import { decodePermalink } from '../core/permalink';
 import {
-  DEFAULT_SEARCH,
   greedySelection,
   type Evaluation,
-  type SearchParams,
   type SearchPool,
   type TracePoint,
 } from '../core/search/search';
@@ -18,8 +18,7 @@ import type {
 } from '../workers/protocol';
 import { getBoard } from './board';
 import { getLabels, poolLabels } from './labels';
-import { decodePermalink } from './permalink';
-import { useStore, type RunState, type UiParams } from './store';
+import { useStore, type RunState } from './store';
 
 const UI_INTERVAL_MS = 100;
 /** Exact checks per run: the best candidates of the archive. */
@@ -73,27 +72,6 @@ function applyPermalink(hash: string): void {
 }
 
 // --- search --------------------------------------------------------------------------------
-
-export function rEffMm(p: UiParams): number {
-  return p.nailDiameterMm / 2 + p.stringThicknessMm / 2;
-}
-
-export function searchParams(p: UiParams): SearchParams {
-  return {
-    ...DEFAULT_SEARCH,
-    n: p.n,
-    minDistanceMm: p.minDistanceMm,
-    targetGapMm: p.targetGapMm,
-    rEffMm: rEffMm(p),
-    iterations: p.iterations,
-    seed: p.seed,
-    weights: {
-      gap: p.weightGap,
-      difficulty: p.weightDifficulty,
-      recognizability: p.weightRecognizability,
-    },
-  };
-}
 
 let searchWorker: Worker | null = null;
 let pending: Extract<SearchResponse, { type: 'progress' | 'done' }> | null = null;

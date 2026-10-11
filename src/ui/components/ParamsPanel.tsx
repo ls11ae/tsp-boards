@@ -3,7 +3,7 @@ import { regionsOf } from '../../core/region';
 import type { BoardModel } from '../board';
 import { startSearch, stopSearch } from '../controller';
 import { useFormat, useT } from '../i18n';
-import { encodePermalink } from '../permalink';
+import { encodePermalink } from '../../core/permalink';
 import type { PuzzleView } from '../puzzle';
 import { useStore, type UiParams } from '../store';
 
@@ -84,6 +84,7 @@ export function ParamsPanel({
       { country: country.country, version: country.dataVersion },
       ids,
       { pinned, excluded },
+      __APP_VERSION__,
     );
     window.history.replaceState(null, '', hash);
     const url = window.location.href;
