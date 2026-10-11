@@ -390,3 +390,11 @@ Short entries: decision; alternatives considered; reason. Newest last.
   (stored in localStorage). No ids, names, cookies or location. The endpoint (Phase 4) is not
   part of this repository yet. Reason: calibrating difficulty needs real data, but privacy by
   default; a static build without the variable never sends anything.
+- **2026-10-12 Deployment prepared, not performed.** No access to the chair server from here,
+  and publishing (e.g. GitHub Pages of the private repository) is the maintainers' decision.
+  Instead: CI uploads the built site as an artifact, `docs/deployment.md` lists server
+  requirements (MIME types, HTTPS, caching, CSP), a shipped `.htaccess` covers Apache, and the
+  production build was tested from a nested sub-path (search, exact check in the worker).
+  A dependency-free reference endpoint for play data (`server/play-data.mjs`, Node) validates
+  records strictly and stores them with the day only; alternatives (PHP script, hosted form
+  services) depend on the server and were not built.

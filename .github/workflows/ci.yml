@@ -23,3 +23,9 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      # The static site, ready to copy to a web server (see docs/deployment.md).
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tsp-boards-dist
+          path: dist/
+          retention-days: 30

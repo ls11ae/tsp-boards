@@ -21,6 +21,11 @@ export default defineConfig({
   worker: { format: 'es' },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.{ts,tsx}', 'cli/**/*.test.ts', 'scripts/**/*.test.ts'],
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'cli/**/*.test.ts',
+      'scripts/**/*.test.ts',
+      'server/**/*.test.mjs',
+    ],
   },
 });

@@ -121,8 +121,15 @@ extracted into `src/core/board/font-data.ts` (generated, committed) by `npm run 
 - `src/workers/`: Web Worker entry points (search, exact solves).
 - `src/ui/`: the React web app.
 - `scripts/`: offline data build and font extraction. `public/data/`: generated data.
-- `cli/`: Node entry points for experiments.
+- `cli/`: Node entry points for experiments and board export.
+- `server/`: optional reference endpoint for play data.
 - `docs/`: design notes and experiments.
+
+### Deployment
+
+The build (`npm run build`, or the CI artifact `tsp-boards-dist`) is a static site that runs
+from any sub-path. Server settings, a smoke test and the optional play data endpoint are
+described in [`docs/deployment.md`](docs/deployment.md).
 
 ### Play data (optional)
 
