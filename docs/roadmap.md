@@ -105,13 +105,14 @@ preparation). Kevin decided to extend the digital side next, before building phy
 - Physical: test board with the prototype dimensions once known; deployment to the chair
   server and the play data endpoint when access is available.
 
-## Curated instances wanted by Kevin
+## Curated instances wanted by Kevin — done 2026-10-12
 
 - Universities of Excellence and excellence alliances (Exzellenzuniversitäten /
   Exzellenzverbünde).
 - Clusters of Excellence (Exzellenzcluster), one node per city.
 
 Research the current lists (funding round, locations) before building them; record sources.
+(Done: `public/puzzles/exzellenz*`, lists and sources in `docs/data/curated/`.)
 
 ## Working with several people
 

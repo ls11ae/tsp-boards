@@ -1,0 +1,2328 @@
+{
+  "retrieved": "2026-10-12",
+  "sources": [
+    {
+      "title": "Förderlinie Exzellenzcluster: Gesamtliste der geförderten Projekte (Ergebnisse der Sitzung der Exzellenzkommission vom 22. Mai 2025), with map",
+      "url": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+      "publisher": "DFG / Wissenschaftsrat",
+      "date": "2025-05-22 (PDF created 2025-05-22, modified 2025-05-28)"
+    },
+    {
+      "title": "Clusters of Excellence Funding Line: Full List of Funded Projects (results of the meeting of the Excellence Commission on 22 May 2025)",
+      "url": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+      "publisher": "DFG / Wissenschaftsrat",
+      "date": "2025-05-22 (PDF created 2025-05-22, modified 2025-05-28)"
+    },
+    {
+      "title": "Pressemitteilung Nr. 10: Entscheidungen in zweiter Wettbewerbsrunde der Exzellenzstrategie: Exzellenzkommission wählt 70 Exzellenzcluster aus",
+      "url": "https://www.dfg.de/de/service/presse/pressemitteilungen/2025/pressemitteilung-nr-10",
+      "publisher": "DFG / Wissenschaftsrat (joint)",
+      "date": "2025-05-22"
+    },
+    {
+      "title": "Entscheidungen in zweiter Wettbewerbsrunde der Exzellenzstrategie (news page with links to list and map)",
+      "url": "https://www.wissenschaftsrat.de/DE/Home/Buehne/_Inhalte/Inhalte_Online/2025_ExStra_Ergebnisse",
+      "publisher": "Wissenschaftsrat",
+      "date": "2025-05-22"
+    },
+    {
+      "title": "Förderung und Einzelevaluation von Exzellenzuniversitäten und Exzellenzverbund (funded since November 2019)",
+      "url": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node",
+      "publisher": "Wissenschaftsrat",
+      "date": "undated (© 2026), retrieved 2026-10-12"
+    },
+    {
+      "title": "Exzellenzstrategie (overview; first round Nov 2019 - Dec 2026, decision of 19 July 2019, Bund-Länder-Vereinbarung version of 10 July 2026)",
+      "url": "https://www.gwk-bonn.de/themen/foerderung-von-hochschulen/exzellenzstrategie-exzellenzinitiative",
+      "publisher": "GWK",
+      "date": "undated, retrieved 2026-10-12 (not yet updated for the 2 Oct 2026 decision)"
+    },
+    {
+      "title": "Pressemitteilung Nr. 04: Zehn Exzellenzstandorte werden weitergefördert",
+      "url": "https://www.dfg.de/de/aktuelles/neuigkeiten-themen/pressemitteilungen/2026/pressemitteilung-nr-04",
+      "publisher": "DFG / Wissenschaftsrat (joint)",
+      "date": "2026-03-11"
+    },
+    {
+      "title": "Förderlinie Exzellenzuniversitäten: Liste der weitergeförderten Exzellenzstandorte (Ergebnisse der Sitzung der Exzellenzkommission vom 11. März 2026)",
+      "url": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+      "publisher": "DFG / Wissenschaftsrat",
+      "date": "2026-03-11"
+    },
+    {
+      "title": "Förderlinie Exzellenzuniversitäten: Liste der Standorte im Neuantragsverfahren",
+      "url": "https://www.dfg.de/resource/blob/390422/260311-exstra-exu-neuantraege.pdf",
+      "publisher": "DFG / Wissenschaftsrat",
+      "date": "2026-03-11"
+    },
+    {
+      "title": "Pressemitteilung 21/2026: Entscheidungen über neue Exzellenzstandorte getroffen – Exzellenzkommission wählt drei Exzellenzuniversitäten und zwei Exzellenzverbünde aus",
+      "url": "https://www.wissenschaftsrat.de/SharedDocs/Pressemitteilungen/DE/PM_2026/PM_2126_ExStra.html",
+      "publisher": "Wissenschaftsrat / DFG (joint)",
+      "date": "2026-10-02"
+    },
+    {
+      "title": "Pressemitteilung Nr. 40: Entscheidungen über neue Exzellenzstandorte getroffen",
+      "url": "https://www.dfg.de/de/aktuelles/neuigkeiten-themen/pressemitteilungen/2026/pressemitteilung-nr-40",
+      "publisher": "DFG / Wissenschaftsrat (joint)",
+      "date": "2026-10-02"
+    },
+    {
+      "title": "Deutsche Spitzenforschung: Fünf neue Exzellenzuniversitäten und -verbünde (Kurzmeldung)",
+      "url": "https://www.bmftr.bund.de/SharedDocs/Kurzmeldungen/DE/2026/10/021026-exu-neu.html",
+      "publisher": "BMFTR",
+      "date": "2026-10-02"
+    },
+    {
+      "title": "Exzellenzstrategie des Bundes und der Länder (DFG programme page)",
+      "url": "https://www.dfg.de/de/foerderung/foerderinitiativen/exzellenzstrategie",
+      "publisher": "DFG",
+      "date": "last updated 2026-10-02"
+    },
+    {
+      "title": "ExStra portal: Exzellenzcluster listing (82 entries; 70 tagged 'Förderphase 2026-2032'; used for short names/acronyms and new vs. continuation)",
+      "url": "https://www.exzellenzstrategie.de/exzellenzcluster/?show_all=1",
+      "publisher": "DFG / Wissenschaftsrat (exzellenzstrategie.de)",
+      "date": "undated (© 2026), retrieved 2026-10-12"
+    },
+    {
+      "title": "ExStra portal: Exzellenzuniversitäten listing (BUA members incl. Charité)",
+      "url": "https://www.exzellenzstrategie.de/exzellenzuniversitaeten/",
+      "publisher": "DFG / Wissenschaftsrat (exzellenzstrategie.de)",
+      "date": "undated (© 2026), retrieved 2026-10-12; still showed only the 11 first-period funding cases"
+    },
+    {
+      "title": "Wikidata (coordinate location P625 of university items and selected buildings)",
+      "url": "https://www.wikidata.org/",
+      "publisher": "Wikimedia Foundation (CC0)",
+      "date": "retrieved 2026-10-12"
+    }
+  ],
+  "universitiesOfExcellence": {
+    "period": "first funding period: 2019-11-01 to 2026-12-31 (in force on 2026-10-12)",
+    "decided": "2019-07-19 (Excellence Commission)",
+    "entries": [
+      {
+        "name": "Rheinisch-Westfälische Technische Hochschule Aachen",
+        "type": "university",
+        "members": [
+          "Rheinisch-Westfälische Technische Hochschule Aachen"
+        ],
+        "cities": [
+          "Aachen"
+        ],
+        "places": [
+          {
+            "name": "Rheinisch-Westfälische Technische Hochschule Aachen",
+            "city": "Aachen",
+            "lat": 50.7778,
+            "lon": 6.0781
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      },
+      {
+        "name": "Berlin University Alliance",
+        "type": "alliance",
+        "members": [
+          "Freie Universität Berlin",
+          "Humboldt-Universität zu Berlin",
+          "Technische Universität Berlin"
+        ],
+        "cities": [
+          "Berlin"
+        ],
+        "places": [
+          {
+            "name": "Freie Universität Berlin",
+            "city": "Berlin",
+            "lat": 52.4543,
+            "lon": 13.2935
+          },
+          {
+            "name": "Humboldt-Universität zu Berlin",
+            "city": "Berlin",
+            "lat": 52.5181,
+            "lon": 13.3933
+          },
+          {
+            "name": "Technische Universität Berlin",
+            "city": "Berlin",
+            "lat": 52.5119,
+            "lon": 13.3264
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node",
+        "partners": [
+          "Charité – Universitätsmedizin Berlin"
+        ],
+        "note": "Official DFG/WR lists name FU, HU and TU Berlin; Charité – Universitätsmedizin Berlin is the fourth partner of the alliance (exzellenzstrategie.de, 2019 announcements). Charité: Berlin, 52.5269, 13.3772 (Campus Mitte, Wikidata Q162684)."
+      },
+      {
+        "name": "Rheinische Friedrich-Wilhelms-Universität Bonn",
+        "type": "university",
+        "members": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn"
+        ],
+        "cities": [
+          "Bonn"
+        ],
+        "places": [
+          {
+            "name": "Rheinische Friedrich-Wilhelms-Universität Bonn",
+            "city": "Bonn",
+            "lat": 50.7339,
+            "lon": 7.1022
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      },
+      {
+        "name": "Technische Universität Dresden",
+        "type": "university",
+        "members": [
+          "Technische Universität Dresden"
+        ],
+        "cities": [
+          "Dresden"
+        ],
+        "places": [
+          {
+            "name": "Technische Universität Dresden",
+            "city": "Dresden",
+            "lat": 51.0281,
+            "lon": 13.7267
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      },
+      {
+        "name": "Universität Hamburg",
+        "type": "university",
+        "members": [
+          "Universität Hamburg"
+        ],
+        "cities": [
+          "Hamburg"
+        ],
+        "places": [
+          {
+            "name": "Universität Hamburg",
+            "city": "Hamburg",
+            "lat": 53.5657,
+            "lon": 9.9848
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      },
+      {
+        "name": "Ruprecht-Karls-Universität Heidelberg",
+        "type": "university",
+        "members": [
+          "Ruprecht-Karls-Universität Heidelberg"
+        ],
+        "cities": [
+          "Heidelberg"
+        ],
+        "places": [
+          {
+            "name": "Ruprecht-Karls-Universität Heidelberg",
+            "city": "Heidelberg",
+            "lat": 49.4103,
+            "lon": 8.7064
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      },
+      {
+        "name": "Karlsruher Institut für Technologie",
+        "type": "university",
+        "members": [
+          "Karlsruher Institut für Technologie"
+        ],
+        "cities": [
+          "Karlsruhe"
+        ],
+        "places": [
+          {
+            "name": "Karlsruher Institut für Technologie",
+            "city": "Karlsruhe",
+            "lat": 49.012,
+            "lon": 8.414
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      },
+      {
+        "name": "Universität Konstanz",
+        "type": "university",
+        "members": [
+          "Universität Konstanz"
+        ],
+        "cities": [
+          "Konstanz"
+        ],
+        "places": [
+          {
+            "name": "Universität Konstanz",
+            "city": "Konstanz",
+            "lat": 47.6902,
+            "lon": 9.1881
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node",
+        "note": "Funded until end of the first period (Dec 2026); not continued from 2027 because it no longer has the required minimum number of Clusters of Excellence (decision 11 March 2026)."
+      },
+      {
+        "name": "Ludwig-Maximilians-Universität München",
+        "type": "university",
+        "members": [
+          "Ludwig-Maximilians-Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "places": [
+          {
+            "name": "Ludwig-Maximilians-Universität München",
+            "city": "München",
+            "lat": 48.1508,
+            "lon": 11.5803
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      },
+      {
+        "name": "Technische Universität München",
+        "type": "university",
+        "members": [
+          "Technische Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "places": [
+          {
+            "name": "Technische Universität München",
+            "city": "München",
+            "lat": 48.1481,
+            "lon": 11.5681
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      },
+      {
+        "name": "Eberhard Karls Universität Tübingen",
+        "type": "university",
+        "members": [
+          "Eberhard Karls Universität Tübingen"
+        ],
+        "cities": [
+          "Tübingen"
+        ],
+        "places": [
+          {
+            "name": "Eberhard Karls Universität Tübingen",
+            "city": "Tübingen",
+            "lat": 48.525,
+            "lon": 9.0589
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node"
+      }
+    ]
+  },
+  "universitiesOfExcellenceNew": {
+    "period": "from 2027-01-01, 7 years (2027-2033); permanent funding subject to evaluation every 7 years",
+    "decided": "2026-03-11 (10 continued after evaluation) and 2026-10-02 (5 newly selected)",
+    "entries": [
+      {
+        "name": "Rheinisch-Westfälische Technische Hochschule Aachen",
+        "type": "university",
+        "members": [
+          "Rheinisch-Westfälische Technische Hochschule Aachen"
+        ],
+        "cities": [
+          "Aachen"
+        ],
+        "places": [
+          {
+            "name": "Rheinisch-Westfälische Technische Hochschule Aachen",
+            "city": "Aachen",
+            "lat": 50.7778,
+            "lon": 6.0781
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Berlin University Alliance",
+        "type": "alliance",
+        "members": [
+          "Freie Universität Berlin",
+          "Humboldt-Universität zu Berlin",
+          "Technische Universität Berlin"
+        ],
+        "cities": [
+          "Berlin"
+        ],
+        "places": [
+          {
+            "name": "Freie Universität Berlin",
+            "city": "Berlin",
+            "lat": 52.4543,
+            "lon": 13.2935
+          },
+          {
+            "name": "Humboldt-Universität zu Berlin",
+            "city": "Berlin",
+            "lat": 52.5181,
+            "lon": 13.3933
+          },
+          {
+            "name": "Technische Universität Berlin",
+            "city": "Berlin",
+            "lat": 52.5119,
+            "lon": 13.3264
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)",
+        "partners": [
+          "Charité – Universitätsmedizin Berlin"
+        ],
+        "note": "Official DFG/WR lists name FU, HU and TU Berlin; Charité – Universitätsmedizin Berlin is the fourth partner of the alliance (exzellenzstrategie.de, 2019 announcements). Charité: Berlin, 52.5269, 13.3772 (Campus Mitte, Wikidata Q162684)."
+      },
+      {
+        "name": "Rheinische Friedrich-Wilhelms-Universität Bonn",
+        "type": "university",
+        "members": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn"
+        ],
+        "cities": [
+          "Bonn"
+        ],
+        "places": [
+          {
+            "name": "Rheinische Friedrich-Wilhelms-Universität Bonn",
+            "city": "Bonn",
+            "lat": 50.7339,
+            "lon": 7.1022
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Technische Universität Dresden",
+        "type": "university",
+        "members": [
+          "Technische Universität Dresden"
+        ],
+        "cities": [
+          "Dresden"
+        ],
+        "places": [
+          {
+            "name": "Technische Universität Dresden",
+            "city": "Dresden",
+            "lat": 51.0281,
+            "lon": 13.7267
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Universität Hamburg",
+        "type": "university",
+        "members": [
+          "Universität Hamburg"
+        ],
+        "cities": [
+          "Hamburg"
+        ],
+        "places": [
+          {
+            "name": "Universität Hamburg",
+            "city": "Hamburg",
+            "lat": 53.5657,
+            "lon": 9.9848
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Ruprecht-Karls-Universität Heidelberg",
+        "type": "university",
+        "members": [
+          "Ruprecht-Karls-Universität Heidelberg"
+        ],
+        "cities": [
+          "Heidelberg"
+        ],
+        "places": [
+          {
+            "name": "Ruprecht-Karls-Universität Heidelberg",
+            "city": "Heidelberg",
+            "lat": 49.4103,
+            "lon": 8.7064
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Karlsruher Institut für Technologie",
+        "type": "university",
+        "members": [
+          "Karlsruher Institut für Technologie"
+        ],
+        "cities": [
+          "Karlsruhe"
+        ],
+        "places": [
+          {
+            "name": "Karlsruher Institut für Technologie",
+            "city": "Karlsruhe",
+            "lat": 49.012,
+            "lon": 8.414
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Ludwig-Maximilians-Universität München",
+        "type": "university",
+        "members": [
+          "Ludwig-Maximilians-Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "places": [
+          {
+            "name": "Ludwig-Maximilians-Universität München",
+            "city": "München",
+            "lat": 48.1508,
+            "lon": 11.5803
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Technische Universität München",
+        "type": "university",
+        "members": [
+          "Technische Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "places": [
+          {
+            "name": "Technische Universität München",
+            "city": "München",
+            "lat": 48.1481,
+            "lon": 11.5681
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Eberhard Karls Universität Tübingen",
+        "type": "university",
+        "members": [
+          "Eberhard Karls Universität Tübingen"
+        ],
+        "cities": [
+          "Tübingen"
+        ],
+        "places": [
+          {
+            "name": "Eberhard Karls Universität Tübingen",
+            "city": "Tübingen",
+            "lat": 48.525,
+            "lon": 9.0589
+          }
+        ],
+        "source": "https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf",
+        "selection": "continued (evaluation decision 11 March 2026)"
+      },
+      {
+        "name": "Albert-Ludwigs-Universität Freiburg",
+        "type": "university",
+        "members": [
+          "Albert-Ludwigs-Universität Freiburg"
+        ],
+        "cities": [
+          "Freiburg im Breisgau"
+        ],
+        "places": [
+          {
+            "name": "Albert-Ludwigs-Universität Freiburg",
+            "city": "Freiburg im Breisgau",
+            "lat": 47.9942,
+            "lon": 7.8469
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/SharedDocs/Pressemitteilungen/DE/PM_2026/PM_2126_ExStra.html",
+        "selection": "newly selected (decision 2 October 2026)"
+      },
+      {
+        "name": "Friedrich-Schiller-Universität Jena",
+        "type": "university",
+        "members": [
+          "Friedrich-Schiller-Universität Jena"
+        ],
+        "cities": [
+          "Jena"
+        ],
+        "places": [
+          {
+            "name": "Friedrich-Schiller-Universität Jena",
+            "city": "Jena",
+            "lat": 50.9283,
+            "lon": 11.5822
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/SharedDocs/Pressemitteilungen/DE/PM_2026/PM_2126_ExStra.html",
+        "selection": "newly selected (decision 2 October 2026)"
+      },
+      {
+        "name": "Universität zu Köln",
+        "type": "university",
+        "members": [
+          "Universität zu Köln"
+        ],
+        "cities": [
+          "Köln"
+        ],
+        "places": [
+          {
+            "name": "Universität zu Köln",
+            "city": "Köln",
+            "lat": 50.9281,
+            "lon": 6.9286
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/SharedDocs/Pressemitteilungen/DE/PM_2026/PM_2126_ExStra.html",
+        "selection": "newly selected (decision 2 October 2026)"
+      },
+      {
+        "name": "Rhein-Main-Universitäten",
+        "type": "alliance",
+        "members": [
+          "Technische Universität Darmstadt",
+          "Goethe-Universität Frankfurt am Main",
+          "Johannes Gutenberg-Universität Mainz"
+        ],
+        "cities": [
+          "Darmstadt",
+          "Frankfurt am Main",
+          "Mainz"
+        ],
+        "places": [
+          {
+            "name": "Technische Universität Darmstadt",
+            "city": "Darmstadt",
+            "lat": 49.875,
+            "lon": 8.6564
+          },
+          {
+            "name": "Goethe-Universität Frankfurt am Main",
+            "city": "Frankfurt am Main",
+            "lat": 50.1279,
+            "lon": 8.6694
+          },
+          {
+            "name": "Johannes Gutenberg-Universität Mainz",
+            "city": "Mainz",
+            "lat": 49.9931,
+            "lon": 8.2417
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/SharedDocs/Pressemitteilungen/DE/PM_2026/PM_2126_ExStra.html",
+        "selection": "newly selected (decision 2 October 2026)",
+        "proposalTitle": "EXCITE – Excellent. Collaborative. Transformative."
+      },
+      {
+        "name": "Ruhr Innovation Lab",
+        "type": "alliance",
+        "members": [
+          "Ruhr-Universität Bochum",
+          "Technische Universität Dortmund"
+        ],
+        "cities": [
+          "Bochum",
+          "Dortmund"
+        ],
+        "places": [
+          {
+            "name": "Ruhr-Universität Bochum",
+            "city": "Bochum",
+            "lat": 51.4439,
+            "lon": 7.2617
+          },
+          {
+            "name": "Technische Universität Dortmund",
+            "city": "Dortmund",
+            "lat": 51.4925,
+            "lon": 7.4142
+          }
+        ],
+        "source": "https://www.wissenschaftsrat.de/SharedDocs/Pressemitteilungen/DE/PM_2026/PM_2126_ExStra.html",
+        "selection": "newly selected (decision 2 October 2026)",
+        "proposalTitle": "An ecosystem for a future proof society"
+      }
+    ]
+  },
+  "clusters": {
+    "period": "2026-01-01 to 2032-12-31 (7 years)",
+    "decided": "2025-05-22 (Excellence Commission, 70 of 98 proposals; 45 continuations, 25 new)",
+    "entries": [
+      {
+        "name": "The Integrated Fuel & Chemical Science Center – Adaptive Umwandlungssysteme für erneuerbare Energieträger und Chemikalien",
+        "nameEn": "The Integrated Fuel & Chemical Science Center – Adaptive Conversion Systems for Sustainable Energy Carriers & Chemicals",
+        "acronym": null,
+        "shortName": "The Integrated Fuel & Chemical Science Center",
+        "status": "continuation",
+        "universities": [
+          "Rheinisch-Westfälische Technische Hochschule Aachen"
+        ],
+        "cities": [
+          "Aachen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/fuel-science-center/"
+      },
+      {
+        "name": "Afrika Multipel: Afrikaforschung neu gestalten",
+        "nameEn": "Africa Multiple: Reconfiguring African Studies",
+        "acronym": null,
+        "shortName": "Africa Multiple",
+        "status": "continuation",
+        "universities": [
+          "Universität Bayreuth"
+        ],
+        "cities": [
+          "Bayreuth"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/africa-multiple/"
+      },
+      {
+        "name": "Auseinandersetzungen um das liberale Skript (SCRIPTS)",
+        "nameEn": "Contestations of the Liberal Script (SCRIPTS)",
+        "acronym": "SCRIPTS",
+        "shortName": "SCRIPTS",
+        "status": "continuation",
+        "universities": [
+          "Freie Universität Berlin"
+        ],
+        "cities": [
+          "Berlin"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/scripts/"
+      },
+      {
+        "name": "CASA: Sicherheit für die digitale Gesellschaft",
+        "nameEn": "CASA: Securing the Digital Society",
+        "acronym": "CASA",
+        "shortName": "CASA",
+        "status": "continuation",
+        "universities": [
+          "Ruhr-Universität Bochum"
+        ],
+        "cities": [
+          "Bochum"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/casa/"
+      },
+      {
+        "name": "Bonn Center for Dependency and Slavery Studies (BCDSS)",
+        "nameEn": "Bonn Center for Dependency and Slavery Studies (BCDSS)",
+        "acronym": "BCDSS",
+        "shortName": "BCDSS",
+        "status": "continuation",
+        "universities": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn"
+        ],
+        "cities": [
+          "Bonn"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/bcdss/"
+      },
+      {
+        "name": "Hausdorff Center für Mathematik (HCM)",
+        "nameEn": "Hausdorff Center for Mathematics (HCM)",
+        "acronym": "HCM",
+        "shortName": "HCM",
+        "status": "continuation",
+        "universities": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn"
+        ],
+        "cities": [
+          "Bonn"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/hcm/"
+      },
+      {
+        "name": "ImmunoSensation3 – das Immunsensorische System: von Immundiversität zu Präzisionsmedizin",
+        "nameEn": "ImmunoSensation3 – the immune sensory system: from Immune Diversity to precision medicine",
+        "acronym": "ImmunoSensation3",
+        "shortName": "ImmunoSensation3",
+        "status": "continuation",
+        "universities": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn"
+        ],
+        "cities": [
+          "Bonn"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/immunosensation2/"
+      },
+      {
+        "name": "PhenoRob2 – Robotik und Phänotypisierung für Nachhaltige Nutzpflanzenproduktion",
+        "nameEn": "PhenoRob2 – Robotics and Phenotyping for Sustainable Crop Production",
+        "acronym": "PhenoRob2",
+        "shortName": "PhenoRob2",
+        "status": "continuation",
+        "universities": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn"
+        ],
+        "cities": [
+          "Bonn"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/phenorob/"
+      },
+      {
+        "name": "Die Marsperspektive: Ressourcenknappheit als Grundlage eines Paradigmas der Nachhaltigkeit",
+        "nameEn": "The Martian Mindset: A Scarcity-Driven Engineering Paradigm",
+        "acronym": null,
+        "shortName": "Die Marsperspektive",
+        "status": "new",
+        "universities": [
+          "Universität Bremen"
+        ],
+        "cities": [
+          "Bremen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/die-marsperspektive/"
+      },
+      {
+        "name": "Vernünftige Künstliche Intelligenz",
+        "nameEn": "Reasonable Artificial Intelligence",
+        "acronym": "RAI",
+        "shortName": "RAI",
+        "status": "new",
+        "universities": [
+          "Technische Universität Darmstadt"
+        ],
+        "cities": [
+          "Darmstadt"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/rai/"
+      },
+      {
+        "name": "Physik des Lebens: Die dynamische Organisation lebender Materie (PoL)",
+        "nameEn": "Physics of Life: The Dynamic Organization of Living Matter (PoL)",
+        "acronym": "PoL",
+        "shortName": "PoL",
+        "status": "continuation",
+        "universities": [
+          "Technische Universität Dresden"
+        ],
+        "cities": [
+          "Dresden"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/pol/"
+      },
+      {
+        "name": "Verantwortungsvolle Elektronik im Zeitalter des Klimawandels",
+        "nameEn": "Responsible Electronics in the Climate Change Era (REC²)",
+        "acronym": "REC²",
+        "shortName": "REC²",
+        "status": "new",
+        "universities": [
+          "Technische Universität Dresden"
+        ],
+        "cities": [
+          "Dresden"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/rec%c2%b2/"
+      },
+      {
+        "name": "Zentrum für taktiles Internet mit Mensch-Maschine-Interaktion (CeTI)",
+        "nameEn": "Centre for Tactile Internet with Human-in-the-Loop (CeTI)",
+        "acronym": "CeTI",
+        "shortName": "CeTI",
+        "status": "continuation",
+        "universities": [
+          "Technische Universität Dresden"
+        ],
+        "cities": [
+          "Dresden"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/ceti/"
+      },
+      {
+        "name": "Transformation der Menschenrechte",
+        "nameEn": "Transforming Human Rights",
+        "acronym": null,
+        "shortName": "Transformation der Menschenrechte",
+        "status": "new",
+        "universities": [
+          "Friedrich-Alexander-Universität Erlangen-Nürnberg"
+        ],
+        "cities": [
+          "Erlangen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/transformation-der-menschenrechte/"
+      },
+      {
+        "name": "SCALE – Subzelluläre Architektur des Lebens",
+        "nameEn": "SCALE – SubCellular Architecture of LifE",
+        "acronym": "SCALE",
+        "shortName": "SCALE",
+        "status": "new",
+        "universities": [
+          "Goethe-Universität Frankfurt am Main"
+        ],
+        "cities": [
+          "Frankfurt am Main"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/scale/"
+      },
+      {
+        "name": "CIBSS – Zentrum für Integrative Biologische Signalstudien",
+        "nameEn": "CIBSS – Centre for Integrative Biological Signalling Studies",
+        "acronym": "CIBSS",
+        "shortName": "CIBSS",
+        "status": "continuation",
+        "universities": [
+          "Albert-Ludwigs-Universität Freiburg"
+        ],
+        "cities": [
+          "Freiburg im Breisgau"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/cibss/"
+      },
+      {
+        "name": "Future Forests – Die Anpassung komplexer sozial-ökologischer Waldsysteme an den globalen Wandel",
+        "nameEn": "Future Forests – Adapting Complex Social-ecological Forest Systems to Global Change",
+        "acronym": null,
+        "shortName": "Future Forests",
+        "status": "new",
+        "universities": [
+          "Albert-Ludwigs-Universität Freiburg"
+        ],
+        "cities": [
+          "Freiburg im Breisgau"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/future-forests/"
+      },
+      {
+        "name": "CUI: Tiefe Einblicke in Materie",
+        "nameEn": "CUI: Advanced Imaging of Matter",
+        "acronym": "CUI",
+        "shortName": "CUI",
+        "status": "continuation",
+        "universities": [
+          "Universität Hamburg"
+        ],
+        "cities": [
+          "Hamburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/cui/"
+      },
+      {
+        "name": "Das Quantisierte Universum II",
+        "nameEn": "Quantum Universe II",
+        "acronym": null,
+        "shortName": "Quantum Universe II",
+        "status": "continuation",
+        "universities": [
+          "Universität Hamburg"
+        ],
+        "cities": [
+          "Hamburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/quantum-universe/"
+      },
+      {
+        "name": "Klima, Klimawandel und Gesellschaft II (CLICCS II)",
+        "nameEn": "Climate, Climatic Change, and Society II (CLICCS II)",
+        "acronym": "CLICCS II",
+        "shortName": "CLICCS II",
+        "status": "continuation",
+        "universities": [
+          "Universität Hamburg"
+        ],
+        "cities": [
+          "Hamburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/cliccs/"
+      },
+      {
+        "name": "Schriftartefakte verstehen: Material, Interaktion und Transmission",
+        "nameEn": "Understanding Written Artefacts: Material, Interaction and Transmission",
+        "acronym": null,
+        "shortName": "Understanding Written Artefacts",
+        "status": "continuation",
+        "universities": [
+          "Universität Hamburg"
+        ],
+        "cities": [
+          "Hamburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/understanding-written-artefacts/"
+      },
+      {
+        "name": "BlueMat: Wassergesteuerte Materialien",
+        "nameEn": "BlueMat: Water-Driven Materials",
+        "acronym": "BlueMat",
+        "shortName": "BlueMat",
+        "status": "new",
+        "universities": [
+          "Technische Universität Hamburg"
+        ],
+        "cities": [
+          "Hamburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/bluemat/"
+      },
+      {
+        "name": "PhoenixD: Optik & Photonik – Dimensionenübergreifende Innovation",
+        "nameEn": "PhoenixD: Photonics, Optics, and Engineering – Innovation Across Dimensions",
+        "acronym": "PhoenixD",
+        "shortName": "PhoenixD",
+        "status": "continuation",
+        "universities": [
+          "Gottfried Wilhelm Leibniz Universität Hannover"
+        ],
+        "cities": [
+          "Hannover"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/phoenixd/"
+      },
+      {
+        "name": "RESIST – Abwehrschwächen gegenüber Infektionen und ihre Kontrolle",
+        "nameEn": "RESIST – Resolving Infection Susceptibility",
+        "acronym": "RESIST",
+        "shortName": "RESIST",
+        "status": "continuation",
+        "universities": [
+          "Medizinische Hochschule Hannover"
+        ],
+        "cities": [
+          "Hannover"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/resist/"
+      },
+      {
+        "name": "SynthImmune – Engineering von Immunfunktionen durch synthetische Biologie",
+        "nameEn": "SynthImmune – Engineering Immune Function with Synthetic Biology",
+        "acronym": "SynthImmune",
+        "shortName": "SynthImmune",
+        "status": "new",
+        "universities": [
+          "Ruprecht-Karls-Universität Heidelberg"
+        ],
+        "cities": [
+          "Heidelberg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/synthimmune/"
+      },
+      {
+        "name": "Gleichgewicht im Mikroversum",
+        "nameEn": "Balance of the Microverse",
+        "acronym": null,
+        "shortName": "Balance of the Microverse",
+        "status": "continuation",
+        "universities": [
+          "Friedrich-Schiller-Universität Jena"
+        ],
+        "cities": [
+          "Jena"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/balance-of-the-microverse/"
+      },
+      {
+        "name": "Imaginamics. Praktiken und Dynamiken sozialen Imaginierens",
+        "nameEn": "Imaginamics. Practices and Dynamics of Social Imagining",
+        "acronym": "Imaginamics",
+        "shortName": "Imaginamics",
+        "status": "new",
+        "universities": [
+          "Friedrich-Schiller-Universität Jena"
+        ],
+        "cities": [
+          "Jena"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/imaginamics/"
+      },
+      {
+        "name": "ROOTS – Konnektivität von Gesellschaft, Umwelt und Kultur in vergangenen Welten",
+        "nameEn": "ROOTS – Social, Environmental, and Cultural Connectivity in Past Societies",
+        "acronym": "ROOTS",
+        "shortName": "ROOTS",
+        "status": "continuation",
+        "universities": [
+          "Christian-Albrechts-Universität zu Kiel"
+        ],
+        "cities": [
+          "Kiel"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/roots/"
+      },
+      {
+        "name": "Kölner Exzellenzcluster zur Erforschung des Alterns und altersassoziierter Erkrankungen",
+        "nameEn": "Cologne Cluster of Excellence on Aging and Aging-associated Diseases",
+        "acronym": "CECAD",
+        "shortName": "CECAD",
+        "status": "continuation",
+        "universities": [
+          "Universität zu Köln"
+        ],
+        "cities": [
+          "Köln"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/cecad/"
+      },
+      {
+        "name": "Die politische Dimension von Ungleichheit",
+        "nameEn": "The Politics of Inequality (In_equality)",
+        "acronym": "In_equality",
+        "shortName": "In_equality",
+        "status": "continuation",
+        "universities": [
+          "Universität Konstanz"
+        ],
+        "cities": [
+          "Konstanz"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/die-politische-dimension-von-ungleichheit/"
+      },
+      {
+        "name": "Leipzig Centrum für Metabolismus (LeiCeM) – Stoffwechselgesundheit verstehen und verbessern",
+        "nameEn": "Leipzig Center of Metabolism (LeiCeM) – Understanding and improving metabolic health",
+        "acronym": "LeiCeM",
+        "shortName": "Leipzig Center of Metabolism – LeiCeM",
+        "status": "new",
+        "universities": [
+          "Universität Leipzig"
+        ],
+        "cities": [
+          "Leipzig"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/leipzig-centrum-fuer-metabolismus-leicem/"
+      },
+      {
+        "name": "Precision Physics, Fundamental Interactions and Structure of Matter (PRISMA++)",
+        "nameEn": "Precision Physics, Fundamental Interactions and Structure of Matter (PRISMA++)",
+        "acronym": "PRISMA++",
+        "shortName": "PRISMA++",
+        "status": "continuation",
+        "universities": [
+          "Johannes Gutenberg-Universität Mainz"
+        ],
+        "cities": [
+          "Mainz"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/prisma/"
+      },
+      {
+        "name": "Microbes-for-Climate (M4C): Mechanismen, Folgen und Chancen der mikrobiellen Umwandlung von Treibhausgasen",
+        "nameEn": "Microbes-for-Climate (M4C): Mechanisms, Consequences and Chances of Microbial Conversions of Greenhouse Gases",
+        "acronym": "M4C",
+        "shortName": "M4C",
+        "status": "new",
+        "universities": [
+          "Philipps-Universität Marburg"
+        ],
+        "cities": [
+          "Marburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/m4c/"
+      },
+      {
+        "name": "Cross-Cultural Philology. Neue Sichtweisen auf vormoderne Textualität",
+        "nameEn": "Cross-Cultural Philology. New Perspectives on Premodern Textualities",
+        "acronym": null,
+        "shortName": "Cross-Cultural Philology",
+        "status": "new",
+        "universities": [
+          "Ludwig-Maximilians-Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/cross-cultural-philology/"
+      },
+      {
+        "name": "TransforM: Münchner Zentrum für Transformative Technologien und gesellschaftlichen Wandel",
+        "nameEn": "TransforM: Munich Center for Transformative Technologies and Societal Change",
+        "acronym": "TransforM",
+        "shortName": "TransforM",
+        "status": "new",
+        "universities": [
+          "Technische Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/transform/"
+      },
+      {
+        "name": "Mathematik Münster: Dynamik – Geometrie – Struktur",
+        "nameEn": "Mathematics Münster: Dynamics – Geometry – Structure",
+        "acronym": null,
+        "shortName": "Mathematik Münster",
+        "status": "continuation",
+        "universities": [
+          "Universität Münster"
+        ],
+        "cities": [
+          "Münster"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/mathematik-muenster/"
+      },
+      {
+        "name": "NaviSense: Internationales Exzellenzcluster für die sensorischen Grundlagen, Mechanismen und Auswirkungen der Tiernavigation",
+        "nameEn": "NaviSense: International Cluster of Excellence for the Sensory Basis, Mechanisms, and Impacts of Animal Navigation",
+        "acronym": "NaviSense",
+        "shortName": "NaviSense",
+        "status": "new",
+        "universities": [
+          "Carl von Ossietzky Universität Oldenburg"
+        ],
+        "cities": [
+          "Oldenburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/navisense/"
+      },
+      {
+        "name": "Integratives computerbasiertes Planen und Bauen für eine transformative Architektur",
+        "nameEn": "Integrative Computational Design and Construction for Transformative Architecture",
+        "acronym": "IntCDC",
+        "shortName": "IntCDC",
+        "status": "continuation",
+        "universities": [
+          "Universität Stuttgart"
+        ],
+        "cities": [
+          "Stuttgart"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/intcdc/"
+      },
+      {
+        "name": "HUMAN ORIGINS – Exzellenzcluster für die Integrative Erforschung Menschlicher Ursprünge",
+        "nameEn": "HUMAN ORIGINS – Cluster of Excellence for Integrative Human Origins Studies",
+        "acronym": "HUMAN ORIGINS",
+        "shortName": "HUMAN ORIGINS",
+        "status": "new",
+        "universities": [
+          "Eberhard Karls Universität Tübingen"
+        ],
+        "cities": [
+          "Tübingen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/human-origins/"
+      },
+      {
+        "name": "Individualisierung von Tumortherapien durch molekulare Bildgebung und funktionelle Identifizierung therapeutischer Zielstrukturen (iFIT)",
+        "nameEn": "Image-guided and Functionally Instructed Tumor Therapies (iFIT)",
+        "acronym": "iFIT",
+        "shortName": "iFIT",
+        "status": "continuation",
+        "universities": [
+          "Eberhard Karls Universität Tübingen"
+        ],
+        "cities": [
+          "Tübingen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/ifit/"
+      },
+      {
+        "name": "Kontrolle von Mikroorganismen zur Bekämpfung von Infektionen (CMFI)",
+        "nameEn": "Controlling Microbes to Fight Infections (CMFI)",
+        "acronym": "CMFI",
+        "shortName": "CMFI",
+        "status": "continuation",
+        "universities": [
+          "Eberhard Karls Universität Tübingen"
+        ],
+        "cities": [
+          "Tübingen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/cmfi/"
+      },
+      {
+        "name": "Maschinelles Lernen: Neue Perspektiven für die Wissenschaft",
+        "nameEn": "Machine Learning: New Perspectives for Science",
+        "acronym": null,
+        "shortName": "Maschinelles Lernen",
+        "status": "continuation",
+        "universities": [
+          "Eberhard Karls Universität Tübingen"
+        ],
+        "cities": [
+          "Tübingen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/maschinelles-lernen-fuer-die-wissenschaft/"
+      },
+      {
+        "name": "TERRA: Terrestrische Geo-Biosphären Wechselwirkungen in einer Welt im Wandel",
+        "nameEn": "TERRA: Terrestrial Geo-Biosphere Interactions in a Changing World",
+        "acronym": "TERRA",
+        "shortName": "TERRA",
+        "status": "new",
+        "universities": [
+          "Eberhard Karls Universität Tübingen"
+        ],
+        "cities": [
+          "Tübingen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/terra/"
+      },
+      {
+        "name": "CARE: Klimaneutrales und ressourceneffizientes Bauen",
+        "nameEn": "CARE: Climate-Neutral And Resource-Efficient Construction",
+        "acronym": "CARE",
+        "shortName": "CARE",
+        "status": "new",
+        "universities": [
+          "Rheinisch-Westfälische Technische Hochschule Aachen",
+          "Technische Universität Dresden"
+        ],
+        "cities": [
+          "Aachen",
+          "Dresden"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/care/"
+      },
+      {
+        "name": "ImmunoPreCept: Erforschung der Schnittstelle zwischen Gesundheit und Krankheit für zell-basierte molekulare Prävention und interzeptive Medizin",
+        "nameEn": "ImmunoPreCept: Exploring the Health-Disease Bifurcation for Cell-based Molecular Prevention and Interceptive Medicine",
+        "acronym": "ImmunoPreCept",
+        "shortName": "ImmunoPreCept",
+        "status": "new",
+        "universities": [
+          "Freie Universität Berlin",
+          "Humboldt-Universität zu Berlin"
+        ],
+        "cities": [
+          "Berlin"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/immunoprecept/"
+      },
+      {
+        "name": "NeuroCure – Neue Wege in der Erforschung und Behandlung von Erkrankungen des Nervensystems",
+        "nameEn": "NeuroCure – Comprehensive approaches to neurological and psychiatric disorders – from mechanisms to interventions",
+        "acronym": "NeuroCure",
+        "shortName": "NeuroCure",
+        "status": "continuation",
+        "universities": [
+          "Freie Universität Berlin",
+          "Humboldt-Universität zu Berlin"
+        ],
+        "cities": [
+          "Berlin"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/neurocure/"
+      },
+      {
+        "name": "RESOLV (Ruhr Explores Solvation) – Verständnis und Design lösungsmittelabhängiger Prozesse",
+        "nameEn": "RESOLV (Ruhr Explores Solvation) – Understanding and Design of Solvent Controlled Processes",
+        "acronym": "RESOLV",
+        "shortName": "RESOLV",
+        "status": "continuation",
+        "universities": [
+          "Ruhr-Universität Bochum",
+          "Technische Universität Dortmund"
+        ],
+        "cities": [
+          "Bochum",
+          "Dortmund"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/resolv/"
+      },
+      {
+        "name": "ECONtribute: Märkte & Public Policy",
+        "nameEn": "ECONtribute: Markets & Public Policy",
+        "acronym": "ECONtribute",
+        "shortName": "ECONtribute",
+        "status": "continuation",
+        "universities": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn",
+          "Universität zu Köln"
+        ],
+        "cities": [
+          "Bonn",
+          "Köln"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/econtribute/"
+      },
+      {
+        "name": "Unser dynamisches Universum",
+        "nameEn": "Our Dynamic Universe",
+        "acronym": "DYNAVERSE",
+        "shortName": "DYNAVERSE",
+        "status": "new",
+        "universities": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn",
+          "Universität zu Köln"
+        ],
+        "cities": [
+          "Bonn",
+          "Köln"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/dynaverse/"
+      },
+      {
+        "name": "QuantumFrontiers: Die Grenzen des Messbaren verschieben",
+        "nameEn": "QuantumFrontiers: Pushing the Boundaries of the Measurable",
+        "acronym": "QuantumFrontiers",
+        "shortName": "QuantumFrontiers",
+        "status": "continuation",
+        "universities": [
+          "Technische Universität Braunschweig",
+          "Gottfried Wilhelm Leibniz Universität Hannover"
+        ],
+        "cities": [
+          "Braunschweig",
+          "Hannover"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/quantumfrontiers/"
+      },
+      {
+        "name": "Der Ozeanboden – unerforschte Schnittstelle der Erde",
+        "nameEn": "The Ocean Floor – Earth's Uncharted Interface",
+        "acronym": null,
+        "shortName": "Der Ozeanboden",
+        "status": "continuation",
+        "universities": [
+          "Universität Bremen",
+          "Carl von Ossietzky Universität Oldenburg"
+        ],
+        "cities": [
+          "Bremen",
+          "Oldenburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/der-ozeanboden/"
+      },
+      {
+        "name": "Komplexität, Topologie und Dynamik in Quantenmaterialien (ctd.qmat)",
+        "nameEn": "Complexity, Topology and Dynamics in Quantum Matter (ctd.qmat)",
+        "acronym": "ctd.qmat",
+        "shortName": "ctd.qmat",
+        "status": "continuation",
+        "universities": [
+          "Technische Universität Dresden",
+          "Julius-Maximilians-Universität Würzburg"
+        ],
+        "cities": [
+          "Dresden",
+          "Würzburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/ctqmat/"
+      },
+      {
+        "name": "Exzellenzcluster für Pflanzenwissenschaften CEPLAS – SMARTe Pflanzen in dynamischen Umwelten",
+        "nameEn": "Cluster of Excellence on Plant Sciences CEPLAS – SMART Plants in Dynamic Environments",
+        "acronym": "CEPLAS",
+        "shortName": "CEPLAS",
+        "status": "continuation",
+        "universities": [
+          "Heinrich-Heine-Universität Düsseldorf",
+          "Universität zu Köln"
+        ],
+        "cities": [
+          "Düsseldorf",
+          "Köln"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/ceplas/"
+      },
+      {
+        "name": "Cardio-Pulmonary Institute (CPI)",
+        "nameEn": "Cardio-Pulmonary Institute (CPI)",
+        "acronym": "CPI",
+        "shortName": "CPI",
+        "status": "continuation",
+        "universities": [
+          "Goethe-Universität Frankfurt am Main",
+          "Justus-Liebig-Universität Gießen"
+        ],
+        "cities": [
+          "Frankfurt am Main",
+          "Gießen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/cpi/"
+      },
+      {
+        "name": "3D Designer Materialien",
+        "nameEn": "3D Matter Made to Order (3DMM2O)",
+        "acronym": "3DMM2O",
+        "shortName": "3DMM2O",
+        "status": "continuation",
+        "universities": [
+          "Ruprecht-Karls-Universität Heidelberg",
+          "Karlsruher Institut für Technologie"
+        ],
+        "cities": [
+          "Heidelberg",
+          "Karlsruhe"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/3dmm2o-2/"
+      },
+      {
+        "name": "Präzisionsmedizin für Chronische Entzündungserkrankungen",
+        "nameEn": "Precision Medicine in Chronic Inflammation (PMI)",
+        "acronym": "PMI",
+        "shortName": "PMI",
+        "status": "continuation",
+        "universities": [
+          "Christian-Albrechts-Universität zu Kiel",
+          "Universität zu Lübeck"
+        ],
+        "cities": [
+          "Kiel",
+          "Lübeck"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/pmi/"
+      },
+      {
+        "name": "Biosystem-Design München (BioSysteM)",
+        "nameEn": "Biosystems Design Munich (BioSysteM)",
+        "acronym": "BioSysteM",
+        "shortName": "BioSysteM",
+        "status": "new",
+        "universities": [
+          "Ludwig-Maximilians-Universität München",
+          "Technische Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/biosystem/"
+      },
+      {
+        "name": "e-conversion 2.0",
+        "nameEn": "e-conversion 2.0",
+        "acronym": "e-conversion 2.0",
+        "shortName": "e-conversion 2.0",
+        "status": "continuation",
+        "universities": [
+          "Ludwig-Maximilians-Universität München",
+          "Technische Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/econversion/"
+      },
+      {
+        "name": "Münchner Zentrum für Quantenwissenschaft und -technologie",
+        "nameEn": "Munich Center for Quantum Science and Technology (MCQST)",
+        "acronym": "MCQST",
+        "shortName": "MCQST",
+        "status": "continuation",
+        "universities": [
+          "Ludwig-Maximilians-Universität München",
+          "Technische Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/mcqst/"
+      },
+      {
+        "name": "Munich Cluster for Systems Neurology (SyNergy)",
+        "nameEn": "Munich Cluster for Systems Neurology (SyNergy)",
+        "acronym": "SyNergy",
+        "shortName": "SyNergy",
+        "status": "continuation",
+        "universities": [
+          "Ludwig-Maximilians-Universität München",
+          "Technische Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/synergy/"
+      },
+      {
+        "name": "ORIGINS: Vom Ursprung des Universums bis zu den ersten Bausteinen des Lebens",
+        "nameEn": "ORIGINS: From the Origin of the Universe to the First Building Blocks of Life",
+        "acronym": "ORIGINS",
+        "shortName": "ORIGINS",
+        "status": "continuation",
+        "universities": [
+          "Ludwig-Maximilians-Universität München",
+          "Technische Universität München"
+        ],
+        "cities": [
+          "München"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/origins/"
+      },
+      {
+        "name": "Materie und Licht für Quanteninformation (ML4Q)",
+        "nameEn": "Matter and Light for Quantum Computing (ML4Q)",
+        "acronym": "ML4Q",
+        "shortName": "ML4Q",
+        "status": "continuation",
+        "universities": [
+          "Rheinisch-Westfälische Technische Hochschule Aachen",
+          "Rheinische Friedrich-Wilhelms-Universität Bonn",
+          "Universität zu Köln"
+        ],
+        "cities": [
+          "Aachen",
+          "Bonn",
+          "Köln"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/ml4q/"
+      },
+      {
+        "name": "MATH+: Berlin Mathematics Research Center",
+        "nameEn": "MATH+: Berlin Mathematics Research Center",
+        "acronym": "MATH+",
+        "shortName": "MATH+",
+        "status": "continuation",
+        "universities": [
+          "Freie Universität Berlin",
+          "Humboldt-Universität zu Berlin",
+          "Technische Universität Berlin"
+        ],
+        "cities": [
+          "Berlin"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/math/"
+      },
+      {
+        "name": "Zentrum für Chirale Elektronik",
+        "nameEn": "Center for Chiral Electronics",
+        "acronym": null,
+        "shortName": "Center for Chiral Electronics",
+        "status": "new",
+        "universities": [
+          "Freie Universität Berlin",
+          "Martin-Luther-Universität Halle-Wittenberg",
+          "Universität Regensburg"
+        ],
+        "cities": [
+          "Berlin",
+          "Halle (Saale)",
+          "Regensburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/center-for-chiral-electronics/"
+      },
+      {
+        "name": "Color meets Flavor – Suche nach neuen Phänomenen in der starken und schwachen Wechselwirkung",
+        "nameEn": "Color meets Flavor – Search for new phenomena in strong and weak interactions",
+        "acronym": null,
+        "shortName": "Color meets Flavor",
+        "status": "new",
+        "universities": [
+          "Rheinische Friedrich-Wilhelms-Universität Bonn",
+          "Technische Universität Dortmund",
+          "Universität Siegen"
+        ],
+        "cities": [
+          "Bonn",
+          "Dortmund",
+          "Siegen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/color-meets-flavor/"
+      },
+      {
+        "name": "Adaptives Verhalten",
+        "nameEn": "The Adaptive Mind",
+        "acronym": null,
+        "shortName": "The Adaptive Mind",
+        "status": "new",
+        "universities": [
+          "Technische Universität Darmstadt",
+          "Justus-Liebig-Universität Gießen",
+          "Philipps-Universität Marburg"
+        ],
+        "cities": [
+          "Darmstadt",
+          "Gießen",
+          "Marburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/the-adaptive-mind/"
+      },
+      {
+        "name": "Post-Lithium Energy Storage (POLiS)",
+        "nameEn": "Post-Lithium Energy Storage (POLiS)",
+        "acronym": "POLiS",
+        "shortName": "POLiS",
+        "status": "continuation",
+        "universities": [
+          "Justus-Liebig-Universität Gießen",
+          "Karlsruher Institut für Technologie",
+          "Universität Ulm"
+        ],
+        "cities": [
+          "Gießen",
+          "Karlsruhe",
+          "Ulm"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/polis/"
+      },
+      {
+        "name": "Hearing4all.connects: Innovative Technologien für die Hörgesundheit – vom Ohr zum Gehirn zur Gesellschaft",
+        "nameEn": "Hearing4all.connects: Innovating Hearing Health Technology from Ear to Brain to Society",
+        "acronym": "Hearing4all.connects",
+        "shortName": "Hearing4all.connects",
+        "status": "continuation",
+        "universities": [
+          "Gottfried Wilhelm Leibniz Universität Hannover",
+          "Medizinische Hochschule Hannover",
+          "Carl von Ossietzky Universität Oldenburg"
+        ],
+        "cities": [
+          "Hannover",
+          "Oldenburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/hearing4all/"
+      },
+      {
+        "name": "GreenRobust: Robustheit pflanzlicher Systeme von Molekülen bis zu Ökosystemen",
+        "nameEn": "GreenRobust: Understanding Robustness of Plant Systems from Molecules to Ecosystems",
+        "acronym": "GreenRobust",
+        "shortName": "GreenRobust",
+        "status": "new",
+        "universities": [
+          "Ruprecht-Karls-Universität Heidelberg",
+          "Universität Hohenheim",
+          "Eberhard Karls Universität Tübingen"
+        ],
+        "cities": [
+          "Heidelberg",
+          "Stuttgart",
+          "Tübingen"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/greenrobust/"
+      },
+      {
+        "name": "Cluster für Nukleinsäureforschung und -technologien – NUCLEATE",
+        "nameEn": "Cluster for Nucleic Acid Sciences and Technologies – NUCLEATE",
+        "acronym": "NUCLEATE",
+        "shortName": "NUCLEATE",
+        "status": "new",
+        "universities": [
+          "Ludwig-Maximilians-Universität München",
+          "Technische Universität München",
+          "Julius-Maximilians-Universität Würzburg"
+        ],
+        "cities": [
+          "München",
+          "Würzburg"
+        ],
+        "source": "https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf",
+        "sourceEn": "https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf",
+        "portal": "https://www.exzellenzstrategie.de/exzellenzcluster/nucleate/"
+      }
+    ]
+  },
+  "universities": {
+    "Rheinisch-Westfälische Technische Hochschule Aachen": {
+      "nameEn": "RWTH Aachen University",
+      "city": "Aachen",
+      "state": "NW",
+      "lat": 50.7778,
+      "lon": 6.0781,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q273263",
+      "coordinateWikidataItem": "Q273263"
+    },
+    "Universität Bayreuth": {
+      "nameEn": "University of Bayreuth",
+      "city": "Bayreuth",
+      "state": "BY",
+      "lat": 49.9288,
+      "lon": 11.5859,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q702482",
+      "coordinateWikidataItem": "Q702482"
+    },
+    "Freie Universität Berlin": {
+      "nameEn": "Freie Universität Berlin",
+      "city": "Berlin",
+      "state": "BE",
+      "lat": 52.4543,
+      "lon": 13.2935,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q153006",
+      "coordinateWikidataItem": "Q153006"
+    },
+    "Humboldt-Universität zu Berlin": {
+      "nameEn": "Humboldt-Universität zu Berlin",
+      "city": "Berlin",
+      "state": "BE",
+      "lat": 52.5181,
+      "lon": 13.3933,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q152087",
+      "coordinateWikidataItem": "Q152087"
+    },
+    "Technische Universität Berlin": {
+      "nameEn": "Technische Universität Berlin",
+      "city": "Berlin",
+      "state": "BE",
+      "lat": 52.5119,
+      "lon": 13.3264,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q51985",
+      "coordinateWikidataItem": "Q51985"
+    },
+    "Ruhr-Universität Bochum": {
+      "nameEn": "Ruhr University Bochum",
+      "city": "Bochum",
+      "state": "NW",
+      "lat": 51.4439,
+      "lon": 7.2617,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q309948",
+      "coordinateWikidataItem": "Q309948"
+    },
+    "Rheinische Friedrich-Wilhelms-Universität Bonn": {
+      "nameEn": "University of Bonn",
+      "city": "Bonn",
+      "state": "NW",
+      "lat": 50.7339,
+      "lon": 7.1022,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q152171",
+      "coordinateWikidataItem": "Q152171"
+    },
+    "Technische Universität Braunschweig": {
+      "nameEn": "Technische Universität Braunschweig",
+      "city": "Braunschweig",
+      "state": "NI",
+      "lat": 52.2736,
+      "lon": 10.5297,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q734324",
+      "coordinateWikidataItem": "Q734324"
+    },
+    "Universität Bremen": {
+      "nameEn": "University of Bremen",
+      "city": "Bremen",
+      "state": "HB",
+      "lat": 53.1086,
+      "lon": 8.8536,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item. Campus in Horn-Lehe, Bremen.",
+      "wikidata": "Q500692",
+      "coordinateWikidataItem": "Q500692"
+    },
+    "Technische Universität Darmstadt": {
+      "nameEn": "Technical University of Darmstadt",
+      "city": "Darmstadt",
+      "state": "HE",
+      "lat": 49.875,
+      "lon": 8.6564,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q310695",
+      "coordinateWikidataItem": "Q310695"
+    },
+    "Technische Universität Dortmund": {
+      "nameEn": "TU Dortmund University",
+      "city": "Dortmund",
+      "state": "NW",
+      "lat": 51.4925,
+      "lon": 7.4142,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q685557",
+      "coordinateWikidataItem": "Q685557"
+    },
+    "Technische Universität Dresden": {
+      "nameEn": "Dresden University of Technology",
+      "city": "Dresden",
+      "state": "SN",
+      "lat": 51.0281,
+      "lon": 13.7267,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q158158",
+      "coordinateWikidataItem": "Q158158"
+    },
+    "Heinrich-Heine-Universität Düsseldorf": {
+      "nameEn": "Heinrich Heine University Düsseldorf",
+      "city": "Düsseldorf",
+      "state": "NW",
+      "lat": 51.1903,
+      "lon": 6.7942,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q317032",
+      "coordinateWikidataItem": "Q317032"
+    },
+    "Friedrich-Alexander-Universität Erlangen-Nürnberg": {
+      "nameEn": "Friedrich-Alexander-Universität Erlangen-Nürnberg",
+      "city": "Erlangen",
+      "state": "BY",
+      "lat": 49.6007,
+      "lon": 11.0047,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item. Erlangen city-centre (Schlossgarten area); FAU also has major sites in Nürnberg.",
+      "wikidata": "Q40025",
+      "coordinateWikidataItem": "Q40025"
+    },
+    "Goethe-Universität Frankfurt am Main": {
+      "nameEn": "Goethe University Frankfurt/Main",
+      "city": "Frankfurt am Main",
+      "state": "HE",
+      "lat": 50.1279,
+      "lon": 8.6694,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item. Campus Westend.",
+      "wikidata": "Q50662",
+      "coordinateWikidataItem": "Q50662"
+    },
+    "Albert-Ludwigs-Universität Freiburg": {
+      "nameEn": "Albert-Ludwigs-Universität Freiburg",
+      "city": "Freiburg im Breisgau",
+      "state": "BW",
+      "lat": 47.9942,
+      "lon": 7.8469,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q153987",
+      "coordinateWikidataItem": "Q153987"
+    },
+    "Justus-Liebig-Universität Gießen": {
+      "nameEn": "Justus Liebig University Giessen",
+      "city": "Gießen",
+      "state": "HE",
+      "lat": 50.5808,
+      "lon": 8.6764,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q317053",
+      "coordinateWikidataItem": "Q317053"
+    },
+    "Martin-Luther-Universität Halle-Wittenberg": {
+      "nameEn": "Martin Luther University Halle-Wittenberg",
+      "city": "Halle (Saale)",
+      "state": "ST",
+      "lat": 51.4865,
+      "lon": 11.9694,
+      "coordinateBasis": "Löwengebäude, central university building, Universitätsplatz (Wikidata Q87835568); university item has no coordinate.",
+      "wikidata": "Q32120",
+      "coordinateWikidataItem": "Q87835568"
+    },
+    "Universität Hamburg": {
+      "nameEn": "University of Hamburg",
+      "city": "Hamburg",
+      "state": "HH",
+      "lat": 53.5657,
+      "lon": 9.9848,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q156725",
+      "coordinateWikidataItem": "Q156725"
+    },
+    "Technische Universität Hamburg": {
+      "nameEn": "Hamburg University of Technology",
+      "city": "Hamburg",
+      "state": "HH",
+      "lat": 53.461,
+      "lon": 9.9695,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item. Campus Harburg (Hamburg).",
+      "wikidata": "Q1060",
+      "coordinateWikidataItem": "Q1060"
+    },
+    "Gottfried Wilhelm Leibniz Universität Hannover": {
+      "nameEn": "Leibniz University Hannover",
+      "city": "Hannover",
+      "state": "NI",
+      "lat": 52.3822,
+      "lon": 9.7178,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q678982",
+      "coordinateWikidataItem": "Q678982"
+    },
+    "Medizinische Hochschule Hannover": {
+      "nameEn": "Hannover Medical School",
+      "city": "Hannover",
+      "state": "NI",
+      "lat": 52.3837,
+      "lon": 9.8045,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q911561",
+      "coordinateWikidataItem": "Q911561"
+    },
+    "Ruprecht-Karls-Universität Heidelberg": {
+      "nameEn": "Heidelberg University",
+      "city": "Heidelberg",
+      "state": "BW",
+      "lat": 49.4103,
+      "lon": 8.7064,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q151510",
+      "coordinateWikidataItem": "Q151510"
+    },
+    "Universität Hohenheim": {
+      "nameEn": "University of Hohenheim",
+      "city": "Stuttgart",
+      "state": "BW",
+      "lat": 48.7125,
+      "lon": 9.214,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item. Schloss Hohenheim campus, district Plieningen/Hohenheim of Stuttgart (same municipality as Universität Stuttgart, ~8 km apart).",
+      "wikidata": "Q690912",
+      "coordinateWikidataItem": "Q690912"
+    },
+    "Friedrich-Schiller-Universität Jena": {
+      "nameEn": "Friedrich Schiller University Jena",
+      "city": "Jena",
+      "state": "TH",
+      "lat": 50.9283,
+      "lon": 11.5822,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q154561",
+      "coordinateWikidataItem": "Q154561"
+    },
+    "Karlsruher Institut für Technologie": {
+      "nameEn": "Karlsruhe Institute of Technology",
+      "city": "Karlsruhe",
+      "state": "BW",
+      "lat": 49.012,
+      "lon": 8.414,
+      "coordinateBasis": "KIT Campus Süd (Wikidata Q130681344). The university item Q309988 points to Campus Nord in Eggenstein-Leopoldshafen, outside Karlsruhe; not used.",
+      "wikidata": "Q309988",
+      "coordinateWikidataItem": "Q130681344"
+    },
+    "Christian-Albrechts-Universität zu Kiel": {
+      "nameEn": "Kiel University",
+      "city": "Kiel",
+      "state": "SH",
+      "lat": 54.3389,
+      "lon": 10.1225,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q156737",
+      "coordinateWikidataItem": "Q156737"
+    },
+    "Universität zu Köln": {
+      "nameEn": "University of Cologne",
+      "city": "Köln",
+      "state": "NW",
+      "lat": 50.9281,
+      "lon": 6.9286,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q54096",
+      "coordinateWikidataItem": "Q54096"
+    },
+    "Universität Konstanz": {
+      "nameEn": "University of Konstanz",
+      "city": "Konstanz",
+      "state": "BW",
+      "lat": 47.6902,
+      "lon": 9.1881,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q835440",
+      "coordinateWikidataItem": "Q835440"
+    },
+    "Universität Leipzig": {
+      "nameEn": "Leipzig University",
+      "city": "Leipzig",
+      "state": "SN",
+      "lat": 51.3386,
+      "lon": 12.3794,
+      "coordinateBasis": "Augusteum, main building at Augustusplatz (Wikidata Q284771); university item has no coordinate.",
+      "wikidata": "Q154804",
+      "coordinateWikidataItem": "Q284771"
+    },
+    "Universität zu Lübeck": {
+      "nameEn": "University of Lübeck",
+      "city": "Lübeck",
+      "state": "SH",
+      "lat": 53.8369,
+      "lon": 10.7058,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q317087",
+      "coordinateWikidataItem": "Q317087"
+    },
+    "Johannes Gutenberg-Universität Mainz": {
+      "nameEn": "Johannes Gutenberg University Mainz",
+      "city": "Mainz",
+      "state": "RP",
+      "lat": 49.9931,
+      "lon": 8.2417,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q161982",
+      "coordinateWikidataItem": "Q161982"
+    },
+    "Philipps-Universität Marburg": {
+      "nameEn": "Philipps-Universität Marburg",
+      "city": "Marburg",
+      "state": "HE",
+      "lat": 50.8108,
+      "lon": 8.7736,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q155354",
+      "coordinateWikidataItem": "Q155354"
+    },
+    "Ludwig-Maximilians-Universität München": {
+      "nameEn": "Ludwig-Maximilians-Universität München",
+      "city": "München",
+      "state": "BY",
+      "lat": 48.1508,
+      "lon": 11.5803,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q55044",
+      "coordinateWikidataItem": "Q55044"
+    },
+    "Technische Universität München": {
+      "nameEn": "Technical University of Munich",
+      "city": "München",
+      "state": "BY",
+      "lat": 48.1481,
+      "lon": 11.5681,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item. Stammgelände, Arcisstraße (Munich); large campuses also in Garching and Freising-Weihenstephan (outside Munich).",
+      "wikidata": "Q157808",
+      "coordinateWikidataItem": "Q157808"
+    },
+    "Universität Münster": {
+      "nameEn": "University of Münster",
+      "city": "Münster",
+      "state": "NW",
+      "lat": 51.964,
+      "lon": 7.613,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q168426",
+      "coordinateWikidataItem": "Q168426"
+    },
+    "Carl von Ossietzky Universität Oldenburg": {
+      "nameEn": "Carl von Ossietzky University of Oldenburg",
+      "city": "Oldenburg",
+      "state": "NI",
+      "lat": 53.1478,
+      "lon": 8.1822,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q597758",
+      "coordinateWikidataItem": "Q597758"
+    },
+    "Universität Regensburg": {
+      "nameEn": "University of Regensburg",
+      "city": "Regensburg",
+      "state": "BY",
+      "lat": 48.9992,
+      "lon": 12.0932,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q574571",
+      "coordinateWikidataItem": "Q574571"
+    },
+    "Universität Siegen": {
+      "nameEn": "University of Siegen",
+      "city": "Siegen",
+      "state": "NW",
+      "lat": 50.9064,
+      "lon": 8.0283,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q504723",
+      "coordinateWikidataItem": "Q504723"
+    },
+    "Universität Stuttgart": {
+      "nameEn": "University of Stuttgart",
+      "city": "Stuttgart",
+      "state": "BW",
+      "lat": 48.7817,
+      "lon": 9.1752,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item. Campus Stadtmitte (Keplerstraße); the larger Campus Vaihingen is ~7 km south-west, also in Stuttgart.",
+      "wikidata": "Q122453",
+      "coordinateWikidataItem": "Q122453"
+    },
+    "Eberhard Karls Universität Tübingen": {
+      "nameEn": "University of Tübingen",
+      "city": "Tübingen",
+      "state": "BW",
+      "lat": 48.525,
+      "lon": 9.0589,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q153978",
+      "coordinateWikidataItem": "Q153978"
+    },
+    "Universität Ulm": {
+      "nameEn": "Ulm University",
+      "city": "Ulm",
+      "state": "BW",
+      "lat": 48.4221,
+      "lon": 9.9538,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q835662",
+      "coordinateWikidataItem": "Q835662"
+    },
+    "Julius-Maximilians-Universität Würzburg": {
+      "nameEn": "Julius-Maximilians-Universität Würzburg",
+      "city": "Würzburg",
+      "state": "BY",
+      "lat": 49.7881,
+      "lon": 9.9353,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q161976",
+      "coordinateWikidataItem": "Q161976"
+    },
+    "Charité – Universitätsmedizin Berlin": {
+      "nameEn": "Charité – Universitätsmedizin Berlin",
+      "city": "Berlin",
+      "state": "BE",
+      "lat": 52.5269,
+      "lon": 13.3772,
+      "coordinateBasis": "Main campus / main building: Wikidata P625 of the university item.",
+      "wikidata": "Q162684",
+      "coordinateWikidataItem": "Q162684"
+    }
+  },
+  "notes": [
+    "Universities of Excellence, list in force today (2026-10-12): the first-period list decided 19 July 2019 (10 universities + 1 alliance = 11 funding cases, not 11 universities + 1 alliance). Funding began 1 November 2019 and runs to December 2026 (GWK: 'November 2019 bis Dezember 2026'; the WR call text originally named 31 October 2026 as end).",
+    "Newly decided list (in force from 1 January 2027, 7-year period 2027-2033, permanent funding subject to evaluation every 7 years): 15 funding cases = 12 universities + 3 alliances (20 universities in 17 cities). 10 continued by the Excellence Commission on 11 March 2026; 5 new selected on 2 October 2026 from 11 applications.",
+    "Universität Konstanz is not continued from 2027 (it no longer has the required minimum number of Clusters of Excellence). WR page mentions degressive phase-out funding for up to three years for sites that leave; exact Konstanz arrangement not verified.",
+    "Unsuccessful 2026 new applicants (from the DFG/WR list of 11 March 2026): Northwest Alliance (Universität Bremen, Carl von Ossietzky Universität Oldenburg), H_CORE (Justus-Liebig-Universität Gießen, Philipps-Universität Marburg), Leibniz Universität Hannover, Medizinische Hochschule Hannover, Christian-Albrechts-Universität zu Kiel, Julius-Maximilians-Universität Würzburg.",
+    "Berlin University Alliance: official DFG/WR lists name only FU, HU and TU Berlin; Charité – Universitätsmedizin Berlin is listed as a member on exzellenzstrategie.de and in 2019 announcements. All four are in Berlin.",
+    "Clusters: complete list of 70 transcribed from the official DFG/WR PDF (German and English versions) of the 22 May 2025 Excellence Commission meeting; funding 1 January 2026 for 7 years (2026-2032). Cross-checked: exzellenzstrategie.de shows exactly the same 70 tagged 'Förderphase 2026-2032'; 45 continuations + 25 new; 43 universities (37 municipalities, 13 Länder) - all matching the DFG press release.",
+    "Cluster acronyms: taken from the official titles or from the exzellenzstrategie.de short labels (e.g. RAI, REC², DYNAVERSE, CECAD, IntCDC, In_equality). null where no acronym is used officially; 'shortName' gives the portal label. Commonly used informal acronyms (e.g. 'FSC' for the Fuel Science Center, 'TAM' for The Adaptive Mind) are NOT given because they are not in the official lists.",
+    "e-conversion 2.0: the portal still shows the old German subtitle 'e-conversion – Energie verstehen an den Grenzflächen'; the official 2025 list title is just 'e-conversion 2.0'.",
+    "Source inconsistencies: (a) GWK page says the evaluation decision was on 26 March 2026; DFG/WR press release and list say 11 March 2026 (used). (b) WR Exzellenzstrategie page says 'Seit Januar 2026 werden 40 Cluster an 43 deutschen Universitäten gefördert' - evidently a typo for 70. (c) DFG programme page still mentions 'bis zu maximal 4 neue Förderfälle' while the press release states 5 were selected (up to 5 were allowed per WR/GWK). (d) exzellenzstrategie.de Universities listing labels the first period '2020-2026' and had not yet added the 5 new sites at retrieval.",
+    "Coordinates: approximate (main building / main campus) from Wikidata P625, rounded to 4 decimals; not checked against official campus addresses. Overrides: KIT -> Campus Süd (the KIT item points to Campus Nord in Eggenstein-Leopoldshafen); Halle -> Löwengebäude; Leipzig -> Augusteum (university items lack coordinates).",
+    "Municipality caveats for puzzle use: Universität Hohenheim is in Stuttgart (same municipality as Universität Stuttgart); Technische Universität Hamburg is in Hamburg-Harburg; FAU Erlangen-Nürnberg assigned to Erlangen (also large sites in Nürnberg); Martin-Luther-Universität Halle-Wittenberg assigned to Halle (Saale); TUM main site in München (big campuses in Garching and Freising); Universität Stuttgart point is Campus Stadtmitte (main campus Vaihingen also in Stuttgart).",
+    "City names are German municipality names; GeoNames short names may differ (e.g. 'Freiburg' vs 'Freiburg im Breisgau', 'Halle' vs 'Halle (Saale)', 'Frankfurt' vs 'Frankfurt am Main')."
+  ]
+}

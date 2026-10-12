@@ -22,6 +22,36 @@
       "n": 40
     },
     {
+      "file": "exzellenzcluster-2026.tsp.json",
+      "id": "exzellenzcluster-2026",
+      "kind": "map",
+      "title": "Exzellenzcluster 2026–2032",
+      "description": "Die 70 Exzellenzcluster der Förderperiode ab 2026 (DFG/WR, Entscheidung vom 22. Mai 2025) in 37 Städten, ein Ort pro Stadt.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 37
+    },
+    {
+      "file": "exzellenzuniversitaeten-2019.tsp.json",
+      "id": "exzellenzuniversitaeten-2019",
+      "kind": "map",
+      "title": "Exzellenzuniversitäten 2019–2026",
+      "description": "Die 11 Exzellenzuniversitäten und der Exzellenzverbund der Förderperiode 2019–2026 (Entscheidung vom 19. Juli 2019), ein Ort pro Stadt.",
+      "purpose": "board",
+      "region": "DE",
+      "n": 10
+    },
+    {
+      "file": "exzellenzuniversitaeten-2027.tsp.json",
+      "id": "exzellenzuniversitaeten-2027",
+      "kind": "map",
+      "title": "Exzellenzuniversitäten ab 2027",
+      "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 (DFG/WR, Entscheidungen vom 11. März und 2. Oktober 2026), ein Ort pro Stadt.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 17
+    },
+    {
       "file": "nrw-25.tsp.json",
       "id": "nrw-25",
       "kind": "map",

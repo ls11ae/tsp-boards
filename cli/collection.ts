@@ -4,6 +4,8 @@
 //       [--purpose board|digital] [--id de-40] [--lang de]
 //   npx tsx cli/collection.ts search --region DE --n 40 --seed 1 --title … [same options]
 //   npx tsx cli/collection.ts incremental --n 12 --seed 1 --title … [--id …]
+//   npx tsx cli/collection.ts list --file places.txt --title … [--purpose auto|board|digital]
+//       (a fixed instance from a place list; auto: board if the gap allows it, else digital)
 //   npx tsx cli/collection.ts index        (rebuilds index.json from the files)
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -24,11 +26,21 @@ import {
   parsePuzzleDoc,
   serializePuzzleDoc,
   type CollectionIndex,
+  type Place,
   type PuzzleDoc,
 } from '../src/core/puzzle-file';
 import { Rng } from '../src/core/rng';
 import { iteratedLocalSearch } from '../src/core/tsp/ils';
 import { verifyCandidate } from '../src/core/verify';
+import { citiesFromColumns } from '../src/core/data';
+import { closePairs } from '../src/core/fixed';
+import {
+  NameIndex,
+  listCities,
+  mergePlaces,
+  parsePlaceLines,
+  type ListPlace,
+} from '../src/core/places';
 import { boardPool, loadBackend, loadCountry, poolLabels } from './lib/country';
 import { runSearch } from './lib/run-search';
 
@@ -67,10 +79,17 @@ function meta(kind: 'map' | 'incremental'): Omit<PuzzleDoc, 'data'> {
   };
 }
 
-async function mapDoc(params: PuzzleParams, ids: readonly number[]): Promise<PuzzleDoc> {
+async function mapDoc(
+  params: PuzzleParams,
+  ids: readonly number[] | null,
+  list: { readonly mode: 'fixed' | 'pool'; readonly places: readonly Place[] } | null = null,
+): Promise<PuzzleDoc> {
   const file = loadCountry(params.region.slice(0, 2));
-  const m = meta('map');
-  const setup = boardSetup(file, { ...params, labelLanguage: m.language }, ids, m.title);
+  let m = meta('map');
+  const towns = new Map(citiesFromColumns(file.cities, file.states).map((c) => [c.id, c]));
+  const pool = list ? listCities(list.places, towns) : null;
+  const selected = ids ?? pool!.map((c) => c.id);
+  const setup = boardSetup(file, { ...params, labelLanguage: m.language }, selected, m.title, pool);
   if (setup.missing.length > 0)
     throw new Error(`cities not in the pool: ${setup.missing.join(',')}`);
   const backend = await loadBackend();
@@ -81,16 +100,32 @@ async function mapDoc(params: PuzzleParams, ids: readonly number[]): Promise<Puz
     boardPlanInput(setup, { tour: v.string.optimal, second: v.string.second, gapUm: v.string.gap }),
     backend,
   );
+  const close = closePairs(setup.points, params.minDistanceMm);
+  if (arg('purpose', 'auto') === 'auto') {
+    // Boards need a gap at the target and room for the nails; else a digital puzzle.
+    const board =
+      v.string.gap >= params.targetGapMm * 1000 &&
+      (plan?.measured.gapUm ?? 0) >= params.targetGapMm * 1000 &&
+      close.every((c) => c.distanceMm >= 12);
+    m = { ...m, purpose: board ? 'board' : 'digital' };
+  }
+  if (close.length > 0)
+    console.error(
+      `close pairs: ${close.map((c) => `${setup.cities[c.a]!.name}–${setup.cities[c.b]!.name} ${c.distanceMm.toFixed(1)} mm`).join(', ')}`,
+    );
   console.error(
-    `${m.title}: n = ${ids.length}, string gap ${(v.string.gap / 1000).toFixed(2)} mm (${v.mode}), ` +
+    `${m.title} (${m.purpose}): n = ${selected.length}, string gap ${(v.string.gap / 1000).toFixed(2)} mm (${v.mode}), ` +
       `scale ${plan ? (plan.measured.gapUm / 1000).toFixed(2) : '–'} mm`,
   );
   return {
     ...m,
     data: { country: file.country, version: file.dataVersion },
     map: {
-      params: { ...params, n: ids.length, labelLanguage: m.language },
-      places: setup.cities.map((c) => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon })),
+      params: { ...params, n: selected.length, labelLanguage: m.language },
+      places: list
+        ? setup.cities.map((c) => list.places[pool!.indexOf(c)]!)
+        : setup.cities.map((c) => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon })),
+      ...(list ? { list } : {}),
       constraints: { pinned: [], excluded: [], groups: [] },
       results: {
         tour: v.string.optimal,
@@ -127,6 +162,58 @@ if (command === 'add') {
   const link = decodePermalink(arg('link', ''));
   if (!link?.selected) throw new Error('--link needs a permalink with selected cities');
   write(await mapDoc(link.params, link.selected));
+  rebuildIndex();
+} else if (command === 'list') {
+  // A fixed instance from a place list file (town names or CSV rows, see src/core/places.ts).
+  const text = readFileSync(arg('file', ''), 'utf8');
+  const file = loadCountry(arg('region', 'DE').slice(0, 2));
+  const index = new NameIndex(citiesFromColumns(file.cities, file.states));
+  const listPlaces: ListPlace[] = parsePlaceLines(text).flatMap((line): ListPlace[] => {
+    if (line.lat !== undefined && line.lon !== undefined) {
+      return [
+        {
+          name: line.name,
+          lat: line.lat,
+          lon: line.lon,
+          ...(line.label ? { label: line.label } : {}),
+          lines: [line.line],
+          names: [line.label ?? line.name],
+        },
+      ];
+    }
+    const match = index.match(line.name);
+    const town = match.options[0];
+    if (!town || match.kind !== 'exact')
+      throw new Error(`line ${line.line}: "${line.name}" is ${match.status}`);
+    if (match.status === 'ambiguous')
+      console.error(
+        `line ${line.line}: "${line.name}" is ambiguous, using ${town.name} (${town.state})`,
+      );
+    return [
+      {
+        id: town.id,
+        name: town.name,
+        lat: town.lat,
+        lon: town.lon,
+        lines: [line.line],
+        names: [town.label],
+      },
+    ];
+  });
+  const places: Place[] = mergePlaces(listPlaces, 2).map((p) => ({
+    ...(p.id !== undefined ? { id: p.id } : {}),
+    name: p.name,
+    lat: p.lat,
+    lon: p.lon,
+    ...(p.label ? { label: p.label } : {}),
+  }));
+  const params: PuzzleParams = {
+    ...DEFAULT_PARAMS,
+    region: arg('region', 'DE'),
+    minDistanceMm: Number(arg('min-dist', String(DEFAULT_PARAMS.minDistanceMm))),
+    targetGapMm: Number(arg('target', String(DEFAULT_PARAMS.targetGapMm))),
+  };
+  write(await mapDoc(params, null, { mode: 'fixed', places }));
   rebuildIndex();
 } else if (command === 'search') {
   const params: PuzzleParams = {

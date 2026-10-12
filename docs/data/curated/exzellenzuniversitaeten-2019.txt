@@ -1,0 +1,25 @@
+# Universities of Excellence and the excellence alliance, funding period November 2019 to December 2026:
+# 11 funding cases (10 universities, 1 alliance), decided 19 July 2019, one place per city.
+# Source: https://www.wissenschaftsrat.de/DE/Aufgabenfelder/Wettbewerbliche_Begutachtungen/Exzellenzstrategie/Foerderung_seit_Nov_2019/foerderung_seit_nov_19_node
+# Full data: excellence-strategy-2026-10-12.json (retrieved 2026-10-12).
+# Rheinisch-Westfälische Technische Hochschule Aachen (Aachen)
+# Berlin University Alliance (Berlin)
+# Rheinische Friedrich-Wilhelms-Universität Bonn (Bonn)
+# Technische Universität Dresden (Dresden)
+# Universität Hamburg (Hamburg)
+# Ruprecht-Karls-Universität Heidelberg (Heidelberg)
+# Karlsruher Institut für Technologie (Karlsruhe)
+# Universität Konstanz (Konstanz)
+# Ludwig-Maximilians-Universität München (München)
+# Technische Universität München (München)
+# Eberhard Karls Universität Tübingen (Tübingen)
+Aachen
+Berlin
+Bonn
+Dresden
+Hamburg
+Heidelberg
+Karlsruhe
+Konstanz
+München
+Tübingen

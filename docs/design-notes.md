@@ -472,3 +472,11 @@ Short entries: decision; alternatives considered; reason. Newest last.
   reference endpoint recomputes the length), the measure and a nickname only with a second,
   separate consent. Incremental play: one board, instances 1–3, 1–4, …; an optimal round trip
   advances to the next nail, a shown solution lets the player move on and marks the game.
+- **2026-10-12 Curated excellence instances.** Lists researched from the primary sources (DFG,
+  Wissenschaftsrat; `docs/data/curated/`): Universities of Excellence and alliances from 2027
+  (15 funding cases, 17 cities), the 2019–2026 list (11 cases, 10 cities) and the 70 Clusters of
+  Excellence 2026–2032 (37 cities); one node per city as wanted, towns from the country data.
+  Built as fixed instances with exact results; the collection CLI chooses the purpose: board
+  only if string gap and gap at the scale reach the target and no nails are closer than 12 mm.
+  The 2027 list (gap 0.37 mm) and the clusters (2.1 mm) become digital puzzles, the 2019 list
+  (15.5 mm) a board.

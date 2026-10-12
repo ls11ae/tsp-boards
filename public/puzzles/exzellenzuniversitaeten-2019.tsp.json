@@ -1,0 +1,187 @@
+{
+  "schema": 1,
+  "id": "exzellenzuniversitaeten-2019",
+  "kind": "map",
+  "title": "Exzellenzuniversitäten 2019–2026",
+  "description": "Die 11 Exzellenzuniversitäten und der Exzellenzverbund der Förderperiode 2019–2026 (Entscheidung vom 19. Juli 2019), ein Ort pro Stadt.",
+  "purpose": "board",
+  "language": "de",
+  "app": "0.0.0",
+  "updated": "2026-10-12",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE",
+      "n": 10,
+      "boardWidthMm": 600,
+      "boardHeightMm": 800,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "labelSizeMm": 8,
+      "labelLanguage": "de"
+    },
+    "places": [
+      {
+        "id": 3247449,
+        "name": "Aachen",
+        "lat": 50.7766,
+        "lon": 6.0834
+      },
+      {
+        "id": 2950159,
+        "name": "Berlin",
+        "lat": 52.5244,
+        "lon": 13.4105
+      },
+      {
+        "id": 2946447,
+        "name": "Bonn",
+        "lat": 50.7344,
+        "lon": 7.0955
+      },
+      {
+        "id": 2935022,
+        "name": "Dresden",
+        "lat": 51.0509,
+        "lon": 13.7383
+      },
+      {
+        "id": 2911298,
+        "name": "Hamburg",
+        "lat": 53.5507,
+        "lon": 9.993
+      },
+      {
+        "id": 2907911,
+        "name": "Heidelberg",
+        "lat": 49.4077,
+        "lon": 8.6908
+      },
+      {
+        "id": 2892794,
+        "name": "Karlsruhe",
+        "lat": 49.0094,
+        "lon": 8.4044
+      },
+      {
+        "id": 2885679,
+        "name": "Konstanz",
+        "lat": 47.6603,
+        "lon": 9.1758
+      },
+      {
+        "id": 2867714,
+        "name": "München",
+        "lat": 48.1374,
+        "lon": 11.5755
+      },
+      {
+        "id": 2820860,
+        "name": "Tübingen",
+        "lat": 48.5227,
+        "lon": 9.0522
+      }
+    ],
+    "list": {
+      "mode": "fixed",
+      "places": [
+        {
+          "id": 3247449,
+          "name": "Aachen",
+          "lat": 50.7766,
+          "lon": 6.0834
+        },
+        {
+          "id": 2950159,
+          "name": "Berlin",
+          "lat": 52.5244,
+          "lon": 13.4105
+        },
+        {
+          "id": 2946447,
+          "name": "Bonn",
+          "lat": 50.7344,
+          "lon": 7.0955
+        },
+        {
+          "id": 2935022,
+          "name": "Dresden",
+          "lat": 51.0509,
+          "lon": 13.7383
+        },
+        {
+          "id": 2911298,
+          "name": "Hamburg",
+          "lat": 53.5507,
+          "lon": 9.993
+        },
+        {
+          "id": 2907911,
+          "name": "Heidelberg",
+          "lat": 49.4077,
+          "lon": 8.6908
+        },
+        {
+          "id": 2892794,
+          "name": "Karlsruhe",
+          "lat": 49.0094,
+          "lon": 8.4044
+        },
+        {
+          "id": 2885679,
+          "name": "Konstanz",
+          "lat": 47.6603,
+          "lon": 9.1758
+        },
+        {
+          "id": 2867714,
+          "name": "München",
+          "lat": 48.1374,
+          "lon": 11.5755
+        },
+        {
+          "id": 2820860,
+          "name": "Tübingen",
+          "lat": 48.5227,
+          "lon": 9.0522
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        2,
+        5,
+        6,
+        9,
+        7,
+        8,
+        3,
+        1,
+        4
+      ],
+      "lengthMm": 1579.985,
+      "gapMm": 15.529,
+      "model": "string",
+      "scaleGapMm": 14.865,
+      "startPlace": 5
+    }
+  }
+}
