@@ -1,0 +1,268 @@
+{
+  "schema": 1,
+  "id": "landeshauptstaedte",
+  "kind": "map",
+  "title": "Landeshauptstädte",
+  "description": "Die Hauptstädte der 16 Bundesländer (nach Wikidata).",
+  "purpose": "digital",
+  "language": "de",
+  "app": "0.0.0",
+  "updated": "2026-10-12",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE",
+      "n": 16,
+      "boardWidthMm": 600,
+      "boardHeightMm": 800,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "id": 2950159,
+        "name": "Berlin",
+        "lat": 52.5244,
+        "lon": 13.4105
+      },
+      {
+        "id": 2944388,
+        "name": "Bremen",
+        "lat": 53.0758,
+        "lon": 8.8072
+      },
+      {
+        "id": 2935022,
+        "name": "Dresden",
+        "lat": 51.0509,
+        "lon": 13.7383
+      },
+      {
+        "id": 2934246,
+        "name": "Düsseldorf",
+        "lat": 51.2232,
+        "lon": 6.7793
+      },
+      {
+        "id": 2929670,
+        "name": "Erfurt",
+        "lat": 50.9773,
+        "lon": 11.0354
+      },
+      {
+        "id": 2911298,
+        "name": "Hamburg",
+        "lat": 53.5507,
+        "lon": 9.993
+      },
+      {
+        "id": 2910831,
+        "name": "Hannover",
+        "lat": 52.3705,
+        "lon": 9.7332
+      },
+      {
+        "id": 2891122,
+        "name": "Kiel",
+        "lat": 54.3213,
+        "lon": 10.1349
+      },
+      {
+        "id": 2874545,
+        "name": "Magdeburg",
+        "lat": 52.1313,
+        "lon": 11.6319
+      },
+      {
+        "id": 2874225,
+        "name": "Mainz",
+        "lat": 49.9819,
+        "lon": 8.2801
+      },
+      {
+        "id": 2867714,
+        "name": "München",
+        "lat": 48.1374,
+        "lon": 11.5755
+      },
+      {
+        "id": 2852458,
+        "name": "Potsdam",
+        "lat": 52.3989,
+        "lon": 13.0657
+      },
+      {
+        "id": 2842647,
+        "name": "Saarbrücken",
+        "lat": 49.2326,
+        "lon": 7.0098
+      },
+      {
+        "id": 2834282,
+        "name": "Schwerin",
+        "lat": 53.6294,
+        "lon": 11.4132
+      },
+      {
+        "id": 2825297,
+        "name": "Stuttgart",
+        "lat": 48.7823,
+        "lon": 9.177
+      },
+      {
+        "id": 2809346,
+        "name": "Wiesbaden",
+        "lat": 50.086,
+        "lon": 8.2444
+      }
+    ],
+    "list": {
+      "mode": "fixed",
+      "places": [
+        {
+          "id": 2950159,
+          "name": "Berlin",
+          "lat": 52.5244,
+          "lon": 13.4105
+        },
+        {
+          "id": 2944388,
+          "name": "Bremen",
+          "lat": 53.0758,
+          "lon": 8.8072
+        },
+        {
+          "id": 2935022,
+          "name": "Dresden",
+          "lat": 51.0509,
+          "lon": 13.7383
+        },
+        {
+          "id": 2934246,
+          "name": "Düsseldorf",
+          "lat": 51.2232,
+          "lon": 6.7793
+        },
+        {
+          "id": 2929670,
+          "name": "Erfurt",
+          "lat": 50.9773,
+          "lon": 11.0354
+        },
+        {
+          "id": 2911298,
+          "name": "Hamburg",
+          "lat": 53.5507,
+          "lon": 9.993
+        },
+        {
+          "id": 2910831,
+          "name": "Hannover",
+          "lat": 52.3705,
+          "lon": 9.7332
+        },
+        {
+          "id": 2891122,
+          "name": "Kiel",
+          "lat": 54.3213,
+          "lon": 10.1349
+        },
+        {
+          "id": 2874545,
+          "name": "Magdeburg",
+          "lat": 52.1313,
+          "lon": 11.6319
+        },
+        {
+          "id": 2874225,
+          "name": "Mainz",
+          "lat": 49.9819,
+          "lon": 8.2801
+        },
+        {
+          "id": 2867714,
+          "name": "München",
+          "lat": 48.1374,
+          "lon": 11.5755
+        },
+        {
+          "id": 2852458,
+          "name": "Potsdam",
+          "lat": 52.3989,
+          "lon": 13.0657
+        },
+        {
+          "id": 2842647,
+          "name": "Saarbrücken",
+          "lat": 49.2326,
+          "lon": 7.0098
+        },
+        {
+          "id": 2834282,
+          "name": "Schwerin",
+          "lat": 53.6294,
+          "lon": 11.4132
+        },
+        {
+          "id": 2825297,
+          "name": "Stuttgart",
+          "lat": 48.7823,
+          "lon": 9.177
+        },
+        {
+          "id": 2809346,
+          "name": "Wiesbaden",
+          "lat": 50.086,
+          "lon": 8.2444
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        2,
+        4,
+        10,
+        14,
+        12,
+        9,
+        15,
+        3,
+        6,
+        1,
+        5,
+        7,
+        13,
+        8,
+        11
+      ],
+      "lengthMm": 1942.213,
+      "gapMm": 18.617,
+      "model": "string",
+      "scaleGapMm": 18.243,
+      "startPlace": 4
+    }
+  }
+}

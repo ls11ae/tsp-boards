@@ -1,0 +1,79 @@
+# Towns with a university in Germany (universities by subclass of Q3918 whose German name contains "Universität", plus RWTH and KIT; located in, P131): 74 places.
+# Source: Wikidata (CC0), query service https://query.wikidata.org/sparql, retrieved 2026-10-12.
+# Built with: npx tsx cli/wikidata.ts universitaetsstaedte
+# Query: SELECT ?o ?oLabel (SAMPLE(?coord) AS ?c) WHERE { ?u wdt:P31 ?t . ?t wdt:P279* wd:Q3918 . ?u wdt:P17 wd:Q183 . FILTER NOT EXISTS { ?u wdt:P576 ?end } ?u rdfs:label ?ul . FILTER(LANG(?ul) = "de" && REGEX(?ul, "Universität|RWTH|Karlsruher Institut für Technologie")) ?u wdt:P131 ?o . ?o wdt:P625 ?coord . SERVICE wikibase:label { bd:serviceParam wikibase:language "de". ?o rdfs:label ?oLabel . } } GROUP BY ?o ?oLabel
+# Not a town of the country data (left out): Bayern, Charlottenburg-Wilmersdorf, Freie Hansestadt Bremen, Harburg, Horn-Lehe, Mecklenburg-Vorpommern, Neuhausen-Nymphenburg, Nordrhein-Westfalen, Sachsen-Anhalt, Schleswig-Holstein, Thüringen
+Aachen
+Augsburg
+Bamberg
+Bayreuth
+Berlin
+Bielefeld
+Bochum
+Bonn
+Braunschweig
+Chemnitz
+Clausthal-Zellerfeld
+Cottbus
+Darmstadt
+Dortmund
+Dresden
+Duisburg
+Düsseldorf
+Eichstätt
+Erlangen
+Essen
+Flensburg
+Frankfurt (Oder)
+Frankfurt am Main
+Freiberg
+Freiburg im Breisgau
+Friedrichshafen
+Gießen
+Göttingen
+Greifswald
+Hamburg
+Hannover
+Heidelberg
+Ilmenau
+Ingolstadt
+Jena
+Karlsruhe
+Kassel
+Kiel
+Koblenz
+Köln
+Konstanz
+Leipzig
+Lübeck
+Lüneburg
+Magdeburg
+Mainz
+Mannheim
+Marburg
+München
+Münster
+Neubiberg
+Neuburg an der Donau
+Nürnberg
+Oldenburg
+Osnabrück
+Paderborn
+Passau
+Potsdam
+Regensburg
+Rostock
+Saarbrücken
+Senftenberg
+Siegen
+Speyer
+Stuttgart
+Trier
+Tübingen
+Ulm
+Vechta
+Weimar
+Wiesbaden
+Witten
+Wuppertal
+Würzburg

@@ -1,0 +1,20 @@
+# Capitals of the 16 German states (P36 of each state; Berlin and Hamburg): 16 places.
+# Source: Wikidata (CC0), query service https://query.wikidata.org/sparql, retrieved 2026-10-12.
+# Built with: npx tsx cli/wikidata.ts landeshauptstaedte
+# Query: SELECT ?o ?oLabel (SAMPLE(?coord) AS ?c) WHERE { { ?s wdt:P31 wd:Q1221156 . ?s wdt:P36 ?o . } UNION { VALUES ?o { wd:Q64 wd:Q1055 } } ?o wdt:P625 ?coord . SERVICE wikibase:label { bd:serviceParam wikibase:language "de". ?o rdfs:label ?oLabel . } } GROUP BY ?o ?oLabel
+Berlin
+Bremen
+Dresden
+Düsseldorf
+Erfurt
+Hamburg
+Hannover
+Kiel
+Magdeburg
+Mainz
+München
+Potsdam
+Saarbrücken
+Schwerin
+Stuttgart
+Wiesbaden

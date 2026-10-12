@@ -45,3 +45,21 @@ Notes: coordinates are Wikidata's point for each district (usually its centre or
 square), not a centroid of the official boundaries. Districts are custom places without
 population, so the search chooses them by gap and difficulty only; `--merge 0` keeps
 neighbouring districts apart.
+
+## Themed instances from Wikidata (Phase 6)
+
+Town lists built with `npx tsx cli/wikidata.ts <list>` and matched to the towns of the
+country data (Wikidata id, else name or name prefix within 15 km; items that are not a town of
+the data, e.g. former Hanseatic towns that are now districts, are left out and named in the
+file header).
+
+| list                       | puzzle                      | places          | purpose |
+| -------------------------- | --------------------------- | --------------- | ------- |
+| `landeshauptstaedte.txt`   | Landeshauptstädte (fixed)   | 16 capitals     | digital (string gap 18.6 mm, but Mainz–Wiesbaden only 10 mm apart on the default board) |
+| `hansestaedte.txt`         | Hansestädte: 25 Orte (pool) | 136 Hanseatic towns (class "Hansestadt") | board (8.9 mm); Lübeck, Stralsund, Wismar pinned |
+| `universitaetsstaedte.txt` | Universitätsstädte: 30 Orte (pool) | 74 towns with a university | board (10.0 mm) |
+
+Notes: "university" means an institution of a subclass of Q3918 whose German name contains
+"Universität" (plus RWTH Aachen and KIT), located in (P131) the town; universities of applied
+sciences are not included. The title class "Universitätsstadt" is incomplete in Wikidata
+(45 towns, without Heidelberg or Leipzig) and was not used.

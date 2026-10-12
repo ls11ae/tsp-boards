@@ -8,7 +8,7 @@
 //       (a fixed instance from a place list; auto: board if the gap allows it, else digital)
 //   npx tsx cli/collection.ts list --file places.txt --pool --n 20 [--seed 1] [--iterations 1000]
 //       [--merge 2] (km within which list places merge; 0 for districts)
-//       (a search over the list as pool: n of its places)
+//       [--pin 'A,B'] (a search over the list as pool: n of its places, the pinned ones included)
 //   npx tsx cli/collection.ts index        (rebuilds index.json from the files)
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -235,10 +235,21 @@ if (command === 'add') {
       marginMm: params.marginMm,
     });
     const pool: BoardPool = { projection, cities, points: boardPoints(cities, projection) };
+    // --pin 'Lübeck,Stralsund': list places the puzzle must contain.
+    const pinNames = arg('pin', '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const pinnedIds = pinNames.map((name) => {
+      const city = cities.find((c) => c.name === name);
+      if (!city) throw new Error(`--pin: ${name} is not in the list`);
+      return city.id;
+    });
     const { search } = runSearch({
       params: searchParams(searchP),
       pool,
       backend: await loadBackend(),
+      pinnedIds,
       labels: poolLabels(pool, params.labelSizeMm, params.nailDiameterMm, params.labelLanguage),
     });
     const best = search.best;

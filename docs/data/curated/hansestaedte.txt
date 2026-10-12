@@ -1,0 +1,141 @@
+# Hanseatic towns in Germany (class Q707813 "Hansestadt"): 136 places.
+# Source: Wikidata (CC0), query service https://query.wikidata.org/sparql, retrieved 2026-10-12.
+# Built with: npx tsx cli/wikidata.ts hansestaedte
+# Query: SELECT ?o ?oLabel (SAMPLE(?coord) AS ?c) WHERE { ?o wdt:P31 wd:Q707813 ; wdt:P17 wd:Q183 ; wdt:P625 ?coord . SERVICE wikibase:label { bd:serviceParam wikibase:language "de". ?o rdfs:label ?oLabel . } } GROUP BY ?o ?oLabel
+# Not a town of the country data (left out): Alfeld, Belecke, Blankenstein, Bödefeld, Cölln an der Spree, Eversberg, Freienohl, Grevenstein, Grieth, Hachen, Hirschberg, Hörde, Hüsten, Kallenhardt, Lennep, Neheim, Peckelsheim, Werben, Westhofen, Wiedenbrück
+Ahlen
+Altena
+Anklam
+Arnsberg
+Aschersleben
+Attendorn
+Bad Iburg
+Balve
+Beckum
+Berlin
+Bielefeld
+Billerbeck
+Bocholt
+Bochum
+Bockenem
+Borgentreich
+Borken
+Brakel
+Brandenburg an der Havel
+Braunschweig
+Breckerfeld
+Bremen
+Brilon
+Buxtehude
+Coesfeld
+Demmin
+Dinslaken
+Dorsten
+Dortmund
+Drolshagen
+Duderstadt
+Duisburg
+Dülmen
+Einbeck
+Emmerich am Rhein
+Erfurt
+Essen
+Frankfurt (Oder)
+Fürstenau
+Gardelegen
+Geldern
+Geseke
+Goslar
+Göttingen
+Greifswald
+Gronau (Leine)
+Hagen
+Halberstadt
+Halle (Saale)
+Haltern am See
+Hamburg
+Hameln
+Hamm
+Haselünne
+Hattingen
+Havelberg
+Helmstedt
+Herford
+Hildesheim
+Höxter
+Iserlohn
+Kalkar
+Kamen
+Kiel
+Köln
+Korbach
+Kyritz
+Lemgo
+Lippstadt
+Lübeck
+Lüdenscheid
+Lüneburg
+Lünen
+Magdeburg
+Marsberg
+Medebach
+Melle
+Menden (Sauerland)
+Meppen
+Merseburg
+Minden
+Mühlhausen/Thüringen
+Münster
+Naumburg (Saale)
+Neuenkirchen-Vörden
+Neuenrade
+Neuss
+Neustadt (Hessen)
+Nieheim
+Nordhausen
+Northeim
+Olpe
+Osnabrück
+Osterburg (Altmark)
+Osterode am Harz
+Paderborn
+Pasewalk
+Perleberg
+Plettenberg
+Pritzwalk
+Quakenbrück
+Quedlinburg
+Ratingen
+Recklinghausen
+Rees
+Rheine
+Rüthen
+Salzwedel
+Schmallenberg
+Schüttorf
+Schwerte
+Seehausen (Altmark)
+Soest
+Solingen
+Sontra
+Stade
+Stendal
+Stralsund
+Sundern (Sauerland)
+Tangermünde
+Telgte
+Uelzen
+Unna
+Uslar
+Vreden
+Warburg
+Warendorf
+Warstein
+Werl
+Werne
+Wesel
+Wetter (Ruhr)
+Winterberg
+Wipperfürth
+Wismar
+Wolgast

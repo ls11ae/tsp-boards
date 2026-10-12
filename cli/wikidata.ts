@@ -1,6 +1,7 @@
 // Builds curated place lists from Wikidata (CC0) for the collection (Phase 6): city districts
 // as custom places with coordinates, and themed lists of towns matched to the country data
-// (by Wikidata id, else by name within 15 km; otherwise kept as a custom place).
+// (by Wikidata id, else by name or name prefix within 15 km; unmatched items, e.g. former towns that are now
+// districts, are left out and listed in a comment).
 // Usage: npx tsx cli/wikidata.ts <list> [<list> …]   (writes docs/data/curated/<list>.txt)
 // Lists: see LISTS below.
 
@@ -42,6 +43,34 @@ const LISTS: Readonly<Record<string, ListSpec>> = {
       ?o wdt:P625 ?coord . ${label('?o rdfs:label ?oLabel .')}
     } GROUP BY ?o ?oLabel`,
     strip: /^Hamburg-/,
+  },
+  landeshauptstaedte: {
+    description: 'Capitals of the 16 German states (P36 of each state; Berlin and Hamburg)',
+    kind: 'towns',
+    query: `SELECT ?o ?oLabel (SAMPLE(?coord) AS ?c) WHERE {
+      { ?s wdt:P31 wd:Q1221156 . ?s wdt:P36 ?o . } UNION { VALUES ?o { wd:Q64 wd:Q1055 } }
+      ?o wdt:P625 ?coord . ${label('?o rdfs:label ?oLabel .')}
+    } GROUP BY ?o ?oLabel`,
+  },
+  hansestaedte: {
+    description: 'Hanseatic towns in Germany (class Q707813 "Hansestadt")',
+    kind: 'towns',
+    query: `SELECT ?o ?oLabel (SAMPLE(?coord) AS ?c) WHERE {
+      ?o wdt:P31 wd:Q707813 ; wdt:P17 wd:Q183 ; wdt:P625 ?coord .
+      ${label('?o rdfs:label ?oLabel .')}
+    } GROUP BY ?o ?oLabel`,
+  },
+  universitaetsstaedte: {
+    description:
+      'Towns with a university in Germany (universities by subclass of Q3918 whose German name contains "Universität", plus RWTH and KIT; located in, P131)',
+    kind: 'towns',
+    query: `SELECT ?o ?oLabel (SAMPLE(?coord) AS ?c) WHERE {
+      ?u wdt:P31 ?t . ?t wdt:P279* wd:Q3918 . ?u wdt:P17 wd:Q183 .
+      FILTER NOT EXISTS { ?u wdt:P576 ?end }
+      ?u rdfs:label ?ul .
+      FILTER(LANG(?ul) = "de" && REGEX(?ul, "Universität|RWTH|Karlsruher Institut für Technologie"))
+      ?u wdt:P131 ?o . ?o wdt:P625 ?coord . ${label('?o rdfs:label ?oLabel .')}
+    } GROUP BY ?o ?oLabel`,
   },
 };
 
@@ -85,7 +114,7 @@ function townFor(row: Row, byQid: Map<string, City>, names: NameIndex): City | n
   const exact = byQid.get(row.qid);
   if (exact) return exact;
   const match = names.match(row.name);
-  if (match.kind !== 'exact') return null;
+  if (match.kind !== 'exact' && match.kind !== 'prefix') return null;
   const near = match.options
     .map((c) => ({ c, km: geodesicKm([c.lon, c.lat], [row.lon, row.lat]) }))
     .filter((x) => x.km < 15)
@@ -106,14 +135,19 @@ for (const id of ids) {
   if (!spec) throw new Error(`unknown list ${id}`);
   const rows = await query(spec.query);
   const clean = (name: string) => (spec.strip ? name.replace(spec.strip, '') : name);
+  const missing: string[] = [];
   const lines = rows
-    .map((r) => {
+    .flatMap((r) => {
       if (spec.kind === 'towns') {
         const town = townFor(r, byQid, names);
-        if (town) return { sort: town.name, line: town.name };
+        if (!town) {
+          missing.push(r.name);
+          return [];
+        }
+        return [{ sort: town.name, line: town.name }];
       }
       const name = clean(r.name);
-      return { sort: name, line: `${name}; ${r.lat.toFixed(5)}; ${r.lon.toFixed(5)}` };
+      return [{ sort: name, line: `${name}; ${r.lat.toFixed(5)}; ${r.lon.toFixed(5)}` }];
     })
     .sort((a, b) => a.sort.localeCompare(b.sort, 'de'));
   const unique = [...new Set(lines.map((l) => l.line))];
@@ -123,6 +157,10 @@ for (const id of ids) {
     `# Built with: npx tsx cli/wikidata.ts ${id}`,
     `# Query: ${spec.query.replace(/\s+/g, ' ').trim()}`,
   ];
+  if (missing.length > 0)
+    header.push(
+      `# Not a town of the country data (left out): ${[...new Set(missing)].sort().join(', ')}`,
+    );
   writeFileSync(path.join(OUT, `${id}.txt`), `${[...header, ...unique].join('\n')}\n`);
   console.error(`${id}: ${unique.length} places (${rows.length} rows)`);
 }

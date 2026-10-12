@@ -581,3 +581,14 @@ Short entries: decision; alternatives considered; reason. Newest last.
   Berlin: 20 of 96 Ortsteile, string gap 37.1 mm; Hamburg: 20 of 104 Stadtteile, 10.8 mm; both
   boards. Alternatives: official boundary data (centroids would be better than Wikidata's
   points, but formats and licences differ per city), OSM `place=suburb` nodes (ODbL share-alike).
+- **2026-10-12 Themed instances (Phase 6).** `cli/wikidata.ts` also builds town lists: state
+  capitals (P36 of the states, plus Berlin and Hamburg), Hanseatic towns (class
+  "Hansestadt", 156 items, 136 of them towns of the data) and university towns (74 towns
+  with a university by subclass of Q3918 and a German name with "Universität"). Matching goes
+  by Wikidata id (only 2007 of 6951 towns carry one), else by name or name prefix within
+  15 km; the rest is left out and named in the list header, so the lists stay one place per
+  municipality. Puzzles: the 16 capitals as a fixed instance (digital: Mainz and Wiesbaden
+  are 10 mm apart on the default board), 25 Hanseatic towns (Lübeck, Stralsund, Wismar
+  pinned; the collection CLI got `--pin` for list pools) and 30 university towns, both boards.
+  Alternatives: the Wikidata class "Universitätsstadt" (an official title in some states,
+  incomplete), membership in the Hanseatic League (P463, only two German members recorded).

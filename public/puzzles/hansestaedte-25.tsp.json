@@ -1,0 +1,1051 @@
+{
+  "schema": 1,
+  "id": "hansestaedte-25",
+  "kind": "map",
+  "title": "Hansestädte: 25 Orte",
+  "description": "Rundreise durch 25 der 136 deutschen Hansestädte (nach Wikidata), mit Lübeck, Stralsund und Wismar.",
+  "purpose": "board",
+  "language": "de",
+  "app": "0.0.0",
+  "updated": "2026-10-12",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE",
+      "n": 25,
+      "boardWidthMm": 600,
+      "boardHeightMm": 800,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "id": 2950159,
+        "name": "Berlin",
+        "lat": 52.5244,
+        "lon": 13.4105
+      },
+      {
+        "id": 2945024,
+        "name": "Braunschweig",
+        "lat": 52.2659,
+        "lon": 10.5267
+      },
+      {
+        "id": 2944388,
+        "name": "Bremen",
+        "lat": 53.0758,
+        "lon": 8.8072
+      },
+      {
+        "id": 2935517,
+        "name": "Dortmund",
+        "lat": 51.5149,
+        "lon": 7.466
+      },
+      {
+        "id": 2925535,
+        "name": "Frankfurt (Oder)",
+        "lat": 52.3471,
+        "lon": 14.5506
+      },
+      {
+        "id": 2917788,
+        "name": "Greifswald",
+        "lat": 54.0891,
+        "lon": 13.4024
+      },
+      {
+        "id": 2911298,
+        "name": "Hamburg",
+        "lat": 53.5507,
+        "lon": 9.993
+      },
+      {
+        "id": 2911271,
+        "name": "Hameln",
+        "lat": 52.104,
+        "lon": 9.3562
+      },
+      {
+        "id": 2911240,
+        "name": "Hamm",
+        "lat": 51.6803,
+        "lon": 7.8209
+      },
+      {
+        "id": 2904789,
+        "name": "Hildesheim",
+        "lat": 52.1508,
+        "lon": 9.9511
+      },
+      {
+        "id": 2891122,
+        "name": "Kiel",
+        "lat": 54.3213,
+        "lon": 10.1349
+      },
+      {
+        "id": 2886242,
+        "name": "Köln",
+        "lat": 50.9333,
+        "lon": 6.95
+      },
+      {
+        "id": 2875601,
+        "name": "Lübeck",
+        "lat": 53.8689,
+        "lon": 10.6873
+      },
+      {
+        "id": 2874545,
+        "name": "Magdeburg",
+        "lat": 52.1313,
+        "lon": 11.6319
+      },
+      {
+        "id": 2872557,
+        "name": "Medebach",
+        "lat": 51.1971,
+        "lon": 8.7064
+      },
+      {
+        "id": 2871845,
+        "name": "Meppen",
+        "lat": 52.6906,
+        "lon": 7.291
+      },
+      {
+        "id": 2867543,
+        "name": "Münster",
+        "lat": 51.9624,
+        "lon": 7.6257
+      },
+      {
+        "id": 2864118,
+        "name": "Neuss",
+        "lat": 51.1981,
+        "lon": 6.685
+      },
+      {
+        "id": 2857306,
+        "name": "Olpe",
+        "lat": 51.029,
+        "lon": 7.8514
+      },
+      {
+        "id": 2856883,
+        "name": "Osnabrück",
+        "lat": 52.2726,
+        "lon": 8.0498
+      },
+      {
+        "id": 2855745,
+        "name": "Paderborn",
+        "lat": 51.7191,
+        "lon": 8.7544
+      },
+      {
+        "id": 2842112,
+        "name": "Salzwedel",
+        "lat": 52.853,
+        "lon": 11.1529
+      },
+      {
+        "id": 2826287,
+        "name": "Stralsund",
+        "lat": 54.3091,
+        "lon": 13.0818
+      },
+      {
+        "id": 2824254,
+        "name": "Tangermünde",
+        "lat": 52.5446,
+        "lon": 11.9765
+      },
+      {
+        "id": 2807465,
+        "name": "Wismar",
+        "lat": 53.8922,
+        "lon": 11.4556
+      }
+    ],
+    "list": {
+      "mode": "pool",
+      "places": [
+        {
+          "id": 2959223,
+          "name": "Ahlen",
+          "lat": 51.7634,
+          "lon": 7.8887
+        },
+        {
+          "id": 2957886,
+          "name": "Altena",
+          "lat": 51.2947,
+          "lon": 7.6734
+        },
+        {
+          "id": 2956018,
+          "name": "Anklam",
+          "lat": 53.8564,
+          "lon": 13.6897
+        },
+        {
+          "id": 2955471,
+          "name": "Arnsberg",
+          "lat": 51.3833,
+          "lon": 8.0833
+        },
+        {
+          "id": 2955168,
+          "name": "Aschersleben",
+          "lat": 51.7574,
+          "lon": 11.4608
+        },
+        {
+          "id": 2954932,
+          "name": "Attendorn",
+          "lat": 51.1265,
+          "lon": 7.9033
+        },
+        {
+          "id": 2953430,
+          "name": "Bad Iburg",
+          "lat": 52.1549,
+          "lon": 8.0422
+        },
+        {
+          "id": 2953003,
+          "name": "Balve",
+          "lat": 51.3315,
+          "lon": 7.8642
+        },
+        {
+          "id": 2951654,
+          "name": "Beckum",
+          "lat": 51.7557,
+          "lon": 8.0407
+        },
+        {
+          "id": 2950159,
+          "name": "Berlin",
+          "lat": 52.5244,
+          "lon": 13.4105
+        },
+        {
+          "id": 2949186,
+          "name": "Bielefeld",
+          "lat": 52.0333,
+          "lon": 8.5333
+        },
+        {
+          "id": 2948944,
+          "name": "Billerbeck",
+          "lat": 51.9783,
+          "lon": 7.2926
+        },
+        {
+          "id": 2947421,
+          "name": "Bocholt",
+          "lat": 51.8388,
+          "lon": 6.6153
+        },
+        {
+          "id": 2947416,
+          "name": "Bochum",
+          "lat": 51.4817,
+          "lon": 7.2165
+        },
+        {
+          "id": 2947359,
+          "name": "Bockenem",
+          "lat": 52.0099,
+          "lon": 10.132
+        },
+        {
+          "id": 2946291,
+          "name": "Borgentreich",
+          "lat": 51.5692,
+          "lon": 9.2411
+        },
+        {
+          "id": 2946228,
+          "name": "Borken",
+          "lat": 51.8438,
+          "lon": 6.8577
+        },
+        {
+          "id": 2945542,
+          "name": "Brakel",
+          "lat": 51.7175,
+          "lon": 9.186
+        },
+        {
+          "id": 2945358,
+          "name": "Brandenburg an der Havel",
+          "lat": 52.4167,
+          "lon": 12.55
+        },
+        {
+          "id": 2945024,
+          "name": "Braunschweig",
+          "lat": 52.2659,
+          "lon": 10.5267
+        },
+        {
+          "id": 2944955,
+          "name": "Breckerfeld",
+          "lat": 51.2593,
+          "lon": 7.4681
+        },
+        {
+          "id": 2944388,
+          "name": "Bremen",
+          "lat": 53.0758,
+          "lon": 8.8072
+        },
+        {
+          "id": 2944079,
+          "name": "Brilon",
+          "lat": 51.3946,
+          "lon": 8.5715
+        },
+        {
+          "id": 2940451,
+          "name": "Buxtehude",
+          "lat": 53.4699,
+          "lon": 9.6897
+        },
+        {
+          "id": 2939945,
+          "name": "Coesfeld",
+          "lat": 51.9435,
+          "lon": 7.1681
+        },
+        {
+          "id": 2938284,
+          "name": "Demmin",
+          "lat": 53.9076,
+          "lon": 13.0314
+        },
+        {
+          "id": 2936871,
+          "name": "Dinslaken",
+          "lat": 51.5623,
+          "lon": 6.7434
+        },
+        {
+          "id": 2935530,
+          "name": "Dorsten",
+          "lat": 51.6617,
+          "lon": 6.9651
+        },
+        {
+          "id": 2935517,
+          "name": "Dortmund",
+          "lat": 51.5149,
+          "lon": 7.466
+        },
+        {
+          "id": 2934886,
+          "name": "Drolshagen",
+          "lat": 51.0236,
+          "lon": 7.7736
+        },
+        {
+          "id": 2934728,
+          "name": "Duderstadt",
+          "lat": 51.5131,
+          "lon": 10.2595
+        },
+        {
+          "id": 2934691,
+          "name": "Duisburg",
+          "lat": 51.4325,
+          "lon": 6.7652
+        },
+        {
+          "id": 2934662,
+          "name": "Dülmen",
+          "lat": 51.8315,
+          "lon": 7.2808
+        },
+        {
+          "id": 2931804,
+          "name": "Einbeck",
+          "lat": 51.8202,
+          "lon": 9.8696
+        },
+        {
+          "id": 2930509,
+          "name": "Emmerich am Rhein",
+          "lat": 51.8393,
+          "lon": 6.2479
+        },
+        {
+          "id": 2929670,
+          "name": "Erfurt",
+          "lat": 50.9773,
+          "lon": 11.0354
+        },
+        {
+          "id": 2928810,
+          "name": "Essen",
+          "lat": 51.4566,
+          "lon": 7.0123
+        },
+        {
+          "id": 2925535,
+          "name": "Frankfurt (Oder)",
+          "lat": 52.3471,
+          "lon": 14.5506
+        },
+        {
+          "id": 2923658,
+          "name": "Fürstenau",
+          "lat": 52.5167,
+          "lon": 7.6767
+        },
+        {
+          "id": 2922580,
+          "name": "Gardelegen",
+          "lat": 52.5252,
+          "lon": 11.3952
+        },
+        {
+          "id": 2921528,
+          "name": "Geldern",
+          "lat": 51.5191,
+          "lon": 6.3236
+        },
+        {
+          "id": 2920834,
+          "name": "Geseke",
+          "lat": 51.6409,
+          "lon": 8.5109
+        },
+        {
+          "id": 2918840,
+          "name": "Goslar",
+          "lat": 51.9043,
+          "lon": 10.4277
+        },
+        {
+          "id": 2918632,
+          "name": "Göttingen",
+          "lat": 51.5344,
+          "lon": 9.9323
+        },
+        {
+          "id": 2917788,
+          "name": "Greifswald",
+          "lat": 54.0891,
+          "lon": 13.4024
+        },
+        {
+          "id": 2952884,
+          "name": "Gronau (Leine)",
+          "lat": 52.0667,
+          "lon": 9.75
+        },
+        {
+          "id": 2912621,
+          "name": "Hagen",
+          "lat": 51.3608,
+          "lon": 7.4717
+        },
+        {
+          "id": 2911665,
+          "name": "Halberstadt",
+          "lat": 51.8956,
+          "lon": 11.0562
+        },
+        {
+          "id": 2911522,
+          "name": "Halle (Saale)",
+          "lat": 51.4816,
+          "lon": 11.9795
+        },
+        {
+          "id": 2911395,
+          "name": "Haltern am See",
+          "lat": 51.743,
+          "lon": 7.1816
+        },
+        {
+          "id": 2911298,
+          "name": "Hamburg",
+          "lat": 53.5507,
+          "lon": 9.993
+        },
+        {
+          "id": 2911271,
+          "name": "Hameln",
+          "lat": 52.104,
+          "lon": 9.3562
+        },
+        {
+          "id": 2911240,
+          "name": "Hamm",
+          "lat": 51.6803,
+          "lon": 7.8209
+        },
+        {
+          "id": 2909761,
+          "name": "Haselünne",
+          "lat": 52.6731,
+          "lon": 7.4868
+        },
+        {
+          "id": 2909230,
+          "name": "Hattingen",
+          "lat": 51.3989,
+          "lon": 7.1856
+        },
+        {
+          "id": 2908644,
+          "name": "Havelberg",
+          "lat": 52.8309,
+          "lon": 12.0755
+        },
+        {
+          "id": 2906676,
+          "name": "Helmstedt",
+          "lat": 52.2279,
+          "lon": 11.0099
+        },
+        {
+          "id": 2906121,
+          "name": "Herford",
+          "lat": 52.1146,
+          "lon": 8.6734
+        },
+        {
+          "id": 2904789,
+          "name": "Hildesheim",
+          "lat": 52.1508,
+          "lon": 9.9511
+        },
+        {
+          "id": 2898321,
+          "name": "Höxter",
+          "lat": 51.775,
+          "lon": 9.3816
+        },
+        {
+          "id": 2895669,
+          "name": "Iserlohn",
+          "lat": 51.3755,
+          "lon": 7.7028
+        },
+        {
+          "id": 2893837,
+          "name": "Kalkar",
+          "lat": 51.7391,
+          "lon": 6.291
+        },
+        {
+          "id": 2893438,
+          "name": "Kamen",
+          "lat": 51.5923,
+          "lon": 7.6638
+        },
+        {
+          "id": 2891122,
+          "name": "Kiel",
+          "lat": 54.3213,
+          "lon": 10.1349
+        },
+        {
+          "id": 2886242,
+          "name": "Köln",
+          "lat": 50.9333,
+          "lon": 6.95
+        },
+        {
+          "id": 2885536,
+          "name": "Korbach",
+          "lat": 51.2756,
+          "lon": 8.873
+        },
+        {
+          "id": 2882161,
+          "name": "Kyritz",
+          "lat": 52.9421,
+          "lon": 12.397
+        },
+        {
+          "id": 2878943,
+          "name": "Lemgo",
+          "lat": 52.0279,
+          "lon": 8.899
+        },
+        {
+          "id": 2876865,
+          "name": "Lippstadt",
+          "lat": 51.6737,
+          "lon": 8.3448
+        },
+        {
+          "id": 2875601,
+          "name": "Lübeck",
+          "lat": 53.8689,
+          "lon": 10.6873
+        },
+        {
+          "id": 2875457,
+          "name": "Lüdenscheid",
+          "lat": 51.2198,
+          "lon": 7.6273
+        },
+        {
+          "id": 2875115,
+          "name": "Lüneburg",
+          "lat": 53.2512,
+          "lon": 10.4155
+        },
+        {
+          "id": 2875107,
+          "name": "Lünen",
+          "lat": 51.6163,
+          "lon": 7.5287
+        },
+        {
+          "id": 2874545,
+          "name": "Magdeburg",
+          "lat": 52.1313,
+          "lon": 11.6319
+        },
+        {
+          "id": 2873211,
+          "name": "Marsberg",
+          "lat": 51.4617,
+          "lon": 8.8495
+        },
+        {
+          "id": 2872557,
+          "name": "Medebach",
+          "lat": 51.1971,
+          "lon": 8.7064
+        },
+        {
+          "id": 2872079,
+          "name": "Melle",
+          "lat": 52.202,
+          "lon": 8.3383
+        },
+        {
+          "id": 2871983,
+          "name": "Menden (Sauerland)",
+          "lat": 51.4434,
+          "lon": 7.7783
+        },
+        {
+          "id": 2871845,
+          "name": "Meppen",
+          "lat": 52.6906,
+          "lon": 7.291
+        },
+        {
+          "id": 2871736,
+          "name": "Merseburg",
+          "lat": 51.3548,
+          "lon": 11.9892
+        },
+        {
+          "id": 2871039,
+          "name": "Minden",
+          "lat": 52.2895,
+          "lon": 8.9146
+        },
+        {
+          "id": 2867996,
+          "name": "Mühlhausen/Thüringen",
+          "lat": 51.209,
+          "lon": 10.4528
+        },
+        {
+          "id": 2867543,
+          "name": "Münster",
+          "lat": 51.9624,
+          "lon": 7.6257
+        },
+        {
+          "id": 2866906,
+          "name": "Naumburg (Saale)",
+          "lat": 51.1499,
+          "lon": 11.8098
+        },
+        {
+          "id": 2865639,
+          "name": "Neuenkirchen-Vörden",
+          "lat": 52.5104,
+          "lon": 8.0637
+        },
+        {
+          "id": 2865592,
+          "name": "Neuenrade",
+          "lat": 51.2828,
+          "lon": 7.7825
+        },
+        {
+          "id": 2864118,
+          "name": "Neuss",
+          "lat": 51.1981,
+          "lon": 6.685
+        },
+        {
+          "id": 2864091,
+          "name": "Neustadt (Hessen)",
+          "lat": 50.85,
+          "lon": 9.1167
+        },
+        {
+          "id": 2862675,
+          "name": "Nieheim",
+          "lat": 51.805,
+          "lon": 9.113
+        },
+        {
+          "id": 2861982,
+          "name": "Nordhausen",
+          "lat": 51.5018,
+          "lon": 10.7957
+        },
+        {
+          "id": 2861814,
+          "name": "Northeim",
+          "lat": 51.7066,
+          "lon": 10
+        },
+        {
+          "id": 2857306,
+          "name": "Olpe",
+          "lat": 51.029,
+          "lon": 7.8514
+        },
+        {
+          "id": 2856883,
+          "name": "Osnabrück",
+          "lat": 52.2726,
+          "lon": 8.0498
+        },
+        {
+          "id": 2856639,
+          "name": "Osterburg (Altmark)",
+          "lat": 52.787,
+          "lon": 11.7543
+        },
+        {
+          "id": 2856405,
+          "name": "Osterode am Harz",
+          "lat": 51.7269,
+          "lon": 10.2509
+        },
+        {
+          "id": 2855745,
+          "name": "Paderborn",
+          "lat": 51.7191,
+          "lon": 8.7544
+        },
+        {
+          "id": 2855337,
+          "name": "Pasewalk",
+          "lat": 53.5063,
+          "lon": 13.99
+        },
+        {
+          "id": 2854848,
+          "name": "Perleberg",
+          "lat": 53.0752,
+          "lon": 11.8574
+        },
+        {
+          "id": 2853209,
+          "name": "Plettenberg",
+          "lat": 51.2095,
+          "lon": 7.8726
+        },
+        {
+          "id": 2851962,
+          "name": "Pritzwalk",
+          "lat": 53.1495,
+          "lon": 12.1741
+        },
+        {
+          "id": 2851523,
+          "name": "Quakenbrück",
+          "lat": 52.674,
+          "lon": 7.949
+        },
+        {
+          "id": 2851465,
+          "name": "Quedlinburg",
+          "lat": 51.7884,
+          "lon": 11.1501
+        },
+        {
+          "id": 2850174,
+          "name": "Ratingen",
+          "lat": 51.2972,
+          "lon": 6.8493
+        },
+        {
+          "id": 2849647,
+          "name": "Recklinghausen",
+          "lat": 51.6138,
+          "lon": 7.1974
+        },
+        {
+          "id": 2849548,
+          "name": "Rees",
+          "lat": 51.7626,
+          "lon": 6.3978
+        },
+        {
+          "id": 2847645,
+          "name": "Rheine",
+          "lat": 52.2851,
+          "lon": 7.4406
+        },
+        {
+          "id": 2842816,
+          "name": "Rüthen",
+          "lat": 51.4909,
+          "lon": 8.436
+        },
+        {
+          "id": 2842112,
+          "name": "Salzwedel",
+          "lat": 52.853,
+          "lon": 11.1529
+        },
+        {
+          "id": 2838053,
+          "name": "Schmallenberg",
+          "lat": 51.1547,
+          "lon": 8.2851
+        },
+        {
+          "id": 2835587,
+          "name": "Schüttorf",
+          "lat": 52.3228,
+          "lon": 7.2218
+        },
+        {
+          "id": 2834265,
+          "name": "Schwerte",
+          "lat": 51.4439,
+          "lon": 7.5675
+        },
+        {
+          "id": 2833800,
+          "name": "Seehausen (Altmark)",
+          "lat": 52.8874,
+          "lon": 11.7521
+        },
+        {
+          "id": 2831708,
+          "name": "Soest",
+          "lat": 51.5756,
+          "lon": 8.1062
+        },
+        {
+          "id": 2831580,
+          "name": "Solingen",
+          "lat": 51.1734,
+          "lon": 7.0845
+        },
+        {
+          "id": 2831083,
+          "name": "Sontra",
+          "lat": 51.0717,
+          "lon": 9.9356
+        },
+        {
+          "id": 2829901,
+          "name": "Stade",
+          "lat": 53.5941,
+          "lon": 9.473
+        },
+        {
+          "id": 2827479,
+          "name": "Stendal",
+          "lat": 52.6058,
+          "lon": 11.8609
+        },
+        {
+          "id": 2826287,
+          "name": "Stralsund",
+          "lat": 54.3091,
+          "lon": 13.0818
+        },
+        {
+          "id": 2824655,
+          "name": "Sundern (Sauerland)",
+          "lat": 51.3281,
+          "lon": 8.0037
+        },
+        {
+          "id": 2824254,
+          "name": "Tangermünde",
+          "lat": 52.5446,
+          "lon": 11.9765
+        },
+        {
+          "id": 2823590,
+          "name": "Telgte",
+          "lat": 51.98,
+          "lon": 7.7829
+        },
+        {
+          "id": 2820456,
+          "name": "Uelzen",
+          "lat": 52.9645,
+          "lon": 10.567
+        },
+        {
+          "id": 2820087,
+          "name": "Unna",
+          "lat": 51.538,
+          "lon": 7.6897
+        },
+        {
+          "id": 2818094,
+          "name": "Uslar",
+          "lat": 51.6569,
+          "lon": 9.635
+        },
+        {
+          "id": 2815824,
+          "name": "Vreden",
+          "lat": 52.0379,
+          "lon": 6.828
+        },
+        {
+          "id": 2814153,
+          "name": "Warburg",
+          "lat": 51.4901,
+          "lon": 9.1464
+        },
+        {
+          "id": 2814127,
+          "name": "Warendorf",
+          "lat": 51.9511,
+          "lon": 7.9876
+        },
+        {
+          "id": 2814005,
+          "name": "Warstein",
+          "lat": 51.4449,
+          "lon": 8.3485
+        },
+        {
+          "id": 2810878,
+          "name": "Werl",
+          "lat": 51.5549,
+          "lon": 7.914
+        },
+        {
+          "id": 2810833,
+          "name": "Werne",
+          "lat": 51.6645,
+          "lon": 7.6342
+        },
+        {
+          "id": 2810678,
+          "name": "Wesel",
+          "lat": 51.6669,
+          "lon": 6.6204
+        },
+        {
+          "id": 2809984,
+          "name": "Wetter (Ruhr)",
+          "lat": 51.3875,
+          "lon": 7.3928
+        },
+        {
+          "id": 2807788,
+          "name": "Winterberg",
+          "lat": 51.1925,
+          "lon": 8.5347
+        },
+        {
+          "id": 2807594,
+          "name": "Wipperfürth",
+          "lat": 51.1161,
+          "lon": 7.3987
+        },
+        {
+          "id": 2807465,
+          "name": "Wismar",
+          "lat": 53.8922,
+          "lon": 11.4556
+        },
+        {
+          "id": 2806501,
+          "name": "Wolgast",
+          "lat": 54.052,
+          "lon": 13.7711
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        4,
+        5,
+        22,
+        24,
+        12,
+        10,
+        6,
+        2,
+        15,
+        19,
+        16,
+        8,
+        3,
+        17,
+        11,
+        18,
+        14,
+        20,
+        7,
+        9,
+        1,
+        21,
+        13,
+        23
+      ],
+      "lengthMm": 1525.376,
+      "gapMm": 8.924,
+      "model": "string",
+      "scaleGapMm": 9.354,
+      "startPlace": 21
+    }
+  }
+}

@@ -72,6 +72,26 @@
       "n": 20
     },
     {
+      "file": "hansestaedte-25.tsp.json",
+      "id": "hansestaedte-25",
+      "kind": "map",
+      "title": "Hansestädte: 25 Orte",
+      "description": "Rundreise durch 25 der 136 deutschen Hansestädte (nach Wikidata), mit Lübeck, Stralsund und Wismar.",
+      "purpose": "board",
+      "region": "DE",
+      "n": 25
+    },
+    {
+      "file": "landeshauptstaedte.tsp.json",
+      "id": "landeshauptstaedte",
+      "kind": "map",
+      "title": "Landeshauptstädte",
+      "description": "Die Hauptstädte der 16 Bundesländer (nach Wikidata).",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 16
+    },
+    {
       "file": "nrw-25.tsp.json",
       "id": "nrw-25",
       "kind": "map",
@@ -90,6 +110,16 @@
       "purpose": "board",
       "region": "",
       "n": 12
+    },
+    {
+      "file": "universitaetsstaedte-30.tsp.json",
+      "id": "universitaetsstaedte-30",
+      "kind": "map",
+      "title": "Universitätsstädte: 30 Orte",
+      "description": "Rundreise durch 30 der 74 deutschen Universitätsstädte (nach Wikidata).",
+      "purpose": "board",
+      "region": "DE",
+      "n": 30
     }
   ]
 }
