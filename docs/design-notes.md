@@ -606,3 +606,10 @@ Short entries: decision; alternatives considered; reason. Newest last.
   before); named unions for Vienna + Lower Austria, the two Basel, the two Appenzell, and the
   NUTS 1 / Swiss major regions. Alternatives: a municipality key from the official registers
   (better, but another source per country), keeping a single country per deployment.
+- **2026-10-12 mapshaper 0.7.83.** Upgraded (exact pin) to clear the advisories in adm-zip
+  (≤ 0.6.0) and the nested fflate 0.8.2 that came only through this dev dependency of the data
+  build; `npm audit` reports none. The release was two days old (same publisher and
+  repository; new dependencies: the two fixes, minor bumps, `@resvg/resvg-wasm`), upgraded at
+  the maintainers' request instead of waiting two weeks. All four country files rebuild with
+  identical content hashes. Alternative: npm `overrides` for adm-zip/fflate under 0.7.67
+  (outside mapshaper's declared range).
