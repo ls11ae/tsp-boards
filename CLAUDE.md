@@ -32,9 +32,12 @@ what we change and why, benchmark results, and open questions.
   chair server needs access and is the maintainers' step. Incremental puzzle implemented
   (`src/core/incremental/`: Held–Karp with two best values, insertion field, sequence search
   with exact checks, measuring track around the board edge; app mode and `cli/incremental.ts`).
-- Open: prototype board dimensions (and calibrating the string model on a real board), code
-  license, deploying to the chair server, play data endpoint, play mode for the incremental
-  puzzle.
+- **Next: Phase 5 "digital features"** (decided by Kevin 2026-10-11/12): puzzle files with
+  titles, save/load and a gallery, city lists and custom points, local highscores, digital vs.
+  board puzzles, overlays, group constraints. **`docs/roadmap.md` is the source of truth for
+  open work**, in its order.
+- Open: prototype board dimensions (and a test board), code license, deploying to the chair
+  server, play data endpoint, play mode for the incremental puzzle.
 - Code license not chosen yet (decide before going public).
 
 ## Agreed direction
@@ -55,18 +58,20 @@ what we change and why, benchmark results, and open questions.
 
 ## Domain facts (do not rediscover)
 
-- The gap between the optimal and the second-best tour is tiny for typical instances
-  (0.00–0.17 % of tour length for random 40–60 point sets; ~3 m string -> 0.1 % ≈ 3 mm).
-  It is THE critical constraint for the physical self-check. Treat it as a hard constraint in
-  mm of string and optimize for it explicitly.
+- The gap between the optimal and the second-best tour is often small for random instances
+  (a few mm of string), but the search finds selections with exactly verified string gaps of
+  6–25 mm (default weights) and ≥ 40 mm (gap only) for n = 30–50 in Germany
+  (`docs/experiments/gap-survey-2026-10-10.md`). For boards it is a hard constraint in mm of
+  string, not a bottleneck. Fixed instances (city lists, Phase 5) cannot be searched and may
+  have small gaps: warn, and offer them as digital puzzles.
 - The string wraps around the nails: string length S = L + r_eff·Σ|θ| (r_eff = nail radius +
   half the string thickness, θ = turning angle at each nail). S, not L, is the primary objective
   in heuristics and the gap bound. Every closed tour has Σ|θ| ≥ 2π, and near-optimal 40-point
   tours have Σ|θ| ≈ 40–48 rad, so "Euclidean-near" windows that would cover all
   string-shorter tours are ~35–40 mm wide and cannot be enumerated.
-- Exact solves in WASM take ~0.15–0.7 s per tour for n = 40–60. Do not run them in every search
-  step: use fast heuristics plus a cheap upper bound on the second-best tour (best local
-  modification of the optimal tour), and verify exactly only for promising candidates.
+- Exact solves (WASM, optimum + runner-up): Euclidean ~30–400 ms, string (turn-cost) model
+  1–17 s for n = 30–50. Do not run them in every search step: use fast heuristics plus a cheap
+  upper bound on the second-best tour, and verify exactly only for promising candidates.
 - The self-check reads the string end on a scale at the start nail; the wrap around the start
   nail changes the measured gap by up to 1.5·r·(π − θ_s). The board certifies the measured
   optimum (turn costs at s replaced by the end wrap, `board/measure.ts`), computed exactly.
@@ -111,7 +116,10 @@ what we change and why, benchmark results, and open questions.
 
 - Work autonomously, without asking. Decide by best judgement and record each decision briefly
   in the "Decision log" section of `docs/design-notes.md` (decision, alternatives, reason).
-- Commit in small steps and push to `main` yourself once tests are green.
+- Commit in small steps and push to `main` yourself once tests are green. Several people work
+  on this repository: `git pull --rebase` before you start and before pushing; when two people
+  work at the same time, use a feature branch and a pull request (CI green) instead.
+- Open work comes from `docs/roadmap.md` (in its order); mark items done there when finished.
 - Stop only if the gap measurement (Germany, string length) gives an achievable gap below
   about 3 mm for n = 40, or if genuinely blocked.
 - Data attribution: GeoNames is CC BY 4.0 -> credit in UI and README. Natural Earth is public
@@ -121,12 +129,9 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-1. **MVP map puzzle:** scaffold + CI; city data for Germany; core (projection, metrics,
-   heuristic TSP, exact solver in a worker, gap upper bound, search with pinning/excluding and
-   "ejection swaps"); UI (choose region and parameters, watch the search live, map in board
-   projection, click to pin/exclude cities, metrics panel, show/hide tour); permalinks.
-2. **Board export:** laser-ready SVG (cut/engrave layers, nail holes, labels, length markings
-   incl. nail correction), printable PDF; label placement as a feasibility constraint.
-3. **Play mode:** solve in the browser (no solution in shared links); optional anonymous,
-   opt-in collection of solve data to calibrate difficulty.
-4. **Deployment** to the chair server; then the **incremental puzzle** (see design notes).
+Phases 1–4 are done (see Status). Open work, in order, is in `docs/roadmap.md`:
+
+5. **Digital features** (current): puzzle files and gallery, city lists and custom points,
+   highscores, digital vs. board puzzles, overlays and thesis metrics, group constraints.
+6. **Later:** teaching mode, robustness over r_eff, classroom worksheets, more countries, play
+   mode for the incremental puzzle, test board with the prototype dimensions, deployment.
