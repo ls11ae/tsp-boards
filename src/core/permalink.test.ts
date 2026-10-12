@@ -85,6 +85,15 @@ describe('permalinks', () => {
     expect(play.list!.mode).toBe('fixed');
   });
 
+  it('writes the thesis weights C and D only when they are used', () => {
+    const data = { country: 'DE', version: 3 };
+    const plain = encodePermalink(DEFAULT_PARAMS, data, [1], { pinned: [], excluded: [] });
+    expect(plain).toContain('w=1%2C0.5%2C0.5&');
+    const params = { ...DEFAULT_PARAMS, weightInterior: 0.4, weightNonNearest: 0.2 };
+    const hash = encodePermalink(params, data, [1], { pinned: [], excluded: [] });
+    expect(decodePermalink(hash)!.params).toEqual(params);
+  });
+
   it('falls back to defaults for missing or invalid values', () => {
     const link = decodePermalink('#v=1&n=-5&r=../x&b=axbxc&sel=');
     expect(link!.params).toEqual(DEFAULT_PARAMS);

@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+import { Instance } from '../../core/instance';
+import { tourMetrics } from '../../core/metrics';
 import type { Evaluation } from '../../core/search/search';
 import type { BoardModel } from '../board';
 import { clearMarks, showCandidate } from '../controller';
@@ -7,6 +10,7 @@ import { useStore } from '../store';
 import { distance } from '../../core/geometry';
 import { ExportPanel } from './ExportPanel';
 import { FixedAnalysis } from './PlacesPanel';
+import { OverlayPicker } from './OverlayPicker';
 
 function SearchStatus() {
   const t = useT();
@@ -110,6 +114,19 @@ function PuzzleMetrics({
       )
     : null;
   const stringMm = exact?.string ? exact.string.optimalLength / 1000 : e ? e.lengthUm / 1000 : null;
+  const thesis = useMemo(
+    () =>
+      tour
+        ? tourMetrics(
+            new Instance(
+              puzzle.members.map((c) => board.points[c]!),
+              0,
+            ),
+            tour.map((c) => puzzle.members.indexOf(c)),
+          )
+        : null,
+    [board, puzzle.members, tour],
+  );
 
   return (
     <section>
@@ -166,6 +183,14 @@ function PuzzleMetrics({
             <dd>{t.excess(fmt.number(e.difficulty.hullInsertion * 100, 1))}</dd>
           </>
         )}
+        {thesis && (
+          <>
+            <dt>{t.interiorFraction}</dt>
+            <dd>{fmt.integer(thesis.interiorFraction * 100)} %</dd>
+            <dt>{t.nonNearestEdges}</dt>
+            <dd>{fmt.integer(thesis.nonNearestEdges * 100)} %</dd>
+          </>
+        )}
       </dl>
       {exact?.optimaDiffer && <p className="hint">{t.optimaDiffer}</p>}
       <label className="checkbox">
@@ -176,6 +201,7 @@ function PuzzleMetrics({
         />
         {t.showTour}
       </label>
+      <OverlayPicker board={board} puzzle={puzzle} />
     </section>
   );
 }

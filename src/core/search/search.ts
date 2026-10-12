@@ -25,7 +25,7 @@ import type { TextMetrics } from '../board/text';
 import { difficulty, type Difficulty } from '../difficulty';
 import type { Point } from '../geometry';
 import { Instance } from '../instance';
-import { recognizability } from '../metrics';
+import { recognizability, tourMetrics } from '../metrics';
 import { Rng, hashSeed } from '../rng';
 import { cheapestInsertion } from '../tsp/construct';
 import { optimalAndSecond, type MipBackend } from '../tsp/exact';
@@ -39,6 +39,10 @@ export interface SearchWeights {
   readonly gap: number;
   readonly difficulty: number;
   readonly recognizability: number;
+  /** Thesis metric C (share of points inside the convex hull); 0 by default. */
+  readonly interior: number;
+  /** Thesis metric D (tour edges outside the nearest-neighbour graph); 0 by default. */
+  readonly nonNearest: number;
 }
 
 export interface SearchParams {
@@ -69,7 +73,7 @@ export const DEFAULT_SEARCH: SearchParams = {
   rEffMm: 1.5,
   iterations: 2000,
   seed: 1,
-  weights: { gap: 1, difficulty: 0.5, recognizability: 0.5 },
+  weights: { gap: 1, difficulty: 0.5, recognizability: 0.5, interior: 0, nonNearest: 0 },
   beta: 0.5,
   kicks: 20,
   archiveSize: 30,
@@ -162,6 +166,9 @@ export interface Evaluation {
   readonly alternativeCities: readonly number[];
   readonly difficulty: Difficulty;
   readonly recognizability: number;
+  /** Thesis metrics C and D of the best known tour. */
+  readonly interiorFraction: number;
+  readonly nonNearestEdges: number;
   /** Labels without a place (0 without a label constraint). */
   readonly unplacedLabels: number;
   /** Gap ≥ target and all labels placed. */
@@ -533,6 +540,7 @@ export class Search {
     );
     const { weights } = this.params;
     const gapTerm = Math.min(1, gap / this.saturationUm);
+    const m = tourMetrics(inst, scan.tour);
     const evaluation: Evaluation = {
       key,
       members,
@@ -546,10 +554,17 @@ export class Search {
       alternativeCities: alternative ? this.changedCities(scan.tour, alternative, slots) : [],
       difficulty: d,
       recognizability: r,
+      interiorFraction: m.interiorFraction,
+      nonNearestEdges: m.nonNearestEdges,
       unplacedLabels,
       feasible:
         gap >= this.targetUm && unplacedLabels === 0 && (this.backend === undefined || level === 2),
-      quality: weights.gap * gapTerm + weights.difficulty * d.score + weights.recognizability * r,
+      quality:
+        weights.gap * gapTerm +
+        weights.difficulty * d.score +
+        weights.recognizability * r +
+        weights.interior * m.interiorFraction +
+        weights.nonNearest * m.nonNearestEdges,
     };
     this.cache.set(key, evaluation);
     return evaluation;

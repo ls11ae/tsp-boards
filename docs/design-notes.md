@@ -490,3 +490,13 @@ Short entries: decision; alternatives considered; reason. Newest last.
   puzzles stay boards. Alternatives: a relative gap target (e.g. 0.1 % of the length), judging
   digital puzzles by S too. Reason: without nails the string is irrelevant, and any unique
   optimum is a fair puzzle on screen.
+- **2026-10-12 Overlays and thesis metrics (roadmap 5.5).** One comparison tour at a time
+  ("compare with": runner-up, nearest neighbour from its best start, greedy edge, hull
+  insertion), drawn dashed over the board; its own edges are solid, the optimal edges it leaves
+  out are marked, and the panel gives the number of differing edges and the excess (mm and %,
+  or % and km for digital puzzles). The runner-up comes from the exact check; heuristic tours
+  are computed in the UI on the puzzle's instance (cheap at n ≤ 120). Players see the choice
+  only after solving or revealing. Metrics C and D are shown for the best known tour, and two
+  optional weights (default 0) add them to the objective; links carry them as weights 4 and 5
+  of `w` only when non-zero, so old links stay valid. Alternatives: several overlays at once
+  (cluttered), heuristic tours from the search worker (would tie them to a run).

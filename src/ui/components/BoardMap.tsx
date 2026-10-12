@@ -9,6 +9,7 @@ import { cycleCity } from '../controller';
 import { planKey, previewPaths } from '../export';
 import { playClick } from '../play';
 import { getLabels, placeBoardLabels } from '../labels';
+import { useOverlay, type OverlayView } from '../overlay';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 import { boardFit } from './fit';
@@ -70,6 +71,27 @@ function Marks({ board }: { readonly board: BoardModel }) {
   );
 }
 
+/** The comparison tour: dashed, its own edges solid, the optimal edges it leaves out marked. */
+function Overlay({
+  board,
+  overlay,
+  showRemoved,
+}: {
+  readonly board: BoardModel;
+  readonly overlay: OverlayView;
+  readonly showRemoved: boolean;
+}) {
+  const at = (c: number) => board.points[c]!.map((v) => v.toFixed(2)).join(',');
+  const edges = (list: OverlayView['added']) => list.map(([a, b]) => `M${at(a)}L${at(b)}`).join('');
+  return (
+    <g>
+      {showRemoved && <path className="overlay-removed" d={edges(overlay.removed)} />}
+      <polygon className="overlay-tour" points={overlay.tour.map(at).join(' ')} />
+      <path className="overlay-added" d={edges(overlay.added)} />
+    </g>
+  );
+}
+
 export function BoardMap({
   board,
   puzzle,
@@ -114,6 +136,9 @@ export function BoardMap({
           .join(' ')
       : null;
   const visited = new Set(playing ? play.state.path : []);
+  // Players see comparisons once the puzzle is solved or the solution revealed.
+  const overlay = useOverlay(board, puzzle);
+  const showOverlay = overlay && (!playing || play.revealed || play.solvedMs !== null);
 
   const onClick = (event: MouseEvent<SVGSVGElement>) => {
     const svg = svgRef.current;
@@ -172,6 +197,7 @@ export function BoardMap({
         </>
       )}
       {tourPoints && <polygon className="tour" points={tourPoints} />}
+      {showOverlay && <Overlay board={board} overlay={overlay} showRemoved={tourPoints !== null} />}
       {pathPoints &&
         (play.state.closed ? (
           <polygon className="play-path" points={pathPoints} />

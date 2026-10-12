@@ -3,6 +3,7 @@
 
 import { create } from 'zustand';
 import type { BoardPlan } from '../core/board/plan';
+import type { HeuristicKind } from '../core/overlays';
 import type { Place, Purpose } from '../core/puzzle-file';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
@@ -18,6 +19,9 @@ export type Language = 'en' | 'de';
 
 /** Puzzle parameters (core); the UI edits them as they are. */
 export type UiParams = PuzzleParams;
+
+/** Tour drawn over the board for comparison: none, the runner-up or a simple strategy. */
+export type OverlayChoice = 'none' | 'second' | HeuristicKind;
 
 export type RunStatus = 'idle' | 'running' | 'done' | 'stopped' | 'error';
 
@@ -190,6 +194,8 @@ export interface AppState {
   readonly loaded: LoadedPuzzle | null;
   readonly verifications: Readonly<Record<string, VerificationState>>;
   readonly showTour: boolean;
+  /** Tour drawn for comparison with the optimum (roadmap 5.5). */
+  readonly overlay: OverlayChoice;
   /** GeoNames ids the next search must include. */
   readonly pinned: readonly number[];
   /** GeoNames ids the next search must not use. */
@@ -204,6 +210,7 @@ export interface AppState {
   readonly setParams: (update: Partial<UiParams>) => void;
   readonly setShown: (shown: Shown) => void;
   readonly setShowTour: (show: boolean) => void;
+  readonly setOverlay: (overlay: OverlayChoice) => void;
 }
 
 const LANG_KEY = 'tsp-boards.lang';
@@ -286,6 +293,7 @@ export const useStore = create<AppState>()((set) => ({
   loaded: null,
   verifications: {},
   showTour: true,
+  overlay: 'none',
   pinned: [],
   excluded: [],
   linkWarnings: [],
@@ -304,4 +312,5 @@ export const useStore = create<AppState>()((set) => ({
   setParams: (update) => set((s) => ({ params: { ...s.params, ...update } })),
   setShown: (shown) => set({ shown }),
   setShowTour: (showTour) => set({ showTour }),
+  setOverlay: (overlay) => set({ overlay }),
 }));

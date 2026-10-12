@@ -142,6 +142,8 @@ export function ParamsPanel({
         <NumberField label={t.weightGap} field="weightGap" step={0.1} />
         <NumberField label={t.weightDifficulty} field="weightDifficulty" step={0.1} />
         <NumberField label={t.weightRecognizability} field="weightRecognizability" step={0.1} />
+        <NumberField label={t.weightInterior} field="weightInterior" step={0.1} />
+        <NumberField label={t.weightNonNearest} field="weightNonNearest" step={0.1} />
       </fieldset>
       <NumberField label={t.seed} field="seed" />
       <NumberField label={t.iterations} field="iterations" step={100} min={1} />

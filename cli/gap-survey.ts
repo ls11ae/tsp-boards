@@ -29,7 +29,7 @@ const modes: Record<string, Partial<SearchParams>> = {
   'max-gap': {
     targetGapMm: 3,
     gapSaturationMm: 40,
-    weights: { gap: 1, difficulty: 0, recognizability: 0 },
+    weights: { gap: 1, difficulty: 0, recognizability: 0, interior: 0, nonNearest: 0 },
   },
   default: { targetGapMm: 5, gapSaturationMm: null },
 };

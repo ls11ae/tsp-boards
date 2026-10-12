@@ -1,6 +1,6 @@
 // Runs the puzzle search in Node and prints the result as JSON (progress goes to stderr).
 // Usage: npx tsx cli/search.ts [--region DE] [--n 40] [--seed 1] [--iterations 2000]
-//   [--target 5] [--min-dist 25] [--min-pop 5000] [--r-eff 1.5] [--weights 1,0.5,0.5]
+//   [--target 5] [--min-dist 25] [--min-pop 5000] [--r-eff 1.5] [--weights 1,0.5,0.5[,C,D]]
 //   [--pin id,id] [--verify 3] [--no-level2] [--labels 8] [--nail 2] [--out file.json]
 // --labels: font size in mm of the board labels that must fit (default 0: no label constraint).
 
@@ -15,11 +15,9 @@ const arg = (name: string, fallback: string) => {
   return i >= 0 ? args[i + 1]! : fallback;
 };
 const region = arg('region', 'DE');
-const [wGap, wDiff, wRec] = arg('weights', '1,0.5,0.5').split(',').map(Number) as [
-  number,
-  number,
-  number,
-];
+const [wGap, wDiff, wRec, wInt = 0, wNn = 0] = arg('weights', '1,0.5,0.5')
+  .split(',')
+  .map(Number) as [number, number, number, number?, number?];
 const params: SearchParams = {
   ...DEFAULT_SEARCH,
   n: Number(arg('n', String(DEFAULT_SEARCH.n))),
@@ -28,7 +26,7 @@ const params: SearchParams = {
   targetGapMm: Number(arg('target', String(DEFAULT_SEARCH.targetGapMm))),
   minDistanceMm: Number(arg('min-dist', String(DEFAULT_SEARCH.minDistanceMm))),
   rEffMm: Number(arg('r-eff', String(DEFAULT_SEARCH.rEffMm))),
-  weights: { gap: wGap, difficulty: wDiff, recognizability: wRec },
+  weights: { gap: wGap, difficulty: wDiff, recognizability: wRec, interior: wInt, nonNearest: wNn },
 };
 const minPop = Number(arg('min-pop', '5000'));
 const verifyCount = Number(arg('verify', '0'));

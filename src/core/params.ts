@@ -21,6 +21,9 @@ export interface PuzzleParams {
   readonly weightGap: number;
   readonly weightDifficulty: number;
   readonly weightRecognizability: number;
+  /** Optional objective terms for comparisons with the thesis: metrics C and D. */
+  readonly weightInterior: number;
+  readonly weightNonNearest: number;
   /** Font size of the board labels in mm; 0 = no labels (and no label constraint). */
   readonly labelSizeMm: number;
   readonly labelLanguage: LabelLanguage;
@@ -43,6 +46,8 @@ export const DEFAULT_PARAMS: PuzzleParams = {
   weightGap: 1,
   weightDifficulty: 0.5,
   weightRecognizability: 0.5,
+  weightInterior: 0,
+  weightNonNearest: 0,
   labelSizeMm: 8,
   labelLanguage: 'de',
 };
@@ -86,6 +91,8 @@ export function searchParams(p: PuzzleParams, purpose: Purpose = 'board'): Searc
       gap: p.weightGap,
       difficulty: p.weightDifficulty,
       recognizability: p.weightRecognizability,
+      interior: p.weightInterior,
+      nonNearest: p.weightNonNearest,
     },
   };
 }

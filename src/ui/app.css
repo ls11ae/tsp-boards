@@ -15,6 +15,7 @@
   --map-country: #5b4630;
   --pool: #7a6a55;
   --tour: #b5482b;
+  --overlay: #2a5db0;
   --nail: #2b2b2b;
   --label: #1d1d1b;
   --label-halo: #ead9bd;
@@ -45,6 +46,7 @@
     --map-country: #d6c3a1;
     --pool: #b8a688;
     --tour: #f08a5d;
+    --overlay: #86aef2;
     --nail: #f3efe6;
     --label: #f3efe6;
     --label-halo: #4a3d2c;
@@ -432,6 +434,29 @@ progress {
   stroke-width: 0.6;
 }
 
+.overlay-tour {
+  fill: none;
+  stroke: var(--overlay);
+  stroke-width: 0.8;
+  stroke-dasharray: 3 2;
+  stroke-linejoin: round;
+}
+
+.overlay-added {
+  fill: none;
+  stroke: var(--overlay);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.overlay-removed {
+  fill: none;
+  stroke: var(--tour);
+  stroke-width: 4;
+  stroke-linecap: round;
+  opacity: 0.4;
+}
+
 .play-path {
   fill: none;
   stroke: var(--tour);
@@ -653,5 +678,16 @@ polyline.trace-quality {
 
 .swatch.trace-quality {
   background: var(--ok);
+  margin-left: 8px;
+}
+
+.swatch.overlay-added {
+  background: var(--overlay);
+}
+
+.swatch.overlay-removed {
+  height: 5px;
+  background: var(--tour);
+  opacity: 0.4;
   margin-left: 8px;
 }

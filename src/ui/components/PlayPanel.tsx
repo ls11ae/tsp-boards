@@ -17,6 +17,7 @@ import {
 } from '../play';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
+import { OverlayPicker } from './OverlayPicker';
 import { Highscores, ShareConsent, Timer } from './PlayParts';
 
 export function PlayPanel({
@@ -142,6 +143,9 @@ export function PlayPanel({
             </button>
           )}
         </div>
+        {(play.revealed || play.solvedMs !== null) && (
+          <OverlayPicker board={board} puzzle={puzzle} />
+        )}
       </section>
       <Highscores />
       <ShareConsent />

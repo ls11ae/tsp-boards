@@ -64,7 +64,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
   puzzles can be harder. The search gets a matching objective (gap term off or relative,
   difficulty weighted higher). Today play mode always judges S; keep that for `board`.
 
-### 5.5 Overlays and metrics
+### 5.5 Overlays and metrics — done 2026-10-12
 
 - Runner-up tour as an overlay after solving or in the designer: highlight the edges where it
   differs from the optimum and show the difference.

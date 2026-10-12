@@ -1,0 +1,29 @@
+import { describe, expect, it } from 'vitest';
+import { Instance } from './instance';
+import { edgeDifference, heuristicTour, HEURISTICS } from './overlays';
+import { randomPoints } from './test-utils';
+import { isTour, stringLength } from './tsp/tour';
+import { nearestNeighbor } from './tsp/construct';
+
+describe('overlays', () => {
+  it('builds valid heuristic tours, nearest neighbour from its best start', () => {
+    const inst = new Instance(randomPoints(25, 3), 1.5);
+    for (const kind of HEURISTICS) expect(isTour(heuristicTour(inst, kind), 25)).toBe(true);
+    const nn = stringLength(inst, heuristicTour(inst, 'nearest-neighbor'));
+    for (let s = 0; s < 25; s++)
+      expect(nn).toBeLessThanOrEqual(stringLength(inst, nearestNeighbor(inst, s)));
+  });
+
+  it('lists the edges in which two tours differ', () => {
+    const d = edgeDifference([0, 1, 2, 3, 4], [0, 2, 1, 3, 4], 5);
+    expect(d.added.map(([a, b]) => [Math.min(a, b), Math.max(a, b)]).sort()).toEqual([
+      [0, 2],
+      [1, 3],
+    ]);
+    expect(d.removed.map(([a, b]) => [Math.min(a, b), Math.max(a, b)]).sort()).toEqual([
+      [0, 1],
+      [2, 3],
+    ]);
+    expect(edgeDifference([0, 1, 2, 3], [3, 2, 1, 0], 4)).toEqual({ added: [], removed: [] });
+  });
+});

@@ -137,7 +137,11 @@ export function encodePermalink(
   q.set('p', String(params.minPopulation));
   q.set('s', String(params.seed));
   q.set('it', String(params.iterations));
-  q.set('w', [params.weightGap, params.weightDifficulty, params.weightRecognizability].join(','));
+  const weights = [params.weightGap, params.weightDifficulty, params.weightRecognizability];
+  // The thesis terms C and D only when used (links from before them have three weights).
+  if (params.weightInterior !== 0 || params.weightNonNearest !== 0)
+    weights.push(params.weightInterior, params.weightNonNearest);
+  q.set('w', weights.join(','));
   q.set('lf', String(params.labelSizeMm));
   q.set('ll', params.labelLanguage);
   if (marks.pinned.length > 0) q.set('pin', encodeIds(marks.pinned));
@@ -190,7 +194,7 @@ export function decodePermalink(hash: string): PermalinkData | null {
   if (q.get('v') !== String(PERMALINK_VERSION)) return null;
   const d = DEFAULT_PARAMS;
   const [bw, bh, bm] = (q.get('b') ?? '').split('x');
-  const [wg, wd, wr] = (q.get('w') ?? '').split(',');
+  const [wg, wd, wr, wi, wn] = (q.get('w') ?? '').split(',');
   let params: PuzzleParams = {
     region: /^[A-Z]{2}(-[A-Z0-9]{1,3})?$/.test(q.get('r') ?? '') ? q.get('r')! : d.region,
     n: Math.round(num(q.get('n'), d.n, 5, 120)),
@@ -207,6 +211,8 @@ export function decodePermalink(hash: string): PermalinkData | null {
     weightGap: num(wg ?? null, d.weightGap, 0, 100),
     weightDifficulty: num(wd ?? null, d.weightDifficulty, 0, 100),
     weightRecognizability: num(wr ?? null, d.weightRecognizability, 0, 100),
+    weightInterior: num(wi ?? null, d.weightInterior, 0, 100),
+    weightNonNearest: num(wn ?? null, d.weightNonNearest, 0, 100),
     // Links from before labels were a constraint have no 'lf': they keep the default.
     labelSizeMm: num(q.get('lf'), d.labelSizeMm, 0, 100),
     labelLanguage: q.get('ll') === 'en' ? 'en' : d.labelLanguage,
