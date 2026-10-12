@@ -549,3 +549,13 @@ Short entries: decision; alternatives considered; reason. Newest last.
   9.5 / 10.9 / 12.3 mm; the gap grows with r_eff here. Alternatives: a finer grid of r_eff
   (cost grows linearly), the local check instead of the exact one (fast, but it is the
   exactness that makes the statement useful for building).
+- **2026-10-12 Classroom worksheet (Phase 6).** A two-page PDF in the board language: the task
+  (title, instruction, name and date line) with the map scaled to fit A4 or A3 (orientation by
+  the better fit), places as dots with the board labels (placed again without the scale, map
+  lines interrupted around them) and a kilometre scale bar (1/2/5 × 10^k km, at least 25 mm);
+  and the solution page with the Euclidean optimum in red, its length in km and how much
+  longer the runner-up is, plus the order when there is room. Pencil on paper measures
+  straight lines, so the solution is the exact Euclidean optimum from the verification, not
+  the string optimum. Available after the exact check, for digital puzzles too.
+  Alternatives: reusing the laser drawing (it carries the scale and the nail holes, which
+  make no sense on paper).

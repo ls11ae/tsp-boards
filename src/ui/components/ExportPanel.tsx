@@ -1,6 +1,12 @@
 import type { BoardPlan, PlanWarning } from '../../core/board/plan';
 import type { BoardModel } from '../board';
-import { downloadBoard, planKey, prepareBoard, type ExportKind } from '../export';
+import {
+  downloadBoard,
+  downloadWorksheet,
+  planKey,
+  prepareBoard,
+  type ExportKind,
+} from '../export';
 import { useFormat, useT } from '../i18n';
 import type { Messages } from '../i18n/en';
 import type { PuzzleView } from '../puzzle';
@@ -125,6 +131,45 @@ function Robustness({
   );
 }
 
+/** Classroom worksheet: needs only the exact check (also for digital puzzles). */
+function Worksheet({
+  board,
+  puzzle,
+  paperField,
+}: {
+  readonly board: BoardModel;
+  readonly puzzle: PuzzleView;
+  /** Show a paper choice (the board downloads have one already). */
+  readonly paperField: boolean;
+}) {
+  const t = useT();
+  const options = useStore((s) => s.exportOptions);
+  const setOptions = useStore((s) => s.setExportOptions);
+  return (
+    <div className="worksheet">
+      <h3>{t.worksheet}</h3>
+      <p className="hint">{t.worksheetHint}</p>
+      {paperField && (
+        <label className="field">
+          <span>{t.worksheetPaper}</span>
+          <select
+            value={options.paper}
+            onChange={(e) => setOptions({ paper: e.target.value === 'A3' ? 'A3' : 'A4' })}
+          >
+            <option value="A4">A4</option>
+            <option value="A3">A3</option>
+          </select>
+        </label>
+      )}
+      <div className="actions">
+        <button type="button" onClick={() => downloadWorksheet(board, puzzle)}>
+          {t.downloadWorksheet}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function ExportPanel({
   board,
   puzzle,
@@ -149,7 +194,10 @@ export function ExportPanel({
     <section>
       <h2>{t.exportTitle}</h2>
       {digital ? (
-        <p className="hint">{t.exportDigital}</p>
+        <>
+          <p className="hint">{t.exportDigital}</p>
+          {verified && <Worksheet board={board} puzzle={puzzle} paperField />}
+        </>
       ) : !verified ? (
         <p className="hint">{t.exportNeedsCheck}</p>
       ) : (
@@ -229,6 +277,7 @@ export function ExportPanel({
               <p className="hint">{t.exportHint}</p>
             </>
           )}
+          <Worksheet board={board} puzzle={puzzle} paperField={!plan} />
         </>
       )}
     </section>

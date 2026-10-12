@@ -92,6 +92,11 @@ export const en = {
   excess: (value: string) => `+${value} %`,
   interiorFraction: 'Points inside the hull (C)',
   nonNearestEdges: 'Edges not to a nearest neighbour (D)',
+  worksheet: 'Classroom worksheet',
+  worksheetHint:
+    'One page with the map scaled to fit, to draw the round trip with a pencil, and a separate solution page (lengths in km between the places).',
+  downloadWorksheet: 'Worksheet (PDF)',
+  worksheetPaper: 'Paper',
   robustness: 'Robustness',
   robustnessHint:
     'Does the optimum stay the shortest if nails or string are a little thinner or thicker? Exact check with r_eff (nail radius + half the string) 0.5 mm smaller and larger.',
@@ -187,7 +192,7 @@ export const en = {
   warnOptimum:
     'Measured at the scale, another round trip would be shortest. Choose another candidate.',
   warnUnverified: 'The gap at the scale is only bounded: the exact check did not finish.',
-  paper: 'Paper (print template)',
+  paper: 'Paper (template and worksheet)',
   holes: 'Nail holes',
   holesCut: 'cut (laser)',
   holesMark: 'mark for drilling',

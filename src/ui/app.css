@@ -448,6 +448,7 @@ progress {
   text-align: left;
 }
 
+.worksheet h3,
 .robustness h3 {
   margin: 12px 0 4px;
   font-size: 1em;

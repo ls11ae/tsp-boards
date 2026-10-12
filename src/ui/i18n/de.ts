@@ -87,6 +87,11 @@ export const de: Messages = {
   excess: (value) => `+${value} %`,
   interiorFraction: 'Punkte im Innern der Hülle (C)',
   nonNearestEdges: 'Kanten nicht zum nächsten Nachbarn (D)',
+  worksheet: 'Arbeitsblatt für den Unterricht',
+  worksheetHint:
+    'Eine Seite mit der Karte, passend verkleinert, zum Einzeichnen der Rundreise mit Bleistift, und eine eigene Lösungsseite (Längen in km zwischen den Orten).',
+  downloadWorksheet: 'Arbeitsblatt (PDF)',
+  worksheetPaper: 'Papier',
   robustness: 'Robustheit',
   robustnessHint:
     'Bleibt das Optimum das kürzeste, wenn Nägel oder Faden etwas dünner oder dicker sind? Exakte Prüfung mit r_eff (Nagelradius + halbe Fadendicke) 0,5 mm kleiner und größer.',
@@ -183,7 +188,7 @@ export const de: Messages = {
     'An der Skala gemessen wäre eine andere Rundreise am kürzesten. Bitte einen anderen Kandidaten wählen.',
   warnUnverified:
     'Die Lücke an der Skala ist nur abgeschätzt: Die exakte Prüfung wurde nicht fertig.',
-  paper: 'Papier (Druckvorlage)',
+  paper: 'Papier (Vorlage und Arbeitsblatt)',
   holes: 'Nagellöcher',
   holesCut: 'schneiden (Laser)',
   holesMark: 'zum Bohren markieren',

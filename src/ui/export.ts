@@ -5,6 +5,7 @@ import { planData, type BoardPlan } from '../core/board/plan';
 import { mapTemplateText, solutionPdf, templatePdf } from '../core/board/print';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import { boardSvg } from '../core/board/svg';
+import { worksheetPdf } from '../core/board/worksheet';
 import type { Layer } from '../core/board/drawing';
 import { svgPathData } from '../core/board/shapes';
 import { measuredLength } from '../core/board/measure';
@@ -182,6 +183,36 @@ function regionName(setup: BoardSetup): string {
   return setup.title[0]?.text ?? setup.params.region;
 }
 
+/** Sheets are in the board language, numbers too. */
+function boardNumberFormat(setup: BoardSetup): (value: number, decimals: number) => string {
+  const locale = setup.params.labelLanguage === 'de' ? 'de-DE' : 'en-GB';
+  return (value, decimals) =>
+    value.toLocaleString(locale, {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
+}
+
+/** Classroom worksheet (task page and solution page) of the shown, verified puzzle. */
+export function downloadWorksheet(board: BoardModel, puzzle: PuzzleView): void {
+  const v = puzzle.verification;
+  const e = v?.status === 'done' ? v.verification.euclidean : null;
+  const setup = puzzleSetup(board, puzzle);
+  if (!e || !setup) return;
+  const { exportOptions, doc } = useStore.getState();
+  const pdf = worksheetPdf({
+    setup,
+    paper: exportOptions.paper,
+    title: doc.title,
+    tour: e.optimal,
+    lengthUm: e.optimalLength,
+    gapUm: e.gap,
+    names: setup.cities.map((c) => (setup.params.labelLanguage === 'en' ? c.nameEn : c.name)),
+    formatNumber: boardNumberFormat(setup),
+  });
+  save(pdf, 'application/pdf', `tsp-worksheet-${fileId(setup)}-${exportOptions.paper}.pdf`);
+}
+
 export type ExportKind = 'svg' | 'template' | 'solution';
 
 export function downloadBoard(
@@ -226,8 +257,6 @@ export function downloadBoard(
     { pinned, excluded, groups },
     __APP_VERSION__,
   );
-  // Sheets are in the board language, numbers too.
-  const locale = setup.params.labelLanguage === 'de' ? 'de-DE' : 'en-GB';
   const pdf = solutionPdf({
     drawing,
     texts: setup.texts,
@@ -241,11 +270,7 @@ export function downloadBoard(
     measuredLengthUm: measuredLength(setup.inst, tour, plan.scale.slot, plan.scale.direction),
     stringGapUm: v.verification.string.gap,
     link: `${window.location.origin}${window.location.pathname}${hash}`,
-    formatNumber: (value, decimals) =>
-      value.toLocaleString(locale, {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      }),
+    formatNumber: boardNumberFormat(setup),
   });
   save(pdf, 'application/pdf', `tsp-board-${name}-solution.pdf`);
 }

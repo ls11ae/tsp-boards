@@ -18,6 +18,7 @@ import { pathBounds } from './shapes';
 import { planBoard, type BoardPlan } from './plan';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from './setup';
 import { boardSvg } from './svg';
+import { scaleBarKm, worksheetPdf } from './worksheet';
 
 const file = parseCountryFile(
   JSON.parse(
@@ -149,6 +150,28 @@ describe('board export (Germany, 25 cities)', () => {
       writeFileSync(`${process.env.BOARD_PDF}-template.pdf`, template);
       writeFileSync(`${process.env.BOARD_PDF}-solution.pdf`, solution);
     }
+  });
+
+  it('writes a classroom worksheet with a solution page', () => {
+    const e = verification.euclidean!;
+    for (const paper of ['A4', 'A3'] as const) {
+      const sheet = worksheetPdf({
+        setup,
+        paper,
+        title: '',
+        tour: e.optimal,
+        lengthUm: e.optimalLength,
+        gapUm: e.gap,
+        names: setup.cities.map((c) => c.name),
+        formatNumber: (v, d) => v.toFixed(d),
+      });
+      checkPdf(sheet, 2);
+      if (process.env.BOARD_PDF)
+        writeFileSync(`${process.env.BOARD_PDF}-worksheet-${paper}.pdf`, sheet);
+    }
+    expect(scaleBarKm(0.3)).toBe(100);
+    expect(scaleBarKm(2)).toBe(20);
+    expect(scaleBarKm(0.05, 30)).toBe(1000);
   });
 });
 

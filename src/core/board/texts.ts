@@ -27,6 +27,11 @@ export interface BoardTexts {
   readonly calibrationTitle: string;
   readonly calibrationSteps: (info: { gapMm: string; cutMm: string }) => string[];
   readonly puzzleLink: string;
+  // Classroom worksheet.
+  readonly worksheetTask: (n: number) => string;
+  readonly worksheetName: string;
+  readonly worksheetLength: (km: string) => string;
+  readonly worksheetSecond: (km: string) => string;
 }
 
 export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
@@ -62,6 +67,11 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
       `Damit erreicht das Fadenende bei der kürzesten Rundreise die 0; jede andere Rundreise endet mindestens ${gapMm} mm davor. Die Zahlen der Skala zeigen, wie viele mm Faden eine Lösung zu viel braucht.`,
     ],
     puzzleLink: 'Puzzle-Link (stellt dieses Brett in der App wieder her)',
+    worksheetTask: (n) =>
+      `Finde die kürzeste Rundreise durch alle ${n} Orte: Sie besucht jeden Ort genau einmal und kehrt zum Start zurück. Zeichne sie mit geraden Linien ein.`,
+    worksheetName: 'Name: ______________________    Datum: ____________',
+    worksheetLength: (km) => `Kürzeste Rundreise: ${km} km (Luftlinie zwischen den Orten).`,
+    worksheetSecond: (km) => `Die zweitkürzeste Rundreise ist ${km} km länger.`,
   },
   en: {
     subtitle: (n) => `${n} cities · Find the shortest round trip!`,
@@ -95,5 +105,10 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
       `The end of the string then reaches 0 for the shortest round trip; every other round trip ends at least ${gapMm} mm before it. The numbers on the scale tell how many mm of string a solution uses too many.`,
     ],
     puzzleLink: 'Puzzle link (restores this board in the app)',
+    worksheetTask: (n) =>
+      `Find the shortest round trip through all ${n} places: it visits every place exactly once and returns to the start. Draw it with straight lines.`,
+    worksheetName: 'Name: ______________________    Date: ____________',
+    worksheetLength: (km) => `Shortest round trip: ${km} km (straight lines between the places).`,
+    worksheetSecond: (km) => `The second-shortest round trip is ${km} km longer.`,
   },
 };
