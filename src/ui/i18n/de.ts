@@ -223,6 +223,42 @@ export const de: Messages = {
   fixedLeaveOut: 'Weglassen',
   fixedNoSearch: 'Eine feste Instanz wird nicht gesucht: Die Liste ist das Puzzle.',
 
+  gallery: 'Galerie',
+  galleryIntro:
+    'Wähle ein Puzzle zum Spielen oder öffne es im Designer. Fortschritt und Bestleistungen bleiben in diesem Browser.',
+  galleryPlay: 'Spielen',
+  galleryEdit: 'Designer',
+  gallerySolved: 'gelöst',
+  galleryTried: 'versucht',
+  galleryUnsolved: 'noch nicht gespielt',
+  galleryInProgress: 'angefangen',
+  galleryBest: (excess, time) => `Bestes: ${excess} in ${time}`,
+  galleryMineEmpty: 'Puzzles, die du im Designer speicherst, erscheinen hier.',
+  galleryNewMap: 'Neues Karten-Puzzle',
+  galleryNewIncremental: 'Neues Schritt-für-Schritt-Puzzle',
+  backToGallery: 'Galerie',
+  highscores: 'Bestenliste (dieser Browser)',
+  playerName: 'Dein Name',
+  highscoresEmpty: 'Noch keine Ergebnisse.',
+  highscoreRevealed: 'Lösung angesehen',
+  highscoresHint:
+    'Sortiert nach Abstand zur kürzesten Rundreise, dann nach Zeit; Ergebnisse nach Ansehen der Lösung kommen zuletzt.',
+  playShareNickname: 'Meinen Namen mit meinen Ergebnissen zeigen',
+  playSolvedBefore: 'Du hast dieses Puzzle gelöst.',
+  playNewGame: 'Noch einmal spielen',
+
+  incPlayTitle: (n) => `Schritt für Schritt: ${n} Nägel`,
+  incPlayHint:
+    'Finde die kürzeste Rundreise durch die Nägel 1–3, dann 1–4 und so weiter: Klicke die aktiven Nägel der Reihe nach an und zum Schluss wieder den ersten. Ist es die kürzeste, kommt der nächste Nagel dazu.',
+  incPlayStage: 'Instanz',
+  incPlayNails: (k) => `Nägel 1–${k}`,
+  incPlayDone: 'alle geschafft',
+  incPlayAllDone: 'Gelöst: Du hast für jede Instanz die kürzeste Rundreise gefunden.',
+  incPlayNext: (prev, k) => `Nägel 1–${prev} gelöst. Jetzt mit Nagel ${k}!`,
+  incPlaySkip: 'Nächste Instanz',
+  playLinkIncremental: 'Spiel-Link kopieren',
+  playNow: 'Spielen',
+
   permalink: 'Link kopieren',
   linkCopied: 'Link kopiert',
   dataVersionMismatch: (linked, current) =>

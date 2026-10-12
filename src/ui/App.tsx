@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useBoard } from './board';
 import { BoardMap } from './components/BoardMap';
+import { Gallery } from './components/Gallery';
+import { IncrementalPlayBoard, IncrementalPlayPanel } from './components/IncrementalPlay';
 import { IncrementalBoard, IncrementalParams, IncrementalSide } from './components/IncrementalView';
 import { ParamsPanel } from './components/ParamsPanel';
 import { PlayPanel } from './components/PlayPanel';
@@ -15,6 +17,7 @@ function Header() {
   const lang = useStore((s) => s.lang);
   const setLang = useStore((s) => s.setLang);
   const mode = useStore((s) => s.mode);
+  const page = useStore((s) => s.page);
   const puzzleType = useStore((s) => s.puzzleType);
   const setPuzzleType = useStore((s) => s.setPuzzleType);
   const types: [PuzzleType, string][] = [
@@ -27,21 +30,34 @@ function Header() {
         <h1>{t.appTitle}</h1>
         <p className="tagline">{t.appTagline}</p>
       </div>
-      {mode === 'design' && (
-        <div className="lang" role="group" aria-label={t.puzzleType}>
-          {types.map(([type, label]) => (
+      <div className="lang" role="group" aria-label={t.puzzleType}>
+        <button
+          type="button"
+          className={page === 'gallery' ? 'selected' : undefined}
+          aria-pressed={page === 'gallery'}
+          onClick={() => useStore.setState({ page: 'gallery' })}
+        >
+          {t.gallery}
+        </button>
+        {types.map(([type, label]) => {
+          const active = page === 'app' && mode === 'design' && type === puzzleType;
+          return (
             <button
               key={type}
               type="button"
-              className={type === puzzleType ? 'selected' : undefined}
-              aria-pressed={type === puzzleType}
-              onClick={() => setPuzzleType(type)}
+              className={active ? 'selected' : undefined}
+              aria-pressed={active}
+              onClick={() => {
+                if (mode === 'play' || page === 'gallery' || type !== puzzleType)
+                  setPuzzleType(type);
+                useStore.setState({ page: 'app', mode: 'design' });
+              }}
             >
               {label}
             </button>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
       <div className="lang" role="group" aria-label={t.language}>
         {(['en', 'de'] as const satisfies readonly Language[]).map((l) => (
           <button
@@ -92,6 +108,7 @@ export function App() {
   const board = useBoard();
   const puzzle = usePuzzle();
   const mode = useStore((s) => s.mode);
+  const page = useStore((s) => s.page);
   const puzzleType = useStore((s) => s.puzzleType);
 
   useEffect(() => {
@@ -100,6 +117,30 @@ export function App() {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
+  if (page === 'gallery') {
+    return (
+      <div className="app gallery-page">
+        <Header />
+        <Gallery />
+        <Footer />
+      </div>
+    );
+  }
+
+  if (puzzleType === 'incremental' && mode === 'play') {
+    return (
+      <div className="app play">
+        <Header />
+        <main className="stage">
+          <BoardTitle />
+          <IncrementalPlayBoard />
+        </main>
+        <IncrementalPlayPanel />
+        <Footer />
+      </div>
+    );
+  }
 
   if (puzzleType === 'incremental' && mode === 'design') {
     return (

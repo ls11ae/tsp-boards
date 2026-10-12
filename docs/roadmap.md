@@ -45,7 +45,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
 - Fixed instances with a gap below the board target: say so and suggest the `digital`
   purpose, or show which single removal would raise the gap most.
 
-### 5.3 Gallery, puzzle switching, highscores
+### 5.3 Gallery, puzzle switching, highscores — done 2026-10-12
 
 - Start page: gallery of curated and own puzzles (title, type, n, region, status solved /
   unsolved, personal best); open a puzzle in play mode or in the designer with one click;

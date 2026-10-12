@@ -128,7 +128,7 @@ export interface IncrementalUi {
 /** A game in play mode; slots index the puzzle's members (ascending pool index). */
 export interface PlayUi {
   readonly state: PlayState;
-  /** performance.now() of the first click. */
+  /** Wall-clock time (Date.now()) of the first click; kept when a game is resumed later. */
   readonly startedAt: number | null;
   readonly attempts: readonly PlayAttempt[];
   /** Path (slots joined) of the last judged round trip, so each trip counts once. */
@@ -137,6 +137,12 @@ export interface PlayUi {
   readonly revealed: boolean;
   /** The record of this game was sent (with consent). */
   readonly sent: boolean;
+  /** Best judged round trip so far (excess in the puzzle's measure, path in slots). */
+  readonly best: { readonly excess: number; readonly path: readonly number[] } | null;
+  /** A highscore entry was made for this game. */
+  readonly scored: boolean;
+  /** Incremental puzzle: the instance being played (k); null for map puzzles. */
+  readonly stage: number | null;
 }
 
 export const NEW_GAME: PlayUi = {
@@ -147,12 +153,23 @@ export const NEW_GAME: PlayUi = {
   solvedMs: null,
   revealed: false,
   sent: false,
+  best: null,
+  scored: false,
+  stage: null,
 };
 
 export interface AppState {
   readonly lang: Language;
   readonly mode: Mode;
   readonly play: PlayUi;
+  /** Id of the puzzle being played (games and highscores are kept per id). */
+  readonly playId: string | null;
+  /** Start page: the gallery of puzzles. */
+  readonly page: 'gallery' | 'app';
+  /** Name for highscore entries (kept in the browser). */
+  readonly playerName: string;
+  /** Increases when highscores change. */
+  readonly scoresVersion: number;
   readonly puzzleType: PuzzleType;
   readonly inc: IncrementalUi;
   readonly doc: DocMeta;
@@ -190,6 +207,24 @@ export interface AppState {
 }
 
 const LANG_KEY = 'tsp-boards.lang';
+const PLAYER_KEY = 'tsp-boards.player-name';
+
+function readPlayerName(): string {
+  try {
+    return localStorage.getItem(PLAYER_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+export function writePlayerName(name: string): void {
+  try {
+    localStorage.setItem(PLAYER_KEY, name);
+  } catch {
+    // This page only.
+  }
+  useStore.setState({ playerName: name });
+}
 
 function initialLanguage(): Language {
   try {
@@ -213,6 +248,10 @@ export const useStore = create<AppState>()((set) => ({
       ? 'play'
       : 'design',
   play: NEW_GAME,
+  playId: null,
+  page: typeof window !== 'undefined' && window.location.hash.length > 1 ? 'app' : 'gallery',
+  playerName: readPlayerName(),
+  scoresVersion: 0,
   puzzleType:
     typeof window !== 'undefined' && /[#&]m=inc(&|$)/.test(window.location.hash)
       ? 'incremental'

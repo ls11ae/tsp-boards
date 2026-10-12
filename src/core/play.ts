@@ -2,6 +2,7 @@
 // anonymous record of a game (sent only with the player's consent).
 
 import type { Instance } from './instance';
+import type { Measure } from './scores';
 import { sameTour, stringLength } from './tsp/tour';
 
 export interface PlayState {
@@ -68,9 +69,13 @@ export interface PlayAttempt {
   readonly excessUm: number;
 }
 
-/** What a game sends with consent: no ids, no names; the puzzle by a hash of its cities. */
+/**
+ * What a game sends with consent: no ids, no personal data; the puzzle by a hash of its
+ * places and by its board points, so a server can recompute lengths from the submitted order.
+ * A nickname is included only if the player agreed to show it.
+ */
 export interface PlayRecord {
-  readonly schema: 1;
+  readonly schema: 2;
   readonly app: string;
   /** Data version, e.g. 'de@1'. */
   readonly data: string;
@@ -87,6 +92,14 @@ export interface PlayRecord {
   readonly gaveUp: boolean;
   /** Difficulty score of the search (0–1), if known. */
   readonly difficulty: number | null;
+  /** How round trips were judged: string length (boards) or Euclidean length (digital). */
+  readonly measure: Measure;
+  /** Board coordinates of the places in mm (0.01), in the puzzle's order. */
+  readonly points: readonly (readonly [number, number])[];
+  /** The player's best round trip (indices into points), null if none was closed. */
+  readonly order: readonly number[] | null;
+  /** Nickname for a shared highscore list, only with consent; else null. */
+  readonly nickname: string | null;
 }
 
 export function puzzleHash(ids: readonly number[]): string {

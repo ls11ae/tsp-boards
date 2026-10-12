@@ -92,6 +92,7 @@ export function applyIncrementalLink(hash: string): boolean {
   useStore.setState({ puzzleType: 'incremental' });
   useStore.getState().setIncParams(link.params);
   if (link.title !== null) useStore.getState().setDoc({ title: link.title });
+  if (link.play) useStore.setState({ mode: 'play', page: 'app' });
   if (link.points) checkPoints(link.params, link.points);
   return true;
 }

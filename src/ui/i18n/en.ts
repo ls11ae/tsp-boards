@@ -230,6 +230,43 @@ export const en = {
   fixedLeaveOut: 'Leave out',
   fixedNoSearch: 'A fixed instance is not searched: the list is the puzzle.',
 
+  // Gallery, highscores
+  gallery: 'Gallery',
+  galleryIntro:
+    'Choose a puzzle to play, or open it in the designer. Your progress and best results stay in this browser.',
+  galleryPlay: 'Play',
+  galleryEdit: 'Designer',
+  gallerySolved: 'solved',
+  galleryTried: 'tried',
+  galleryUnsolved: 'not played yet',
+  galleryInProgress: 'in progress',
+  galleryBest: (excess: string, time: string) => `best: ${excess} in ${time}`,
+  galleryMineEmpty: 'Puzzles you save in the designer appear here.',
+  galleryNewMap: 'New map puzzle',
+  galleryNewIncremental: 'New step-by-step puzzle',
+  backToGallery: 'Gallery',
+  highscores: 'Highscores (this browser)',
+  playerName: 'Your name',
+  highscoresEmpty: 'No results yet.',
+  highscoreRevealed: 'solution shown',
+  highscoresHint:
+    'Ranked by excess over the shortest round trip, then time; results after showing the solution come last.',
+  playShareNickname: 'Show my name with my results',
+  playSolvedBefore: 'You have solved this puzzle.',
+  playNewGame: 'Play again',
+
+  incPlayTitle: (n: string) => `Step by step: ${n} nails`,
+  incPlayHint:
+    'Find the shortest round trip through nails 1–3, then 1–4, and so on: click the active nails in order and the first one again to close the trip. When it is the shortest, the next nail joins.',
+  incPlayStage: 'Instance',
+  incPlayNails: (k: string) => `nails 1–${k}`,
+  incPlayDone: 'all done',
+  incPlayAllDone: 'Solved: you found the shortest round trip of every instance.',
+  incPlayNext: (prev: string, k: string) => `Nails 1–${prev} solved. Now with nail ${k}!`,
+  incPlaySkip: 'Next instance',
+  playLinkIncremental: 'Copy play link',
+  playNow: 'Play',
+
   // Permalink and data
   permalink: 'Copy link',
   linkCopied: 'Link copied',

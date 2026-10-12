@@ -36,6 +36,7 @@ describe('incremental links', () => {
       params: DEFAULT_INCREMENTAL_UI,
       points: null,
       title: null,
+      play: false,
     });
     expect(decodeIncrementalLink('#v=1&n=40')).toBeNull();
   });

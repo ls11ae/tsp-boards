@@ -28,13 +28,48 @@ describe('play record validation', () => {
     for (const bad of [
       null,
       [],
-      { ...record, schema: 2 },
+      { ...record, schema: 3 },
       { ...record, puzzle: 'Dortmund' },
       { ...record, attempts: [{ ms: -1, excessUm: 0 }] },
       { ...record, attempts: Array.from({ length: 501 }, () => ({ ms: 1, excessUm: 1 })) },
       { ...record, difficulty: 2 },
       { ...record, solvedMs: 'soon' },
       { ...record, region: 'DE; DROP TABLE' },
+    ])
+      expect(validateRecord(bad)).toBeNull();
+  });
+
+  const v2 = {
+    ...record,
+    schema: 2,
+    n: 4,
+    measure: 'string',
+    points: [
+      [0, 0],
+      [30, 0],
+      [30, 40],
+      [0, 40],
+    ],
+    order: [0, 1, 2, 3],
+    nickname: 'Ada L.',
+  };
+
+  it('accepts schema 2 and recomputes the length of the submitted order', () => {
+    expect(validateRecord(v2)).toEqual({ ...v2, lengthMm: 140 });
+    expect(validateRecord({ ...v2, order: null, nickname: null })).toMatchObject({
+      lengthMm: null,
+      nickname: null,
+    });
+  });
+
+  it('rejects schema 2 records with bad points, orders or nicknames', () => {
+    for (const bad of [
+      { ...v2, order: [0, 1, 1, 3] },
+      { ...v2, order: [0, 1, 2] },
+      { ...v2, points: v2.points.slice(1) },
+      { ...v2, measure: 'other' },
+      { ...v2, nickname: '<script>' },
+      { ...v2, nickname: 'x'.repeat(31) },
     ])
       expect(validateRecord(bad)).toBeNull();
   });

@@ -460,3 +460,15 @@ Short entries: decision; alternatives considered; reason. Newest last.
   deflated and base64url-encoded (`pl`, selection as list indices `sx`), files as `map.list`.
   Alternatives: geocoding service (needs a server, privacy), Euclidean-only matching by
   coordinates. Reason: works offline with the shipped data; custom rows cover the rest.
+- **2026-10-12 Gallery, games and highscores (roadmap 5.3).** The app starts on a gallery of
+  the curated collection and the local library (status: not played, in progress, solved or
+  tried, with the personal best); links still open the designer or play mode directly. Games
+  are kept per puzzle id (document id, or a hash of the places) in localStorage (50 most recent,
+  wall-clock start so a resumed game keeps its time), so switching puzzles keeps progress.
+  Highscores are local (name field, top 20 per puzzle): one entry per game, made when the
+  optimum is found or when the solution is shown (then with the best excess and a flag that
+  ranks it after all others); ranking by excess (µm of string, or ppm of length for digital
+  puzzles, 5.4), then time. Play records move to schema 2: board points, the best order (the
+  reference endpoint recomputes the length), the measure and a nickname only with a second,
+  separate consent. Incremental play: one board, instances 1–3, 1–4, …; an optimal round trip
+  advances to the next nail, a shown solution lets the player move on and marks the game.

@@ -114,7 +114,7 @@ export function openDocument(doc: PuzzleDoc, mode: 'design' | 'play' = 'design')
     purpose: doc.purpose,
   };
   if (doc.kind === 'incremental' && doc.incremental) {
-    useStore.setState({ puzzleType: 'incremental', mode: 'design', doc: meta, play: NEW_GAME });
+    useStore.setState({ puzzleType: 'incremental', mode, doc: meta, play: NEW_GAME, playId: null });
     applyIncrementalPuzzle(doc.incremental.params, doc.incremental.points);
     return;
   }
@@ -125,6 +125,7 @@ export function openDocument(doc: PuzzleDoc, mode: 'design' | 'play' = 'design')
     mode,
     doc: meta,
     play: NEW_GAME,
+    playId: null,
     params: map.params,
     pinned: map.constraints.pinned.filter((id) => id > 0),
     excluded: map.constraints.excluded.filter((id) => id > 0),

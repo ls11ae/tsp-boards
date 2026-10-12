@@ -75,10 +75,12 @@ export function encodeIncrementalLink(
   points: readonly Point[] | null,
   appVersion = '',
   title = '',
+  play = false,
 ): string {
   const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
   q.set('m', 'inc');
+  if (play) q.set('play', '1');
   if (title) q.set('t', title);
   if (appVersion) q.set('app', appVersion);
   q.set('n', String(ui.n));
@@ -104,6 +106,8 @@ export function decodeIncrementalLink(hash: string): {
   readonly params: IncrementalUiParams;
   readonly points: Point[] | null;
   readonly title: string | null;
+  /** Open in play mode (only with points). */
+  readonly play: boolean;
 } | null {
   const q = new Query(hash.startsWith('#') ? hash.slice(1) : hash);
   if (q.get('v') !== String(PERMALINK_VERSION) || q.get('m') !== 'inc') return null;
@@ -127,5 +131,6 @@ export function decodeIncrementalLink(hash: string): {
     params,
     points: points && points.length <= 16 ? points : null,
     title: q.get('t') ? q.get('t')!.slice(0, 200) : null,
+    play: q.get('play') === '1' && points !== null,
   };
 }

@@ -1,38 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
-import { pathLength } from '../../core/play';
-import { stringLength } from '../../core/tsp/tour';
 import { Instance } from '../../core/instance';
 import { rEffMm } from '../../core/params';
+import { pathLength } from '../../core/play';
+import { stringLength } from '../../core/tsp/tour';
 import type { BoardModel } from '../board';
 import { useFormat, useT } from '../i18n';
 import {
-  PLAY_DATA_URL,
   judgePending,
+  mapPlayId,
   openInDesigner,
+  playNewGame,
   playReveal,
   playRestart,
   playUndo,
-  readConsent,
-  writeConsent,
+  startPlaying,
 } from '../play';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
-
-function Timer({ startedAt, stoppedMs }: { startedAt: number | null; stoppedMs: number | null }) {
-  const [now, setNow] = useState(() => performance.now());
-  useEffect(() => {
-    if (startedAt === null || stoppedMs !== null) return;
-    const id = setInterval(() => setNow(performance.now()), 1000);
-    return () => clearInterval(id);
-  }, [startedAt, stoppedMs]);
-  const ms = stoppedMs ?? (startedAt === null ? 0 : now - startedAt);
-  const s = Math.max(0, Math.floor(ms / 1000));
-  return (
-    <>
-      {Math.floor(s / 60)}:{String(s % 60).padStart(2, '0')}
-    </>
-  );
-}
+import { Highscores, ShareConsent, Timer } from './PlayParts';
 
 export function PlayPanel({
   board,
@@ -44,17 +29,23 @@ export function PlayPanel({
   const t = useT();
   const fmt = useFormat();
   const play = useStore((s) => s.play);
+  const playId = useStore((s) => s.playId);
   const params = useStore((s) => s.params);
   const [confirmReveal, setConfirmReveal] = useState(false);
-  const [consent, setConsent] = useState(readConsent);
   const v = puzzle?.verification;
   const optimum = v?.status === 'done' ? v.verification.string : null;
   const pathKey = play.state.path.join(',');
+  const id = puzzle ? mapPlayId(puzzle) : null;
+
+  // Resume this puzzle's game (switching puzzles keeps each game).
+  useEffect(() => {
+    if (id && id !== playId) startPlaying(id);
+  }, [id, playId]);
 
   useEffect(() => {
-    if (puzzle) judgePending(puzzle);
+    if (puzzle && id === playId) judgePending(puzzle);
     // Re-judge when the optimum arrives or the trip changes.
-  }, [puzzle, optimum, pathKey, play.state.closed]);
+  }, [puzzle, optimum, pathKey, play.state.closed, id, playId]);
 
   const members = puzzle?.members;
   const rEff = rEffMm(params);
@@ -103,6 +94,9 @@ export function PlayPanel({
           ) : (
             <p className="play-result">{t.playLonger(mm(last.excessUm))}</p>
           ))}
+        {play.solvedMs !== null && !judged && (
+          <p className="play-result optimal">{t.playSolvedBefore}</p>
+        )}
         {play.revealed && optimum && (
           <p className="hint">{t.playRevealed(mm(optimum.optimalLength))}</p>
         )}
@@ -131,25 +125,19 @@ export function PlayPanel({
                 {t.playReveal}
               </button>
             ))}
+          {(play.revealed || play.solvedMs !== null) && (
+            <button type="button" onClick={playNewGame}>
+              {t.playNewGame}
+            </button>
+          )}
         </div>
       </section>
-      {PLAY_DATA_URL && (
-        <section>
-          <label className="checkbox">
-            <input
-              type="checkbox"
-              checked={consent}
-              onChange={(e) => {
-                setConsent(e.target.checked);
-                writeConsent(e.target.checked);
-              }}
-            />
-            {t.playShare}
-          </label>
-          <p className="hint">{t.playShareHint}</p>
-        </section>
-      )}
-      <section>
+      <Highscores />
+      <ShareConsent />
+      <section className="actions">
+        <button type="button" onClick={() => useStore.setState({ page: 'gallery' })}>
+          {t.backToGallery}
+        </button>
         <button type="button" onClick={openInDesigner}>
           {t.playDesigner}
         </button>

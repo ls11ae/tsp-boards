@@ -476,6 +476,23 @@ progress {
   fill: none;
 }
 
+.inc-nail.inactive {
+  fill: var(--board);
+  stroke: var(--muted);
+  stroke-width: 0.8;
+  opacity: 0.6;
+}
+
+.inc-nail.live {
+  fill: var(--board);
+  stroke: var(--tour);
+  stroke-width: 1.4;
+}
+
+.inc-nail.visited {
+  fill: var(--tour);
+}
+
 .inc-nail.active {
   fill: var(--tour);
   opacity: 0.6;

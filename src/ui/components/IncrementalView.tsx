@@ -7,6 +7,7 @@ import type { IncrementalUiParams } from '../../core/incremental/params';
 import { useFormat, useT } from '../i18n';
 import { downloadIncremental, generate, incrementalLink, incrementalPreview } from '../incremental';
 import { useStore } from '../store';
+import { incrementalPlayLink } from '../incremental-play';
 import { DocumentPanel } from './DocumentPanel';
 import { boardFit } from './fit';
 
@@ -225,6 +226,24 @@ export function IncrementalSide() {
               />
               {t.incShowSolution}
             </label>
+            <div className="actions">
+              <button
+                type="button"
+                className="primary"
+                onClick={() => useStore.setState({ mode: 'play', playId: null })}
+              >
+                {t.playNow}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const url = incrementalPlayLink();
+                  if (url) void navigator.clipboard.writeText(url).catch(() => undefined);
+                }}
+              >
+                {t.playLinkIncremental}
+              </button>
+            </div>
           </>
         )}
       </section>

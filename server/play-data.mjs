@@ -18,12 +18,35 @@ const isInt = (v, min, max) => Number.isInteger(v) && v >= min && v <= max;
 const isNum = (v, min, max) => typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max;
 const isStr = (v, pattern) => typeof v === 'string' && pattern.test(v);
 
-/** The record with exactly the known fields, or null if anything is off. */
+const MAX_MS = 7 * 24 * 3600 * 1000;
+
+/** Euclidean length (mm) of a round trip over points; the server does not trust lengths. */
+export function tourLengthMm(points, order) {
+  let sum = 0;
+  for (let i = 0; i < order.length; i++) {
+    const [ax, ay] = points[order[i]];
+    const [bx, by] = points[order[(i + 1) % order.length]];
+    sum += Math.hypot(ax - bx, ay - by);
+  }
+  return Math.round(sum * 100) / 100;
+}
+
+const isPermutation = (order, n) =>
+  Array.isArray(order) &&
+  order.length === n &&
+  new Set(order).size === n &&
+  order.every((v) => isInt(v, 0, n - 1));
+
+/**
+ * The record with exactly the known fields, or null if anything is off. Schema 1 (results
+ * only) and schema 2 (also board points, the best order, the measure and an optional
+ * nickname; the server adds the recomputed Euclidean length of the order).
+ */
 export function validateRecord(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const r = value;
   const ok =
-    r.schema === 1 &&
+    (r.schema === 1 || r.schema === 2) &&
     isStr(r.app, /^[0-9A-Za-z.+-]{1,40}$/) &&
     isStr(r.data, /^[a-z]{2}@\d{1,6}$/) &&
     isStr(r.puzzle, /^[0-9a-f]{8}$/) &&
@@ -33,18 +56,14 @@ export function validateRecord(value) {
     Array.isArray(r.attempts) &&
     r.attempts.length <= MAX_ATTEMPTS &&
     r.attempts.every(
-      (a) =>
-        a &&
-        typeof a === 'object' &&
-        isInt(a.ms, 0, 7 * 24 * 3600 * 1000) &&
-        isInt(a.excessUm, 0, 1e9),
+      (a) => a && typeof a === 'object' && isInt(a.ms, 0, MAX_MS) && isInt(a.excessUm, 0, 1e9),
     ) &&
-    (r.solvedMs === null || isInt(r.solvedMs, 0, 7 * 24 * 3600 * 1000)) &&
+    (r.solvedMs === null || isInt(r.solvedMs, 0, MAX_MS)) &&
     typeof r.gaveUp === 'boolean' &&
     (r.difficulty === null || isNum(r.difficulty, 0, 1));
   if (!ok) return null;
-  return {
-    schema: 1,
+  const base = {
+    schema: r.schema,
     app: r.app,
     data: r.data,
     puzzle: r.puzzle,
@@ -55,6 +74,26 @@ export function validateRecord(value) {
     solvedMs: r.solvedMs,
     gaveUp: r.gaveUp,
     difficulty: r.difficulty,
+  };
+  if (r.schema === 1) return base;
+  const points = r.points;
+  const ok2 =
+    (r.measure === 'string' || r.measure === 'euclidean') &&
+    Array.isArray(points) &&
+    points.length === r.n &&
+    points.every(
+      (p) => Array.isArray(p) && p.length === 2 && isNum(p[0], -1e4, 1e4) && isNum(p[1], -1e4, 1e4),
+    ) &&
+    (r.order === null || isPermutation(r.order, r.n)) &&
+    (r.nickname === null || isStr(r.nickname, /^[\p{L}\p{N} ._-]{1,30}$/u));
+  if (!ok2) return null;
+  return {
+    ...base,
+    measure: r.measure,
+    points: points.map(([x, y]) => [x, y]),
+    order: r.order === null ? null : [...r.order],
+    nickname: r.nickname,
+    lengthMm: r.order === null ? null : tourLengthMm(points, r.order),
   };
 }
 

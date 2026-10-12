@@ -174,6 +174,13 @@ export function ParamsPanel({
         >
           {copied === 'play' ? t.linkCopied : t.playLink}
         </button>
+        <button
+          type="button"
+          onClick={() => useStore.setState({ mode: 'play', playId: null })}
+          disabled={!puzzle}
+        >
+          {t.playNow}
+        </button>
       </div>
     </aside>
   );
