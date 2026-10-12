@@ -592,3 +592,17 @@ Short entries: decision; alternatives considered; reason. Newest last.
   pinned; the collection CLI got `--pin` for list pools) and 30 university towns, both boards.
   Alternatives: the Wikidata class "Universitätsstadt" (an official title in some states,
   incomplete), membership in the Hanseatic League (P463, only two German members recorded).
+- **2026-10-12 More countries (Phase 6).** Austria, Switzerland and the Netherlands from the
+  same pipeline. The municipality key is a per-country scheme in `geonames.ts`: Germany admin4
+  (AGS), Austria admin3 (but Vienna as one municipality: its admin3 units are the 23
+  Gemeindebezirke), Switzerland admin3, the Netherlands admin2; name cleaning per country
+  ("Gemeinde …", "Wien Stadt", "Bern/Berne/Berna", "Gemeente …"). Natural Earth: German canton
+  names from `name_de` ("Kanton Luzern" → "Luzern"; `name` mixes languages), the Caribbean
+  Netherlands left out (they spread the bounding box over the Atlantic). Germany rebuilt from a
+  fresh download with the refactored code is byte-identical (data version 1). Result: AT 1673,
+  CH 1418, NL 341 places. The app loads country files on demand; a country switch sets data and
+  region in one update; links and files of another country load its data first. Regions are
+  offered if they hold 10 places with all towns of the data (for Germany the same list as
+  before); named unions for Vienna + Lower Austria, the two Basel, the two Appenzell, and the
+  NUTS 1 / Swiss major regions. Alternatives: a municipality key from the official registers
+  (better, but another source per country), keeping a single country per deployment.

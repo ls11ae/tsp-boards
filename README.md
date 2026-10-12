@@ -18,7 +18,8 @@ board export) are implemented; deployment is prepared (see below). Design notes,
 
 ## Using the app
 
-1. Choose a region (Germany or a federal state), the number of cities and the board: size,
+1. Choose a country (Germany, Austria, Switzerland, the Netherlands) and a region (the whole
+   country, a state or canton, or a larger region), the number of cities and the board: size,
    margin, nail diameter, string thickness and minimum distance between nails (all in mm).
 2. Set the target gap: how much longer (in mm of string) the second-best round trip must be
    than the optimal one, so that players can check their solution with the string.
@@ -103,7 +104,9 @@ npm run data:build -- de
 
 The download goes to `data/raw/` (gitignored, about 52 MB). The build writes
 `public/data/countries/de.json`, updates `public/data/manifest.json` and writes a review report
-to `docs/data/de-report.md`. The data version only increases when the content changes.
+to `docs/data/de-report.md`. The data version only increases when the content changes. The
+same works for `at`, `ch` and `nl` (one place per municipality; the municipality level and the
+cleaning of official names are set per country in `scripts/build-data/geonames.ts`).
 
 ### Experiments (Node)
 

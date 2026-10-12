@@ -33,7 +33,8 @@ interface NamedRegion {
 
 /**
  * Unions of states with a name. City-states have one or two towns (one place per
- * municipality), so they come with their surrounding state (roadmap 5.6).
+ * municipality), so they come with their surrounding state (roadmap 5.6); the same holds for
+ * Vienna, Basel-Stadt and the two Appenzell.
  */
 const NAMED_REGIONS: Readonly<Record<string, readonly NamedRegion[]>> = {
   DE: [
@@ -80,6 +81,91 @@ const NAMED_REGIONS: Readonly<Record<string, readonly NamedRegion[]>> = {
       kind: 'multi',
     },
     { states: ['BW', 'BY'], name: 'Süddeutschland', nameEn: 'Southern Germany', kind: 'multi' },
+  ],
+  // Vienna with the state around it; the NUTS 1 regions.
+  AT: [
+    {
+      states: ['3', '9'],
+      name: 'Wien und Niederösterreich',
+      nameEn: 'Vienna and Lower Austria',
+      kind: 'state',
+    },
+    { states: ['1', '3', '9'], name: 'Ostösterreich', nameEn: 'Eastern Austria', kind: 'multi' },
+    { states: ['2', '6'], name: 'Südösterreich', nameEn: 'Southern Austria', kind: 'multi' },
+    {
+      states: ['4', '5', '7', '8'],
+      name: 'Westösterreich',
+      nameEn: 'Western Austria',
+      kind: 'multi',
+    },
+  ],
+  // The two Basel and the two Appenzell; the seven statistical major regions (Grossregionen,
+  // Zurich and Ticino are single cantons).
+  CH: [
+    {
+      states: ['BL', 'BS'],
+      name: 'Basel-Stadt und Basel-Landschaft',
+      nameEn: 'Basel-Stadt and Basel-Landschaft',
+      kind: 'state',
+    },
+    {
+      states: ['AI', 'AR'],
+      name: 'Appenzell (beide Halbkantone)',
+      nameEn: 'Appenzell (both half-cantons)',
+      kind: 'state',
+    },
+    {
+      states: ['GE', 'VD', 'VS'],
+      name: 'Genferseeregion',
+      nameEn: 'Lake Geneva Region',
+      kind: 'multi',
+    },
+    {
+      states: ['BE', 'FR', 'JU', 'NE', 'SO'],
+      name: 'Espace Mittelland',
+      nameEn: 'Espace Mittelland',
+      kind: 'multi',
+    },
+    {
+      states: ['AG', 'BL', 'BS'],
+      name: 'Nordwestschweiz',
+      nameEn: 'Northwestern Switzerland',
+      kind: 'multi',
+    },
+    {
+      states: ['AI', 'AR', 'GL', 'GR', 'SG', 'SH', 'TG'],
+      name: 'Ostschweiz',
+      nameEn: 'Eastern Switzerland',
+      kind: 'multi',
+    },
+    {
+      states: ['LU', 'NW', 'OW', 'SZ', 'UR', 'ZG'],
+      name: 'Zentralschweiz',
+      nameEn: 'Central Switzerland',
+      kind: 'multi',
+    },
+  ],
+  // The NUTS 1 regions.
+  NL: [
+    {
+      states: ['DR', 'FR', 'GR'],
+      name: 'Noord-Nederland',
+      nameEn: 'Northern Netherlands',
+      kind: 'multi',
+    },
+    {
+      states: ['FL', 'GE', 'OV'],
+      name: 'Oost-Nederland',
+      nameEn: 'Eastern Netherlands',
+      kind: 'multi',
+    },
+    {
+      states: ['NH', 'UT', 'ZE', 'ZH'],
+      name: 'West-Nederland',
+      nameEn: 'Western Netherlands',
+      kind: 'multi',
+    },
+    { states: ['LI', 'NB'], name: 'Zuid-Nederland', nameEn: 'Southern Netherlands', kind: 'multi' },
   ],
 };
 

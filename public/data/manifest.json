@@ -2,6 +2,38 @@
   "format": 1,
   "countries": [
     {
+      "country": "AT",
+      "name": {
+        "en": "Austria",
+        "de": "Österreich"
+      },
+      "file": "countries/at.json",
+      "dataVersion": 1,
+      "cityCount": 1673,
+      "bbox": [
+        9.5212,
+        46.3786,
+        17.1483,
+        49.0098
+      ]
+    },
+    {
+      "country": "CH",
+      "name": {
+        "en": "Switzerland",
+        "de": "Schweiz"
+      },
+      "file": "countries/ch.json",
+      "dataVersion": 1,
+      "cityCount": 1418,
+      "bbox": [
+        5.9548,
+        45.8207,
+        10.4666,
+        47.8012
+      ]
+    },
+    {
       "country": "DE",
       "name": {
         "en": "Germany",
@@ -15,6 +47,22 @@
         47.2711,
         15.0221,
         55.0653
+      ]
+    },
+    {
+      "country": "NL",
+      "name": {
+        "en": "Netherlands",
+        "de": "Niederlande"
+      },
+      "file": "countries/nl.json",
+      "dataVersion": 1,
+      "cityCount": 341,
+      "bbox": [
+        3.3494,
+        50.7475,
+        7.1985,
+        53.5581
       ]
     }
   ]

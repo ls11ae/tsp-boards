@@ -23,6 +23,7 @@ import {
 import { COUNTRIES, type CountryConfig } from './countries';
 import {
   DEFAULT_CLEANING,
+  SCHEMES,
   buildCities,
   groupMunicipalities,
   parseAlternateNames,
@@ -117,11 +118,15 @@ async function buildCountry(config: CountryConfig): Promise<void> {
     await readZipEntry(src.alternateNames.file, `${config.code}.txt`),
     new Set(rows.map((r) => r.id)),
   );
-  const municipalities = groupMunicipalities(rows).length;
-  const records = buildCities(rows, alts, {
-    ...DEFAULT_CLEANING,
-    minPopulation: config.minPopulation,
-  });
+  const scheme = SCHEMES[config.code];
+  if (!scheme) throw new Error(`no municipality scheme for ${config.code}`);
+  const municipalities = groupMunicipalities(rows, scheme).length;
+  const records = buildCities(
+    rows,
+    alts,
+    { ...DEFAULT_CLEANING, minPopulation: config.minPopulation },
+    scheme,
+  );
 
   console.log('build regions');
   const admin1 = JSON.parse(
@@ -131,6 +136,8 @@ async function buildCountry(config: CountryConfig): Promise<void> {
     adm0: config.adm0,
     contextMarginDeg: 2,
     simplifyMetres: 400,
+    ...(config.stateName ? { stateName: config.stateName } : {}),
+    ...(config.excludeStates ? { excludeStates: config.excludeStates } : {}),
   });
 
   const overridesPath = path.join(import.meta.dirname, 'overrides', `${cc}.json`);

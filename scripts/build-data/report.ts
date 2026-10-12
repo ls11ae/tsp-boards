@@ -59,7 +59,7 @@ export function renderReport(input: ReportInput): string {
 
   lines.push('## Counts', '');
   lines.push(
-    `- GeoNames rows kept for processing (populated places and ADM4): ${fmt(input.geonamesRows)}`,
+    `- GeoNames rows kept for processing (populated places and ADM2 to ADM4): ${fmt(input.geonamesRows)}`,
   );
   lines.push(`- Municipalities (groups by admin1/admin4): ${fmt(input.municipalities)}`);
   lines.push(`- Cities with population ≥ ${fmt(file.minPopulation)}: **${fmt(cities.length)}**`);

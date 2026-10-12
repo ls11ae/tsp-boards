@@ -36,26 +36,95 @@ const VERIFY_TIME_LIMIT_SEC = 120;
 
 // --- data ----------------------------------------------------------------------------------
 
+/** The country shown first without a link (if the data has it). */
+const DEFAULT_COUNTRY = 'DE';
+
+const countryFiles = new Map<string, Promise<CountryFile>>();
+
+/** Loads the data of a country (once). */
+export function fetchCountry(code: string): Promise<CountryFile> {
+  const { manifest } = useStore.getState();
+  const entry = manifest?.countries.find((c) => c.country === code.toUpperCase());
+  if (!entry) return Promise.reject(new Error(`no data for country ${code}`));
+  let file = countryFiles.get(entry.country);
+  if (!file) {
+    const base = import.meta.env.BASE_URL;
+    file = fetch(`${base}data/${entry.file}`)
+      .then((r) => r.json())
+      .then((json) => parseCountryFile(json));
+    countryFiles.set(entry.country, file);
+  }
+  return file;
+}
+
+/** Country of a permalink: its data version, else its region. */
+function linkCountry(hash: string): string | null {
+  const link = decodePermalink(hash);
+  return link ? (link.data?.country ?? link.params.region.slice(0, 2)) : null;
+}
+
 export async function loadData(): Promise<void> {
   const base = import.meta.env.BASE_URL;
   // Incremental puzzles need no city data; their links are handled right away.
   const incremental = applyIncrementalLink(window.location.hash);
   try {
     const manifest = (await (await fetch(`${base}data/manifest.json`)).json()) as Manifest;
-    const entry = manifest.countries[0];
-    if (!entry) throw new Error('empty manifest');
-    const country = parseCountryFile(await (await fetch(`${base}data/${entry.file}`)).json());
-    useStore.setState({ manifest, country });
+    if (manifest.countries.length === 0) throw new Error('empty manifest');
+    useStore.setState({ manifest });
+    const wanted = (!incremental && linkCountry(window.location.hash)) || DEFAULT_COUNTRY;
+    const code = manifest.countries.some((c) => c.country === wanted)
+      ? wanted
+      : manifest.countries[0]!.country;
+    const country = await fetchCountry(code);
+    useStore.setState({
+      country,
+      params: { ...useStore.getState().params, region: country.country },
+    });
     if (!incremental) applyPermalink(window.location.hash);
   } catch (error) {
     useStore.setState({ loadError: error instanceof Error ? error.message : String(error) });
   }
 }
 
+/**
+ * Switches to another country: its data, the whole country as region, and no list, marks or
+ * results of the old one (in one update, so region and data always match).
+ */
+export async function switchCountry(code: string): Promise<void> {
+  const country = await fetchCountry(code);
+  stopSearch();
+  const { params, run } = useStore.getState();
+  useStore.setState({
+    country,
+    params: { ...params, region: country.country },
+    list: null,
+    loaded: null,
+    shown: { kind: 'auto' },
+    run: { status: 'idle', runId: run.runId + 1, progress: null, trace: [], error: null },
+    pinned: [],
+    excluded: [],
+    groups: [],
+    linkWarnings: [],
+  });
+}
+
 function applyPermalink(hash: string): void {
   const link = decodePermalink(hash);
   const { country } = useStore.getState();
   if (!link || !country) return;
+  // A link of another country: its data first (region and data must match).
+  if (!link.params.region.startsWith(country.country)) {
+    const code = link.params.region.slice(0, 2);
+    fetchCountry(code)
+      .then((file) => {
+        useStore.setState({ country: file, params: link.params });
+        applyPermalink(hash);
+      })
+      .catch((error: unknown) =>
+        useStore.setState({ loadError: error instanceof Error ? error.message : String(error) }),
+      );
+    return;
+  }
   const warnings: string[] = [];
   if (link.data && link.data.version !== country.dataVersion) {
     warnings.push(`data:${link.data.version}:${country.dataVersion}`);

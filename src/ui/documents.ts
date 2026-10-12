@@ -14,7 +14,7 @@ import {
   type PuzzleDoc,
 } from '../core/puzzle-file';
 import { getBoard } from './board';
-import { openSelection } from './controller';
+import { fetchCountry, openSelection } from './controller';
 import { openListPuzzle } from './lists';
 import { planKey } from './export';
 import { applyIncrementalPuzzle } from './incremental';
@@ -120,6 +120,20 @@ export function openDocument(doc: PuzzleDoc, mode: 'design' | 'play' = 'design')
   }
   const map = doc.map;
   if (!map) return;
+  const code = (doc.data?.country ?? map.params.region.slice(0, 2)).toUpperCase();
+  const current = useStore.getState().country;
+  if (current?.country !== code) {
+    // Another country: load its data and set it together with the parameters.
+    fetchCountry(code)
+      .then((country) => {
+        useStore.setState({ country, params: map.params, list: null });
+        openDocument(doc, mode);
+      })
+      .catch((error: unknown) =>
+        useStore.setState({ loadError: error instanceof Error ? error.message : String(error) }),
+      );
+    return;
+  }
   useStore.setState({
     puzzleType: 'map',
     mode,

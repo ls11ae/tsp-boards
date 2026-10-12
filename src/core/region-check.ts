@@ -34,11 +34,16 @@ export function regionCapacity(
 
 const offered = new WeakMap<CountryFile, RegionInfo[]>();
 
-/** Regions that hold a minimum puzzle on the default board (memoised per country file). */
+/**
+ * Regions that hold a minimum puzzle on the default board with all towns of the data
+ * (memoised per country file).
+ */
 export function offeredRegions(file: CountryFile): RegionInfo[] {
   let list = offered.get(file);
   if (!list) {
-    list = regionsOf(file).filter((r) => regionCapacity(file, r.id) >= MIN_PUZZLE_PLACES);
+    // The smallest pool the data has: whether a region can hold a puzzle at all.
+    const params = { ...DEFAULT_PARAMS, minPopulation: file.minPopulation };
+    list = regionsOf(file).filter((r) => regionCapacity(file, r.id, params) >= MIN_PUZZLE_PLACES);
     offered.set(file, list);
   }
   return list;

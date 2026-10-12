@@ -3,7 +3,7 @@ import { EVERY_STATE } from '../../core/groups';
 import { regionInfo, regionStates, type RegionInfo } from '../../core/region';
 import { offeredRegions } from '../../core/region-check';
 import type { BoardModel } from '../board';
-import { changeParams, startSearch, stopSearch } from '../controller';
+import { changeParams, startSearch, stopSearch, switchCountry } from '../controller';
 import { useFormat, useT } from '../i18n';
 import { encodePermalink } from '../../core/permalink';
 import { linkList } from '../lists';
@@ -79,6 +79,42 @@ function BlankBoardField() {
   );
 }
 
+/** Country of the map puzzle (shown when the data has more than one). */
+function CountryField() {
+  const t = useT();
+  const fmt = useFormat();
+  const manifest = useStore((s) => s.manifest);
+  const country = useStore((s) => s.country);
+  const [error, setError] = useState<string | null>(null);
+  if (!manifest || manifest.countries.length < 2) return null;
+  const countries = [...manifest.countries].sort((a, b) =>
+    a.name[fmt.lang].localeCompare(b.name[fmt.lang], fmt.lang),
+  );
+  return (
+    <>
+      <label className="field">
+        <span>{t.country}</span>
+        <select
+          value={country?.country ?? ''}
+          onChange={(e) => {
+            setError(null);
+            switchCountry(e.target.value).catch((err: unknown) =>
+              setError(err instanceof Error ? err.message : String(err)),
+            );
+          }}
+        >
+          {countries.map((c) => (
+            <option key={c.country} value={c.country}>
+              {c.name[fmt.lang]}
+            </option>
+          ))}
+        </select>
+      </label>
+      {error && <p className="error">{error}</p>}
+    </>
+  );
+}
+
 /** Regions that hold a minimum puzzle, grouped; a region from a link stays selectable. */
 function RegionField() {
   const t = useT();
@@ -101,7 +137,14 @@ function RegionField() {
   const groups: [string, RegionInfo[]][] = [
     [t.regionCountry, sorted('country')],
     [t.regionUnions, sorted('multi')],
-    [t.regionStates, sorted('state')],
+    [
+      country?.country === 'CH'
+        ? t.regionCantons
+        : country?.country === 'NL'
+          ? t.regionProvinces
+          : t.regionStates,
+      sorted('state'),
+    ],
   ];
   return (
     <label className="field">
@@ -242,6 +285,7 @@ export function ParamsPanel({
     <aside className="panel params">
       <DocumentPanel puzzle={puzzle} />
       <h2>{t.parameters}</h2>
+      <CountryField />
       <RegionField />
       <PlacesPanel />
       <NumberField label={t.cityCount} field="n" min={5} />

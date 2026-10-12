@@ -1,9 +1,12 @@
-// GeoNames parsing and cleaning: one city per municipality, German names.
+// GeoNames parsing and cleaning: one city per municipality, names in the local language.
 //
-// GeoNames codes many city districts as plain PPL (not PPLX), but districts share the 8-digit
-// municipality key (admin4 = AGS in Germany) with their city. So we group populated places by
-// (admin1, admin4), take the municipality (ADM4 feature) for name and population, and the most
-// important populated place (seat of administration) for the coordinates.
+// GeoNames codes many city districts as plain PPL (not PPLX), but districts share the
+// municipality key with their city. So we group populated places by municipality key, take the
+// municipality's administrative feature for name and population, and the most important
+// populated place (seat of administration) for the coordinates. The key and the cleaning of
+// official names depend on the country (MunicipalityScheme): Germany admin4 (AGS), Austria and
+// Switzerland admin3 (Vienna as a whole: its admin3 units are districts), the Netherlands
+// admin2.
 
 import { CityFlag } from '../../src/core/data';
 
@@ -15,6 +18,8 @@ export interface GeoNameRow {
   readonly featureClass: string;
   readonly featureCode: string;
   readonly admin1: string;
+  readonly admin2: string;
+  readonly admin3: string;
   readonly admin4: string;
   readonly population: number;
 }
@@ -47,7 +52,7 @@ export function isKeptPlace(row: GeoNameRow): boolean {
   return row.featureClass === 'P' && PLACE_RANK.has(row.featureCode);
 }
 
-/** Parses the GeoNames table (19 tab-separated columns). Keeps populated places and ADM4. */
+/** Parses the GeoNames table (19 tab-separated columns). Keeps populated places and ADM2–4. */
 export function parseGeoNames(text: string): GeoNameRow[] {
   const rows: GeoNameRow[] = [];
   for (const line of text.split('\n')) {
@@ -56,7 +61,7 @@ export function parseGeoNames(text: string): GeoNameRow[] {
     if (c.length < 19) throw new Error(`GeoNames: expected 19 columns, got ${c.length}`);
     const featureClass = c[6]!;
     const featureCode = c[7]!;
-    if (featureClass !== 'P' && featureCode !== 'ADM4') continue;
+    if (featureClass !== 'P' && !(featureClass === 'A' && /^ADM[234]$/.test(featureCode))) continue;
     rows.push({
       id: Number(c[0]),
       name: c[1]!,
@@ -65,6 +70,8 @@ export function parseGeoNames(text: string): GeoNameRow[] {
       featureClass,
       featureCode,
       admin1: c[10]!,
+      admin2: c[11]!,
+      admin3: c[12]!,
       admin4: c[13]!,
       population: Number(c[14]) || 0,
     });
@@ -98,26 +105,81 @@ export function parseAlternateNames(
   return result;
 }
 
+export interface MunicipalityScheme {
+  /** Municipality key of a row; null if the row has none (a place then stands alone). */
+  readonly key: (row: GeoNameRow) => string | null;
+  /** The administrative feature that names a municipality (and gives its population). */
+  readonly isUnit: (row: GeoNameRow) => boolean;
+  /** Cleans an official municipality name (`expansions`: place and alternate names). */
+  readonly clean: (name: string, expansions: readonly string[]) => string;
+  /** Language of alternate names used for short labels and expansions. */
+  readonly language: string;
+}
+
+const isAdmin = (row: GeoNameRow, code: string) =>
+  row.featureClass === 'A' && row.featureCode === code;
+
+/** Vienna's admin1 code: the city is one municipality, its admin3 units are districts. */
+const VIENNA = '09';
+
+export const SCHEMES: Readonly<Record<string, MunicipalityScheme>> = {
+  DE: {
+    key: (r) => (r.admin4 ? `${r.admin1}/${r.admin4}` : null),
+    isUnit: (r) => isAdmin(r, 'ADM4'),
+    clean: cleanMunicipalityName,
+    language: 'de',
+  },
+  AT: {
+    key: (r) => (r.admin1 === VIENNA ? VIENNA : r.admin3 ? `${r.admin1}/${r.admin3}` : null),
+    isUnit: (r) => isAdmin(r, r.admin1 === VIENNA ? 'ADM2' : 'ADM3'),
+    // "Gemeinde Ramsau am Dachstein", "Wien Stadt".
+    clean: (name) =>
+      name
+        .replace(/^(Markt|Stadt)?[Gg]emeinde /u, '')
+        .replace(/ Stadt$/u, '')
+        .trim(),
+    language: 'de',
+  },
+  CH: {
+    key: (r) => (r.admin3 ? `${r.admin1}/${r.admin3}` : null),
+    isUnit: (r) => isAdmin(r, 'ADM3'),
+    // Multilingual names: the first one ("Bern/Berne/Berna", "Biel/Bienne"); canton suffixes
+    // such as "Aesch (BL)" stay, they tell equal names apart.
+    clean: (name) => name.split('/')[0]!.trim(),
+    language: 'de',
+  },
+  NL: {
+    key: (r) => (r.admin2 ? `${r.admin1}/${r.admin2}` : null),
+    isUnit: (r) => isAdmin(r, 'ADM2'),
+    clean: (name) => name.replace(/^Gemeente /u, '').trim(),
+    language: 'nl',
+  },
+};
+
 export interface Municipality {
-  /** The ADM4 feature, if GeoNames has one for this key. */
-  readonly adm4: GeoNameRow | null;
+  /** The municipality's administrative feature, if GeoNames has one for this key. */
+  readonly unit: GeoNameRow | null;
   /** Kept populated places (see isKeptPlace) in the municipality. */
   readonly places: readonly GeoNameRow[];
 }
 
-/** Groups kept places by municipality key; places without admin4 form their own group. */
-export function groupMunicipalities(rows: readonly GeoNameRow[]): Municipality[] {
-  const groups = new Map<string, { adm4: GeoNameRow | null; places: GeoNameRow[] }>();
+/** Groups kept places by municipality key; places without a key form their own group. */
+export function groupMunicipalities(
+  rows: readonly GeoNameRow[],
+  scheme: MunicipalityScheme = SCHEMES.DE!,
+): Municipality[] {
+  const groups = new Map<string, { unit: GeoNameRow | null; places: GeoNameRow[] }>();
   const group = (key: string) => {
     let g = groups.get(key);
-    if (!g) groups.set(key, (g = { adm4: null, places: [] }));
+    if (!g) groups.set(key, (g = { unit: null, places: [] }));
     return g;
   };
   for (const row of rows) {
-    if (row.featureCode === 'ADM4' && row.featureClass === 'A') {
-      if (row.admin4) group(`${row.admin1}/${row.admin4}`).adm4 = row;
+    const key = scheme.key(row);
+    if (scheme.isUnit(row)) {
+      if (key) group(key).unit = row;
     } else if (isKeptPlace(row)) {
-      group(row.admin4 ? `${row.admin1}/${row.admin4}` : `id/${row.id}`).places.push(row);
+      group(key ?? `id/${row.id}`).places.push(row);
     }
   }
   return [...groups.values()];
@@ -194,27 +256,28 @@ export function cleanMunicipalityName(name: string, expansions: readonly string[
  * GeoNames' alternate names for municipalities are less reliable than the official names
  * (e.g. "Leinfelden" for Leinfelden-Echterdingen), so the official name is used and cleaned.
  */
-export type NameSource = 'adm4:name' | 'place:de-preferred' | 'place:name';
+export type NameSource = 'unit:name' | 'place:preferred' | 'place:name';
 
-/** Display name of a municipality; populated-place names only if there is no ADM4 feature. */
+/** Display name of a municipality; populated-place names only if there is no unit feature. */
 export function municipalityName(
-  adm4: GeoNameRow | null,
+  unit: GeoNameRow | null,
   places: readonly GeoNameRow[],
   alts: AltNames,
+  scheme: MunicipalityScheme = SCHEMES.DE!,
 ): { name: string; source: NameSource } {
   const expansions = [
     ...places.map((p) => p.name),
-    ...(alts.get(adm4?.id ?? -1) ?? [])
-      .filter((a) => a.lang === 'de' && usable(a))
+    ...(alts.get(unit?.id ?? -1) ?? [])
+      .filter((a) => a.lang === scheme.language && usable(a))
       .map((a) => a.name),
   ];
-  if (adm4) return { name: cleanMunicipalityName(adm4.name, expansions), source: 'adm4:name' };
+  if (unit) return { name: scheme.clean(unit.name, expansions), source: 'unit:name' };
   const place = places[0];
-  if (!place) throw new Error('municipality without adm4 and place');
-  const dePreferred = findAlt(alts, place.id, (x) => x.lang === 'de' && x.preferred);
+  if (!place) throw new Error('municipality without unit and place');
+  const preferred = findAlt(alts, place.id, (x) => x.lang === scheme.language && x.preferred);
   return {
-    name: cleanMunicipalityName(dePreferred ?? place.name, expansions),
-    source: dePreferred ? 'place:de-preferred' : 'place:name',
+    name: scheme.clean(preferred ?? place.name, expansions),
+    source: preferred ? 'place:preferred' : 'place:name',
   };
 }
 
@@ -276,17 +339,18 @@ export function buildCities(
   rows: readonly GeoNameRow[],
   alts: AltNames,
   options: CleaningOptions = DEFAULT_CLEANING,
+  scheme: MunicipalityScheme = SCHEMES.DE!,
 ): CityRecord[] {
   const cities: CityRecord[] = [];
-  for (const { adm4, places } of groupMunicipalities(rows)) {
+  for (const { unit, places } of groupMunicipalities(rows, scheme)) {
     const placePop = Math.max(0, ...places.map((p) => p.population));
-    const pop = adm4 && adm4.population > 0 ? adm4.population : placePop;
+    const pop = unit && unit.population > 0 ? unit.population : placePop;
     if (pop < options.minPopulation) continue;
 
     const byPopulation = [...places].sort((x, y) => y.population - x.population || x.id - y.id);
-    const { name, source } = municipalityName(adm4, byPopulation, alts);
+    const { name, source } = municipalityName(unit, byPopulation, alts, scheme);
     const place = [...places].sort(placeOrder(name))[0] ?? null;
-    const point = place ?? adm4!;
+    const point = place ?? unit!;
     // A short label must be a prefix of the name ("Freiburg" for "Freiburg im Breisgau", not
     // "Bergzabern" for "Bad Bergzabern") and must not cut a double name ("Zeulenroda" for
     // "Zeulenroda-Triebes").
@@ -294,7 +358,7 @@ export function buildCities(
       alts,
       place?.id,
       (x) =>
-        x.lang === 'de' &&
+        x.lang === scheme.language &&
         x.short &&
         !isAbbreviated(x.name) &&
         name.startsWith(x.name) &&
@@ -304,11 +368,11 @@ export function buildCities(
     // ("Rothenburg upon Tauber"), comma disambiguations ("Burgdorf, Hanover") and truncations
     // of the German name ("Hagen" for "Hagen am Teutoburger Wald").
     const nameEn =
-      [adm4?.id, place?.id]
+      [unit?.id, place?.id]
         .map((id) => findAlt(alts, id, (x) => x.lang === 'en' && x.preferred))
         .find((n) => n !== null && isExonym(n, name)) ?? name;
     const wikidata =
-      findAlt(alts, adm4?.id, (x) => x.lang === 'wkdt') ??
+      findAlt(alts, unit?.id, (x) => x.lang === 'wkdt') ??
       findAlt(alts, place?.id, (x) => x.lang === 'wkdt');
 
     cities.push({

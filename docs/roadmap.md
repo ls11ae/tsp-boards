@@ -101,7 +101,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
 - Themed instances from Wikidata (state capitals, Hanseatic cities, university towns, ...),
   built offline into the curated collection. (Done 2026-10-12.)
 - More countries: Austria, Switzerland, the Netherlands (the municipality deduplication is
-  Germany-specific and needs a per-country variant).
+  Germany-specific and needs a per-country variant). (Done 2026-10-12.)
 - Physical: test board with the prototype dimensions once known; deployment to the chair
   server and the play data endpoint when access is available.
 

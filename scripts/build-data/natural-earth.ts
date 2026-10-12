@@ -7,11 +7,12 @@ import mapshaper from 'mapshaper';
 import type { Topology } from 'topojson-specification';
 import type { StateInfo } from '../../src/core/data';
 
-interface NeProperties {
+export interface NeProperties {
   readonly adm0_a3: string;
   readonly iso_3166_2: string;
   readonly gn_a1_code: string | null;
   readonly name: string;
+  readonly name_de: string | null;
   readonly name_en: string | null;
 }
 
@@ -22,6 +23,10 @@ export interface RegionOptions {
   readonly contextMarginDeg: number;
   /** Visvalingam simplification interval in metres. */
   readonly simplifyMetres: number;
+  /** German state name (default: Natural Earth's `name`). */
+  readonly stateName?: (p: NeProperties) => string;
+  /** States left out (ISO 3166-2), e.g. overseas parts. */
+  readonly excludeStates?: readonly string[];
 }
 
 export interface RegionResult {
@@ -61,19 +66,23 @@ export async function buildRegions(
   admin1: FeatureCollection<Geometry, NeProperties>,
   options: RegionOptions,
 ): Promise<RegionResult> {
-  const own = admin1.features.filter((f) => f.properties.adm0_a3 === options.adm0);
+  const excluded = new Set(options.excludeStates ?? []);
+  const own = admin1.features.filter(
+    (f) => f.properties.adm0_a3 === options.adm0 && !excluded.has(f.properties.iso_3166_2),
+  );
   if (own.length === 0) throw new Error(`no admin-1 features for ${options.adm0}`);
   const bbox = bboxOf(own);
   const m = options.contextMarginDeg;
   const context = [bbox[0] - m, bbox[1] - m, bbox[2] + m, bbox[3] + m];
+  // Left-out states count as neighbours where they are near (they are not, overseas).
   const neighbours = admin1.features.filter(
-    (f) => f.properties.adm0_a3 !== options.adm0 && overlaps(bboxOf([f]), context),
+    (f) => !own.includes(f) && overlaps(bboxOf([f]), context),
   );
 
   const states: StateInfo[] = own
     .map((f) => ({
       id: f.properties.iso_3166_2,
-      name: f.properties.name,
+      name: options.stateName?.(f.properties) ?? f.properties.name,
       nameEn: f.properties.name_en ?? f.properties.name,
     }))
     .sort((x, y) => x.id.localeCompare(y.id));

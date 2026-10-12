@@ -67,3 +67,34 @@ describe('regions', () => {
     for (const id of ids) expect(regionCapacity(file, id)).toBe(MIN_PUZZLE_PLACES);
   });
 });
+
+describe('regions of other countries', () => {
+  const load = (cc: string) =>
+    parseCountryFile(
+      JSON.parse(
+        readFileSync(
+          path.resolve(import.meta.dirname, `../../public/data/countries/${cc}.json`),
+          'utf8',
+        ),
+      ),
+    );
+
+  it('offers Vienna with Lower Austria, Basel-Stadt with Basel-Landschaft', () => {
+    const at = load('at');
+    const ids = offeredRegions(at).map((r) => r.id);
+    expect(ids).not.toContain('AT-9');
+    expect(ids).toContain('AT-3+9');
+    expect(regionInfo(at, 'AT-3+9').name).toBe('Wien und Niederösterreich');
+    const ch = offeredRegions(load('ch')).map((r) => r.id);
+    expect(ch).not.toContain('CH-BS');
+    expect(ch).toContain('CH-BL+BS');
+    expect(ch).toContain('CH-AI+AR+GL+GR+SG+SH+TG');
+  });
+
+  it('keeps the Caribbean Netherlands off the board of the Netherlands', () => {
+    const nl = load('nl');
+    expect(nl.states.map((s) => s.id)).not.toContain('NL-BQ1');
+    const projection = boardProjection(regionOutline(nl, 'NL'), board);
+    expect(projection.mmPerKm).toBeGreaterThan(1.5);
+  });
+});

@@ -7,6 +7,7 @@ import {
   isExonym,
   parseAlternateNames,
   parseGeoNames,
+  SCHEMES,
   type AltName,
   type GeoNameRow,
 } from './geonames';
@@ -28,6 +29,8 @@ function row(
     featureClass: featureCode === 'ADM4' ? 'A' : 'P',
     featureCode,
     admin1: '07',
+    admin2: '',
+    admin3: '',
     admin4,
     population,
   };
@@ -174,7 +177,7 @@ describe('cleanMunicipalityName', () => {
 });
 
 describe('parsing', () => {
-  it('parses GeoNames rows and keeps populated places and ADM4 only', () => {
+  it('parses GeoNames rows and keeps populated places and ADM2 to ADM4 only', () => {
     const line = (id: number, name: string, cls: string, code: string, pop: number) =>
       [
         id,
@@ -222,5 +225,69 @@ describe('parsing', () => {
       alt('en', 'Munich', { preferred: true, short: true }),
     ]);
     expect(alts.has(2)).toBe(false);
+  });
+});
+
+describe('municipality schemes', () => {
+  const place = (
+    name: string,
+    featureCode: string,
+    admin: Partial<Pick<GeoNameRow, 'admin1' | 'admin2' | 'admin3' | 'admin4'>>,
+    population: number,
+  ): GeoNameRow => ({
+    ...row(name, featureCode, '', population),
+    featureClass: featureCode.startsWith('ADM') ? 'A' : 'P',
+    admin1: '01',
+    ...admin,
+  });
+
+  it('Austria: Vienna is one municipality, its districts are not', () => {
+    const rows = [
+      place('Wien Stadt', 'ADM2', { admin1: '09', admin2: '900' }, 2_000_000),
+      place(
+        'Gemeindebezirk Favoriten',
+        'ADM3',
+        { admin1: '09', admin2: '900', admin3: '910' },
+        200_000,
+      ),
+      place('Vienna', 'PPLC', { admin1: '09', admin2: '900' }, 1_700_000),
+      place('Favoriten', 'PPL', { admin1: '09', admin2: '900', admin3: '910' }, 200_000),
+      place(
+        'Gemeinde Ramsau am Dachstein',
+        'ADM3',
+        { admin1: '06', admin2: '612', admin3: '61262' },
+        2_800,
+      ),
+      place('Ramsau am Dachstein', 'PPL', { admin1: '06', admin2: '612', admin3: '61262' }, 2_700),
+    ];
+    const cities = buildCities(rows, new Map(), options, SCHEMES.AT);
+    expect(cities.map((c) => [c.name, c.pop])).toEqual([
+      ['Wien', 2_000_000],
+      ['Ramsau am Dachstein', 2_800],
+    ]);
+  });
+
+  it('Switzerland and the Netherlands: municipality names without designations', () => {
+    const ch = buildCities(
+      [
+        place('Bern/Berne/Berna', 'ADM3', { admin1: 'BE', admin3: '351' }, 134_000),
+        place('Bern', 'PPLC', { admin1: 'BE', admin3: '351' }, 121_000),
+      ],
+      new Map(),
+      options,
+      SCHEMES.CH,
+    );
+    expect(ch.map((c) => c.name)).toEqual(['Bern']);
+    const nl = buildCities(
+      [
+        place('Gemeente Den Haag', 'ADM2', { admin1: '11', admin2: '0518' }, 530_000),
+        place('The Hague', 'PPLG', { admin1: '11', admin2: '0518' }, 470_000),
+        place('Scheveningen', 'PPL', { admin1: '11', admin2: '0518' }, 50_000),
+      ],
+      new Map(),
+      options,
+      SCHEMES.NL,
+    );
+    expect(nl.map((c) => [c.name, c.pop])).toEqual([['Den Haag', 530_000]]);
   });
 });
