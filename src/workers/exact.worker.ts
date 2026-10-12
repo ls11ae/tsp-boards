@@ -7,6 +7,7 @@ import { removalSuggestions } from '../core/fixed';
 import { Instance } from '../core/instance';
 import { runLpSelfTest } from '../core/lp/selftest';
 import { Rng } from '../core/rng';
+import { checkRobustness } from '../core/robustness';
 import { subtourRounds } from '../core/teaching';
 import { iteratedLocalSearch } from '../core/tsp/ils';
 import { verifyCandidate } from '../core/verify';
@@ -36,6 +37,16 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
         loadMs,
         solveMs: performance.now() - start,
       });
+      break;
+    }
+    case 'robustness': {
+      for (const r of request.radii) {
+        const row = checkRobustness(highs, request.points, r, request.reference, request.scale, {
+          timeLimitSec: request.timeLimitSec,
+        });
+        reply({ type: 'robustness-row', jobId: request.jobId, row });
+      }
+      reply({ type: 'robustness-done', jobId: request.jobId });
       break;
     }
     case 'rounds': {

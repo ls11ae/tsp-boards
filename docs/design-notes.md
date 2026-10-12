@@ -540,3 +540,12 @@ Short entries: decision; alternatives considered; reason. Newest last.
   later classroom view or export can reuse them. Alternatives: animating inside the search
   worker (would tie teaching to a run), the string model for the rounds (its extra turn
   variables make the pictures harder to read).
+- **2026-10-12 Robustness check (Phase 6).** For a planned board the export panel checks r_eff
+  0.5 mm below and above the planned value (e.g. 1.0 / 1.5 / 2.0 mm), each exactly: string
+  optimum and runner-up (is the optimum still the board's tour? the gap), and the measured
+  optimum and gap at the scale for the planned start nail and direction. One exact worker of
+  its own, rows arrive one by one (about a minute at n = 40; 0.5 s at n = 10). First results:
+  the Germany board (n = 40) keeps its optimum, gap 9.0 / 10.1 / 11.2 mm, at the scale
+  9.5 / 10.9 / 12.3 mm; the gap grows with r_eff here. Alternatives: a finer grid of r_eff
+  (cost grows linearly), the local check instead of the exact one (fast, but it is the
+  exactness that makes the statement useful for building).

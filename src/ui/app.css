@@ -434,6 +434,25 @@ progress {
   stroke-width: 0.6;
 }
 
+.robustness table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+}
+
+.robustness th,
+.robustness td {
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.robustness h3 {
+  margin: 12px 0 4px;
+  font-size: 1em;
+}
+
 .teach-edge {
   fill: none;
   stroke: var(--overlay);

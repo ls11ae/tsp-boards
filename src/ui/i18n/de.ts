@@ -87,6 +87,20 @@ export const de: Messages = {
   excess: (value) => `+${value} %`,
   interiorFraction: 'Punkte im Innern der Hülle (C)',
   nonNearestEdges: 'Kanten nicht zum nächsten Nachbarn (D)',
+  robustness: 'Robustheit',
+  robustnessHint:
+    'Bleibt das Optimum das kürzeste, wenn Nägel oder Faden etwas dünner oder dicker sind? Exakte Prüfung mit r_eff (Nagelradius + halbe Fadendicke) 0,5 mm kleiner und größer.',
+  robustRun: 'Robustheit prüfen',
+  robustRunning: 'Prüfe exakt (kann eine Minute dauern) …',
+  robustOptimum: 'Optimum',
+  robustGap: 'Lücke',
+  robustScale: 'An der Skala',
+  robustSame: 'gleich',
+  robustDiffers: 'anders',
+  robustTimeLimit: 'Zeitlimit',
+  robustOk: 'Optimum und seine Messung an der Skala bleiben für alle Werte gleich.',
+  robustWarn:
+    'Bei manchen Werten ist eine andere Rundreise kürzer: Das Brett genau mit den geplanten Nägeln und dem geplanten Faden bauen.',
   teaching: 'Strategien ansehen',
   teachingHint:
     'Wie bauen einfache Strategien eine Rundreise, und wie beweist der exakte Löser das Optimum? Schritt für Schritt an diesem Puzzle (Abstände zwischen den Nagelmitten).',

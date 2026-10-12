@@ -92,6 +92,20 @@ export const en = {
   excess: (value: string) => `+${value} %`,
   interiorFraction: 'Points inside the hull (C)',
   nonNearestEdges: 'Edges not to a nearest neighbour (D)',
+  robustness: 'Robustness',
+  robustnessHint:
+    'Does the optimum stay the shortest if nails or string are a little thinner or thicker? Exact check with r_eff (nail radius + half the string) 0.5 mm smaller and larger.',
+  robustRun: 'Check robustness',
+  robustRunning: 'Checking exactly (can take a minute) …',
+  robustOptimum: 'Optimum',
+  robustGap: 'Gap',
+  robustScale: 'At the scale',
+  robustSame: 'same',
+  robustDiffers: 'differs',
+  robustTimeLimit: 'time limit',
+  robustOk: 'The optimum and its measurement at the scale stay the same for all values.',
+  robustWarn:
+    'For some values another round trip is shorter: build the board with exactly the planned nails and string.',
   teaching: 'Watch a strategy',
   teachingHint:
     'How do simple strategies build a round trip, and how does the exact solver prove the optimum? Step by step on this puzzle (distances between nail centres).',

@@ -10,6 +10,7 @@ import type {
 } from '../core/search/search';
 import type { BoardPlan, PlanData } from '../core/board/plan';
 import type { RemovalSuggestion } from '../core/fixed';
+import type { RobustnessRow, ScalePosition } from '../core/robustness';
 import type {
   IncrementalParams,
   IncrementalPuzzle,
@@ -83,8 +84,19 @@ export interface RoundsJob {
   readonly points: readonly Point[];
 }
 
+export interface RobustnessJob {
+  readonly jobId: number;
+  readonly points: readonly Point[];
+  readonly radii: readonly number[];
+  /** The board's optimal tour (slots). */
+  readonly reference: readonly number[];
+  readonly scale: ScalePosition | null;
+  readonly timeLimitSec: number;
+}
+
 export type ExactWorkerRequest =
   | { readonly type: 'selftest' }
+  | ({ readonly type: 'robustness' } & RobustnessJob)
   | ({ readonly type: 'rounds' } & RoundsJob)
   | ({ readonly type: 'verify' } & VerifyJob)
   | ({ readonly type: 'plan' } & PlanJob)
@@ -120,6 +132,8 @@ export type ExactWorkerResponse =
       readonly jobId: number;
       readonly suggestions: readonly RemovalSuggestion[];
     }
+  | { readonly type: 'robustness-row'; readonly jobId: number; readonly row: RobustnessRow }
+  | { readonly type: 'robustness-done'; readonly jobId: number }
   | {
       readonly type: 'rounds';
       readonly jobId: number;

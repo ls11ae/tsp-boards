@@ -4,6 +4,7 @@ import { downloadBoard, planKey, prepareBoard, type ExportKind } from '../export
 import { useFormat, useT } from '../i18n';
 import type { Messages } from '../i18n/en';
 import type { PuzzleView } from '../puzzle';
+import { checkBoardRobustness } from '../robustness';
 import { useStore } from '../store';
 
 function warningText(t: Messages, w: PlanWarning, mm: (um: number) => string): string | null {
@@ -60,6 +61,70 @@ function PlanSummary({
   );
 }
 
+/** Exact check for r_eff half a millimetre below and above the planned value. */
+function Robustness({
+  board,
+  puzzle,
+  plan,
+}: {
+  readonly board: BoardModel;
+  readonly puzzle: PuzzleView;
+  readonly plan: BoardPlan;
+}) {
+  const t = useT();
+  const fmt = useFormat();
+  const params = useStore((s) => s.params);
+  const state = useStore((s) => s.robustness);
+  const mine = state?.key === planKey(puzzle.key, params) ? state : null;
+  const mm = (um: number) => (Number.isFinite(um) ? `${fmt.number(um / 1000, 2)} mm` : '–');
+  const verdict = (ok: boolean, status: string) =>
+    status !== 'optimal' ? t.robustTimeLimit : ok ? `✓ ${t.robustSame}` : `✗ ${t.robustDiffers}`;
+  const done = mine && !mine.running && !mine.error && mine.rows.length > 0;
+  const allSame = mine?.rows.every((r) => r.sameOptimum && (r.scale?.sameOptimum ?? true));
+  return (
+    <div className="robustness">
+      <h3>{t.robustness}</h3>
+      <p className="hint">{t.robustnessHint}</p>
+      {mine && mine.rows.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>r_eff</th>
+              <th>{t.robustOptimum}</th>
+              <th>{t.robustGap}</th>
+              <th>{t.robustScale}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mine.rows.map((r) => (
+              <tr key={r.rEffMm}>
+                <td>{fmt.number(r.rEffMm, 2)} mm</td>
+                <td>{verdict(r.sameOptimum, r.status)}</td>
+                <td>{r.status === 'optimal' ? mm(r.gapUm) : '–'}</td>
+                <td>
+                  {r.scale
+                    ? `${verdict(r.scale.sameOptimum, r.scale.status)}${r.scale.status === 'optimal' ? `, ${mm(r.scale.gapUm)}` : ''}`
+                    : '–'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {mine?.running && <p className="hint">{t.robustRunning}</p>}
+      {mine?.error && <p className="error">{mine.error}</p>}
+      {done && <p className={allSame ? 'hint' : 'error'}>{allSame ? t.robustOk : t.robustWarn}</p>}
+      {!mine?.running && (
+        <div className="actions">
+          <button type="button" onClick={() => checkBoardRobustness(board, puzzle, plan)}>
+            {t.robustRun}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function ExportPanel({
   board,
   puzzle,
@@ -97,6 +162,7 @@ export function ExportPanel({
           )}
           {state?.status === 'done' && !state.plan && <p className="error">{t.noScaleSpace}</p>}
           {plan && <PlanSummary board={board} puzzle={puzzle} plan={plan} />}
+          {plan && <Robustness board={board} puzzle={puzzle} plan={plan} />}
           {state?.status !== 'running' && !plan && (
             <div className="actions">
               <button type="button" className="primary" onClick={() => prepareBoard(board, puzzle)}>
