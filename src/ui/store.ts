@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import type { BoardPlan } from '../core/board/plan';
-import type { Purpose } from '../core/puzzle-file';
+import type { Place, Purpose } from '../core/puzzle-file';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
 import { EMPTY_PLAY, type PlayAttempt, type PlayState } from '../core/play';
@@ -66,6 +66,37 @@ export interface ExportOptions {
 
 export type Mode = 'design' | 'play';
 
+/** One input line of a place list and how it was resolved. */
+export interface ListEntry {
+  readonly line: number;
+  readonly text: string;
+  readonly query: string;
+  readonly status: 'matched' | 'ambiguous' | 'not-found' | 'custom';
+  /** Candidate towns (GeoNames ids), best first. */
+  readonly options: readonly {
+    readonly id: number;
+    readonly name: string;
+    readonly state: string;
+    readonly pop: number;
+  }[];
+  /** Chosen option (index), or -1: skip the line. */
+  readonly choice: number;
+  /** Custom place (CSV row). */
+  readonly custom?: { readonly lat: number; readonly lon: number };
+  readonly label?: string;
+}
+
+/** A place list replacing the region's towns (roadmap 5.2). */
+export interface PlaceListState {
+  readonly mode: 'fixed' | 'pool';
+  readonly text: string;
+  readonly entries: readonly ListEntry[];
+  /** Merge places closer than this (km). */
+  readonly mergeKm: number;
+  /** The resolved, merged places (the board pool). */
+  readonly places: readonly Place[];
+}
+
 /** The open puzzle document: what a saved file or a link carries besides the places. */
 export interface DocMeta {
   /** Library id once saved or opened from a file; null for a new puzzle. */
@@ -126,6 +157,8 @@ export interface AppState {
   readonly inc: IncrementalUi;
   readonly doc: DocMeta;
   readonly setDoc: (update: Partial<DocMeta>) => void;
+  /** Place list instead of the region's towns; null: the region's towns. */
+  readonly list: PlaceListState | null;
   /** Increases when the local library changes (re-render lists). */
   readonly libraryVersion: number;
   readonly setPuzzleType: (type: PuzzleType) => void;
@@ -198,6 +231,7 @@ export const useStore = create<AppState>()((set) => ({
     showSolution: false,
   },
   doc: NEW_DOC,
+  list: null,
   libraryVersion: 0,
   setDoc: (update) => set((s) => ({ doc: { ...s.doc, ...update } })),
   setPuzzleType: (puzzleType) => set({ puzzleType, mode: 'design', doc: NEW_DOC }),

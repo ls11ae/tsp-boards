@@ -1,7 +1,9 @@
 // Glue between the store and the workers: data loading, search runs (throttled UI updates)
 // and the queue of exact verifications.
 
-import { parseCountryFile, type Manifest } from '../core/data';
+import { parseCountryFile, type CountryFile, type Manifest } from '../core/data';
+import type { LinkPlace } from '../core/places';
+import type { Place } from '../core/puzzle-file';
 import { rEffMm, searchParams } from '../core/params';
 import { decodePermalink } from '../core/permalink';
 import {
@@ -16,7 +18,8 @@ import type {
   SearchRequest,
   SearchResponse,
 } from '../workers/protocol';
-import { getBoard } from './board';
+import { getBoard, townsById } from './board';
+import { openListPuzzle } from './lists';
 import { applyIncrementalLink } from './incremental';
 import { getLabels, poolLabels } from './labels';
 import { useStore, type RunState } from './store';
@@ -60,7 +63,38 @@ function applyPermalink(hash: string): void {
     mode: link.mode,
   });
   if (link.title !== null) useStore.getState().setDoc({ title: link.title });
-  if (link.selected) openSelection(link.selected, warnings);
+  if (link.list) {
+    const places = linkPlaces(country, link.list.places, warnings);
+    useStore.setState({ linkWarnings: warnings });
+    openListPuzzle(link.list.mode, places, link.list.selected);
+  } else if (link.selected) {
+    openSelection(link.selected, warnings);
+  }
+}
+
+/** Places of a link: towns come as ids and get their name and position from the data. */
+function linkPlaces(country: CountryFile, rows: readonly LinkPlace[], warnings: string[]): Place[] {
+  const towns = townsById(country);
+  const missing: number[] = [];
+  const places = rows.flatMap((row): Place[] => {
+    if ('lat' in row) return [row];
+    const town = towns.get(row.id);
+    if (!town) {
+      missing.push(row.id);
+      return [];
+    }
+    return [
+      {
+        id: town.id,
+        name: town.name,
+        lat: town.lat,
+        lon: town.lon,
+        ...(row.label ? { label: row.label } : {}),
+      },
+    ];
+  });
+  if (missing.length > 0) warnings.push(`missing:${missing.join(',')}`);
+  return places;
 }
 
 /**
@@ -75,8 +109,13 @@ export function openSelection(ids: readonly number[], warnings: string[] = []): 
   const missing = ids.filter((id) => !board.index.has(id));
   if (missing.length > 0) warnings.push(`missing:${missing.join(',')}`);
   useStore.setState({ linkWarnings: warnings });
-  if (members.length < 3) return;
-  members.sort((a, b) => a - b);
+  openMembers(members);
+}
+
+/** Shows the puzzle made of the given pool indices and checks it exactly. */
+export function openMembers(indices: readonly number[]): void {
+  if (indices.length < 3) return;
+  const members = [...indices].sort((a, b) => a - b);
   const key = members.join(',');
   useStore.setState({ loaded: { key, members }, shown: { kind: 'key', key } });
   enqueueVerification(key, members, null);

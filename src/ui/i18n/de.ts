@@ -193,6 +193,36 @@ export const de: Messages = {
   removeConfirm: 'Wirklich löschen?',
   placesCount: (n) => `${n} Orte`,
 
+  places: 'Orte',
+  placesSource: 'Verwenden',
+  placesRegion: 'Städte der Region',
+  placesFixed: 'eine Liste: genau diese',
+  placesPool: 'eine Liste: daraus auswählen',
+  listHint: 'Eine Stadt pro Zeile oder „Name, Breite, Länge, Beschriftung“ für andere Orte.',
+  listPlaceholder: 'Dortmund\nBochum\nTU Dortmund, 51.4924, 7.4127, TU',
+  listMerge: 'Zusammenfassen bis (km)',
+  listApply: 'Liste übernehmen',
+  listSummary: (places, lines, ambiguous, notFound) =>
+    `${places} Orte aus ${lines} Zeilen; ${ambiguous} zu prüfen, ${notFound} nicht gefunden.`,
+  listCheck: 'Zuordnung prüfen',
+  listCustom: 'eigener Ort',
+  listNotFound: 'nicht gefunden',
+  listSkip: '(weglassen)',
+  listLabel: 'Beschriftung',
+  fixedTitle: 'Feste Instanz',
+  fixedHint: (n) => `${n} Orte, keine Suche: Das Puzzle ist genau diese Liste.`,
+  fixedClose: (count, min) => `${count} Paare liegen näher als der Mindestabstand (${min} mm):`,
+  fixedOutside: (names) =>
+    `Außerhalb des Bretts: ${names}. Eine größere Region oder eine andere Liste wählen.`,
+  fixedSmallGap: (gap, target) =>
+    `Die Lücke (${gap} mm) liegt unter dem Ziel für Bretter (${target} mm): Auf einem Brett kann der Faden das Optimum nicht sicher unterscheiden.`,
+  fixedMakeDigital: 'Als digitales Puzzle verwenden',
+  fixedRemovals: 'Welches Weglassen hilft am meisten?',
+  fixedSearching: 'Wird berechnet …',
+  fixedWithout: (name, gap) => `ohne ${name}: Lücke ${gap} mm`,
+  fixedLeaveOut: 'Weglassen',
+  fixedNoSearch: 'Eine feste Instanz wird nicht gesucht: Die Liste ist das Puzzle.',
+
   permalink: 'Link kopieren',
   linkCopied: 'Link kopiert',
   dataVersionMismatch: (linked, current) =>

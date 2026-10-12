@@ -58,6 +58,8 @@ export function boardSetup(
   cityIds: readonly number[],
   /** Puzzle title for the board (default: the region's name). */
   title = '',
+  /** Pool to take the cities from (default: the region's towns); e.g. a place list. */
+  poolCities: readonly City[] | null = null,
 ): BoardSetup {
   const outline = regionOutline(file, params.region);
   const projection = boardProjection(outline, {
@@ -65,7 +67,7 @@ export function boardSetup(
     heightMm: params.boardHeightMm,
     marginMm: params.marginMm,
   });
-  const pool = cityPool(file, params.region, { minPopulation: params.minPopulation });
+  const pool = poolCities ?? cityPool(file, params.region, { minPopulation: params.minPopulation });
   const index = new Map(pool.map((c, i) => [c.id, i]));
   const members = cityIds
     .map((id) => index.get(id))

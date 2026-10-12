@@ -198,6 +198,38 @@ export const en = {
   removeConfirm: 'Really delete?',
   placesCount: (n: string) => `${n} places`,
 
+  // Place lists and fixed instances
+  places: 'Places',
+  placesSource: 'Use',
+  placesRegion: "the region's towns",
+  placesFixed: 'a list: exactly these',
+  placesPool: 'a list: choose from it',
+  listHint: 'One town per line, or "name, latitude, longitude, label" for other places.',
+  listPlaceholder: 'Dortmund\nBochum\nTU Dortmund, 51.4924, 7.4127, TU',
+  listMerge: 'Merge within (km)',
+  listApply: 'Apply list',
+  listSummary: (places: string, lines: string, ambiguous: string, notFound: string) =>
+    `${places} places from ${lines} lines; ${ambiguous} to check, ${notFound} not found.`,
+  listCheck: 'Check the matches',
+  listCustom: 'own place',
+  listNotFound: 'not found',
+  listSkip: '(leave out)',
+  listLabel: 'label',
+  fixedTitle: 'Fixed instance',
+  fixedHint: (n: string) => `${n} places, no search: the puzzle is exactly this list.`,
+  fixedClose: (count: string, min: string) =>
+    `${count} pairs are closer than the minimum distance (${min} mm):`,
+  fixedOutside: (names: string) =>
+    `Outside the board: ${names}. Choose a larger region or another list.`,
+  fixedSmallGap: (gap: string, target: string) =>
+    `The gap (${gap} mm) is below the board target (${target} mm): on a board the string cannot reliably tell the optimum apart.`,
+  fixedMakeDigital: 'Make it a digital puzzle',
+  fixedRemovals: 'Which removal helps most?',
+  fixedSearching: 'Computing…',
+  fixedWithout: (name: string, gap: string) => `without ${name}: gap ${gap} mm`,
+  fixedLeaveOut: 'Leave out',
+  fixedNoSearch: 'A fixed instance is not searched: the list is the puzzle.',
+
   // Permalink and data
   permalink: 'Copy link',
   linkCopied: 'Link copied',

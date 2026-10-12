@@ -4,6 +4,8 @@
 // exactly; parameters + seed reproduce the search only within the same JS engine.
 
 import { DEFAULT_PARAMS, type PuzzleParams } from './params';
+import { decodePlaceList, encodePlaceList, type LinkPlace } from './places';
+import type { Place } from './puzzle-file';
 
 export const PERMALINK_VERSION = 1;
 
@@ -20,6 +22,39 @@ export interface PermalinkData {
   readonly mode: 'design' | 'play';
   /** Puzzle title, if the link has one. */
   readonly title: string | null;
+  /** Place list (instead of the region's towns), if the link has one. */
+  readonly list: {
+    readonly mode: 'fixed' | 'pool';
+    readonly places: readonly LinkPlace[];
+    /** Selected places as indices into the list (pool mode). */
+    readonly selected: readonly number[] | null;
+  } | null;
+}
+
+/** A place list for a link: its places and, in pool mode, the selected indices. */
+export interface LinkList {
+  readonly mode: 'fixed' | 'pool';
+  readonly places: readonly Place[];
+  readonly selected: readonly number[] | null;
+}
+
+const encodeIndices = (indices: readonly number[]) =>
+  [...indices]
+    .sort((a, b) => a - b)
+    .map((i) => i.toString(36))
+    .join('.');
+
+const decodeIndices = (text: string | null): number[] | null =>
+  text
+    ? text
+        .split('.')
+        .map((s) => parseInt(s, 36))
+        .filter((x) => Number.isInteger(x) && x >= 0 && x < 5000)
+    : null;
+
+function setList(q: Query, list: LinkList): void {
+  q.set('pl', encodePlaceList(list.mode, list.places));
+  if (list.selected && list.selected.length > 0) q.set('sx', encodeIndices(list.selected));
 }
 
 /**
@@ -84,6 +119,7 @@ export function encodePermalink(
   },
   appVersion = '',
   title = '',
+  list: LinkList | null = null,
 ): string {
   const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
@@ -106,7 +142,8 @@ export function encodePermalink(
   q.set('ll', params.labelLanguage);
   if (marks.pinned.length > 0) q.set('pin', encodeIds(marks.pinned));
   if (marks.excluded.length > 0) q.set('ex', encodeIds(marks.excluded));
-  if (selectedIds && selectedIds.length > 0) q.set('sel', encodeIds(selectedIds));
+  if (list) setList(q, list);
+  else if (selectedIds && selectedIds.length > 0) q.set('sel', encodeIds(selectedIds));
   return `#${q.toString()}`;
 }
 
@@ -120,6 +157,7 @@ export function encodePlayLink(
   selectedIds: readonly number[],
   appVersion = '',
   title = '',
+  list: LinkList | null = null,
 ): string {
   const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
@@ -134,7 +172,8 @@ export function encodePlayLink(
   q.set('p', String(params.minPopulation));
   q.set('lf', String(params.labelSizeMm));
   q.set('ll', params.labelLanguage);
-  q.set('sel', encodeIds(selectedIds));
+  if (list) setList(q, list);
+  else q.set('sel', encodeIds(selectedIds));
   return `#${q.toString()}`;
 }
 
@@ -173,8 +212,11 @@ export function decodePermalink(hash: string): PermalinkData | null {
     labelLanguage: q.get('ll') === 'en' ? 'en' : d.labelLanguage,
   };
   const selected = q.get('sel') ? decodeIds(q.get('sel')) : null;
+  const placeList = q.get('pl') ? decodePlaceList(q.get('pl')!) : null;
+  const list = placeList ? { ...placeList, selected: decodeIndices(q.get('sx')) } : null;
   // Play links carry no 'n': the puzzle has as many cities as it selects.
-  if (selected && q.get('n') === null) params = { ...params, n: selected.length };
+  const count = selected?.length ?? list?.selected?.length ?? list?.places.length;
+  if (count !== undefined && q.get('n') === null) params = { ...params, n: count };
   const match = /^([a-z]{2})@(\d+)$/.exec(q.get('d') ?? '');
   const data = match ? { country: match[1]!.toUpperCase(), version: Number(match[2]) } : null;
   return {
@@ -183,7 +225,8 @@ export function decodePermalink(hash: string): PermalinkData | null {
     excluded: decodeIds(q.get('ex')),
     selected,
     data,
-    mode: q.get('m') === 'play' && selected ? 'play' : 'design',
+    mode: q.get('m') === 'play' && (selected || list) ? 'play' : 'design',
     title: q.get('t') ? q.get('t')!.slice(0, 200) : null,
+    list,
   };
 }

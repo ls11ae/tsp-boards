@@ -447,3 +447,16 @@ Short entries: decision; alternatives considered; reason. Newest last.
   curated collection (`public/puzzles/`, index + files) is built by `cli/collection.ts`, which
   verifies exactly and stores the results. Titles travel in all link types (`t=`) and replace
   the region name on the board and the sheets.
+- **2026-10-12 Place lists (roadmap 5.2).** Lines are town names or CSV rows "name, lat, lon,
+  label" (semicolons or tabs allow decimal commas). Names are matched against all towns of the
+  country data: exact (also transliterated "Muenchen" and English names), then word prefix
+  ("Frankfurt"), then edit distance 1–2 (always offered as a choice); ambiguous matches default
+  to the largest town and can be changed per line. Places of the same town or within 2 km merge
+  into one node labelled with all names (unless a label is given). Two modes: `fixed` (the list
+  is the puzzle: no search, exact analysis with warnings for close pairs, places off the board
+  and gaps below the board target, plus "which removal helps most": local gap bound for every
+  removal, exact solve for the best three) and `pool` (the search chooses from the list). The
+  list replaces the board pool (custom places get negative ids, population 1); links carry it
+  deflated and base64url-encoded (`pl`, selection as list indices `sx`), files as `map.list`.
+  Alternatives: geocoding service (needs a server, privacy), Euclidean-only matching by
+  coordinates. Reason: works offline with the shipped data; custom rows cover the rest.

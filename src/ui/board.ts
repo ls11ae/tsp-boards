@@ -2,7 +2,9 @@
 // with board coordinates, and SVG paths of the map layers (all in board mm).
 
 import { useStore, type UiParams } from './store';
-import type { City, CountryFile } from '../core/data';
+import { citiesFromColumns, type City, type CountryFile } from '../core/data';
+import { listCities } from '../core/places';
+import type { Place } from '../core/puzzle-file';
 import type { Point } from '../core/geometry';
 import { boardProjection, type BoardProjection } from '../core/projection';
 import { boardPoints, cityPool, mapLayers, regionOutline } from '../core/region';
@@ -22,23 +24,38 @@ export interface BoardModel {
   };
 }
 
-let cached: { key: string; country: CountryFile; model: BoardModel } | null = null;
+let cached: {
+  key: string;
+  country: CountryFile;
+  list: readonly Place[] | null;
+  model: BoardModel;
+} | null = null;
 
 function boardKey(p: UiParams): string {
   return [p.region, p.boardWidthMm, p.boardHeightMm, p.marginMm, p.minPopulation].join('|');
 }
 
-/** Memoised: recomputed only when the region, board size or population threshold change. */
-export function getBoard(country: CountryFile, params: UiParams): BoardModel {
+/**
+ * Memoised: recomputed only when the region, board size, population threshold or the place
+ * list change. With a place list, the pool is the list (in its order) instead of the towns.
+ */
+export function getBoard(
+  country: CountryFile,
+  params: UiParams,
+  list: readonly Place[] | null = useStore.getState().list?.places ?? null,
+): BoardModel {
   const key = boardKey(params);
-  if (cached && cached.country === country && cached.key === key) return cached.model;
+  if (cached && cached.country === country && cached.key === key && cached.list === list)
+    return cached.model;
   const outline = regionOutline(country, params.region);
   const projection = boardProjection(outline, {
     widthMm: params.boardWidthMm,
     heightMm: params.boardHeightMm,
     marginMm: params.marginMm,
   });
-  const pool = cityPool(country, params.region, { minPopulation: params.minPopulation });
+  const pool = list
+    ? listCities(list, townsById(country))
+    : cityPool(country, params.region, { minPopulation: params.minPopulation });
   const layers = mapLayers(country);
   const model: BoardModel = {
     projection,
@@ -52,12 +69,26 @@ export function getBoard(country: CountryFile, params: UiParams): BoardModel {
       region: params.region === country.country ? null : projection.path(outline),
     },
   };
-  cached = { key, country, model };
+  cached = { key, country, list, model };
   return model;
+}
+
+let towns: { country: CountryFile; map: Map<number, City> } | null = null;
+
+/** All towns of the country by GeoNames id (memoised). */
+export function townsById(country: CountryFile): Map<number, City> {
+  if (towns?.country !== country) {
+    towns = {
+      country,
+      map: new Map(citiesFromColumns(country.cities, country.states).map((c) => [c.id, c])),
+    };
+  }
+  return towns.map;
 }
 
 export function useBoard(): BoardModel | null {
   const country = useStore((s) => s.country);
   const params = useStore((s) => s.params);
-  return country ? getBoard(country, params) : null;
+  const list = useStore((s) => s.list?.places ?? null);
+  return country ? getBoard(country, params, list) : null;
 }

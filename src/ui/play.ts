@@ -6,6 +6,7 @@ import { rEffMm } from '../core/params';
 import { encodePlayLink } from '../core/permalink';
 import { clickNail, judge, puzzleHash, undo, type PlayRecord } from '../core/play';
 import { getBoard } from './board';
+import { linkList } from './lists';
 import type { PuzzleView } from './puzzle';
 import { NEW_GAME, useStore, type PlayUi } from './store';
 
@@ -139,6 +140,7 @@ export function playLink(puzzle: PuzzleView): string | null {
     puzzle.members.map((c) => board.pool[c]!.id),
     __APP_VERSION__,
     doc.title,
+    linkList(puzzle.members),
   );
   return `${window.location.origin}${window.location.pathname}${hash}`;
 }

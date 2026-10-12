@@ -4,8 +4,10 @@ import type { BoardModel } from '../board';
 import { startSearch, stopSearch } from '../controller';
 import { useFormat, useT } from '../i18n';
 import { encodePermalink } from '../../core/permalink';
+import { linkList } from '../lists';
 import { playLink } from '../play';
 import { DocumentPanel } from './DocumentPanel';
+import { PlacesPanel } from './PlacesPanel';
 import type { PuzzleView } from '../puzzle';
 import { useStore, type UiParams } from '../store';
 
@@ -74,6 +76,7 @@ export function ParamsPanel({
   const region = useStore((s) => s.params.region);
   const setParams = useStore((s) => s.setParams);
   const status = useStore((s) => s.run.status);
+  const fixed = useStore((s) => s.list?.mode === 'fixed');
   const [copied, setCopied] = useState<'link' | 'play' | null>(null);
   const copy = (text: string, which: 'link' | 'play') => {
     navigator.clipboard
@@ -97,6 +100,7 @@ export function ParamsPanel({
       { pinned, excluded },
       __APP_VERSION__,
       useStore.getState().doc.title,
+      linkList(puzzle ? puzzle.members : null),
     );
     window.history.replaceState(null, '', hash);
     copy(window.location.href, 'link');
@@ -117,6 +121,7 @@ export function ParamsPanel({
             ))}
         </select>
       </label>
+      <PlacesPanel />
       <NumberField label={t.cityCount} field="n" min={5} />
       <NumberField label={t.minPopulation} field="minPopulation" step={1000} />
       {board && <p className="hint">{t.poolSize(fmt.integer(board.pool.length))}</p>}
@@ -146,7 +151,13 @@ export function ParamsPanel({
             {t.stop}
           </button>
         ) : (
-          <button type="button" className="primary" onClick={startSearch} disabled={!country}>
+          <button
+            type="button"
+            className="primary"
+            onClick={startSearch}
+            disabled={!country || fixed}
+            title={fixed ? t.fixedNoSearch : undefined}
+          >
             {t.start}
           </button>
         )}

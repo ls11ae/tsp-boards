@@ -47,6 +47,44 @@ describe('permalinks', () => {
     expect(decodePermalink('#v=1&m=play')!.mode).toBe('design');
   });
 
+  it('carry place lists with custom places and the selection', () => {
+    const places = [
+      { id: 2935517, name: 'Dortmund', lat: 51.5, lon: 7.46 },
+      { name: 'Campus Nord', lat: 51.49, lon: 7.41, label: 'TU' },
+      { id: 2928810, name: 'Essen', lat: 51.45, lon: 7.01 },
+    ];
+    const hash = encodePermalink(
+      DEFAULT_PARAMS,
+      { country: 'DE', version: 1 },
+      null,
+      undefined,
+      '',
+      'Liste',
+      { mode: 'pool', places, selected: [0, 2] },
+    );
+    const link = decodePermalink(hash)!;
+    expect(link.selected).toBeNull();
+    expect(link.list).toEqual({
+      mode: 'pool',
+      places: [
+        { id: 2935517 },
+        { name: 'Campus Nord', lat: 51.49, lon: 7.41, label: 'TU' },
+        { id: 2928810 },
+      ],
+      selected: [0, 2],
+    });
+    const play = decodePermalink(
+      encodePlayLink(DEFAULT_PARAMS, { country: 'DE', version: 1 }, [], '', '', {
+        mode: 'fixed',
+        places,
+        selected: null,
+      }),
+    )!;
+    expect(play.mode).toBe('play');
+    expect(play.params.n).toBe(3);
+    expect(play.list!.mode).toBe('fixed');
+  });
+
   it('falls back to defaults for missing or invalid values', () => {
     const link = decodePermalink('#v=1&n=-5&r=../x&b=axbxc&sel=');
     expect(link!.params).toEqual(DEFAULT_PARAMS);

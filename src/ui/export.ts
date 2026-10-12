@@ -77,6 +77,7 @@ export function puzzleSetup(board: BoardModel, puzzle: PuzzleView): BoardSetup |
     params,
     puzzle.members.map((c) => board.pool[c]!.id),
     useStore.getState().doc.title,
+    useStore.getState().list ? board.pool : null,
   );
 }
 

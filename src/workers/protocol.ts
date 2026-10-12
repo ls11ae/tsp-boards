@@ -9,6 +9,7 @@ import type {
   TracePoint,
 } from '../core/search/search';
 import type { BoardPlan, PlanData } from '../core/board/plan';
+import type { RemovalSuggestion } from '../core/fixed';
 import type {
   IncrementalParams,
   IncrementalPuzzle,
@@ -66,10 +67,19 @@ export interface PlanJob {
   readonly timeLimitSec: number;
 }
 
+export interface RemovalsJob {
+  readonly jobId: number;
+  readonly points: readonly Point[];
+  readonly rEffMm: number;
+  readonly model: 'string' | 'euclidean';
+  readonly top: number;
+}
+
 export type ExactWorkerRequest =
   | { readonly type: 'selftest' }
   | ({ readonly type: 'verify' } & VerifyJob)
-  | ({ readonly type: 'plan' } & PlanJob);
+  | ({ readonly type: 'plan' } & PlanJob)
+  | ({ readonly type: 'removals' } & RemovalsJob);
 
 export type ExactWorkerResponse =
   | {
@@ -95,6 +105,11 @@ export type ExactWorkerResponse =
       /** null: no start nail has room for the scale. */
       readonly plan: BoardPlan | null;
       readonly ms: number;
+    }
+  | {
+      readonly type: 'removals';
+      readonly jobId: number;
+      readonly suggestions: readonly RemovalSuggestion[];
     }
   | { readonly type: 'error'; readonly jobId?: number; readonly message: string };
 

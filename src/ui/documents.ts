@@ -10,10 +10,12 @@ import {
   serializePuzzleDoc,
   type CollectionIndex,
   type MapResults,
+  type Place,
   type PuzzleDoc,
 } from '../core/puzzle-file';
 import { getBoard } from './board';
 import { openSelection } from './controller';
+import { openListPuzzle } from './lists';
 import { planKey } from './export';
 import { applyIncrementalPuzzle } from './incremental';
 import type { PuzzleView } from './puzzle';
@@ -28,7 +30,10 @@ export function mapDocument(puzzle: PuzzleView | null): PuzzleDoc | null {
   if (!country) return null;
   const board = getBoard(country, params);
   const members = puzzle?.members ?? [];
-  const places = members.map((c) => {
+  const list = s.list;
+  // With a place list, pool index = list index, and the list's places keep their labels.
+  const places = members.map((c): Place => {
+    if (list) return list.places[c]!;
     const city = board.pool[c]!;
     return { id: city.id, name: city.name, lat: city.lat, lon: city.lon };
   });
@@ -61,6 +66,7 @@ export function mapDocument(puzzle: PuzzleView | null): PuzzleDoc | null {
     map: {
       params: { ...params, n: places.length || params.n },
       places,
+      ...(list ? { list: { mode: list.mode, places: list.places } } : {}),
       constraints: { pinned: s.pinned, excluded: s.excluded, groups: [] },
       ...(results ? { results } : {}),
     },
@@ -128,9 +134,20 @@ export function openDocument(doc: PuzzleDoc, mode: 'design' | 'play' = 'design')
   const warnings: string[] = [];
   if (doc.data && country && doc.data.version !== country.dataVersion)
     warnings.push(`data:${doc.data.version}:${country.dataVersion}`);
+  useStore.setState({ linkWarnings: warnings });
+  if (map.list) {
+    // The puzzle's places as indices into the list (same town, or same custom place).
+    const same = (a: Place, b: Place) =>
+      a.id !== undefined ? a.id === b.id : a.name === b.name && a.lat === b.lat && a.lon === b.lon;
+    const selected = map.places
+      .map((p) => map.list!.places.findIndex((q) => same(p, q)))
+      .filter((i) => i >= 0);
+    openListPuzzle(map.list.mode, map.list.places, selected);
+    return;
+  }
+  useStore.setState({ list: null });
   const ids = map.places.map((p) => p.id).filter((id): id is number => id !== undefined);
   if (ids.length >= 3) openSelection(ids, warnings);
-  else useStore.setState({ linkWarnings: warnings });
 }
 
 /** Starts a new, untitled puzzle (keeps the parameters). */

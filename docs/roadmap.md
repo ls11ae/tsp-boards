@@ -31,7 +31,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
   (the board export already warns when there is no room for a title).
 - A curated collection shipped with the app under `public/puzzles/` with an index file.
 
-### 5.2 City lists and custom points
+### 5.2 City lists and custom points — done 2026-10-12
 
 - Input as text, one place per line, fuzzy-matched against the country data with a choice
   when ambiguous; or CSV with name, latitude, longitude and optional label for places that are

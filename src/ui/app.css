@@ -515,6 +515,52 @@ table.steps tr.selected {
   flex-wrap: wrap;
 }
 
+table.entries {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+table.entries td {
+  padding: 2px;
+  vertical-align: middle;
+}
+
+table.entries select,
+table.entries input {
+  width: 100%;
+  max-width: 150px;
+  font: inherit;
+}
+
+.entry-ambiguous td:first-child {
+  color: var(--accent);
+}
+
+.entry-not-found td:first-child {
+  color: var(--error);
+}
+
+.removals {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.removals li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.warning ul {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+
 .actions.column {
   flex-direction: column;
 }
