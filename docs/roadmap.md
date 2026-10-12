@@ -2,7 +2,7 @@
 
 Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through the items in
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
-items done here when they are finished.
+items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
 Status 2026-10-12: Phases 1–4 and the incremental puzzle are done (map puzzle search with
 exact verification, board export with labels, start nail and scale, play mode, deployment
@@ -10,7 +10,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
 
 ## Phase 5: digital features
 
-### 5.0 Housekeeping
+### 5.0 Housekeeping — done 2026-10-12
 
 - `docs/design-notes.md` still contains superseded statements: Section 3.1 ("the gap is the
   bottleneck"; answered by Section 6.3), Section 5 (no-good cut with n − 1; the code uses

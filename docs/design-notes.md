@@ -34,11 +34,13 @@ GeoNames cities with >= 5000 inhabitants, projection EPSG:3857).
 
 ## 3. Observations that motivate changes (map puzzle)
 
-1. **The gap to the second-best tour is the bottleneck.** Our benchmark (Section 6): random
-   40–60 point instances have gaps of 0.00–0.17 % of the tour length. With ~3 m of string
-   (board ~60×80 cm, 40 cities), 0.1 % ≈ 3 mm. In the thesis, S rarely exceeded 0.1, i.e.
-   gaps below 0.5 %. -> Make the gap a hard constraint in mm of string; optimize it explicitly;
-   consider fewer cities or a complementary verification mechanism.
+1. **The gap to the second-best tour.** Random 40–60 point instances have gaps of 0.00–0.17 %
+   of the tour length (Section 6), with ~3 m of string 0.1 % ≈ 3 mm; in the thesis, S rarely
+   exceeded 0.1 (gaps below 0.5 %). -> The gap is a hard constraint in mm of string and is
+   optimised explicitly. Measured since (Section 6.3): the search finds exactly verified string
+   gaps of 6–25 mm with default weights and ≥ 40 mm when only the gap counts (n = 30–50,
+   Germany), and the gap at the scale keeps 95–112 % of it (Section 6.4). For searched boards
+   the gap is not a bottleneck; fixed instances (city lists) can still have small gaps.
 2. **Projection.** EPSG:3857 scales distances by 1/cos(latitude): ~1.47 in southern vs ~1.74 in
    northern Germany (~18 % difference). The thesis' "150 km" minimum distance was measured in
    Mercator units: the closest pair in its Table A.4 is only 92 km apart in reality
@@ -74,19 +76,21 @@ interactive editing, privacy is trivial, scales for free, works offline at schoo
 - Exact solver behind an interface; a server-side solver could be added if ever needed.
 - Optional later: tiny endpoint for anonymous, opt-in play data.
 
-## 5. Algorithms (proposed)
+## 5. Algorithms
 
 - **Exact TSP:** DFJ, degree constraints, iterative subtour elimination (solve MIP, add SECs
   for all components, repeat), HiGHS WASM in a Web Worker.
-- **Exact second-best tour:** add the no-good cut Σ_{e ∈ OPT} x_e ≤ n − 1, keep the SECs collected
-  so far, repeat the loop.
+- **Exact second-best tour:** add the no-good cut Σ_{e ∈ OPT} x_e ≤ n − 2 (two different tours
+  share at most n − 2 edges), keep the SECs collected so far, repeat the loop. Both models: the
+  Euclidean length L and the string length S (turn-cost model, decision log 2026-10-10).
 - **Heuristic optimum during search:** Or-opt + 2-opt with neighbour lists and perturbation
   (iterated local search); warm-start from the previous tour after a swap (remove city, cheapest
   insertion of the new city, local search).
 - **Cheap upper bound on the second-best tour:** best tour different from OPT among local
-  modifications of OPT (2-opt moves, Or-opt moves of segments of length 1–3). If
-  UB − L(OPT) < required gap, reject the candidate without an exact solve. The true second-best
-  can be a non-local change, so always verify exactly before accepting a final candidate.
+  modifications of OPT (all 2-opt moves, all pure 3-opt reconnections, optionally double
+  bridges), in string length. If UB − S(OPT) < required gap, reject the candidate without an
+  exact solve. The true second-best can be a non-local change (Section 6.2), so promising
+  candidates are refined and final candidates verified exactly.
 - **Search:** SA / iterated local search over city subsets with ejection swaps; constraints:
   minimum distance on the board (mm), pinned/excluded cities, later label feasibility;
   objectives: gap (saturating at the target), difficulty, recognizability. Cache evaluations by
@@ -193,7 +197,7 @@ Board files: the SVG of a 40-city board is ~0.4 MB (text as outlines), the A4 te
 - Play mode in the browser doubles as a measurement tool for empirical difficulty (records
   are ready; an endpoint and an analysis are still to come).
 
-## 8. Incremental puzzle (later)
+## 8. Incremental puzzle
 
 - Thesis idea: for a base set I and a new point p,
   L(OPT(I ∪ {p})) = min_{i≠j} W_ij + |p nᵢ| + |p nⱼ|, where W_ij is the shortest Hamiltonian path
@@ -234,8 +238,7 @@ weakest slack, larger N (Held–Karp limits N to 16).
 - Dimensions, nail diameter and string of existing prototype boards (for defaults/calibration).
 - Calibration of the string model on a real board: does the measured gap match? (Wind the
   optimum and the runner-up on a board and compare the string ends at the scale.)
-- Is the string-length self-check the only verification mechanism, given the tiny gaps?
-- Hosting details on the chair server.
+- Hosting details on the chair server (requirements in `docs/deployment.md`).
 
 ## 11. Decision log
 
@@ -427,3 +430,9 @@ Short entries: decision; alternatives considered; reason. Newest last.
   inserted") starts at k = 5: every four-point tour is the triangle with one point inserted.
   Later points keep 4 mm clear of earlier optimal tours, since their nails stand on the board
   while earlier instances are played.
+- **2026-10-12 Housekeeping of these notes (roadmap 5.0).** Section 3.1 no longer calls the gap
+  the bottleneck (answered by Sections 6.3 and 6.4); Section 5 describes the implemented
+  algorithms (no-good cut with n − 2, string-length bound with 3-opt and double bridges);
+  Section 10 drops the question whether the string self-check can work (answered by the
+  measured gaps and the start-nail and scale design). The original statements are in the git
+  history (first version: commit 3e07a9c).
