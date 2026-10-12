@@ -32,12 +32,16 @@ what we change and why, benchmark results, and open questions.
   chair server needs access and is the maintainers' step. Incremental puzzle implemented
   (`src/core/incremental/`: Held–Karp with two best values, insertion field, sequence search
   with exact checks, measuring track around the board edge; app mode and `cli/incremental.ts`).
-- **Next: Phase 5 "digital features"** (decided by Kevin 2026-10-11/12): puzzle files with
-  titles, save/load and a gallery, city lists and custom points, local highscores, digital vs.
-  board puzzles, overlays, group constraints. **`docs/roadmap.md` is the source of truth for
-  open work**, in its order.
+- Phase 5 "digital features" complete (2026-10-12): puzzle files, library, curated collection
+  and gallery; place lists (fixed instances and pools); games and local highscores; digital
+  vs. board puzzles; overlays and thesis metrics; unions of states as regions and group
+  constraints per state.
+- Phase 6 complete except the physical items (2026-10-12): teaching mode, robustness over
+  r_eff, classroom worksheet, points placed by hand on a blank board, city puzzles and themed
+  instances from Wikidata (`cli/wikidata.ts`), Austria, Switzerland and the Netherlands.
+  **`docs/roadmap.md` is the source of truth for open work**, in its order.
 - Open: prototype board dimensions (and a test board), code license, deploying to the chair
-  server, play data endpoint, play mode for the incremental puzzle.
+  server, play data endpoint.
 - Code license not chosen yet (decide before going public).
 
 ## Agreed direction
