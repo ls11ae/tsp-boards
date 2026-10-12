@@ -92,6 +92,43 @@ export const en = {
   excess: (value: string) => `+${value} %`,
   interiorFraction: 'Points inside the hull (C)',
   nonNearestEdges: 'Edges not to a nearest neighbour (D)',
+  teaching: 'Watch a strategy',
+  teachingHint:
+    'How do simple strategies build a round trip, and how does the exact solver prove the optimum? Step by step on this puzzle (distances between nail centres).',
+  teachStrategy: 'Strategy',
+  teachStart: 'Start at',
+  teachShow: 'Show',
+  teachClose: 'Close',
+  teachComputing: 'The exact solver is running…',
+  teachFirst: 'First step',
+  teachBack: 'Step back',
+  teachPlay: 'Play',
+  teachPause: 'Pause',
+  teachNext: 'Next step',
+  teachStep: (i: string, n: string) => `Step ${i} of ${n}`,
+  teachLength: (length: string) => `Length of the edges drawn: ${length}`,
+  teachTwoOpt: '2-opt improvement (from nearest neighbour)',
+  teachSubtours: 'Exact solver (subtour elimination)',
+  teachNnStart: (a: string) => `Start in ${a}.`,
+  teachNnStep: (a: string, b: string) => `From ${a} to the nearest place not visited yet: ${b}.`,
+  teachNnClose: (a: string, b: string) => `All places visited: from ${a} back to ${b}.`,
+  teachHull: (count: string) =>
+    `Start with the convex hull: the ${count} outer places in their order around the edge.`,
+  teachInsert: (v: string, a: string, b: string) =>
+    `Insert ${v} between ${a} and ${b}: of all places left, it lengthens the round trip least.`,
+  teachGreedy: (a: string, b: string) =>
+    `Shortest edge still allowed: ${a} – ${b} (no place gets three edges, no cycle closes early).`,
+  teachGreedyClose: (a: string, b: string) => `Close the round trip: ${a} – ${b}.`,
+  teachTwoOptStart: 'Start with the nearest-neighbour round trip.',
+  teachTwoOptRemove: (gain: string) =>
+    `These two edges go: joining the four places the other way round saves ${gain}.`,
+  teachTwoOptAdd: (gain: string) => `Joined the other way round: ${gain} shorter.`,
+  teachTwoOptDone:
+    'No exchange of two edges helps any more: a local optimum, not necessarily the shortest round trip.',
+  teachRound: (round: string, subtours: string) =>
+    `Round ${round}: the cheapest edges with two per place form ${subtours} separate round trips. Each is forbidden by a new constraint, and the solver runs again.`,
+  teachOptimal: (rounds: string) =>
+    `Round ${rounds}: a single round trip. It is the shortest one, proven.`,
   overlay: 'Compare with',
   overlayNone: 'nothing',
   overlaySecond: 'second-best tour',

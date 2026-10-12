@@ -87,6 +87,43 @@ export const de: Messages = {
   excess: (value) => `+${value} %`,
   interiorFraction: 'Punkte im Innern der Hülle (C)',
   nonNearestEdges: 'Kanten nicht zum nächsten Nachbarn (D)',
+  teaching: 'Strategien ansehen',
+  teachingHint:
+    'Wie bauen einfache Strategien eine Rundreise, und wie beweist der exakte Löser das Optimum? Schritt für Schritt an diesem Puzzle (Abstände zwischen den Nagelmitten).',
+  teachStrategy: 'Strategie',
+  teachStart: 'Start in',
+  teachShow: 'Zeigen',
+  teachClose: 'Schließen',
+  teachComputing: 'Der exakte Löser rechnet …',
+  teachFirst: 'Erster Schritt',
+  teachBack: 'Schritt zurück',
+  teachPlay: 'Abspielen',
+  teachPause: 'Anhalten',
+  teachNext: 'Nächster Schritt',
+  teachStep: (i, n) => `Schritt ${i} von ${n}`,
+  teachLength: (length) => `Länge der gezeichneten Kanten: ${length}`,
+  teachTwoOpt: '2-opt-Verbesserung (ab nächstem Nachbarn)',
+  teachSubtours: 'Exakter Löser (Subtour-Elimination)',
+  teachNnStart: (a) => `Start in ${a}.`,
+  teachNnStep: (a, b) => `Von ${a} zum nächsten noch nicht besuchten Ort: ${b}.`,
+  teachNnClose: (a, b) => `Alle Orte besucht: von ${a} zurück nach ${b}.`,
+  teachHull: (count) =>
+    `Start mit der konvexen Hülle: die ${count} äußeren Orte in ihrer Reihenfolge am Rand.`,
+  teachInsert: (v, a, b) =>
+    `${v} zwischen ${a} und ${b} einfügen: Von allen übrigen Orten verlängert er die Rundreise am wenigsten.`,
+  teachGreedy: (a, b) =>
+    `Kürzeste noch erlaubte Kante: ${a} – ${b} (kein Ort bekommt drei Kanten, kein Kreis schließt sich zu früh).`,
+  teachGreedyClose: (a, b) => `Rundreise schließen: ${a} – ${b}.`,
+  teachTwoOptStart: 'Start mit der Rundreise nach „nächster Nachbar“.',
+  teachTwoOptRemove: (gain) =>
+    `Diese zwei Kanten fallen weg: Die vier Orte andersherum verbunden spart ${gain}.`,
+  teachTwoOptAdd: (gain) => `Andersherum verbunden: ${gain} kürzer.`,
+  teachTwoOptDone:
+    'Kein Tausch zweier Kanten hilft mehr: ein lokales Optimum, nicht unbedingt die kürzeste Rundreise.',
+  teachRound: (round, subtours) =>
+    `Runde ${round}: Die günstigsten Kanten mit zwei pro Ort bilden ${subtours} getrennte Rundreisen. Jede wird durch eine neue Bedingung verboten, und der Löser rechnet erneut.`,
+  teachOptimal: (rounds) =>
+    `Runde ${rounds}: eine einzige Rundreise. Sie ist die kürzeste, bewiesen.`,
   overlay: 'Vergleichen mit',
   overlayNone: 'nichts',
   overlaySecond: 'zweitbeste Tour',

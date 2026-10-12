@@ -280,8 +280,11 @@ export class ExactTsp {
     });
   }
 
-  /** Optimal tour subject to all exclusions; `start` must be feasible (a MIP start). */
-  solve(start?: Tour): ExactTour {
+  /**
+   * Optimal tour subject to all exclusions; `start` must be feasible (a MIP start).
+   * `onRound` sees the edges of each MIP solution (subtours until the last round).
+   */
+  solve(start?: Tour, onRound?: (edges: readonly [number, number][]) => void): ExactTour {
     const n = this.inst.n;
     let runs = 0;
     for (;;) {
@@ -299,6 +302,7 @@ export class ExactTsp {
       for (let i = 0; i < n; i++) {
         for (let j = i + 1; j < n; j++) if (x[edgeIndex(i, j, n)]! > 0.5) edges.push([i, j]);
       }
+      onRound?.(edges);
       const comps = components(n, edges);
       if (comps.length === 1) {
         const tour = tourFromEdges(n, edges);

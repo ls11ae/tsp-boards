@@ -4,6 +4,7 @@
 import { create } from 'zustand';
 import type { BoardPlan } from '../core/board/plan';
 import type { HeuristicKind } from '../core/overlays';
+import type { TeachingState } from './teaching';
 import type { GroupConstraint, Place, Purpose } from '../core/puzzle-file';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
@@ -200,6 +201,8 @@ export interface AppState {
   readonly showTour: boolean;
   /** Tour drawn for comparison with the optimum (roadmap 5.5). */
   readonly overlay: OverlayChoice;
+  /** A strategy shown step by step (teaching mode), or null. */
+  readonly teaching: TeachingState | null;
   /** GeoNames ids the next search must include. */
   readonly pinned: readonly number[];
   /** GeoNames ids the next search must not use. */
@@ -300,6 +303,7 @@ export const useStore = create<AppState>()((set) => ({
   verifications: {},
   showTour: true,
   overlay: 'none',
+  teaching: null,
   pinned: [],
   excluded: [],
   groups: [],

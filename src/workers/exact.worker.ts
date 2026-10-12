@@ -7,6 +7,7 @@ import { removalSuggestions } from '../core/fixed';
 import { Instance } from '../core/instance';
 import { runLpSelfTest } from '../core/lp/selftest';
 import { Rng } from '../core/rng';
+import { subtourRounds } from '../core/teaching';
 import { iteratedLocalSearch } from '../core/tsp/ils';
 import { verifyCandidate } from '../core/verify';
 import { loadHighsInWorker } from './highs';
@@ -35,6 +36,11 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
         loadMs,
         solveMs: performance.now() - start,
       });
+      break;
+    }
+    case 'rounds': {
+      const rounds = subtourRounds(highs, new Instance(request.points, 0));
+      reply({ type: 'rounds', jobId: request.jobId, rounds });
       break;
     }
     case 'removals': {

@@ -529,3 +529,14 @@ Short entries: decision; alternatives considered; reason. Newest last.
   one place per state: exact string gap 44 mm after 400 iterations (2 s). Alternatives: soft
   penalties (the walk could leave the feasible set and the archive would need filtering),
   per-state limits in the UI (kept to files and links for now).
+- **2026-10-12 Teaching mode (Phase 6).** A designer panel shows one strategy at a time on the
+  puzzle on display, as frames (edges so far, the newest emphasised, a caption with place
+  names): nearest neighbour from a chosen start (default: the largest place), convex hull +
+  cheapest insertion, greedy edge, 2-opt (best exchange each step, from the nearest-neighbour
+  tour; two frames per exchange) and the exact solver's rounds (Euclidean DFJ model: the
+  MIP solution of each round with its subtours, until one tour; computed in the exact worker
+  via a round callback of `ExactTsp.solve`). All strategies use distances between nail
+  centres, like the difficulty probes. Frames are plain data in `src/core/teaching.ts`, so a
+  later classroom view or export can reuse them. Alternatives: animating inside the search
+  worker (would tie teaching to a run), the string model for the rounds (its extra turn
+  variables make the pictures harder to read).

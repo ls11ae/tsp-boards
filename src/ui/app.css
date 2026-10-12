@@ -434,6 +434,35 @@ progress {
   stroke-width: 0.6;
 }
 
+.teach-edge {
+  fill: none;
+  stroke: var(--overlay);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.teach-hl {
+  fill: none;
+  stroke: var(--tour);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+
+.teach-node {
+  fill: none;
+  stroke: var(--tour);
+  stroke-width: 1.2;
+}
+
+.teach-note {
+  margin: 6px 0;
+  min-height: 3.6em;
+}
+
+.teach-controls button {
+  min-width: 2.4em;
+}
+
 .overlay-tour {
   fill: none;
   stroke: var(--overlay);

@@ -77,8 +77,15 @@ export interface RemovalsJob {
   readonly top: number;
 }
 
+export interface RoundsJob {
+  readonly jobId: number;
+  /** Board points (mm) in slot order. */
+  readonly points: readonly Point[];
+}
+
 export type ExactWorkerRequest =
   | { readonly type: 'selftest' }
+  | ({ readonly type: 'rounds' } & RoundsJob)
   | ({ readonly type: 'verify' } & VerifyJob)
   | ({ readonly type: 'plan' } & PlanJob)
   | ({ readonly type: 'removals' } & RemovalsJob);
@@ -112,6 +119,12 @@ export type ExactWorkerResponse =
       readonly type: 'removals';
       readonly jobId: number;
       readonly suggestions: readonly RemovalSuggestion[];
+    }
+  | {
+      readonly type: 'rounds';
+      readonly jobId: number;
+      /** Edges (slot pairs) of each subtour elimination round of the Euclidean solver. */
+      readonly rounds: readonly (readonly (readonly [number, number])[])[];
     }
   | { readonly type: 'error'; readonly jobId?: number; readonly message: string };
 

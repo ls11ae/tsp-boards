@@ -90,7 +90,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
 ## Phase 6: later
 
 - Teaching mode: animate nearest neighbour, insertion, greedy and 2-opt on the current
-  puzzle; visualise the exact solver's subtour elimination rounds.
+  puzzle; visualise the exact solver's subtour elimination rounds. (Done 2026-10-12.)
 - Robustness: re-verify for several r_eff values (e.g. 1.0, 1.5, 2.0 mm) and show whether the
   optimum and the gap at the scale stay the same.
 - Classroom worksheet: one A4/A3 page with the map scaled to fit and a separate solution page

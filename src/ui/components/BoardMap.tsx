@@ -10,6 +10,7 @@ import { planKey, previewPaths } from '../export';
 import { playClick } from '../play';
 import { getLabels, placeBoardLabels } from '../labels';
 import { useOverlay, type OverlayView } from '../overlay';
+import type { TeachingFrame } from '../../core/teaching';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 import { boardFit } from './fit';
@@ -66,6 +67,31 @@ function Marks({ board }: { readonly board: BoardModel }) {
             d={`M${x - 3},${y - 3}L${x + 3},${y + 3}M${x - 3},${y + 3}L${x + 3},${y - 3}`}
           />
         );
+      })}
+    </g>
+  );
+}
+
+/** A frame of the teaching mode: the edges so far, the newest emphasised. */
+function TeachingLayer({
+  board,
+  members,
+  frame,
+}: {
+  readonly board: BoardModel;
+  readonly members: readonly number[];
+  readonly frame: TeachingFrame;
+}) {
+  const at = (s: number) => board.points[members[s]!]!.map((v) => v.toFixed(2)).join(',');
+  const edges = (list: TeachingFrame['edges']) =>
+    list.map(([a, b]) => `M${at(a)}L${at(b)}`).join('');
+  return (
+    <g>
+      <path className="teach-edge" d={edges(frame.edges)} />
+      <path className="teach-hl" d={edges(frame.highlight)} />
+      {frame.nodes.map((s) => {
+        const [x, y] = board.points[members[s]!]!;
+        return <circle key={s} className="teach-node" cx={x} cy={y} r={6} />;
       })}
     </g>
   );
@@ -138,7 +164,13 @@ export function BoardMap({
   const visited = new Set(playing ? play.state.path : []);
   // Players see comparisons once the puzzle is solved or the solution revealed.
   const overlay = useOverlay(board, puzzle);
-  const showOverlay = overlay && (!playing || play.revealed || play.solvedMs !== null);
+  const teaching = useStore((s) => s.teaching);
+  const teachFrame =
+    !playing && puzzle && teaching?.key === puzzle.key
+      ? (teaching.frames?.[teaching.index] ?? null)
+      : null;
+  const showOverlay =
+    overlay && !teachFrame && (!playing || play.revealed || play.solvedMs !== null);
 
   const onClick = (event: MouseEvent<SVGSVGElement>) => {
     const svg = svgRef.current;
@@ -196,7 +228,10 @@ export function BoardMap({
           {!playing && <PoolDots points={board.points} />}
         </>
       )}
-      {tourPoints && <polygon className="tour" points={tourPoints} />}
+      {tourPoints && !teachFrame && <polygon className="tour" points={tourPoints} />}
+      {teachFrame && puzzle && (
+        <TeachingLayer board={board} members={puzzle.members} frame={teachFrame} />
+      )}
       {showOverlay && <Overlay board={board} overlay={overlay} showRemoved={tourPoints !== null} />}
       {pathPoints &&
         (play.state.closed ? (
