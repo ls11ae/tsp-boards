@@ -8,7 +8,7 @@ Status 2026-10-12: Phases 1–4 and the incremental puzzle are done (map puzzle 
 exact verification, board export with labels, start nail and scale, play mode, deployment
 preparation). Kevin decided to extend the digital side next, before building physical boards.
 
-## Phase 5: digital features
+## Phase 5: digital features — done 2026-10-12
 
 ### 5.0 Housekeeping — done 2026-10-12
 
@@ -103,7 +103,8 @@ preparation). Kevin decided to extend the digital side next, before building phy
 - More countries: Austria, Switzerland, the Netherlands (the municipality deduplication is
   Germany-specific and needs a per-country variant). (Done 2026-10-12.)
 - Physical: test board with the prototype dimensions once known; deployment to the chair
-  server and the play data endpoint when access is available.
+  server and the play data endpoint when access is available. (Open: waits for the prototype
+  dimensions and for access to the chair server; everything else of Phase 6 is done.)
 
 ## Curated instances wanted by Kevin — done 2026-10-12
 
