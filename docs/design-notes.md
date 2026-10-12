@@ -436,3 +436,14 @@ Short entries: decision; alternatives considered; reason. Newest last.
   Section 10 drops the question whether the string self-check can work (answered by the
   measured gaps and the start-nail and scale design). The original statements are in the git
   history (first version: commit 3e07a9c).
+- **2026-10-12 Puzzle files (schema 1, roadmap 5.1).** One self-contained JSON document per
+  puzzle (`src/core/puzzle-file.ts`): title, description, purpose, kind, data and app version,
+  and either the map part (parameters, places, optional place list for 5.2, constraints) or the
+  incremental part (parameters, points). Places carry name and coordinates besides the GeoNames
+  id, so files stay readable across data versions. Results (optimum, gaps, start nail) are
+  informational; the app recomputes them on opening, since stored solver output could be stale
+  or edited. Library: localStorage (`tsp-boards.library.v1`) with an in-memory fallback and a
+  notice when the browser keeps nothing; IndexedDB is not needed at a few KB per puzzle. The
+  curated collection (`public/puzzles/`, index + files) is built by `cli/collection.ts`, which
+  verifies exactly and stores the results. Titles travel in all link types (`t=`) and replace
+  the region name on the board and the sheets.

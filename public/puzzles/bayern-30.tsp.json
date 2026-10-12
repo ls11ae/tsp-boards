@@ -1,0 +1,262 @@
+{
+  "schema": 1,
+  "id": "bayern-30",
+  "kind": "map",
+  "title": "Bayern: 30 Städte",
+  "description": "Rundreise durch 30 bayerische Städte.",
+  "purpose": "board",
+  "language": "de",
+  "app": "0.0.0",
+  "updated": "2026-10-12",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE-BY",
+      "n": 30,
+      "boardWidthMm": 600,
+      "boardHeightMm": 800,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "labelSizeMm": 8,
+      "labelLanguage": "de"
+    },
+    "places": [
+      {
+        "id": 2867714,
+        "name": "München",
+        "lat": 48.1374,
+        "lon": 11.5755
+      },
+      {
+        "id": 2861650,
+        "name": "Nürnberg",
+        "lat": 49.4542,
+        "lon": 11.0775
+      },
+      {
+        "id": 2954172,
+        "name": "Augsburg",
+        "lat": 48.3715,
+        "lon": 10.8985
+      },
+      {
+        "id": 2849483,
+        "name": "Regensburg",
+        "lat": 49.0151,
+        "lon": 12.1016
+      },
+      {
+        "id": 2895992,
+        "name": "Ingolstadt",
+        "lat": 48.7651,
+        "lon": 11.4237
+      },
+      {
+        "id": 2952984,
+        "name": "Bamberg",
+        "lat": 49.8987,
+        "lon": 10.9007
+      },
+      {
+        "id": 2891621,
+        "name": "Kempten (Allgäu)",
+        "lat": 47.7267,
+        "lon": 10.3139
+      },
+      {
+        "id": 2863941,
+        "name": "Neu-Ulm",
+        "lat": 48.3928,
+        "lon": 10.0111
+      },
+      {
+        "id": 2855328,
+        "name": "Passau",
+        "lat": 48.5665,
+        "lon": 13.4312
+      },
+      {
+        "id": 2826099,
+        "name": "Straubing",
+        "lat": 48.8813,
+        "lon": 12.5739
+      },
+      {
+        "id": 2892080,
+        "name": "Kaufbeuren",
+        "lat": 47.8824,
+        "lon": 10.6219
+      },
+      {
+        "id": 2956656,
+        "name": "Amberg",
+        "lat": 49.4429,
+        "lon": 11.8627
+      },
+      {
+        "id": 2813040,
+        "name": "Weiden",
+        "lat": 49.6768,
+        "lon": 12.1561
+      },
+      {
+        "id": 2881509,
+        "name": "Landsberg am Lech",
+        "lat": 48.0482,
+        "lon": 10.8828
+      },
+      {
+        "id": 2877550,
+        "name": "Lindau (Bodensee)",
+        "lat": 47.5461,
+        "lon": 9.6843
+      },
+      {
+        "id": 2844265,
+        "name": "Roth",
+        "lat": 49.2476,
+        "lon": 11.0911
+      },
+      {
+        "id": 2922230,
+        "name": "Gauting",
+        "lat": 48.0692,
+        "lon": 11.377
+      },
+      {
+        "id": 2913555,
+        "name": "Günzburg",
+        "lat": 48.456,
+        "lon": 10.277
+      },
+      {
+        "id": 2821517,
+        "name": "Traunreut",
+        "lat": 47.9627,
+        "lon": 12.5923
+      },
+      {
+        "id": 2836084,
+        "name": "Schrobenhausen",
+        "lat": 48.5607,
+        "lon": 11.2607
+      },
+      {
+        "id": 2925080,
+        "name": "Freilassing",
+        "lat": 47.8409,
+        "lon": 12.9811
+      },
+      {
+        "id": 2943408,
+        "name": "Bruckmühl",
+        "lat": 47.8786,
+        "lon": 11.911
+      },
+      {
+        "id": 2903016,
+        "name": "Höchstadt an der Aisch",
+        "lat": 49.7062,
+        "lon": 10.8133
+      },
+      {
+        "id": 2855065,
+        "name": "Pegnitz",
+        "lat": 49.7522,
+        "lon": 11.5419
+      },
+      {
+        "id": 2813755,
+        "name": "Wasserburg am Inn",
+        "lat": 48.0525,
+        "lon": 12.2234
+      },
+      {
+        "id": 2810832,
+        "name": "Werneck",
+        "lat": 49.982,
+        "lon": 10.0988
+      },
+      {
+        "id": 2953194,
+        "name": "Baiersdorf",
+        "lat": 49.6581,
+        "lon": 11.0359
+      },
+      {
+        "id": 2867262,
+        "name": "Nabburg",
+        "lat": 49.4535,
+        "lon": 12.18
+      },
+      {
+        "id": 2957468,
+        "name": "Altenstadt",
+        "lat": 48.1603,
+        "lon": 10.1144
+      },
+      {
+        "id": 2947125,
+        "name": "Bodenkirchen",
+        "lat": 48.3833,
+        "lon": 12.3833
+      }
+    ],
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        16,
+        13,
+        10,
+        6,
+        14,
+        28,
+        7,
+        17,
+        2,
+        19,
+        4,
+        15,
+        1,
+        26,
+        22,
+        25,
+        5,
+        23,
+        12,
+        27,
+        11,
+        3,
+        9,
+        8,
+        20,
+        18,
+        29,
+        24,
+        21
+      ],
+      "lengthMm": 1903.949,
+      "gapMm": 9.39,
+      "model": "string",
+      "scaleGapMm": 9.39,
+      "startPlace": 29
+    }
+  }
+}

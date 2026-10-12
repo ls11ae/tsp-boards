@@ -18,6 +18,8 @@ export interface PermalinkData {
   readonly data: { readonly country: string; readonly version: number } | null;
   /** 'play': open the puzzle for playing (no search settings, no solution). */
   readonly mode: 'design' | 'play';
+  /** Puzzle title, if the link has one. */
+  readonly title: string | null;
 }
 
 /**
@@ -81,9 +83,11 @@ export function encodePermalink(
     excluded: [],
   },
   appVersion = '',
+  title = '',
 ): string {
   const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
+  if (title) q.set('t', title);
   q.set('d', `${dataVersion.country.toLowerCase()}@${dataVersion.version}`);
   // Informational: the seed reproduces a search only with the same app version and engine.
   if (appVersion) q.set('app', appVersion);
@@ -115,10 +119,12 @@ export function encodePlayLink(
   dataVersion: { country: string; version: number },
   selectedIds: readonly number[],
   appVersion = '',
+  title = '',
 ): string {
   const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
   q.set('m', 'play');
+  if (title) q.set('t', title);
   q.set('d', `${dataVersion.country.toLowerCase()}@${dataVersion.version}`);
   if (appVersion) q.set('app', appVersion);
   q.set('r', params.region);
@@ -178,5 +184,6 @@ export function decodePermalink(hash: string): PermalinkData | null {
     selected,
     data,
     mode: q.get('m') === 'play' && selected ? 'play' : 'design',
+    title: q.get('t') ? q.get('t')!.slice(0, 200) : null,
   };
 }

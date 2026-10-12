@@ -16,7 +16,10 @@ describe('incremental links', () => {
       [355, 355],
       [200, 100],
     ] as const;
-    const link = decodeIncrementalLink(encodeIncrementalLink(ui, points, '0.0.0'))!;
+    const link = decodeIncrementalLink(
+      encodeIncrementalLink(ui, points, '0.0.0', 'Ein Test & mehr'),
+    )!;
+    expect(link.title).toBe('Ein Test & mehr');
     expect(link.params).toEqual({ ...ui, n: 4 });
     expect(link.points).toEqual([
       [45, 50.3],
@@ -32,6 +35,7 @@ describe('incremental links', () => {
     expect(decodeIncrementalLink('#v=1&m=inc&g=-3&pts=zz')).toEqual({
       params: DEFAULT_INCREMENTAL_UI,
       points: null,
+      title: null,
     });
     expect(decodeIncrementalLink('#v=1&n=40')).toBeNull();
   });

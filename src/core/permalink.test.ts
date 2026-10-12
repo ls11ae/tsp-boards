@@ -22,6 +22,7 @@ describe('permalinks', () => {
         excluded: [2867714],
       },
       '0.0.0+abc1234',
+      'Ruhr & Rhein',
     );
     const link = decodePermalink(hash);
     expect(link).not.toBeNull();
@@ -31,6 +32,7 @@ describe('permalinks', () => {
     expect(link!.excluded).toEqual([2867714]);
     expect(link!.data).toEqual({ country: 'DE', version: 3 });
     expect(hash).toContain('app=');
+    expect(link!.title).toBe('Ruhr & Rhein');
   });
 
   it('writes play links without search settings', () => {

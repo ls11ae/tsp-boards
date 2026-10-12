@@ -56,6 +56,8 @@ export function boardSetup(
   file: CountryFile,
   params: PuzzleParams,
   cityIds: readonly number[],
+  /** Puzzle title for the board (default: the region's name). */
+  title = '',
 ): BoardSetup {
   const outline = regionOutline(file, params.region);
   const projection = boardProjection(outline, {
@@ -94,7 +96,7 @@ export function boardSetup(
     labels,
     texts,
     title: [
-      { text: regionName, sizeMm: TITLE_SIZE_MM },
+      { text: title || regionName, sizeMm: TITLE_SIZE_MM },
       { text: texts.subtitle(cities.length), sizeMm: SUBTITLE_SIZE_MM },
     ],
     footer: { text: texts.attribution, sizeMm: FOOTER_SIZE_MM },

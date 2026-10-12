@@ -17,7 +17,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
   n − 2), Section 10 (open question whether the string self-check works; answered by 6.3 and
   the start-nail design). Update them; keep the history in the decision log.
 
-### 5.1 Puzzle files and library
+### 5.1 Puzzle files and library — done 2026-10-12
 
 - One JSON document per puzzle (map and incremental): **title**, description, **purpose**
   (`board` or `digital`, see 5.4), region, places (GeoNames ids or custom points, see 5.2),
@@ -26,7 +26,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
 - Save and load: download/upload as a file; a local library "My puzzles" in the browser
   (IndexedDB or localStorage with try/catch; works without it); existing permalinks and play
   links keep working, and links can carry a title (compressed when custom points make them
-  long).
+  long). (Done; compressed links come with the custom points of 5.2.)
 - The title replaces the generic one in the app, in play mode and on the exported board
   (the board export already warns when there is no room for a title).
 - A curated collection shipped with the app under `public/puzzles/` with an index file.

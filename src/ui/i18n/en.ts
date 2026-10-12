@@ -57,7 +57,7 @@ export const en = {
   showCurrent: 'current state',
   showBest: 'best so far',
   showCandidate: (rank: string) => `candidate ${rank}`,
-  showLoaded: 'puzzle from link',
+  showLoaded: 'opened puzzle (link or file)',
   noPuzzle: 'No puzzle yet. Start a search.',
   gap: 'Gap to second-best tour',
   gapAtLeast: (value: string) => `≥ ${value} mm`,
@@ -174,6 +174,29 @@ export const en = {
       spacing: 'mark too close to the previous one',
     })[kind] ?? kind,
   incMarksDontFit: 'The marks do not all fit on the track.',
+
+  // Puzzle documents
+  puzzleSection: 'Puzzle',
+  docTitle: 'Title',
+  docDescription: 'Description',
+  docPurpose: 'Purpose',
+  purposeBoard: 'board (nails, string)',
+  purposeDigital: 'digital (screen)',
+  docNew: 'New',
+  docSave: 'Save to my puzzles',
+  docSaved: 'Saved in "My puzzles".',
+  docDownload: 'Download file',
+  docOpen: 'Open file…',
+  docOpenFailed: (message: string) => `Could not open the file: ${message}`,
+  myPuzzles: 'My puzzles',
+  myPuzzlesEmpty: 'Nothing saved yet.',
+  notPersistent:
+    'This browser does not keep data for this page: saved puzzles last until the page is closed. Download files to keep them.',
+  collection: 'Collection',
+  untitled: 'Untitled puzzle',
+  remove: 'Delete',
+  removeConfirm: 'Really delete?',
+  placesCount: (n: string) => `${n} places`,
 
   // Permalink and data
   permalink: 'Copy link',

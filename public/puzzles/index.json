@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "puzzles": [
+    {
+      "file": "bayern-30.tsp.json",
+      "id": "bayern-30",
+      "kind": "map",
+      "title": "Bayern: 30 Städte",
+      "description": "Rundreise durch 30 bayerische Städte.",
+      "purpose": "board",
+      "region": "DE-BY",
+      "n": 30
+    },
+    {
+      "file": "deutschland-40.tsp.json",
+      "id": "deutschland-40",
+      "kind": "map",
+      "title": "Deutschland: 40 Städte",
+      "description": "Die Rundreise durch 40 deutsche Städte, gesucht mit Standardgewichten.",
+      "purpose": "board",
+      "region": "DE",
+      "n": 40
+    },
+    {
+      "file": "nrw-25.tsp.json",
+      "id": "nrw-25",
+      "kind": "map",
+      "title": "Nordrhein-Westfalen: 25 Städte",
+      "description": "Rundreise durch 25 Städte in Nordrhein-Westfalen.",
+      "purpose": "board",
+      "region": "DE-NW",
+      "n": 25
+    },
+    {
+      "file": "schritt-12.tsp.json",
+      "id": "schritt-12",
+      "kind": "incremental",
+      "title": "Schritt für Schritt: 12 Nägel",
+      "description": "Die kürzeste Rundreise durch 1–3, 1–4, … bis 1–12.",
+      "purpose": "board",
+      "region": "",
+      "n": 12
+    }
+  ]
+}

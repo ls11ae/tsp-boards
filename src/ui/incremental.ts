@@ -91,8 +91,19 @@ export function applyIncrementalLink(hash: string): boolean {
   if (!link) return false;
   useStore.setState({ puzzleType: 'incremental' });
   useStore.getState().setIncParams(link.params);
+  if (link.title !== null) useStore.getState().setDoc({ title: link.title });
   if (link.points) checkPoints(link.params, link.points);
   return true;
+}
+
+/** Opens an incremental puzzle with the given points (checked exactly). */
+export function applyIncrementalPuzzle(
+  params: IncrementalUiParams,
+  points: readonly Point[],
+): void {
+  useStore.getState().setIncParams(params);
+  if (points.length >= 3) checkPoints(params, points);
+  else useStore.getState().setInc({ puzzle: null, status: 'idle' });
 }
 
 function checkPoints(params: IncrementalUiParams, points: readonly Point[]): void {
@@ -100,22 +111,26 @@ function checkPoints(params: IncrementalUiParams, points: readonly Point[]): voi
 }
 
 export function incrementalLink(): string {
-  const { params, puzzle } = useStore.getState().inc;
+  const { inc, doc } = useStore.getState();
+  const { params, puzzle } = inc;
   const hash = encodeIncrementalLink(
     { ...params, n: puzzle?.points.length ?? params.n },
     puzzle?.points ?? null,
     __APP_VERSION__,
+    doc.title,
   );
   return `${window.location.origin}${window.location.pathname}${hash}`;
 }
 
 function drawingOptions(params: IncrementalUiParams, holes: 'cut' | 'mark', n: number) {
+  const title = useStore.getState().doc.title;
+  const line = INCREMENTAL_TEXTS[params.labelLanguage].boardLine(n);
   return {
     nailDiameterMm: params.nailDiameterMm,
     labelSizeMm: params.labelSizeMm > 0 ? params.labelSizeMm : 8,
     holes,
     cornerRadiusMm: 5,
-    line: INCREMENTAL_TEXTS[params.labelLanguage].boardLine(n),
+    line: title ? `${title} · ${line}` : line,
   };
 }
 
@@ -132,7 +147,13 @@ export function incrementalPreview(
   params: IncrementalUiParams,
   holes: 'cut' | 'mark',
 ): IncrementalPreview {
-  const key = [holes, params.nailDiameterMm, params.labelSizeMm, params.labelLanguage].join('|');
+  const key = [
+    holes,
+    params.nailDiameterMm,
+    params.labelSizeMm,
+    params.labelLanguage,
+    useStore.getState().doc.title,
+  ].join('|');
   const cached = previewCache.get(puzzle);
   if (cached?.key === key) return cached.paths;
   const { drawing } = drawIncremental(puzzle, drawingOptions(params, holes, puzzle.points.length));

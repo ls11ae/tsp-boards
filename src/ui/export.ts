@@ -22,6 +22,7 @@ const PLAN_TIME_LIMIT_SEC = 120;
 export function planKey(puzzleKey: string, p: PuzzleParams): string {
   return [
     puzzleKey,
+    useStore.getState().doc.title,
     p.region,
     p.boardWidthMm,
     p.boardHeightMm,
@@ -75,6 +76,7 @@ export function puzzleSetup(board: BoardModel, puzzle: PuzzleView): BoardSetup |
     country,
     params,
     puzzle.members.map((c) => board.pool[c]!.id),
+    useStore.getState().doc.title,
   );
 }
 

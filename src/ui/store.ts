@@ -3,6 +3,7 @@
 
 import { create } from 'zustand';
 import type { BoardPlan } from '../core/board/plan';
+import type { Purpose } from '../core/puzzle-file';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
 import { EMPTY_PLAY, type PlayAttempt, type PlayState } from '../core/play';
@@ -64,6 +65,17 @@ export interface ExportOptions {
 }
 
 export type Mode = 'design' | 'play';
+
+/** The open puzzle document: what a saved file or a link carries besides the places. */
+export interface DocMeta {
+  /** Library id once saved or opened from a file; null for a new puzzle. */
+  readonly id: string | null;
+  readonly title: string;
+  readonly description: string;
+  readonly purpose: Purpose;
+}
+
+export const NEW_DOC: DocMeta = { id: null, title: '', description: '', purpose: 'board' };
 export type PuzzleType = 'map' | 'incremental';
 
 export interface IncrementalUi {
@@ -112,6 +124,10 @@ export interface AppState {
   readonly play: PlayUi;
   readonly puzzleType: PuzzleType;
   readonly inc: IncrementalUi;
+  readonly doc: DocMeta;
+  readonly setDoc: (update: Partial<DocMeta>) => void;
+  /** Increases when the local library changes (re-render lists). */
+  readonly libraryVersion: number;
   readonly setPuzzleType: (type: PuzzleType) => void;
   readonly setIncParams: (update: Partial<IncrementalUiParams>) => void;
   readonly setInc: (update: Partial<IncrementalUi>) => void;
@@ -181,7 +197,10 @@ export const useStore = create<AppState>()((set) => ({
     shownK: null,
     showSolution: false,
   },
-  setPuzzleType: (puzzleType) => set({ puzzleType, mode: 'design' }),
+  doc: NEW_DOC,
+  libraryVersion: 0,
+  setDoc: (update) => set((s) => ({ doc: { ...s.doc, ...update } })),
+  setPuzzleType: (puzzleType) => set({ puzzleType, mode: 'design', doc: NEW_DOC }),
   setIncParams: (update) =>
     set((s) => ({ inc: { ...s.inc, params: { ...s.inc.params, ...update } } })),
   setInc: (update) => set((s) => ({ inc: { ...s.inc, ...update } })),

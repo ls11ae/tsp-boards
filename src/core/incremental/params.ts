@@ -74,10 +74,12 @@ export function encodeIncrementalLink(
   ui: IncrementalUiParams,
   points: readonly Point[] | null,
   appVersion = '',
+  title = '',
 ): string {
   const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
   q.set('m', 'inc');
+  if (title) q.set('t', title);
   if (appVersion) q.set('app', appVersion);
   q.set('n', String(ui.n));
   q.set('b', `${ui.widthMm}x${ui.heightMm}`);
@@ -98,9 +100,11 @@ function num(value: string | null, fallback: number, min: number, max: number): 
   return Number.isFinite(x) && x >= min && x <= max ? x : fallback;
 }
 
-export function decodeIncrementalLink(
-  hash: string,
-): { readonly params: IncrementalUiParams; readonly points: Point[] | null } | null {
+export function decodeIncrementalLink(hash: string): {
+  readonly params: IncrementalUiParams;
+  readonly points: Point[] | null;
+  readonly title: string | null;
+} | null {
   const q = new Query(hash.startsWith('#') ? hash.slice(1) : hash);
   if (q.get('v') !== String(PERMALINK_VERSION) || q.get('m') !== 'inc') return null;
   const d = DEFAULT_INCREMENTAL_UI;
@@ -119,5 +123,9 @@ export function decodeIncrementalLink(
     labelSizeMm: num(q.get('lf'), d.labelSizeMm, 0, 50),
     labelLanguage: q.get('ll') === 'en' ? 'en' : 'de',
   };
-  return { params, points: points && points.length <= 16 ? points : null };
+  return {
+    params,
+    points: points && points.length <= 16 ? points : null,
+    title: q.get('t') ? q.get('t')!.slice(0, 200) : null,
+  };
 }

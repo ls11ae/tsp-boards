@@ -1,0 +1,236 @@
+{
+  "schema": 1,
+  "id": "schritt-12",
+  "kind": "incremental",
+  "title": "Schritt für Schritt: 12 Nägel",
+  "description": "Die kürzeste Rundreise durch 1–3, 1–4, … bis 1–12.",
+  "purpose": "board",
+  "language": "de",
+  "app": "0.0.0",
+  "updated": "2026-10-12",
+  "data": null,
+  "incremental": {
+    "params": {
+      "n": 12,
+      "widthMm": 400,
+      "heightMm": 400,
+      "minDistanceMm": 30,
+      "targetGapMm": 5,
+      "spacingMm": 10,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "seed": 1,
+      "labelSizeMm": 8,
+      "labelLanguage": "de"
+    },
+    "points": [
+      [
+        150,
+        265
+      ],
+      [
+        195,
+        170
+      ],
+      [
+        225,
+        280
+      ],
+      [
+        350,
+        50
+      ],
+      [
+        45,
+        65
+      ],
+      [
+        350,
+        285
+      ],
+      [
+        45,
+        335
+      ],
+      [
+        180,
+        350
+      ],
+      [
+        140,
+        190
+      ],
+      [
+        190,
+        225
+      ],
+      [
+        275,
+        145
+      ],
+      [
+        215,
+        90
+      ]
+    ],
+    "results": {
+      "steps": [
+        {
+          "k": 3,
+          "tour": [
+            0,
+            1,
+            2
+          ],
+          "stringMm": 305.047,
+          "gapMm": null,
+          "trackGapMm": null
+        },
+        {
+          "k": 4,
+          "tour": [
+            0,
+            1,
+            3,
+            2
+          ],
+          "stringMm": 648.825,
+          "gapMm": 43.813,
+          "trackGapMm": 42.109
+        },
+        {
+          "k": 5,
+          "tour": [
+            0,
+            2,
+            1,
+            3,
+            4
+          ],
+          "stringMm": 930.742,
+          "gapMm": 14.736,
+          "trackGapMm": 11.959
+        },
+        {
+          "k": 6,
+          "tour": [
+            0,
+            1,
+            4,
+            3,
+            5,
+            2
+          ],
+          "stringMm": 1043.804,
+          "gapMm": 11.021,
+          "trackGapMm": 12.41
+        },
+        {
+          "k": 7,
+          "tour": [
+            0,
+            2,
+            5,
+            3,
+            1,
+            4,
+            6
+          ],
+          "stringMm": 1227.488,
+          "gapMm": 56.871,
+          "trackGapMm": 53.337
+        },
+        {
+          "k": 8,
+          "tour": [
+            0,
+            1,
+            4,
+            3,
+            5,
+            2,
+            7,
+            6
+          ],
+          "stringMm": 1317.3,
+          "gapMm": 13.279,
+          "trackGapMm": 8.462
+        },
+        {
+          "k": 9,
+          "tour": [
+            0,
+            6,
+            7,
+            2,
+            5,
+            3,
+            1,
+            4,
+            8
+          ],
+          "stringMm": 1338.378,
+          "gapMm": 12.053,
+          "trackGapMm": 9.014
+        },
+        {
+          "k": 10,
+          "tour": [
+            0,
+            6,
+            7,
+            2,
+            5,
+            3,
+            4,
+            8,
+            1,
+            9
+          ],
+          "stringMm": 1359.282,
+          "gapMm": 21.964,
+          "trackGapMm": 17.548
+        },
+        {
+          "k": 11,
+          "tour": [
+            0,
+            6,
+            7,
+            2,
+            5,
+            3,
+            10,
+            1,
+            4,
+            8,
+            9
+          ],
+          "stringMm": 1390.806,
+          "gapMm": 16.817,
+          "trackGapMm": 12.401
+        },
+        {
+          "k": 12,
+          "tour": [
+            0,
+            6,
+            7,
+            2,
+            5,
+            10,
+            3,
+            11,
+            4,
+            8,
+            1,
+            9
+          ],
+          "stringMm": 1416.186,
+          "gapMm": 16.92,
+          "trackGapMm": 12.504
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "schema": 1,
+  "id": "nrw-25",
+  "kind": "map",
+  "title": "Nordrhein-Westfalen: 25 Städte",
+  "description": "Rundreise durch 25 Städte in Nordrhein-Westfalen.",
+  "purpose": "board",
+  "language": "de",
+  "app": "0.0.0",
+  "updated": "2026-10-12",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE-NW",
+      "n": 25,
+      "boardWidthMm": 600,
+      "boardHeightMm": 800,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "labelSizeMm": 8,
+      "labelLanguage": "de"
+    },
+    "places": [
+      {
+        "id": 2886242,
+        "name": "Köln",
+        "lat": 50.9333,
+        "lon": 6.95
+      },
+      {
+        "id": 2934246,
+        "name": "Düsseldorf",
+        "lat": 51.2232,
+        "lon": 6.7793
+      },
+      {
+        "id": 2928810,
+        "name": "Essen",
+        "lat": 51.4566,
+        "lon": 7.0123
+      },
+      {
+        "id": 2949186,
+        "name": "Bielefeld",
+        "lat": 52.0333,
+        "lon": 8.5333
+      },
+      {
+        "id": 2867543,
+        "name": "Münster",
+        "lat": 51.9624,
+        "lon": 7.6257
+      },
+      {
+        "id": 3247449,
+        "name": "Aachen",
+        "lat": 50.7766,
+        "lon": 6.0834
+      },
+      {
+        "id": 2831580,
+        "name": "Solingen",
+        "lat": 51.1734,
+        "lon": 7.0845
+      },
+      {
+        "id": 2855745,
+        "name": "Paderborn",
+        "lat": 51.7191,
+        "lon": 8.7544
+      },
+      {
+        "id": 2849647,
+        "name": "Recklinghausen",
+        "lat": 51.6138,
+        "lon": 7.1974
+      },
+      {
+        "id": 2913366,
+        "name": "Gütersloh",
+        "lat": 51.9069,
+        "lon": 8.3785
+      },
+      {
+        "id": 2934486,
+        "name": "Düren",
+        "lat": 50.8043,
+        "lon": 6.493
+      },
+      {
+        "id": 2817311,
+        "name": "Viersen",
+        "lat": 51.2544,
+        "lon": 6.3944
+      },
+      {
+        "id": 2847645,
+        "name": "Rheine",
+        "lat": 52.2851,
+        "lon": 7.4406
+      },
+      {
+        "id": 2891524,
+        "name": "Kerpen",
+        "lat": 50.8699,
+        "lon": 6.6969
+      },
+      {
+        "id": 2928396,
+        "name": "Euskirchen",
+        "lat": 50.6606,
+        "lon": 6.7872
+      },
+      {
+        "id": 2909230,
+        "name": "Hattingen",
+        "lat": 51.3989,
+        "lon": 7.1856
+      },
+      {
+        "id": 2832521,
+        "name": "Siegburg",
+        "lat": 50.8002,
+        "lon": 7.2077
+      },
+      {
+        "id": 2959279,
+        "name": "Ahaus",
+        "lat": 52.0794,
+        "lon": 7.0134
+      },
+      {
+        "id": 2852577,
+        "name": "Porta Westfalica",
+        "lat": 52.2296,
+        "lon": 8.9161
+      },
+      {
+        "id": 2857943,
+        "name": "Oelde",
+        "lat": 51.8289,
+        "lon": 8.1472
+      },
+      {
+        "id": 2842131,
+        "name": "Salzkotten",
+        "lat": 51.6717,
+        "lon": 8.6009
+      },
+      {
+        "id": 2857900,
+        "name": "Oerlinghausen",
+        "lat": 51.9545,
+        "lon": 8.6622
+      },
+      {
+        "id": 2891014,
+        "name": "Kierspe",
+        "lat": 51.134,
+        "lon": 7.5908
+      },
+      {
+        "id": 2861847,
+        "name": "Nordwalde",
+        "lat": 52.0833,
+        "lon": 7.4833
+      },
+      {
+        "id": 2928890,
+        "name": "Eslohe (Sauerland)",
+        "lat": 51.2537,
+        "lon": 8.1695
+      }
+    ],
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        13,
+        14,
+        10,
+        5,
+        11,
+        1,
+        6,
+        15,
+        2,
+        8,
+        17,
+        12,
+        23,
+        4,
+        19,
+        9,
+        3,
+        18,
+        21,
+        7,
+        20,
+        24,
+        22,
+        16
+      ],
+      "lengthMm": 1651.883,
+      "gapMm": 8.134,
+      "model": "string",
+      "scaleGapMm": 8.134,
+      "startPlace": 18
+    }
+  }
+}

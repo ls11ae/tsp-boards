@@ -130,7 +130,7 @@ function sendRecord(puzzle: PuzzleView): void {
 
 /** Link that opens the shown puzzle in play mode. */
 export function playLink(puzzle: PuzzleView): string | null {
-  const { country, params } = useStore.getState();
+  const { country, params, doc } = useStore.getState();
   if (!country) return null;
   const board = getBoard(country, params);
   const hash = encodePlayLink(
@@ -138,6 +138,7 @@ export function playLink(puzzle: PuzzleView): string | null {
     { country: country.country, version: country.dataVersion },
     puzzle.members.map((c) => board.pool[c]!.id),
     __APP_VERSION__,
+    doc.title,
   );
   return `${window.location.origin}${window.location.pathname}${hash}`;
 }

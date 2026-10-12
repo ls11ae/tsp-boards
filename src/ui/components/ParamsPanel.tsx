@@ -5,6 +5,7 @@ import { startSearch, stopSearch } from '../controller';
 import { useFormat, useT } from '../i18n';
 import { encodePermalink } from '../../core/permalink';
 import { playLink } from '../play';
+import { DocumentPanel } from './DocumentPanel';
 import type { PuzzleView } from '../puzzle';
 import { useStore, type UiParams } from '../store';
 
@@ -95,6 +96,7 @@ export function ParamsPanel({
       ids,
       { pinned, excluded },
       __APP_VERSION__,
+      useStore.getState().doc.title,
     );
     window.history.replaceState(null, '', hash);
     copy(window.location.href, 'link');
@@ -102,6 +104,7 @@ export function ParamsPanel({
 
   return (
     <aside className="panel params">
+      <DocumentPanel puzzle={puzzle} />
       <h2>{t.parameters}</h2>
       <label className="field">
         <span>{t.region}</span>

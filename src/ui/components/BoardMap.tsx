@@ -11,6 +11,7 @@ import { playClick } from '../play';
 import { getLabels, placeBoardLabels } from '../labels';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
+import { boardFit } from './fit';
 
 /** Nails are drawn at least this large (mm) so they stay visible on screen. */
 const MIN_VISUAL_RADIUS_MM = 3;
@@ -150,6 +151,7 @@ export function BoardMap({
     <svg
       ref={svgRef}
       className="board"
+      style={boardFit(widthMm, heightMm)}
       viewBox={`0 0 ${widthMm} ${heightMm}`}
       role="img"
       aria-label={puzzle ? puzzle.members.map((c) => board.pool[c]!.name).join(', ') : undefined}

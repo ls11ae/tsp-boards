@@ -7,6 +7,8 @@ import type { IncrementalUiParams } from '../../core/incremental/params';
 import { useFormat, useT } from '../i18n';
 import { downloadIncremental, generate, incrementalLink, incrementalPreview } from '../incremental';
 import { useStore } from '../store';
+import { DocumentPanel } from './DocumentPanel';
+import { boardFit } from './fit';
 
 type NumericKey = {
   [K in keyof IncrementalUiParams]: IncrementalUiParams[K] extends number ? K : never;
@@ -51,6 +53,7 @@ export function IncrementalParams() {
   const [copied, setCopied] = useState(false);
   return (
     <aside className="panel params">
+      <DocumentPanel puzzle={null} />
       <h2>{t.parameters}</h2>
       <p className="hint">{t.incTagline}</p>
       <Field label={t.incPoints} field="n" min={4} />
@@ -122,7 +125,13 @@ export function IncrementalBoard() {
       : null;
   const { widthMm: w, heightMm: h } = puzzle.params;
   return (
-    <svg className="board" viewBox={`0 0 ${w} ${h}`} role="img" aria-label={t.incrementalPuzzle}>
+    <svg
+      className="board"
+      style={boardFit(w, h)}
+      viewBox={`0 0 ${w} ${h}`}
+      role="img"
+      aria-label={t.incrementalPuzzle}
+    >
       <g className="preview">
         <rect className="board-bg" width={w} height={h} />
         <path className="lay-score" d={preview.score} />

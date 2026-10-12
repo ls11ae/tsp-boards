@@ -59,6 +59,18 @@ function Header() {
   );
 }
 
+/** Title of the open puzzle above the board. */
+function BoardTitle() {
+  const doc = useStore((s) => s.doc);
+  if (!doc.title) return null;
+  return (
+    <div className="board-title">
+      <h2>{doc.title}</h2>
+      {doc.description && <p className="hint">{doc.description}</p>}
+    </div>
+  );
+}
+
 function Footer() {
   const t = useT();
   const lang = useStore((s) => s.lang);
@@ -95,6 +107,7 @@ export function App() {
         <Header />
         <IncrementalParams />
         <main className="stage">
+          <BoardTitle />
           <IncrementalBoard />
         </main>
         <IncrementalSide />
@@ -108,6 +121,7 @@ export function App() {
       <Header />
       {mode === 'design' && <ParamsPanel board={board} puzzle={puzzle} />}
       <main className="stage">
+        <BoardTitle />
         {loadError ? (
           <p className="error">
             {t.loadFailed} ({loadError})

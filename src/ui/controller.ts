@@ -59,19 +59,26 @@ function applyPermalink(hash: string): void {
     linkWarnings: warnings,
     mode: link.mode,
   });
-  if (!link.selected) return;
-  const board = getBoard(country, link.params);
-  const members = link.selected.map((id) => board.index.get(id)).filter((i) => i !== undefined);
-  const missing = link.selected.filter((id) => !board.index.has(id));
+  if (link.title !== null) useStore.getState().setDoc({ title: link.title });
+  if (link.selected) openSelection(link.selected, warnings);
+}
+
+/**
+ * Shows the puzzle made of the given GeoNames ids (from a link or a file) and checks it
+ * exactly; ids missing from the current pool are reported as warnings.
+ */
+export function openSelection(ids: readonly number[], warnings: string[] = []): void {
+  const { country, params } = useStore.getState();
+  if (!country) return;
+  const board = getBoard(country, params);
+  const members = ids.map((id) => board.index.get(id)).filter((i) => i !== undefined);
+  const missing = ids.filter((id) => !board.index.has(id));
   if (missing.length > 0) warnings.push(`missing:${missing.join(',')}`);
+  useStore.setState({ linkWarnings: warnings });
   if (members.length < 3) return;
   members.sort((a, b) => a - b);
   const key = members.join(',');
-  useStore.setState({
-    loaded: { key, members },
-    shown: { kind: 'key', key },
-    linkWarnings: warnings,
-  });
+  useStore.setState({ loaded: { key, members }, shown: { kind: 'key', key } });
   enqueueVerification(key, members, null);
 }
 
