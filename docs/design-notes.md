@@ -500,3 +500,17 @@ Short entries: decision; alternatives considered; reason. Newest last.
   optional weights (default 0) add them to the objective; links carry them as weights 4 and 5
   of `w` only when non-zero, so old links stay valid. Alternatives: several overlays at once
   (cluttered), heuristic tours from the search worker (would tie them to a run).
+- **2026-10-12 Regions (roadmap 5.6).** A region is the country, a state or a union of states
+  with the id `DE-BB+BE` (state codes sorted, joined by `+`): pool = towns of the states,
+  outline = the dissolved state polygons (topojson `merge`), board outline = its outer
+  boundary. Named unions live in `src/core/region.ts`: the city-states with their surrounding
+  state (Berlin and Brandenburg, Bremen and Lower Saxony, Hamburg and Schleswig-Holstein),
+  Rhineland-Palatinate and Saarland, and Northern, Eastern, Central and Southern Germany. A
+  region is offered only if 10 places fit greedily at the minimum distance on the default
+  board (85 ms for all regions, memoised); this drops Berlin, Hamburg and Bremen alone, while
+  links with such a region still open. Brandenburg, Lower Saxony and Schleswig-Holstein stay
+  available on their own. Changing the pool (region, population threshold) now drops search
+  results and moves the puzzle on display to the new pool by its GeoNames ids when all its
+  places are there (before, it kept stale pool indices and could crash the board).
+  Alternatives: unions in the data build (would need a data version bump for each new union),
+  a free choice of states (possible with the same ids; a UI for it is left for later).

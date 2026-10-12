@@ -9,7 +9,7 @@ import type { Point } from '../geometry';
 import { Instance } from '../instance';
 import { rEffMm, type PuzzleParams } from '../params';
 import { boardProjection, type BoardProjection } from '../projection';
-import { boardPoints, cityPool, regionOutline, regionsOf } from '../region';
+import { boardPoints, cityPool, regionInfo, regionOutline } from '../region';
 import { boardLabel } from '../data';
 import type { Tour } from '../tsp/tour';
 import {
@@ -77,8 +77,8 @@ export function boardSetup(
   const points = boardPoints(cities, projection);
   const lang = params.labelLanguage;
   const texts = BOARD_TEXTS[lang];
-  const region = regionsOf(file).find((r) => r.id === params.region);
-  const regionName = region ? (lang === 'de' ? region.name : region.nameEn) : params.region;
+  const region = regionInfo(file, params.region);
+  const regionName = lang === 'de' ? region.name : region.nameEn;
   let labels: BoardSetup['labels'] = null;
   if (params.labelSizeMm > 0) {
     const labelTexts = cities.map((c) => boardLabel(c, lang));

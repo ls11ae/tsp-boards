@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { regionsOf } from '../../core/region';
+import { regionInfo, type RegionInfo } from '../../core/region';
+import { offeredRegions } from '../../core/region-check';
 import type { BoardModel } from '../board';
-import { startSearch, stopSearch } from '../controller';
+import { changeParams, startSearch, stopSearch } from '../controller';
 import { useFormat, useT } from '../i18n';
 import { encodePermalink } from '../../core/permalink';
 import { linkList } from '../lists';
@@ -27,7 +28,6 @@ function NumberField({
   readonly min?: number;
 }) {
   const value = useStore((s) => s.params[field]);
-  const setParams = useStore((s) => s.setParams);
   return (
     <label className="field">
       <span>{label}</span>
@@ -38,7 +38,7 @@ function NumberField({
         min={min}
         onChange={(e) => {
           const x = e.target.valueAsNumber;
-          if (Number.isFinite(x)) setParams({ [field]: x });
+          if (Number.isFinite(x)) changeParams({ [field]: x });
         }}
       />
     </label>
@@ -63,6 +63,51 @@ function LabelLanguageField() {
   );
 }
 
+/** Regions that hold a minimum puzzle, grouped; a region from a link stays selectable. */
+function RegionField() {
+  const t = useT();
+  const fmt = useFormat();
+  const country = useStore((s) => s.country);
+  const region = useStore((s) => s.params.region);
+  const name = (r: RegionInfo) => (fmt.lang === 'de' ? r.name : r.nameEn);
+  let regions: RegionInfo[] = country ? offeredRegions(country) : [];
+  if (country && !regions.some((r) => r.id === region)) {
+    let current: RegionInfo = { id: region, name: region, nameEn: region, kind: 'state' };
+    try {
+      current = regionInfo(country, region);
+    } catch {
+      // Unknown region: shown by its id.
+    }
+    regions = [...regions, current];
+  }
+  const sorted = (kind: RegionInfo['kind']) =>
+    regions.filter((r) => r.kind === kind).sort((a, b) => name(a).localeCompare(name(b), fmt.lang));
+  const groups: [string, RegionInfo[]][] = [
+    [t.regionCountry, sorted('country')],
+    [t.regionUnions, sorted('multi')],
+    [t.regionStates, sorted('state')],
+  ];
+  return (
+    <label className="field">
+      <span>{t.region}</span>
+      <select value={region} onChange={(e) => changeParams({ region: e.target.value })}>
+        {groups.map(
+          ([label, list]) =>
+            list.length > 0 && (
+              <optgroup key={label} label={label}>
+                {list.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {name(r)}
+                  </option>
+                ))}
+              </optgroup>
+            ),
+        )}
+      </select>
+    </label>
+  );
+}
+
 export function ParamsPanel({
   board,
   puzzle,
@@ -73,8 +118,6 @@ export function ParamsPanel({
   const t = useT();
   const fmt = useFormat();
   const country = useStore((s) => s.country);
-  const region = useStore((s) => s.params.region);
-  const setParams = useStore((s) => s.setParams);
   const status = useStore((s) => s.run.status);
   const fixed = useStore((s) => s.list?.mode === 'fixed');
   const [copied, setCopied] = useState<'link' | 'play' | null>(null);
@@ -110,17 +153,7 @@ export function ParamsPanel({
     <aside className="panel params">
       <DocumentPanel puzzle={puzzle} />
       <h2>{t.parameters}</h2>
-      <label className="field">
-        <span>{t.region}</span>
-        <select value={region} onChange={(e) => setParams({ region: e.target.value })}>
-          {country &&
-            regionsOf(country).map((r) => (
-              <option key={r.id} value={r.id}>
-                {fmt.lang === 'de' ? r.name : r.nameEn}
-              </option>
-            ))}
-        </select>
-      </label>
+      <RegionField />
       <PlacesPanel />
       <NumberField label={t.cityCount} field="n" min={5} />
       <NumberField label={t.minPopulation} field="minPopulation" step={1000} />

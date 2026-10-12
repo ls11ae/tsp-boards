@@ -6,6 +6,7 @@
 import { DEFAULT_PARAMS, type PuzzleParams } from './params';
 import { decodePlaceList, encodePlaceList, type LinkPlace } from './places';
 import type { Place } from './puzzle-file';
+import { REGION_ID_PATTERN } from './region';
 
 export const PERMALINK_VERSION = 1;
 
@@ -196,7 +197,7 @@ export function decodePermalink(hash: string): PermalinkData | null {
   const [bw, bh, bm] = (q.get('b') ?? '').split('x');
   const [wg, wd, wr, wi, wn] = (q.get('w') ?? '').split(',');
   let params: PuzzleParams = {
-    region: /^[A-Z]{2}(-[A-Z0-9]{1,3})?$/.test(q.get('r') ?? '') ? q.get('r')! : d.region,
+    region: REGION_ID_PATTERN.test(q.get('r') ?? '') ? q.get('r')! : d.region,
     n: Math.round(num(q.get('n'), d.n, 5, 120)),
     boardWidthMm: num(bw ?? null, d.boardWidthMm, 50, 5000),
     boardHeightMm: num(bh ?? null, d.boardHeightMm, 50, 5000),

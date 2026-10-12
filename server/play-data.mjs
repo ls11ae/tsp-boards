@@ -50,7 +50,7 @@ export function validateRecord(value) {
     isStr(r.app, /^[0-9A-Za-z.+-]{1,40}$/) &&
     isStr(r.data, /^[a-z]{2}@\d{1,6}$/) &&
     isStr(r.puzzle, /^[0-9a-f]{8}$/) &&
-    isStr(r.region, /^[A-Z]{2}(-[A-Z0-9]{1,3})?$/) &&
+    isStr(r.region, /^[A-Z]{2}(-[A-Z0-9]{1,3}(\+[A-Z0-9]{1,3})*)?$/) &&
     isInt(r.n, 3, 500) &&
     isNum(r.rEffMm, 0, 50) &&
     Array.isArray(r.attempts) &&

@@ -12,7 +12,7 @@ import type { GeometryCollection } from 'topojson-specification';
 import type { CountryFile } from '../data';
 import type { Point } from '../geometry';
 import type { BoardProjection } from '../projection';
-import type { RegionId } from '../region';
+import { regionStates, type RegionId } from '../region';
 
 export interface MapLines {
   /** Country and region outline (engraved stronger). */
@@ -68,12 +68,14 @@ export function boardMapLines(
   const states = object(file, 'states');
   const seen = new Set<string>();
   const layers: { geometry: MultiLineString; strong: boolean }[] = [];
-  if (region !== file.country) {
+  const inside = regionStates(file, region);
+  if (inside) {
     const own: GeometryCollection = {
       ...states,
-      geometries: states.geometries.filter((g) => idOf(g.properties) === region),
+      geometries: states.geometries.filter((g) => inside.includes(idOf(g.properties) ?? '')),
     };
-    layers.push({ geometry: mesh(topology, own), strong: true });
+    // Outer boundary only: borders between the states of a union stay thin.
+    layers.push({ geometry: mesh(topology, own, (a, b) => a === b), strong: true });
   }
   layers.push({ geometry: mesh(topology, object(file, 'country')), strong: true });
   layers.push({ geometry: mesh(topology, states, (a, b) => a !== b), strong: false });

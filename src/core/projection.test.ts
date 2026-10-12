@@ -53,8 +53,10 @@ describe('board projection for Germany', () => {
     ).toBeCloseTo(504, -1);
   });
 
-  it('lists the country and its 16 states as regions', () => {
-    expect(regionsOf(file).map((r) => r.id)).toHaveLength(17);
+  it('lists the country, the named unions and the 16 states as regions', () => {
+    expect(regionsOf(file).filter((r) => r.kind === 'state' && !r.id.includes('+'))).toHaveLength(
+      16,
+    );
     expect(
       cityPool(file, 'DE-NW', { minPopulation: 100_000 }).every((c) => c.state === 'DE-NW'),
     ).toBe(true);

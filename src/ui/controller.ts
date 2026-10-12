@@ -23,7 +23,7 @@ import { getBoard, townsById } from './board';
 import { openListPuzzle } from './lists';
 import { applyIncrementalLink } from './incremental';
 import { getLabels, poolLabels } from './labels';
-import { useStore, type RunState } from './store';
+import { useStore, type RunState, type UiParams } from './store';
 
 const UI_INTERVAL_MS = 100;
 /** Exact checks per run: the best candidates of the archive. */
@@ -437,6 +437,36 @@ function resetVerifications(): void {
     busy = null;
   }
   useStore.setState({ verifications: {} });
+}
+
+// --- parameters ----------------------------------------------------------------------------
+
+/**
+ * Changes parameters. If the city pool changes (region, population threshold), search results
+ * and checks belong to the old pool: they are dropped, and the puzzle on display moves to the
+ * new pool by its GeoNames ids if all its places are there.
+ */
+export function changeParams(update: Partial<UiParams>): void {
+  const before = useStore.getState();
+  const old = before.country ? getBoard(before.country, before.params) : null;
+  before.setParams(update);
+  const { country, params, loaded, run } = useStore.getState();
+  if (!country || !old) return;
+  const board = getBoard(country, params);
+  const same =
+    board.pool.length === old.pool.length && board.pool.every((c, i) => c.id === old.pool[i]!.id);
+  if (same) return;
+  const members =
+    loaded?.members ?? run.progress?.best?.members ?? run.progress?.current.members ?? [];
+  const ids = members.map((c) => old.pool[c]!.id);
+  stopSearch();
+  resetVerifications();
+  useStore.setState({
+    run: { status: 'idle', runId: run.runId + 1, progress: null, trace: [], error: null },
+    loaded: null,
+    shown: { kind: 'auto' },
+  });
+  if (ids.length > 0 && ids.every((id) => board.index.has(id))) openSelection(ids);
 }
 
 // --- pins and exclusions -------------------------------------------------------------------
