@@ -571,3 +571,13 @@ Short entries: decision; alternatives considered; reason. Newest last.
   now resets checks, plans, robustness and teaching whenever the pool changes.
   Alternatives: a puzzle type of its own with points in board mm (cleaner data, but every
   feature of map puzzles would need a second implementation).
+- **2026-10-12 City puzzles (Phase 6).** Districts come from Wikidata (CC0) rather than
+  official open data or OSM: one SPARQL query per city gives names and points (Berlin: the
+  96 current items of class "Ortsteil von Berlin"; Hamburg: the 104 parts of its seven
+  Bezirke), no licence obligations beyond the CC BY of GeoNames we already carry, and
+  `cli/wikidata.ts` rebuilds the lists. They are place lists of custom places with the
+  city-state as region (not offered in the region list, but valid), and the collection CLI
+  now searches a list as pool (`list --pool --n`) with `--merge 0` for close districts.
+  Berlin: 20 of 96 Ortsteile, string gap 37.1 mm; Hamburg: 20 of 104 Stadtteile, 10.8 mm; both
+  boards. Alternatives: official boundary data (centroids would be better than Wikidata's
+  points, but formats and licences differ per city), OSM `place=suburb` nodes (ODbL share-alike).

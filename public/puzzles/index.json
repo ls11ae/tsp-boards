@@ -12,6 +12,16 @@
       "n": 30
     },
     {
+      "file": "berlin-ortsteile-20.tsp.json",
+      "id": "berlin-ortsteile-20",
+      "kind": "map",
+      "title": "Berlin: 20 Ortsteile",
+      "description": "Rundreise durch 20 der 96 Berliner Ortsteile (Lage nach Wikidata).",
+      "purpose": "board",
+      "region": "DE-BE",
+      "n": 20
+    },
+    {
       "file": "deutschland-40.tsp.json",
       "id": "deutschland-40",
       "kind": "map",
@@ -50,6 +60,16 @@
       "purpose": "digital",
       "region": "DE",
       "n": 17
+    },
+    {
+      "file": "hamburg-stadtteile-20.tsp.json",
+      "id": "hamburg-stadtteile-20",
+      "kind": "map",
+      "title": "Hamburg: 20 Stadtteile",
+      "description": "Rundreise durch 20 der 104 Hamburger Stadtteile (Lage nach Wikidata).",
+      "purpose": "board",
+      "region": "DE-HH",
+      "n": 20
     },
     {
       "file": "nrw-25.tsp.json",

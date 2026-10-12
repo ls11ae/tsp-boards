@@ -1,0 +1,660 @@
+{
+  "schema": 1,
+  "id": "berlin-ortsteile-20",
+  "kind": "map",
+  "title": "Berlin: 20 Ortsteile",
+  "description": "Rundreise durch 20 der 96 Berliner Ortsteile (Lage nach Wikidata).",
+  "purpose": "board",
+  "language": "de",
+  "app": "0.0.0",
+  "updated": "2026-10-12",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE-BE",
+      "n": 20,
+      "boardWidthMm": 600,
+      "boardHeightMm": 800,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "name": "Adlershof",
+        "lat": 52.43778,
+        "lon": 13.5475
+      },
+      {
+        "name": "Alt-Hohenschönhausen",
+        "lat": 52.5486,
+        "lon": 13.5075
+      },
+      {
+        "name": "Blankenburg",
+        "lat": 52.5931,
+        "lon": 13.4542
+      },
+      {
+        "name": "Friedrichsfelde",
+        "lat": 52.5058,
+        "lon": 13.5192
+      },
+      {
+        "name": "Frohnau",
+        "lat": 52.63333,
+        "lon": 13.29
+      },
+      {
+        "name": "Haselhorst",
+        "lat": 52.54306,
+        "lon": 13.24028
+      },
+      {
+        "name": "Heiligensee",
+        "lat": 52.6167,
+        "lon": 13.2333
+      },
+      {
+        "name": "Hermsdorf",
+        "lat": 52.6167,
+        "lon": 13.3167
+      },
+      {
+        "name": "Kaulsdorf",
+        "lat": 52.5081,
+        "lon": 13.5808
+      },
+      {
+        "name": "Neukölln",
+        "lat": 52.48139,
+        "lon": 13.43528
+      },
+      {
+        "name": "Niederschöneweide",
+        "lat": 52.4561,
+        "lon": 13.5131
+      },
+      {
+        "name": "Niederschönhausen",
+        "lat": 52.5833,
+        "lon": 13.4
+      },
+      {
+        "name": "Rahnsdorf",
+        "lat": 52.4333,
+        "lon": 13.7
+      },
+      {
+        "name": "Rosenthal",
+        "lat": 52.59917,
+        "lon": 13.37722
+      },
+      {
+        "name": "Schmargendorf",
+        "lat": 52.4772,
+        "lon": 13.2881
+      },
+      {
+        "name": "Stadtrandsiedlung Malchow",
+        "lat": 52.5722,
+        "lon": 13.4667
+      },
+      {
+        "name": "Steglitz",
+        "lat": 52.46667,
+        "lon": 13.33333
+      },
+      {
+        "name": "Tegel",
+        "lat": 52.5833,
+        "lon": 13.2833
+      },
+      {
+        "name": "Westend",
+        "lat": 52.5125,
+        "lon": 13.2625
+      },
+      {
+        "name": "Wilhelmstadt",
+        "lat": 52.5211,
+        "lon": 13.1967
+      }
+    ],
+    "list": {
+      "mode": "pool",
+      "places": [
+        {
+          "name": "Adlershof",
+          "lat": 52.43778,
+          "lon": 13.5475
+        },
+        {
+          "name": "Alt-Hohenschönhausen",
+          "lat": 52.5486,
+          "lon": 13.5075
+        },
+        {
+          "name": "Alt-Treptow",
+          "lat": 52.4899,
+          "lon": 13.4494
+        },
+        {
+          "name": "Altglienicke",
+          "lat": 52.41667,
+          "lon": 13.53333
+        },
+        {
+          "name": "Baumschulenweg",
+          "lat": 52.465,
+          "lon": 13.486
+        },
+        {
+          "name": "Biesdorf",
+          "lat": 52.50917,
+          "lon": 13.55528
+        },
+        {
+          "name": "Blankenburg",
+          "lat": 52.5931,
+          "lon": 13.4542
+        },
+        {
+          "name": "Blankenfelde",
+          "lat": 52.6186,
+          "lon": 13.3903
+        },
+        {
+          "name": "Bohnsdorf",
+          "lat": 52.4,
+          "lon": 13.5667
+        },
+        {
+          "name": "Borsigwalde",
+          "lat": 52.5831,
+          "lon": 13.3111
+        },
+        {
+          "name": "Britz",
+          "lat": 52.45,
+          "lon": 13.43333
+        },
+        {
+          "name": "Buch",
+          "lat": 52.6333,
+          "lon": 13.5
+        },
+        {
+          "name": "Buckow",
+          "lat": 52.4319,
+          "lon": 13.4617
+        },
+        {
+          "name": "Charlottenburg",
+          "lat": 52.51667,
+          "lon": 13.3
+        },
+        {
+          "name": "Charlottenburg-Nord",
+          "lat": 52.5389,
+          "lon": 13.2931
+        },
+        {
+          "name": "Dahlem",
+          "lat": 52.45806,
+          "lon": 13.2875
+        },
+        {
+          "name": "Falkenberg",
+          "lat": 52.5708,
+          "lon": 13.5458
+        },
+        {
+          "name": "Falkenhagener Feld",
+          "lat": 52.5469,
+          "lon": 13.1778
+        },
+        {
+          "name": "Fennpfuhl",
+          "lat": 52.5283,
+          "lon": 13.4742
+        },
+        {
+          "name": "Französisch Buchholz",
+          "lat": 52.6,
+          "lon": 13.4333
+        },
+        {
+          "name": "Friedenau",
+          "lat": 52.47222,
+          "lon": 13.32778
+        },
+        {
+          "name": "Friedrichsfelde",
+          "lat": 52.5058,
+          "lon": 13.5192
+        },
+        {
+          "name": "Friedrichshagen",
+          "lat": 52.45,
+          "lon": 13.61667
+        },
+        {
+          "name": "Friedrichshain",
+          "lat": 52.51583,
+          "lon": 13.45417
+        },
+        {
+          "name": "Frohnau",
+          "lat": 52.63333,
+          "lon": 13.29
+        },
+        {
+          "name": "Gatow",
+          "lat": 52.4889,
+          "lon": 13.1817
+        },
+        {
+          "name": "Gesundbrunnen",
+          "lat": 52.54861,
+          "lon": 13.39028
+        },
+        {
+          "name": "Grünau",
+          "lat": 52.4167,
+          "lon": 13.5667
+        },
+        {
+          "name": "Grunewald",
+          "lat": 52.48333,
+          "lon": 13.26667
+        },
+        {
+          "name": "Hakenfelde",
+          "lat": 52.5778,
+          "lon": 13.1808
+        },
+        {
+          "name": "Halensee",
+          "lat": 52.49808,
+          "lon": 13.29628
+        },
+        {
+          "name": "Hansaviertel",
+          "lat": 52.51667,
+          "lon": 13.33889
+        },
+        {
+          "name": "Haselhorst",
+          "lat": 52.54306,
+          "lon": 13.24028
+        },
+        {
+          "name": "Heiligensee",
+          "lat": 52.6167,
+          "lon": 13.2333
+        },
+        {
+          "name": "Heinersdorf",
+          "lat": 52.5669,
+          "lon": 13.44
+        },
+        {
+          "name": "Hellersdorf",
+          "lat": 52.5375,
+          "lon": 13.6042
+        },
+        {
+          "name": "Hermsdorf",
+          "lat": 52.6167,
+          "lon": 13.3167
+        },
+        {
+          "name": "Johannisthal",
+          "lat": 52.4433,
+          "lon": 13.5022
+        },
+        {
+          "name": "Karlshorst",
+          "lat": 52.4825,
+          "lon": 13.52583
+        },
+        {
+          "name": "Karow",
+          "lat": 52.6125,
+          "lon": 13.4833
+        },
+        {
+          "name": "Kaulsdorf",
+          "lat": 52.5081,
+          "lon": 13.5808
+        },
+        {
+          "name": "Kladow",
+          "lat": 52.45306,
+          "lon": 13.14278
+        },
+        {
+          "name": "Konradshöhe",
+          "lat": 52.5833,
+          "lon": 13.2333
+        },
+        {
+          "name": "Köpenick",
+          "lat": 52.44583,
+          "lon": 13.57722
+        },
+        {
+          "name": "Kreuzberg",
+          "lat": 52.4875,
+          "lon": 13.3833
+        },
+        {
+          "name": "Lankwitz",
+          "lat": 52.4333,
+          "lon": 13.35
+        },
+        {
+          "name": "Lichtenberg",
+          "lat": 52.52111,
+          "lon": 13.48
+        },
+        {
+          "name": "Lichtenrade",
+          "lat": 52.4,
+          "lon": 13.4
+        },
+        {
+          "name": "Lichterfelde",
+          "lat": 52.4428,
+          "lon": 13.29567
+        },
+        {
+          "name": "Lübars",
+          "lat": 52.6167,
+          "lon": 13.3667
+        },
+        {
+          "name": "Mahlsdorf",
+          "lat": 52.5087,
+          "lon": 13.61316
+        },
+        {
+          "name": "Malchow",
+          "lat": 52.5792,
+          "lon": 13.4833
+        },
+        {
+          "name": "Mariendorf",
+          "lat": 52.44,
+          "lon": 13.39
+        },
+        {
+          "name": "Marienfelde",
+          "lat": 52.4167,
+          "lon": 13.3667
+        },
+        {
+          "name": "Märkisches Viertel",
+          "lat": 52.6,
+          "lon": 13.35833
+        },
+        {
+          "name": "Marzahn",
+          "lat": 52.5458,
+          "lon": 13.5625
+        },
+        {
+          "name": "Mitte",
+          "lat": 52.51944,
+          "lon": 13.40667
+        },
+        {
+          "name": "Moabit",
+          "lat": 52.5333,
+          "lon": 13.3333
+        },
+        {
+          "name": "Müggelheim",
+          "lat": 52.4,
+          "lon": 13.65
+        },
+        {
+          "name": "Neu-Hohenschönhausen",
+          "lat": 52.5633,
+          "lon": 13.505
+        },
+        {
+          "name": "Neukölln",
+          "lat": 52.48139,
+          "lon": 13.43528
+        },
+        {
+          "name": "Niederschöneweide",
+          "lat": 52.4561,
+          "lon": 13.5131
+        },
+        {
+          "name": "Niederschönhausen",
+          "lat": 52.5833,
+          "lon": 13.4
+        },
+        {
+          "name": "Nikolassee",
+          "lat": 52.4333,
+          "lon": 13.2
+        },
+        {
+          "name": "Oberschöneweide",
+          "lat": 52.462,
+          "lon": 13.515
+        },
+        {
+          "name": "Pankow",
+          "lat": 52.56667,
+          "lon": 13.4
+        },
+        {
+          "name": "Plänterwald",
+          "lat": 52.4796,
+          "lon": 13.4754
+        },
+        {
+          "name": "Prenzlauer Berg",
+          "lat": 52.53417,
+          "lon": 13.41861
+        },
+        {
+          "name": "Rahnsdorf",
+          "lat": 52.4333,
+          "lon": 13.7
+        },
+        {
+          "name": "Reinickendorf",
+          "lat": 52.5667,
+          "lon": 13.3333
+        },
+        {
+          "name": "Rosenthal",
+          "lat": 52.59917,
+          "lon": 13.37722
+        },
+        {
+          "name": "Rudow",
+          "lat": 52.4167,
+          "lon": 13.5
+        },
+        {
+          "name": "Rummelsburg",
+          "lat": 52.5,
+          "lon": 13.4925
+        },
+        {
+          "name": "Schlachtensee",
+          "lat": 52.43818,
+          "lon": 13.21552
+        },
+        {
+          "name": "Schmargendorf",
+          "lat": 52.4772,
+          "lon": 13.2881
+        },
+        {
+          "name": "Schmöckwitz",
+          "lat": 52.3778,
+          "lon": 13.6492
+        },
+        {
+          "name": "Schöneberg",
+          "lat": 52.48306,
+          "lon": 13.34972
+        },
+        {
+          "name": "Siemensstadt",
+          "lat": 52.54056,
+          "lon": 13.26306
+        },
+        {
+          "name": "Spandau",
+          "lat": 52.5367,
+          "lon": 13.2044
+        },
+        {
+          "name": "Staaken",
+          "lat": 52.5325,
+          "lon": 13.1414
+        },
+        {
+          "name": "Stadtrandsiedlung Malchow",
+          "lat": 52.5722,
+          "lon": 13.4667
+        },
+        {
+          "name": "Steglitz",
+          "lat": 52.46667,
+          "lon": 13.33333
+        },
+        {
+          "name": "Tegel",
+          "lat": 52.5833,
+          "lon": 13.2833
+        },
+        {
+          "name": "Tempelhof",
+          "lat": 52.4667,
+          "lon": 13.3833
+        },
+        {
+          "name": "Tiergarten",
+          "lat": 52.51667,
+          "lon": 13.36667
+        },
+        {
+          "name": "Waidmannslust",
+          "lat": 52.6067,
+          "lon": 13.3208
+        },
+        {
+          "name": "Wannsee",
+          "lat": 52.4167,
+          "lon": 13.15
+        },
+        {
+          "name": "Wartenberg",
+          "lat": 52.5792,
+          "lon": 13.5208
+        },
+        {
+          "name": "Wedding",
+          "lat": 52.55,
+          "lon": 13.3425
+        },
+        {
+          "name": "Weißensee",
+          "lat": 52.55,
+          "lon": 13.46667
+        },
+        {
+          "name": "Westend",
+          "lat": 52.5125,
+          "lon": 13.2625
+        },
+        {
+          "name": "Wilhelmsruh",
+          "lat": 52.5872,
+          "lon": 13.3681
+        },
+        {
+          "name": "Wilhelmstadt",
+          "lat": 52.5211,
+          "lon": 13.1967
+        },
+        {
+          "name": "Wilmersdorf",
+          "lat": 52.48333,
+          "lon": 13.31667
+        },
+        {
+          "name": "Wittenau",
+          "lat": 52.59194,
+          "lon": 13.32639
+        },
+        {
+          "name": "Zehlendorf",
+          "lat": 52.434,
+          "lon": 13.259
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        10,
+        9,
+        16,
+        14,
+        18,
+        19,
+        5,
+        17,
+        6,
+        4,
+        7,
+        13,
+        11,
+        2,
+        15,
+        1,
+        3,
+        8,
+        12
+      ],
+      "lengthMm": 1205.516,
+      "gapMm": 37.084,
+      "model": "string",
+      "scaleGapMm": 35.995,
+      "startPlace": 19
+    }
+  }
+}

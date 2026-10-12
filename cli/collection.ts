@@ -6,6 +6,9 @@
 //   npx tsx cli/collection.ts incremental --n 12 --seed 1 --title … [--id …]
 //   npx tsx cli/collection.ts list --file places.txt --title … [--purpose auto|board|digital]
 //       (a fixed instance from a place list; auto: board if the gap allows it, else digital)
+//   npx tsx cli/collection.ts list --file places.txt --pool --n 20 [--seed 1] [--iterations 1000]
+//       [--merge 2] (km within which list places merge; 0 for districts)
+//       (a search over the list as pool: n of its places)
 //   npx tsx cli/collection.ts index        (rebuilds index.json from the files)
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -41,7 +44,9 @@ import {
   parsePlaceLines,
   type ListPlace,
 } from '../src/core/places';
-import { boardPool, loadBackend, loadCountry, poolLabels } from './lib/country';
+import { boardPool, loadBackend, loadCountry, poolLabels, type BoardPool } from './lib/country';
+import { boardProjection } from '../src/core/projection';
+import { boardPoints, regionOutline } from '../src/core/region';
 import { runSearch } from './lib/run-search';
 
 const DIR = path.resolve(import.meta.dirname, '../public/puzzles');
@@ -200,7 +205,7 @@ if (command === 'add') {
       },
     ];
   });
-  const places: Place[] = mergePlaces(listPlaces, 2).map((p) => ({
+  const places: Place[] = mergePlaces(listPlaces, Number(arg('merge', '2'))).map((p) => ({
     ...(p.id !== undefined ? { id: p.id } : {}),
     name: p.name,
     lat: p.lat,
@@ -213,7 +218,39 @@ if (command === 'add') {
     minDistanceMm: Number(arg('min-dist', String(DEFAULT_PARAMS.minDistanceMm))),
     targetGapMm: Number(arg('target', String(DEFAULT_PARAMS.targetGapMm))),
   };
-  write(await mapDoc(params, null, { mode: 'fixed', places }));
+  if (args.includes('--pool')) {
+    const searchP: PuzzleParams = {
+      ...params,
+      n: Number(arg('n', '20')),
+      seed: Number(arg('seed', '1')),
+      iterations: Number(arg('iterations', '1000')),
+    };
+    const cities = listCities(
+      places,
+      new Map(citiesFromColumns(file.cities, file.states).map((c) => [c.id, c])),
+    );
+    const projection = boardProjection(regionOutline(file, params.region), {
+      widthMm: params.boardWidthMm,
+      heightMm: params.boardHeightMm,
+      marginMm: params.marginMm,
+    });
+    const pool: BoardPool = { projection, cities, points: boardPoints(cities, projection) };
+    const { search } = runSearch({
+      params: searchParams(searchP),
+      pool,
+      backend: await loadBackend(),
+      labels: poolLabels(pool, params.labelSizeMm, params.nailDiameterMm, params.labelLanguage),
+    });
+    const best = search.best;
+    if (!best) throw new Error('no feasible candidate found');
+    write(
+      await mapDoc(
+        searchP,
+        best.members.map((c) => cities[c]!.id),
+        { mode: 'pool', places },
+      ),
+    );
+  } else write(await mapDoc(params, null, { mode: 'fixed', places }));
   rebuildIndex();
 } else if (command === 'search') {
   const params: PuzzleParams = {

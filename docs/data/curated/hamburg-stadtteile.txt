@@ -1,0 +1,108 @@
+# Stadtteile of Hamburg (parts of the seven Bezirke, P150): 104 places.
+# Source: Wikidata (CC0), query service https://query.wikidata.org/sparql, retrieved 2026-10-12.
+# Built with: npx tsx cli/wikidata.ts hamburg-stadtteile
+# Query: SELECT ?o ?oLabel (SAMPLE(?coord) AS ?c) WHERE { wd:Q1055 wdt:P150 ?b . ?b wdt:P150 ?o . ?o wdt:P625 ?coord . SERVICE wikibase:label { bd:serviceParam wikibase:language "de". ?o rdfs:label ?oLabel . } } GROUP BY ?o ?oLabel
+Allermöhe; 53.48333; 10.15000
+Alsterdorf; 53.60000; 10.00000
+Altengamme; 53.42472; 10.26250
+Altenwerder; 53.50683; 9.91791
+Altona-Altstadt; 53.54889; 9.94778
+Altona-Nord; 53.56306; 9.94528
+Altstadt; 53.55000; 10.00000
+Bahrenfeld; 53.57384; 9.89251
+Barmbek-Nord; 53.59889; 10.04810
+Barmbek-Süd; 53.57989; 10.04325
+Bergedorf; 53.48333; 10.21667
+Bergstedt; 53.67111; 10.12694
+Billbrook; 53.54526; 10.03042
+Billstedt; 53.54056; 10.10000
+Billwerder; 53.49917; 10.13444
+Blankenese; 53.55843; 9.81123
+Borgfelde; 53.55475; 10.03447
+Bramfeld; 53.60861; 10.07250
+Cranz; 53.53688; 9.78042
+Curslack; 53.45866; 10.21575
+Dulsberg; 53.58257; 10.06293
+Duvenstedt; 53.70806; 10.10444
+Eidelstedt; 53.60707; 9.90622
+Eilbek; 53.56778; 10.04556
+Eimsbüttel; 53.57583; 9.95194
+Eißendorf; 53.45583; 9.95458
+Eppendorf; 53.59039; 9.98688
+Farmsen-Berne; 53.60639; 10.11972
+Finkenwerder; 53.54000; 9.83000
+Francop; 53.50812; 9.85279
+Fuhlsbüttel; 53.63500; 10.01611
+Groß Borstel; 53.61366; 9.98259
+Groß Flottbek; 53.56536; 9.87759
+Gut Moor; 53.44925; 10.01524
+HafenCity; 53.54167; 9.99333
+Hamm; 53.55487; 10.05742
+Hammerbrook; 53.54527; 10.03042
+Harburg; 53.45926; 9.98267
+Harvestehude; 53.57765; 9.98893
+Hausbruch; 53.46667; 9.88333
+Heimfeld; 53.46401; 9.95624
+Hoheluft-Ost; 53.58472; 9.97611
+Hoheluft-West; 53.58390; 9.96917
+Hohenfelde; 53.56188; 10.02119
+Horn; 53.55406; 10.08989
+Hummelsbüttel; 53.64773; 10.04149
+Iserbrook; 53.57639; 9.82333
+Jenfeld; 53.57222; 10.13611
+Kirchwerder; 53.41976; 10.20157
+Kleiner Grasbrook; 53.53111; 9.99361
+Langenbek; 53.43149; 9.98937
+Langenhorn; 53.65000; 10.00000
+Lemsahl-Mellingstedt; 53.68998; 10.09648
+Lohbrügge; 53.50949; 10.18214
+Lokstedt; 53.60306; 9.95639
+Lurup; 53.59306; 9.88278
+Marienthal; 53.56885; 10.08594
+Marmstorf; 53.43590; 9.96851
+Moorburg; 53.48917; 9.94361
+Moorfleet; 53.50424; 10.08519
+Neuallermöhe; 53.48333; 10.16667
+Neuenfelde; 53.51472; 9.79556
+Neuengamme; 53.43056; 10.23361
+Neugraben-Fischbek; 53.47257; 9.83582
+Neuland; 53.47099; 10.02480
+Neustadt; 53.55196; 9.98558
+Neuwerk; 53.92111; 8.50056
+Niendorf; 53.61769; 9.95032
+Nienstedten; 53.55500; 9.84472
+Ochsenwerder; 53.45699; 10.09257
+Ohlsdorf; 53.62154; 10.03776
+Osdorf; 53.57222; 9.84306
+Othmarschen; 53.55278; 9.89444
+Ottensen; 53.55389; 9.91778
+Poppenbüttel; 53.65917; 10.08472
+Rahlstedt; 53.60000; 10.15000
+Reitbrook; 53.46667; 10.15000
+Rissen; 53.55000; 9.83333
+Rönneburg; 53.43744; 10.00447
+Rothenburgsort; 53.53500; 10.04082
+Rotherbaum; 53.56794; 9.98839
+Sasel; 53.65385; 10.11184
+Schnelsen; 53.63333; 9.91667
+Sinstorf; 53.42390; 9.98069
+Spadenland; 53.48778; 10.05778
+St. Georg; 53.55513; 10.01231
+St. Pauli; 53.55694; 9.96389
+Steilshoop; 53.61028; 10.05917
+Steinwerder; 53.53444; 9.95722
+Stellingen; 53.59220; 9.92870
+Sternschanze; 53.56167; 9.96222
+Sülldorf; 53.58500; 9.79417
+Tatenberg; 53.48333; 10.08333
+Tonndorf; 53.58613; 10.12477
+Uhlenhorst; 53.57151; 10.01274
+Veddel; 53.51667; 10.03333
+Volksdorf; 53.64863; 10.16439
+Waltershof; 53.52789; 9.90068
+Wandsbek; 53.58203; 10.08426
+Wellingsbüttel; 53.64104; 10.07980
+Wilhelmsburg; 53.49500; 10.01111
+Wilstorf; 53.44361; 9.98417
+Winterhude; 53.60000; 10.00000
+Wohldorf-Ohlstedt; 53.69282; 10.13117

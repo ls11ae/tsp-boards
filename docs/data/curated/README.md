@@ -28,3 +28,20 @@ Sources (retrieved 2026-10-12; details, universities, cluster names and coordina
 Notes: one place per city (several universities or clusters in one city share a node); the
 2027 list no longer contains Konstanz. Places are the towns of the GeoNames data, not campus
 coordinates (those are in the JSON for later use).
+
+## City puzzles (Phase 6)
+
+Districts as places, from Wikidata (CC0), built with `npx tsx cli/wikidata.ts <list>` (the
+SPARQL query and the retrieval date are in each file's header) and turned into puzzles by a
+search over the list as pool:
+`npx tsx cli/collection.ts list --file docs/data/curated/<list>.txt --region DE-BE --pool --n 20 --merge 0 …`.
+
+| list                     | puzzle                  | pool          | purpose |
+| ------------------------ | ----------------------- | ------------- | ------- |
+| `berlin-ortsteile.txt`   | Berlin: 20 Ortsteile    | 96 Ortsteile  | board (string gap 37.1 mm) |
+| `hamburg-stadtteile.txt` | Hamburg: 20 Stadtteile  | 104 Stadtteile | board (string gap 10.8 mm) |
+
+Notes: coordinates are Wikidata's point for each district (usually its centre or main
+square), not a centroid of the official boundaries. Districts are custom places without
+population, so the search chooses them by gap and difficulty only; `--merge 0` keeps
+neighbouring districts apart.

@@ -97,7 +97,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
   (the existing print template is 1:1 for building boards). (Done 2026-10-12.)
 - Free-form instances: place points by hand on an empty board. (Done 2026-10-12.)
 - City puzzles: districts as places (e.g. the Ortsteile of Berlin or the Stadtteile of Hamburg)
-  from official open data or OpenStreetMap (ODbL), or landmarks via city lists (5.2).
+  from official open data or OpenStreetMap (ODbL), or landmarks via city lists (5.2). (Done 2026-10-12: Berlin and Hamburg from Wikidata.)
 - Themed instances from Wikidata (state capitals, Hanseatic cities, university towns, ...),
   built offline into the curated collection.
 - More countries: Austria, Switzerland, the Netherlands (the municipality deduplication is

@@ -1,0 +1,100 @@
+# Ortsteile of Berlin (class Q35034452 "Ortsteil von Berlin", not dissolved): 96 places.
+# Source: Wikidata (CC0), query service https://query.wikidata.org/sparql, retrieved 2026-10-12.
+# Built with: npx tsx cli/wikidata.ts berlin-ortsteile
+# Query: SELECT ?o ?oLabel (SAMPLE(?coord) AS ?c) WHERE { ?o wdt:P31 wd:Q35034452 . FILTER NOT EXISTS { ?o wdt:P576 ?end } ?o wdt:P625 ?coord . SERVICE wikibase:label { bd:serviceParam wikibase:language "de". ?o rdfs:label ?oLabel . } } GROUP BY ?o ?oLabel
+Adlershof; 52.43778; 13.54750
+Alt-Hohenschönhausen; 52.54860; 13.50750
+Alt-Treptow; 52.48990; 13.44940
+Altglienicke; 52.41667; 13.53333
+Baumschulenweg; 52.46500; 13.48600
+Biesdorf; 52.50917; 13.55528
+Blankenburg; 52.59310; 13.45420
+Blankenfelde; 52.61860; 13.39030
+Bohnsdorf; 52.40000; 13.56670
+Borsigwalde; 52.58310; 13.31110
+Britz; 52.45000; 13.43333
+Buch; 52.63330; 13.50000
+Buckow; 52.43190; 13.46170
+Charlottenburg; 52.51667; 13.30000
+Charlottenburg-Nord; 52.53890; 13.29310
+Dahlem; 52.45806; 13.28750
+Falkenberg; 52.57080; 13.54580
+Falkenhagener Feld; 52.54690; 13.17780
+Fennpfuhl; 52.52830; 13.47420
+Französisch Buchholz; 52.60000; 13.43330
+Friedenau; 52.47222; 13.32778
+Friedrichsfelde; 52.50580; 13.51920
+Friedrichshagen; 52.45000; 13.61667
+Friedrichshain; 52.51583; 13.45417
+Frohnau; 52.63333; 13.29000
+Gatow; 52.48890; 13.18170
+Gesundbrunnen; 52.54861; 13.39028
+Grünau; 52.41670; 13.56670
+Grunewald; 52.48333; 13.26667
+Hakenfelde; 52.57780; 13.18080
+Halensee; 52.49808; 13.29628
+Hansaviertel; 52.51667; 13.33889
+Haselhorst; 52.54306; 13.24028
+Heiligensee; 52.61670; 13.23330
+Heinersdorf; 52.56690; 13.44000
+Hellersdorf; 52.53750; 13.60420
+Hermsdorf; 52.61670; 13.31670
+Johannisthal; 52.44330; 13.50220
+Karlshorst; 52.48250; 13.52583
+Karow; 52.61250; 13.48330
+Kaulsdorf; 52.50810; 13.58080
+Kladow; 52.45306; 13.14278
+Konradshöhe; 52.58330; 13.23330
+Köpenick; 52.44583; 13.57722
+Kreuzberg; 52.48750; 13.38330
+Lankwitz; 52.43330; 13.35000
+Lichtenberg; 52.52111; 13.48000
+Lichtenrade; 52.40000; 13.40000
+Lichterfelde; 52.44280; 13.29567
+Lübars; 52.61670; 13.36670
+Mahlsdorf; 52.50870; 13.61316
+Malchow; 52.57920; 13.48330
+Mariendorf; 52.44000; 13.39000
+Marienfelde; 52.41670; 13.36670
+Märkisches Viertel; 52.60000; 13.35833
+Marzahn; 52.54580; 13.56250
+Mitte; 52.51944; 13.40667
+Moabit; 52.53330; 13.33330
+Müggelheim; 52.40000; 13.65000
+Neu-Hohenschönhausen; 52.56330; 13.50500
+Neukölln; 52.48139; 13.43528
+Niederschöneweide; 52.45610; 13.51310
+Niederschönhausen; 52.58330; 13.40000
+Nikolassee; 52.43330; 13.20000
+Oberschöneweide; 52.46200; 13.51500
+Pankow; 52.56667; 13.40000
+Plänterwald; 52.47960; 13.47540
+Prenzlauer Berg; 52.53417; 13.41861
+Rahnsdorf; 52.43330; 13.70000
+Reinickendorf; 52.56670; 13.33330
+Rosenthal; 52.59917; 13.37722
+Rudow; 52.41670; 13.50000
+Rummelsburg; 52.50000; 13.49250
+Schlachtensee; 52.43818; 13.21552
+Schmargendorf; 52.47720; 13.28810
+Schmöckwitz; 52.37780; 13.64920
+Schöneberg; 52.48306; 13.34972
+Siemensstadt; 52.54056; 13.26306
+Spandau; 52.53670; 13.20440
+Staaken; 52.53250; 13.14140
+Stadtrandsiedlung Malchow; 52.57220; 13.46670
+Steglitz; 52.46667; 13.33333
+Tegel; 52.58330; 13.28330
+Tempelhof; 52.46670; 13.38330
+Tiergarten; 52.51667; 13.36667
+Waidmannslust; 52.60670; 13.32080
+Wannsee; 52.41670; 13.15000
+Wartenberg; 52.57920; 13.52080
+Wedding; 52.55000; 13.34250
+Weißensee; 52.55000; 13.46667
+Westend; 52.51250; 13.26250
+Wilhelmsruh; 52.58720; 13.36810
+Wilhelmstadt; 52.52110; 13.19670
+Wilmersdorf; 52.48333; 13.31667
+Wittenau; 52.59194; 13.32639
+Zehlendorf; 52.43400; 13.25900

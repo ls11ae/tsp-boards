@@ -1,0 +1,696 @@
+{
+  "schema": 1,
+  "id": "hamburg-stadtteile-20",
+  "kind": "map",
+  "title": "Hamburg: 20 Stadtteile",
+  "description": "Rundreise durch 20 der 104 Hamburger Stadtteile (Lage nach Wikidata).",
+  "purpose": "board",
+  "language": "de",
+  "app": "0.0.0",
+  "updated": "2026-10-12",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE-HH",
+      "n": 20,
+      "boardWidthMm": 600,
+      "boardHeightMm": 800,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "name": "Altengamme",
+        "lat": 53.42472,
+        "lon": 10.2625
+      },
+      {
+        "name": "Altenwerder",
+        "lat": 53.50683,
+        "lon": 9.91791
+      },
+      {
+        "name": "Eidelstedt",
+        "lat": 53.60707,
+        "lon": 9.90622
+      },
+      {
+        "name": "Eppendorf",
+        "lat": 53.59039,
+        "lon": 9.98688
+      },
+      {
+        "name": "Groß Flottbek",
+        "lat": 53.56536,
+        "lon": 9.87759
+      },
+      {
+        "name": "Hamm",
+        "lat": 53.55487,
+        "lon": 10.05742
+      },
+      {
+        "name": "Hohenfelde",
+        "lat": 53.56188,
+        "lon": 10.02119
+      },
+      {
+        "name": "Horn",
+        "lat": 53.55406,
+        "lon": 10.08989
+      },
+      {
+        "name": "Hummelsbüttel",
+        "lat": 53.64773,
+        "lon": 10.04149
+      },
+      {
+        "name": "Iserbrook",
+        "lat": 53.57639,
+        "lon": 9.82333
+      },
+      {
+        "name": "Jenfeld",
+        "lat": 53.57222,
+        "lon": 10.13611
+      },
+      {
+        "name": "Lohbrügge",
+        "lat": 53.50949,
+        "lon": 10.18214
+      },
+      {
+        "name": "Lurup",
+        "lat": 53.59306,
+        "lon": 9.88278
+      },
+      {
+        "name": "Moorburg",
+        "lat": 53.48917,
+        "lon": 9.94361
+      },
+      {
+        "name": "Neuengamme",
+        "lat": 53.43056,
+        "lon": 10.23361
+      },
+      {
+        "name": "Neuland",
+        "lat": 53.47099,
+        "lon": 10.0248
+      },
+      {
+        "name": "Niendorf",
+        "lat": 53.61769,
+        "lon": 9.95032
+      },
+      {
+        "name": "Ochsenwerder",
+        "lat": 53.45699,
+        "lon": 10.09257
+      },
+      {
+        "name": "Ottensen",
+        "lat": 53.55389,
+        "lon": 9.91778
+      },
+      {
+        "name": "Waltershof",
+        "lat": 53.52789,
+        "lon": 9.90068
+      }
+    ],
+    "list": {
+      "mode": "pool",
+      "places": [
+        {
+          "name": "Allermöhe",
+          "lat": 53.48333,
+          "lon": 10.15
+        },
+        {
+          "name": "Alsterdorf",
+          "lat": 53.6,
+          "lon": 10,
+          "label": "Alsterdorf · Winterhude"
+        },
+        {
+          "name": "Altengamme",
+          "lat": 53.42472,
+          "lon": 10.2625
+        },
+        {
+          "name": "Altenwerder",
+          "lat": 53.50683,
+          "lon": 9.91791
+        },
+        {
+          "name": "Altona-Altstadt",
+          "lat": 53.54889,
+          "lon": 9.94778
+        },
+        {
+          "name": "Altona-Nord",
+          "lat": 53.56306,
+          "lon": 9.94528
+        },
+        {
+          "name": "Altstadt",
+          "lat": 53.55,
+          "lon": 10
+        },
+        {
+          "name": "Bahrenfeld",
+          "lat": 53.57384,
+          "lon": 9.89251
+        },
+        {
+          "name": "Barmbek-Nord",
+          "lat": 53.59889,
+          "lon": 10.0481
+        },
+        {
+          "name": "Barmbek-Süd",
+          "lat": 53.57989,
+          "lon": 10.04325
+        },
+        {
+          "name": "Bergedorf",
+          "lat": 53.48333,
+          "lon": 10.21667
+        },
+        {
+          "name": "Bergstedt",
+          "lat": 53.67111,
+          "lon": 10.12694
+        },
+        {
+          "name": "Billbrook",
+          "lat": 53.54526,
+          "lon": 10.03042
+        },
+        {
+          "name": "Billstedt",
+          "lat": 53.54056,
+          "lon": 10.1
+        },
+        {
+          "name": "Billwerder",
+          "lat": 53.49917,
+          "lon": 10.13444
+        },
+        {
+          "name": "Blankenese",
+          "lat": 53.55843,
+          "lon": 9.81123
+        },
+        {
+          "name": "Borgfelde",
+          "lat": 53.55475,
+          "lon": 10.03447
+        },
+        {
+          "name": "Bramfeld",
+          "lat": 53.60861,
+          "lon": 10.0725
+        },
+        {
+          "name": "Cranz",
+          "lat": 53.53688,
+          "lon": 9.78042
+        },
+        {
+          "name": "Curslack",
+          "lat": 53.45866,
+          "lon": 10.21575
+        },
+        {
+          "name": "Dulsberg",
+          "lat": 53.58257,
+          "lon": 10.06293
+        },
+        {
+          "name": "Duvenstedt",
+          "lat": 53.70806,
+          "lon": 10.10444
+        },
+        {
+          "name": "Eidelstedt",
+          "lat": 53.60707,
+          "lon": 9.90622
+        },
+        {
+          "name": "Eilbek",
+          "lat": 53.56778,
+          "lon": 10.04556
+        },
+        {
+          "name": "Eimsbüttel",
+          "lat": 53.57583,
+          "lon": 9.95194
+        },
+        {
+          "name": "Eißendorf",
+          "lat": 53.45583,
+          "lon": 9.95458
+        },
+        {
+          "name": "Eppendorf",
+          "lat": 53.59039,
+          "lon": 9.98688
+        },
+        {
+          "name": "Farmsen-Berne",
+          "lat": 53.60639,
+          "lon": 10.11972
+        },
+        {
+          "name": "Finkenwerder",
+          "lat": 53.54,
+          "lon": 9.83
+        },
+        {
+          "name": "Francop",
+          "lat": 53.50812,
+          "lon": 9.85279
+        },
+        {
+          "name": "Fuhlsbüttel",
+          "lat": 53.635,
+          "lon": 10.01611
+        },
+        {
+          "name": "Groß Borstel",
+          "lat": 53.61366,
+          "lon": 9.98259
+        },
+        {
+          "name": "Groß Flottbek",
+          "lat": 53.56536,
+          "lon": 9.87759
+        },
+        {
+          "name": "Gut Moor",
+          "lat": 53.44925,
+          "lon": 10.01524
+        },
+        {
+          "name": "HafenCity",
+          "lat": 53.54167,
+          "lon": 9.99333
+        },
+        {
+          "name": "Hamm",
+          "lat": 53.55487,
+          "lon": 10.05742
+        },
+        {
+          "name": "Hammerbrook",
+          "lat": 53.54527,
+          "lon": 10.03042
+        },
+        {
+          "name": "Harburg",
+          "lat": 53.45926,
+          "lon": 9.98267
+        },
+        {
+          "name": "Harvestehude",
+          "lat": 53.57765,
+          "lon": 9.98893
+        },
+        {
+          "name": "Hausbruch",
+          "lat": 53.46667,
+          "lon": 9.88333
+        },
+        {
+          "name": "Heimfeld",
+          "lat": 53.46401,
+          "lon": 9.95624
+        },
+        {
+          "name": "Hoheluft-Ost",
+          "lat": 53.58472,
+          "lon": 9.97611
+        },
+        {
+          "name": "Hoheluft-West",
+          "lat": 53.5839,
+          "lon": 9.96917
+        },
+        {
+          "name": "Hohenfelde",
+          "lat": 53.56188,
+          "lon": 10.02119
+        },
+        {
+          "name": "Horn",
+          "lat": 53.55406,
+          "lon": 10.08989
+        },
+        {
+          "name": "Hummelsbüttel",
+          "lat": 53.64773,
+          "lon": 10.04149
+        },
+        {
+          "name": "Iserbrook",
+          "lat": 53.57639,
+          "lon": 9.82333
+        },
+        {
+          "name": "Jenfeld",
+          "lat": 53.57222,
+          "lon": 10.13611
+        },
+        {
+          "name": "Kirchwerder",
+          "lat": 53.41976,
+          "lon": 10.20157
+        },
+        {
+          "name": "Kleiner Grasbrook",
+          "lat": 53.53111,
+          "lon": 9.99361
+        },
+        {
+          "name": "Langenbek",
+          "lat": 53.43149,
+          "lon": 9.98937
+        },
+        {
+          "name": "Langenhorn",
+          "lat": 53.65,
+          "lon": 10
+        },
+        {
+          "name": "Lemsahl-Mellingstedt",
+          "lat": 53.68998,
+          "lon": 10.09648
+        },
+        {
+          "name": "Lohbrügge",
+          "lat": 53.50949,
+          "lon": 10.18214
+        },
+        {
+          "name": "Lokstedt",
+          "lat": 53.60306,
+          "lon": 9.95639
+        },
+        {
+          "name": "Lurup",
+          "lat": 53.59306,
+          "lon": 9.88278
+        },
+        {
+          "name": "Marienthal",
+          "lat": 53.56885,
+          "lon": 10.08594
+        },
+        {
+          "name": "Marmstorf",
+          "lat": 53.4359,
+          "lon": 9.96851
+        },
+        {
+          "name": "Moorburg",
+          "lat": 53.48917,
+          "lon": 9.94361
+        },
+        {
+          "name": "Moorfleet",
+          "lat": 53.50424,
+          "lon": 10.08519
+        },
+        {
+          "name": "Neuallermöhe",
+          "lat": 53.48333,
+          "lon": 10.16667
+        },
+        {
+          "name": "Neuenfelde",
+          "lat": 53.51472,
+          "lon": 9.79556
+        },
+        {
+          "name": "Neuengamme",
+          "lat": 53.43056,
+          "lon": 10.23361
+        },
+        {
+          "name": "Neugraben-Fischbek",
+          "lat": 53.47257,
+          "lon": 9.83582
+        },
+        {
+          "name": "Neuland",
+          "lat": 53.47099,
+          "lon": 10.0248
+        },
+        {
+          "name": "Neustadt",
+          "lat": 53.55196,
+          "lon": 9.98558
+        },
+        {
+          "name": "Neuwerk",
+          "lat": 53.92111,
+          "lon": 8.50056
+        },
+        {
+          "name": "Niendorf",
+          "lat": 53.61769,
+          "lon": 9.95032
+        },
+        {
+          "name": "Nienstedten",
+          "lat": 53.555,
+          "lon": 9.84472
+        },
+        {
+          "name": "Ochsenwerder",
+          "lat": 53.45699,
+          "lon": 10.09257
+        },
+        {
+          "name": "Ohlsdorf",
+          "lat": 53.62154,
+          "lon": 10.03776
+        },
+        {
+          "name": "Osdorf",
+          "lat": 53.57222,
+          "lon": 9.84306
+        },
+        {
+          "name": "Othmarschen",
+          "lat": 53.55278,
+          "lon": 9.89444
+        },
+        {
+          "name": "Ottensen",
+          "lat": 53.55389,
+          "lon": 9.91778
+        },
+        {
+          "name": "Poppenbüttel",
+          "lat": 53.65917,
+          "lon": 10.08472
+        },
+        {
+          "name": "Rahlstedt",
+          "lat": 53.6,
+          "lon": 10.15
+        },
+        {
+          "name": "Reitbrook",
+          "lat": 53.46667,
+          "lon": 10.15
+        },
+        {
+          "name": "Rissen",
+          "lat": 53.55,
+          "lon": 9.83333
+        },
+        {
+          "name": "Rönneburg",
+          "lat": 53.43744,
+          "lon": 10.00447
+        },
+        {
+          "name": "Rothenburgsort",
+          "lat": 53.535,
+          "lon": 10.04082
+        },
+        {
+          "name": "Rotherbaum",
+          "lat": 53.56794,
+          "lon": 9.98839
+        },
+        {
+          "name": "Sasel",
+          "lat": 53.65385,
+          "lon": 10.11184
+        },
+        {
+          "name": "Schnelsen",
+          "lat": 53.63333,
+          "lon": 9.91667
+        },
+        {
+          "name": "Sinstorf",
+          "lat": 53.4239,
+          "lon": 9.98069
+        },
+        {
+          "name": "Spadenland",
+          "lat": 53.48778,
+          "lon": 10.05778
+        },
+        {
+          "name": "St. Georg",
+          "lat": 53.55513,
+          "lon": 10.01231
+        },
+        {
+          "name": "St. Pauli",
+          "lat": 53.55694,
+          "lon": 9.96389
+        },
+        {
+          "name": "Steilshoop",
+          "lat": 53.61028,
+          "lon": 10.05917
+        },
+        {
+          "name": "Steinwerder",
+          "lat": 53.53444,
+          "lon": 9.95722
+        },
+        {
+          "name": "Stellingen",
+          "lat": 53.5922,
+          "lon": 9.9287
+        },
+        {
+          "name": "Sternschanze",
+          "lat": 53.56167,
+          "lon": 9.96222
+        },
+        {
+          "name": "Sülldorf",
+          "lat": 53.585,
+          "lon": 9.79417
+        },
+        {
+          "name": "Tatenberg",
+          "lat": 53.48333,
+          "lon": 10.08333
+        },
+        {
+          "name": "Tonndorf",
+          "lat": 53.58613,
+          "lon": 10.12477
+        },
+        {
+          "name": "Uhlenhorst",
+          "lat": 53.57151,
+          "lon": 10.01274
+        },
+        {
+          "name": "Veddel",
+          "lat": 53.51667,
+          "lon": 10.03333
+        },
+        {
+          "name": "Volksdorf",
+          "lat": 53.64863,
+          "lon": 10.16439
+        },
+        {
+          "name": "Waltershof",
+          "lat": 53.52789,
+          "lon": 9.90068
+        },
+        {
+          "name": "Wandsbek",
+          "lat": 53.58203,
+          "lon": 10.08426
+        },
+        {
+          "name": "Wellingsbüttel",
+          "lat": 53.64104,
+          "lon": 10.0798
+        },
+        {
+          "name": "Wilhelmsburg",
+          "lat": 53.495,
+          "lon": 10.01111
+        },
+        {
+          "name": "Wilstorf",
+          "lat": 53.44361,
+          "lon": 9.98417
+        },
+        {
+          "name": "Wohldorf-Ohlstedt",
+          "lat": 53.69282,
+          "lon": 10.13117
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        11,
+        10,
+        7,
+        5,
+        6,
+        3,
+        8,
+        16,
+        2,
+        12,
+        9,
+        4,
+        18,
+        19,
+        1,
+        13,
+        15,
+        17,
+        14
+      ],
+      "lengthMm": 1301.37,
+      "gapMm": 10.759,
+      "model": "string",
+      "scaleGapMm": 10.759,
+      "startPlace": 8
+    }
+  }
+}
