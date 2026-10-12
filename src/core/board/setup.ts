@@ -138,12 +138,14 @@ export function drawPuzzleBoard(
   const drawing = { ...DEFAULT_DRAWING, holeDiameterMm: setup.params.nailDiameterMm, ...options };
   const { boardWidthMm: w, boardHeightMm: h } = setup.params;
   const inset = drawing.lineInsetMm;
-  const map = boardMapLines(setup.file, setup.params.region, setup.projection, [
-    inset,
-    inset,
-    w - inset,
-    h - inset,
-  ]);
+  const map = setup.params.blankBoard
+    ? { strong: [], thin: [] }
+    : boardMapLines(setup.file, setup.params.region, setup.projection, [
+        inset,
+        inset,
+        w - inset,
+        h - inset,
+      ]);
   return drawBoard(
     {
       width: w,

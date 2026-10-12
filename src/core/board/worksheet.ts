@@ -91,7 +91,9 @@ function drawMap(c: PdfCanvas, setup: BoardSetup, scale: number): void {
       );
     });
   }
-  const map = boardMapLines(setup.file, setup.params.region, setup.projection, [0, 0, w, h]);
+  const map = setup.params.blankBoard
+    ? { strong: [], thin: [] }
+    : boardMapLines(setup.file, setup.params.region, setup.projection, [0, 0, w, h]);
   const halo = 1.2;
   const holes: Point[][] = [
     ...labelBoxes.map(([x0, y0, x1, y1]): Point[] => [

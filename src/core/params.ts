@@ -27,6 +27,8 @@ export interface PuzzleParams {
   /** Font size of the board labels in mm; 0 = no labels (and no label constraint). */
   readonly labelSizeMm: number;
   readonly labelLanguage: LabelLanguage;
+  /** Board without map lines (e.g. for points placed by hand). */
+  readonly blankBoard: boolean;
 }
 
 /** Placeholders until the dimensions of the prototype boards are known. */
@@ -50,6 +52,7 @@ export const DEFAULT_PARAMS: PuzzleParams = {
   weightNonNearest: 0,
   labelSizeMm: 8,
   labelLanguage: 'de',
+  blankBoard: false,
 };
 
 /** Nail radius plus half the string thickness (mm): the string's centre line wraps at r_eff. */

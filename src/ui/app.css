@@ -454,6 +454,10 @@ progress {
   font-size: 1em;
 }
 
+.board.placing {
+  cursor: crosshair;
+}
+
 .teach-edge {
   fill: none;
   stroke: var(--overlay);

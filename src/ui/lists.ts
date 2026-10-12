@@ -196,6 +196,39 @@ export function openListPuzzle(
   else if (selected) openMembers(selected.filter((i) => i < places.length));
 }
 
+/**
+ * Adds a point placed by hand: a custom place named by the next free number, appended to the
+ * list text (a new list is a fixed instance without merging).
+ */
+export function addHandPoint(lat: number, lon: number): void {
+  const { country, list } = useStore.getState();
+  if (!country) return;
+  const numbers = (list?.places ?? []).map((p) => Number(p.name)).filter(Number.isInteger);
+  const name = String(Math.max(0, ...numbers) + 1);
+  const line = `${name}; ${lat.toFixed(5)}; ${lon.toFixed(5)}`;
+  const text = list?.text.trim() ? `${list.text.trimEnd()}\n${line}` : line;
+  applyList(text, list?.mode ?? 'fixed', list?.mergeKm ?? 0);
+}
+
+/** Removes a place by hand: a custom place loses its line, a town is skipped. */
+export function removeHandPoint(index: number): void {
+  const { list } = useStore.getState();
+  const place = list?.places[index];
+  if (!list || !place) return;
+  const entry = list.entries.find(
+    (e) => e.custom && e.custom.lat === place.lat && e.custom.lon === place.lon,
+  );
+  if (!entry) {
+    removePlace(index);
+    return;
+  }
+  const text = list.text
+    .split(/\r?\n/)
+    .filter((_, i) => i + 1 !== entry.line)
+    .join('\n');
+  applyList(text, list.mode, list.mergeKm);
+}
+
 /** Removes the place at pool index `index` from the list (its entries are skipped). */
 export function removePlace(index: number): void {
   const { list } = useStore.getState();

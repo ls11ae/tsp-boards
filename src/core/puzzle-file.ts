@@ -140,6 +140,7 @@ function merge<T extends object>(defaults: T, value: unknown): T {
     const v = value[key];
     if (typeof d === 'number' && isNum(v)) out[key] = v;
     else if (typeof d === 'string' && typeof v === 'string') out[key] = v.slice(0, 40);
+    else if (typeof d === 'boolean' && typeof v === 'boolean') out[key] = v;
   }
   return out as T;
 }

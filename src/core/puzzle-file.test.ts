@@ -77,7 +77,13 @@ describe('puzzle files', () => {
       id: '../../etc',
       purpose: 'other',
       map: {
-        params: { n: 'many', region: 'DE-BY', boardWidthMm: 500 },
+        params: {
+          n: 'many',
+          region: 'DE-BY',
+          boardWidthMm: 500,
+          blankBoard: true,
+          labelSizeMm: false,
+        },
         places: [
           { name: 'Nowhere', lat: 123, lon: 0 },
           { name: '', lat: 1, lon: 1 },
@@ -91,6 +97,8 @@ describe('puzzle files', () => {
     expect(messy.map!.params.n).toBe(DEFAULT_PARAMS.n);
     expect(messy.map!.params.region).toBe('DE-BY');
     expect(messy.map!.params.boardWidthMm).toBe(500);
+    expect(messy.map!.params.blankBoard).toBe(true);
+    expect(messy.map!.params.labelSizeMm).toBe(DEFAULT_PARAMS.labelSizeMm);
     expect(messy.map!.places).toEqual([{ name: 'Ok', lat: 50, lon: 8 }]);
     expect(messy.map!.constraints).toEqual({
       pinned: [7],

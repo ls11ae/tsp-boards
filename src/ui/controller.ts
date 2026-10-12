@@ -1,7 +1,7 @@
 // Glue between the store and the workers: data loading, search runs (throttled UI updates)
 // and the queue of exact verifications.
 
-import { parseCountryFile, type CountryFile, type Manifest } from '../core/data';
+import { parseCountryFile, type City, type CountryFile, type Manifest } from '../core/data';
 import type { LinkPlace } from '../core/places';
 import type { Place } from '../core/puzzle-file';
 import { DEFAULT_PARAMS, DIGITAL_WEIGHTS, effectiveREffMm, searchParams } from '../core/params';
@@ -369,6 +369,7 @@ export function enqueueVerification(
   evaluation: Evaluation | null,
   first = false,
 ): void {
+  checkPool();
   const { verifications } = useStore.getState();
   const queued = queue.findIndex((j) => j.key === key);
   if (queued >= 0) {
@@ -476,6 +477,42 @@ function purposeChanged(): void {
       ? loaded.members
       : (run.progress?.archive.find((e) => e.key === key)?.members ?? run.progress?.best?.members);
   if (members) enqueueVerification(members.join(','), members, null, true);
+}
+
+const signatures = new WeakMap<readonly City[], string>();
+
+/** FNV-1a over the pool's ids and coordinates (custom places of two lists share ids). */
+function poolSignature(pool: readonly City[]): string {
+  let s = signatures.get(pool);
+  if (s === undefined) {
+    let h = 0x811c9dc5;
+    for (const c of pool) {
+      for (const ch of `${c.id}:${c.lat}:${c.lon};`) {
+        h ^= ch.charCodeAt(0);
+        h = Math.imul(h, 0x01000193) >>> 0;
+      }
+    }
+    s = `${pool.length}:${h.toString(16)}`;
+    signatures.set(pool, s);
+  }
+  return s;
+}
+
+let checkedPool = '';
+
+/**
+ * Keys are pool indices: results and queued checks of another pool (a different list, region
+ * or population threshold) must not be reused for the same key.
+ */
+function checkPool(): void {
+  const { country, params } = useStore.getState();
+  if (!country) return;
+  const signature = poolSignature(getBoard(country, params).pool);
+  if (signature === checkedPool) return;
+  checkedPool = signature;
+  resetVerifications();
+  // Plans, robustness checks and teaching frames are keyed by the puzzle key too.
+  useStore.setState({ boardPlans: {}, robustness: null, teaching: null });
 }
 
 /** Cancels running and queued checks (they belong to an old pool). */

@@ -202,6 +202,8 @@ export interface AppState {
   readonly showTour: boolean;
   /** Tour drawn for comparison with the optimum (roadmap 5.5). */
   readonly overlay: OverlayChoice;
+  /** Clicks on the board place and remove points (free-form instance). */
+  readonly placing: boolean;
   /** A strategy shown step by step (teaching mode), or null. */
   readonly teaching: TeachingState | null;
   /** Robustness check of a planned board (rows arrive one by one), or null. */
@@ -306,6 +308,7 @@ export const useStore = create<AppState>()((set) => ({
   verifications: {},
   showTour: true,
   overlay: 'none',
+  placing: false,
   teaching: null,
   robustness: null,
   pinned: [],

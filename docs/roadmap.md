@@ -95,7 +95,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
   optimum and the gap at the scale stay the same. (Done 2026-10-12.)
 - Classroom worksheet: one A4/A3 page with the map scaled to fit and a separate solution page
   (the existing print template is 1:1 for building boards). (Done 2026-10-12.)
-- Free-form instances: place points by hand on an empty board.
+- Free-form instances: place points by hand on an empty board. (Done 2026-10-12.)
 - City puzzles: districts as places (e.g. the Ortsteile of Berlin or the Stadtteile of Hamburg)
   from official open data or OpenStreetMap (ODbL), or landmarks via city lists (5.2).
 - Themed instances from Wikidata (state capitals, Hanseatic cities, university towns, ...),

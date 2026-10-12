@@ -6,6 +6,7 @@ import { memo, useMemo, useRef, type MouseEvent } from 'react';
 import type { Point } from '../../core/geometry';
 import type { BoardModel } from '../board';
 import { cycleCity } from '../controller';
+import { addHandPoint, removeHandPoint } from '../lists';
 import { planKey, previewPaths } from '../export';
 import { playClick } from '../play';
 import { getLabels, placeBoardLabels } from '../labels';
@@ -131,6 +132,7 @@ export function BoardMap({
   const mode = useStore((s) => s.mode);
   const play = useStore((s) => s.play);
   const playing = mode === 'play';
+  const placing = useStore((s) => s.placing) && !playing;
   const nailDiameter = params.nailDiameterMm;
   const lang = useStore((s) => s.lang);
   const labels = getLabels(board, params);
@@ -201,13 +203,21 @@ export function BoardMap({
         best = i;
       }
     });
+    if (placing) {
+      if (best >= 0) removeHandPoint(best);
+      else {
+        const lonLat = board.projection.invert(p.x, p.y);
+        if (lonLat) addHandPoint(lonLat[1], lonLat[0]);
+      }
+      return;
+    }
     if (best >= 0) cycleCity(board.pool[best]!.id);
   };
 
   return (
     <svg
       ref={svgRef}
-      className="board"
+      className={placing ? 'board placing' : 'board'}
       style={boardFit(widthMm, heightMm)}
       viewBox={`0 0 ${widthMm} ${heightMm}`}
       role="img"

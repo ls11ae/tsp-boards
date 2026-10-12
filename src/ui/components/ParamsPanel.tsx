@@ -64,6 +64,21 @@ function LabelLanguageField() {
   );
 }
 
+function BlankBoardField() {
+  const t = useT();
+  const value = useStore((s) => s.params.blankBoard);
+  return (
+    <label className="checkbox">
+      <input
+        type="checkbox"
+        checked={value}
+        onChange={(e) => changeParams({ blankBoard: e.target.checked })}
+      />
+      {t.blankBoard}
+    </label>
+  );
+}
+
 /** Regions that hold a minimum puzzle, grouped; a region from a link stays selectable. */
 function RegionField() {
   const t = useT();
@@ -243,6 +258,7 @@ export function ParamsPanel({
         <NumberField label={t.minDistance} field="minDistanceMm" />
         <NumberField label={t.labelSize} field="labelSizeMm" step={0.5} />
         <LabelLanguageField />
+        <BlankBoardField />
       </fieldset>
       <NumberField label={t.targetGap} field="targetGapMm" step={0.5} />
       <fieldset>

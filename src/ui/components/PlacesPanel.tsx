@@ -68,6 +68,14 @@ export function PlacesPanel() {
   const list = useStore((s) => s.list);
   const country = useStore((s) => s.country);
   const [text, setText] = useState(list?.text ?? '');
+  const placing = useStore((s) => s.placing);
+  // Points placed by hand change the list text.
+  const listText = list?.text;
+  const [seenText, setSeenText] = useState(listText);
+  if (listText !== seenText) {
+    setSeenText(listText);
+    if (listText !== undefined) setText(listText);
+  }
   const [mergeKm, setMergeKm] = useState(list?.mergeKm ?? DEFAULT_MERGE_KM);
   const source: Source = list ? list.mode : 'region';
   const [draft, setDraft] = useState<Source>(source);
@@ -104,6 +112,17 @@ export function PlacesPanel() {
           <option value="pool">{t.placesPool}</option>
         </select>
       </label>
+      <div className="actions">
+        <button
+          type="button"
+          className={placing ? 'primary' : undefined}
+          aria-pressed={placing}
+          onClick={() => useStore.setState({ placing: !placing })}
+        >
+          {placing ? t.placeByHandDone : t.placeByHand}
+        </button>
+      </div>
+      {placing && <p className="hint">{t.placeByHandHint}</p>}
       {shown !== 'region' && (
         <>
           <label className="field wide">

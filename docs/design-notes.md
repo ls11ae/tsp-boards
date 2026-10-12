@@ -559,3 +559,15 @@ Short entries: decision; alternatives considered; reason. Newest last.
   the string optimum. Available after the exact check, for digital puzzles too.
   Alternatives: reusing the laser drawing (it carries the scale and the nail holes, which
   make no sense on paper).
+- **2026-10-12 Free-form instances (Phase 6).** Points placed by hand are custom places of a
+  fixed place list: a click on the board adds a line `n; lat; lon` (the board point inverted
+  through the region's projection, named by the next number), a click on a point removes its
+  line; the list text stays editable. So verification, play, board export, worksheet,
+  teaching, links and files work unchanged. A new board option `blankBoard` (link `bl=1`)
+  hides the map lines in the app and in all exports. Points live in geographic coordinates,
+  so a changed board size scales the pattern with the region fit. Fix found on the way:
+  checks are keyed by pool indices, and two pools (two lists of the same size, or a list
+  edit) gave stale results for the same key; a signature of the pool (ids and coordinates)
+  now resets checks, plans, robustness and teaching whenever the pool changes.
+  Alternatives: a puzzle type of its own with points in board mm (cleaner data, but every
+  feature of map puzzles would need a second implementation).

@@ -94,6 +94,14 @@ describe('permalinks', () => {
     expect(decodePermalink(hash)!.params).toEqual(params);
   });
 
+  it('carry the blank board option', () => {
+    const params = { ...DEFAULT_PARAMS, blankBoard: true };
+    const hash = encodePermalink(params, { country: 'DE', version: 3 }, null);
+    expect(hash).toContain('bl=1');
+    expect(decodePermalink(hash)!.params.blankBoard).toBe(true);
+    expect(decodePermalink('#v=1')!.params.blankBoard).toBe(false);
+  });
+
   it('carry group constraints per state', () => {
     const groups = [{ group: '*', min: 1, max: 1 }];
     const hash = encodePermalink(DEFAULT_PARAMS, { country: 'DE', version: 3 }, null, {

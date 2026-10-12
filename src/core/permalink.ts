@@ -152,6 +152,7 @@ export function encodePermalink(
   q.set('w', weights.join(','));
   q.set('lf', String(params.labelSizeMm));
   q.set('ll', params.labelLanguage);
+  if (params.blankBoard) q.set('bl', '1');
   if (marks.pinned.length > 0) q.set('pin', encodeIds(marks.pinned));
   if (marks.excluded.length > 0) q.set('ex', encodeIds(marks.excluded));
   if (marks.groups && marks.groups.length > 0) q.set('gr', encodeGroups(marks.groups));
@@ -185,6 +186,7 @@ export function encodePlayLink(
   q.set('p', String(params.minPopulation));
   q.set('lf', String(params.labelSizeMm));
   q.set('ll', params.labelLanguage);
+  if (params.blankBoard) q.set('bl', '1');
   if (list) setList(q, list);
   else q.set('sel', encodeIds(selectedIds));
   return `#${q.toString()}`;
@@ -225,6 +227,7 @@ export function decodePermalink(hash: string): PermalinkData | null {
     // Links from before labels were a constraint have no 'lf': they keep the default.
     labelSizeMm: num(q.get('lf'), d.labelSizeMm, 0, 100),
     labelLanguage: q.get('ll') === 'en' ? 'en' : d.labelLanguage,
+    blankBoard: q.get('bl') === '1',
   };
   const selected = q.get('sel') ? decodeIds(q.get('sel')) : null;
   const placeList = q.get('pl') ? decodePlaceList(q.get('pl')!) : null;

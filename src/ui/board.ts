@@ -32,7 +32,14 @@ let cached: {
 } | null = null;
 
 function boardKey(p: UiParams): string {
-  return [p.region, p.boardWidthMm, p.boardHeightMm, p.marginMm, p.minPopulation].join('|');
+  return [
+    p.region,
+    p.boardWidthMm,
+    p.boardHeightMm,
+    p.marginMm,
+    p.minPopulation,
+    p.blankBoard,
+  ].join('|');
 }
 
 /**
@@ -62,12 +69,14 @@ export function getBoard(
     pool,
     points: boardPoints(pool, projection),
     index: new Map(pool.map((c, i) => [c.id, i])),
-    paths: {
-      neighbors: projection.path(layers.neighbors),
-      states: projection.path(layers.states),
-      country: projection.path(layers.country),
-      region: params.region === country.country ? null : projection.path(outline),
-    },
+    paths: params.blankBoard
+      ? { neighbors: '', states: '', country: '', region: null }
+      : {
+          neighbors: projection.path(layers.neighbors),
+          states: projection.path(layers.states),
+          country: projection.path(layers.country),
+          region: params.region === country.country ? null : projection.path(outline),
+        },
   };
   cached = { key, country, list, model };
   return model;

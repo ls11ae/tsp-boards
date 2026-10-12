@@ -92,6 +92,11 @@ export const en = {
   excess: (value: string) => `+${value} %`,
   interiorFraction: 'Points inside the hull (C)',
   nonNearestEdges: 'Edges not to a nearest neighbour (D)',
+  placeByHand: 'Place points by hand',
+  placeByHandDone: 'Done placing points',
+  placeByHandHint:
+    'Click on the board to add a point, click a point to remove it. The points form a fixed instance (named by numbers) and are checked exactly after each change.',
+  blankBoard: 'Blank board (no map lines)',
   worksheet: 'Classroom worksheet',
   worksheetHint:
     'One page with the map scaled to fit, to draw the round trip with a pencil, and a separate solution page (lengths in km between the places).',

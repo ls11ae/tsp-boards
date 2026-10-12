@@ -87,6 +87,11 @@ export const de: Messages = {
   excess: (value) => `+${value} %`,
   interiorFraction: 'Punkte im Innern der Hülle (C)',
   nonNearestEdges: 'Kanten nicht zum nächsten Nachbarn (D)',
+  placeByHand: 'Punkte von Hand setzen',
+  placeByHandDone: 'Fertig mit Punkten',
+  placeByHandHint:
+    'Klick aufs Brett setzt einen Punkt, Klick auf einen Punkt entfernt ihn. Die Punkte bilden eine feste Instanz (mit Nummern als Namen) und werden nach jeder Änderung exakt geprüft.',
+  blankBoard: 'Leeres Brett (ohne Kartenlinien)',
   worksheet: 'Arbeitsblatt für den Unterricht',
   worksheetHint:
     'Eine Seite mit der Karte, passend verkleinert, zum Einzeichnen der Rundreise mit Bleistift, und eine eigene Lösungsseite (Längen in km zwischen den Orten).',

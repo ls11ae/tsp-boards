@@ -27,6 +27,8 @@ export interface BoardProjection {
   /** Board millimetres per kilometre on the ground, at the region centre. */
   readonly mmPerKm: number;
   project(lon: number, lat: number): [number, number];
+  /** Longitude and latitude of a board point (null outside the projection's domain). */
+  invert(x: number, y: number): [number, number] | null;
   /** SVG path data in board mm (2 decimals). */
   path(object: GeoPermissibleObjects): string;
   /**
@@ -103,6 +105,7 @@ export function boardProjection(region: GeoPermissibleObjects, board: BoardSpec)
     centralMeridian,
     mmPerKm,
     project,
+    invert: (x, y) => projection.invert?.([x, y]) ?? null,
     path: (object) => pathGenerator(object) ?? '',
     lines,
   };
