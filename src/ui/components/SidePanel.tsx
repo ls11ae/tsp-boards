@@ -6,7 +6,7 @@ import type { BoardModel } from '../board';
 import { clearMarks, showCandidate } from '../controller';
 import { useFormat, useT } from '../i18n';
 import type { PuzzleView } from '../puzzle';
-import { useStore } from '../store';
+import { useStore, type RunError } from '../store';
 import { distance } from '../../core/geometry';
 import { ExportPanel } from './ExportPanel';
 import { FixedAnalysis } from './PlacesPanel';
@@ -17,6 +17,24 @@ function SearchStatus() {
   const fmt = useFormat();
   const run = useStore((s) => s.run);
   const p = run.progress;
+  const errorText = (e: RunError): string => {
+    switch (e.kind) {
+      case 'too-few':
+        return t.tooFew(fmt.integer(e.placed), fmt.integer(e.n));
+      case 'pin-conflict':
+        return t.pinConflict(e.names);
+      case 'pin-labels':
+        return t.pinLabels(e.names);
+      case 'group-size':
+        return t.groupSize(fmt.integer(e.min), fmt.integer(e.max));
+      case 'group-short':
+        return t.groupShort(e.names);
+      case 'group-pins':
+        return t.groupPins(e.names);
+      default:
+        return e.message;
+    }
+  };
   const label = {
     idle: t.idle,
     running: t.running,
@@ -28,15 +46,7 @@ function SearchStatus() {
     <section>
       <h2>{t.search}</h2>
       <p className={`status status-${run.status}`}>{label}</p>
-      {run.error && (
-        <p className="error">
-          {run.error.kind === 'too-few'
-            ? t.tooFew(fmt.integer(run.error.placed), fmt.integer(run.error.n))
-            : run.error.kind === 'pin-conflict'
-              ? t.pinConflict(run.error.names)
-              : run.error.message}
-        </p>
-      )}
+      {run.error && <p className="error">{errorText(run.error)}</p>}
       {p && (
         <>
           <progress value={p.iteration} max={p.iterations} />

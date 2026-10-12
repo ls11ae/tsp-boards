@@ -49,6 +49,19 @@ export const de: Messages = {
   tooFew: (placed, n) =>
     `Mit diesem Mindestabstand passen nur ${placed} Städte (nötig: ${n}). Weniger Städte, einen kleineren Mindestabstand, eine größere Region oder ein größeres Brett wählen.`,
   pinConflict: (pairs) => `Gepinnte Städte liegen näher als der Mindestabstand: ${pairs}`,
+  pinLabels: (names) =>
+    `Die Beschriftungen dieser gepinnten Städte passen nicht aufs Brett: ${names}`,
+  groupSize: (min, max) =>
+    `Mit diesen Grenzen pro Bundesland hat ein Puzzle ${min} bis ${max} Orte. Ändere die Zahl der Städte oder die Grenzen.`,
+  groupShort: (names) => `Zu wenige Orte (im Mindestabstand) für das Minimum pro Land in: ${names}`,
+  groupPins: (names) => `Mehr gepinnte Städte als erlaubt in: ${names}`,
+  perState: 'Orte pro Bundesland',
+  perStateMin: 'Mindestens',
+  perStateMax: 'Höchstens',
+  noLimit: 'beliebig',
+  everyState: 'Jedes Land',
+  onePerState: (n) => `Genau eins pro Land (${n} Orte)`,
+  perStateHint: 'Gilt für die nächste Suche; gepinnte Städte zählen mit.',
   trace: 'Verlauf der Suche',
   traceGap: 'Lücke des aktuellen Zustands (mm)',
   traceQuality: 'Qualität des besten Kandidaten',

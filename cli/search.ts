@@ -2,10 +2,13 @@
 // Usage: npx tsx cli/search.ts [--region DE] [--n 40] [--seed 1] [--iterations 2000]
 //   [--target 5] [--min-dist 25] [--min-pop 5000] [--r-eff 1.5] [--weights 1,0.5,0.5[,C,D]]
 //   [--pin id,id] [--verify 3] [--no-level2] [--labels 8] [--nail 2] [--out file.json]
+//   [--groups '*:1:1'] (places per state: group:min:max, max empty for none; '*' = every state)
 // --labels: font size in mm of the board labels that must fit (default 0: no label constraint).
 
 import { writeFileSync } from 'node:fs';
 import { DEFAULT_SEARCH, type SearchParams } from '../src/core/search/search';
+import { decodeGroups, stateGroups } from '../src/core/groups';
+import { regionStates } from '../src/core/region';
 import { boardPool, loadBackend, loadCountry, poolLabels } from './lib/country';
 import { runSearch, summarize, verify } from './lib/run-search';
 
@@ -44,6 +47,12 @@ const { search, elapsedMs } = runSearch({
   backend: args.includes('--no-level2') ? undefined : backend,
   pinnedIds,
   labels: labelSize > 0 ? poolLabels(pool, labelSize, nailDiameter) : undefined,
+  groups:
+    stateGroups(
+      pool.cities,
+      regionStates(file, region) ?? file.states.map((s) => s.id),
+      decodeGroups(arg('groups', '')),
+    ) ?? undefined,
   progressEvery: 100,
   onProgress: (s, ms) => {
     const best = s.best;

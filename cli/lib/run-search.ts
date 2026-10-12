@@ -8,6 +8,7 @@ import {
   type PoolLabels,
   type SearchParams,
 } from '../../src/core/search/search';
+import type { PoolGroups } from '../../src/core/search/groups';
 import type { MipBackend } from '../../src/core/tsp/exact';
 import { verifyCandidate, type Verification } from '../../src/core/verify';
 import type { BoardPool } from './country';
@@ -18,6 +19,7 @@ export interface RunOptions {
   readonly backend: MipBackend | undefined;
   readonly pinnedIds?: readonly number[];
   readonly labels?: PoolLabels;
+  readonly groups?: PoolGroups;
   readonly onProgress?: (search: Search, elapsedMs: number) => void;
   readonly progressEvery?: number;
 }
@@ -37,6 +39,7 @@ export function runSearch(options: RunOptions): { search: Search; elapsedMs: num
       population: pool.cities.map((c) => c.pop),
       pinned,
       labels: options.labels,
+      ...(options.groups ? { groups: options.groups } : {}),
     },
     params,
     options.backend,

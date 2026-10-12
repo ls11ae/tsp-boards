@@ -52,6 +52,20 @@ export const en = {
   tooFew: (placed: string, n: string) =>
     `Only ${placed} cities fit at this minimum distance (need ${n}). Lower the number of cities or the minimum distance, or choose a larger region or board.`,
   pinConflict: (pairs: string) => `Pinned cities are closer than the minimum distance: ${pairs}`,
+  pinLabels: (names: string) =>
+    `The labels of these pinned cities do not fit on the board: ${names}`,
+  groupSize: (min: string, max: string) =>
+    `With these limits per state a puzzle has ${min} to ${max} places. Change the number of cities or the limits.`,
+  groupShort: (names: string) =>
+    `Too few places (at the minimum distance) for the minimum per state in: ${names}`,
+  groupPins: (names: string) => `More pinned cities than allowed in: ${names}`,
+  perState: 'Places per state',
+  perStateMin: 'At least',
+  perStateMax: 'At most',
+  noLimit: 'no limit',
+  everyState: 'Every state',
+  onePerState: (n: string) => `Exactly one per state (${n} places)`,
+  perStateHint: 'Applies to the next search; pinned cities count.',
   trace: 'Progress of the search',
   traceGap: 'gap of the current state (mm)',
   traceQuality: 'quality of the best candidate',

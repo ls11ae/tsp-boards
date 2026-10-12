@@ -5,7 +5,8 @@
 
 import { DEFAULT_PARAMS, type PuzzleParams } from './params';
 import { decodePlaceList, encodePlaceList, type LinkPlace } from './places';
-import type { Place } from './puzzle-file';
+import type { GroupConstraint, Place } from './puzzle-file';
+import { decodeGroups, encodeGroups } from './groups';
 import { REGION_ID_PATTERN } from './region';
 
 export const PERMALINK_VERSION = 1;
@@ -15,6 +16,8 @@ export interface PermalinkData {
   /** GeoNames ids of pinned and excluded cities. */
   readonly pinned: readonly number[];
   readonly excluded: readonly number[];
+  /** Minimum and maximum number of places per state. */
+  readonly groups: readonly GroupConstraint[];
   /** GeoNames ids of the selected cities, if the link contains a puzzle. */
   readonly selected: readonly number[] | null;
   /** 'de@1' style data version, if present. */
@@ -114,7 +117,11 @@ export function encodePermalink(
   params: PuzzleParams,
   dataVersion: { country: string; version: number },
   selectedIds: readonly number[] | null,
-  marks: { readonly pinned: readonly number[]; readonly excluded: readonly number[] } = {
+  marks: {
+    readonly pinned: readonly number[];
+    readonly excluded: readonly number[];
+    readonly groups?: readonly GroupConstraint[];
+  } = {
     pinned: [],
     excluded: [],
   },
@@ -147,6 +154,7 @@ export function encodePermalink(
   q.set('ll', params.labelLanguage);
   if (marks.pinned.length > 0) q.set('pin', encodeIds(marks.pinned));
   if (marks.excluded.length > 0) q.set('ex', encodeIds(marks.excluded));
+  if (marks.groups && marks.groups.length > 0) q.set('gr', encodeGroups(marks.groups));
   if (list) setList(q, list);
   else if (selectedIds && selectedIds.length > 0) q.set('sel', encodeIds(selectedIds));
   return `#${q.toString()}`;
@@ -230,6 +238,7 @@ export function decodePermalink(hash: string): PermalinkData | null {
     params,
     pinned: decodeIds(q.get('pin')),
     excluded: decodeIds(q.get('ex')),
+    groups: decodeGroups(q.get('gr')),
     selected,
     data,
     mode: q.get('m') === 'play' && (selected || list) ? 'play' : 'design',

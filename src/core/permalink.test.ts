@@ -94,6 +94,17 @@ describe('permalinks', () => {
     expect(decodePermalink(hash)!.params).toEqual(params);
   });
 
+  it('carry group constraints per state', () => {
+    const groups = [{ group: '*', min: 1, max: 1 }];
+    const hash = encodePermalink(DEFAULT_PARAMS, { country: 'DE', version: 3 }, null, {
+      pinned: [],
+      excluded: [],
+      groups,
+    });
+    expect(decodePermalink(hash)!.groups).toEqual(groups);
+    expect(decodePermalink('#v=1')!.groups).toEqual([]);
+  });
+
   it('falls back to defaults for missing or invalid values', () => {
     const link = decodePermalink('#v=1&n=-5&r=../x&b=axbxc&sel=');
     expect(link!.params).toEqual(DEFAULT_PARAMS);

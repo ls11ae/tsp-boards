@@ -6,6 +6,7 @@ import { distance } from '../geometry';
 import { randomPoints } from '../test-utils';
 import type { MipBackend } from '../tsp/exact';
 import { ConflictGraph, Selection } from './conflicts';
+import { groupCounts, sizeRange, withinBounds, type PoolGroups } from './groups';
 import {
   DEFAULT_SEARCH,
   Search,
@@ -141,6 +142,60 @@ describe('Search', () => {
       for (const c of e.members) expect(c % 3).not.toBe(0);
     }
   }, 120_000);
+});
+
+describe('group bounds', () => {
+  // Quadrants of the 600 × 800 board as groups.
+  const quadrants = (p: SearchPool, min: number, max: number): PoolGroups => ({
+    of: p.points.map(([x, y]) => (x < 300 ? 0 : 1) + (y < 400 ? 0 : 2)),
+    min: [min, min, min, min],
+    max: [max, max, max, max],
+  });
+
+  it('keeps every candidate within the bounds', () => {
+    const base = pool(120, 8);
+    const groups = quadrants(base, 3, 5);
+    expect(sizeRange(groups)).toEqual({ min: 12, max: 20 });
+    const search = new Search({ ...base, groups }, params, backend);
+    search.step(params.iterations);
+    expect(search.stats.accepted).toBeGreaterThan(0);
+    for (const e of [search.current, ...search.archive])
+      expect(withinBounds(groups, groupCounts(groups, e.members))).toBe(true);
+  }, 120_000);
+
+  it('finds exactly one city per group (swaps within a group)', () => {
+    const base = pool(120, 9);
+    const groups: PoolGroups = {
+      of: base.points.map((_, i) => i % 15),
+      min: new Array<number>(15).fill(1),
+      max: new Array<number>(15).fill(1),
+    };
+    const search = new Search({ ...base, groups }, params, backend);
+    search.step(params.iterations);
+    expect(search.stats.accepted).toBeGreaterThan(0);
+    for (const e of [search.current, ...search.archive])
+      expect(groupCounts(groups, e.members)).toEqual(new Array<number>(15).fill(1));
+  }, 120_000);
+
+  it('reports groups whose minimum cannot be met and pins over the maximum', () => {
+    const p: SearchPool = {
+      points: [
+        [0, 0],
+        [10, 0],
+        [100, 0],
+        [200, 0],
+      ],
+      population: [10, 20, 30, 40],
+      pinned: [2, 3],
+      groups: { of: [0, 0, 1, 1], min: [2, 0], max: [2, 1] },
+    };
+    const result = greedySelection(p, 4, 50);
+    expect(result.groupShortfall).toEqual([0]);
+    expect(result.pinsOverMax).toEqual([1]);
+    const free = greedySelection({ ...p, pinned: [], groups: { ...p.groups!, max: [2, 2] } }, 3, 5);
+    expect(free.selection).toEqual([1, 0, 3]);
+    expect(free.groupShortfall).toEqual([]);
+  });
 });
 
 describe('greedySelection', () => {

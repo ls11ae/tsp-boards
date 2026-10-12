@@ -67,7 +67,7 @@ export function mapDocument(puzzle: PuzzleView | null): PuzzleDoc | null {
       params: { ...params, n: places.length || params.n },
       places,
       ...(list ? { list: { mode: list.mode, places: list.places } } : {}),
-      constraints: { pinned: s.pinned, excluded: s.excluded, groups: [] },
+      constraints: { pinned: s.pinned, excluded: s.excluded, groups: s.groups },
       ...(results ? { results } : {}),
     },
   };
@@ -129,6 +129,7 @@ export function openDocument(doc: PuzzleDoc, mode: 'design' | 'play' = 'design')
     params: map.params,
     pinned: map.constraints.pinned.filter((id) => id > 0),
     excluded: map.constraints.excluded.filter((id) => id > 0),
+    groups: map.constraints.groups,
     linkWarnings: [],
   });
   const { country } = useStore.getState();

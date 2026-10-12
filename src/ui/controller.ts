@@ -9,6 +9,7 @@ import type { Purpose } from '../core/puzzle-file';
 import { decodePermalink } from '../core/permalink';
 import {
   greedySelection,
+  unplacedLabelCities,
   type Evaluation,
   type SearchPool,
   type TracePoint,
@@ -24,6 +25,9 @@ import { openListPuzzle } from './lists';
 import { applyIncrementalLink } from './incremental';
 import { getLabels, poolLabels } from './labels';
 import { useStore, type RunState, type UiParams } from './store';
+import { stateGroups, type StateGroups } from '../core/groups';
+import { regionStates } from '../core/region';
+import { groupCounts, sizeRange } from '../core/search/groups';
 
 const UI_INTERVAL_MS = 100;
 /** Exact checks per run: the best candidates of the archive. */
@@ -60,6 +64,7 @@ function applyPermalink(hash: string): void {
     params: link.params,
     pinned: link.pinned,
     excluded: link.excluded,
+    groups: link.groups,
     linkWarnings: warnings,
     mode: link.mode,
   });
@@ -188,6 +193,15 @@ function flush(): void {
   syncVerifications(message.archive.slice(0, VERIFY_TOP));
 }
 
+/** State groups of the current board for the group constraints (null without any). */
+export function boardGroups(): StateGroups | null {
+  const { country, params, groups } = useStore.getState();
+  if (!country) return null;
+  const board = getBoard(country, params);
+  const states = regionStates(country, params.region) ?? country.states.map((s) => s.id);
+  return stateGroups(board.pool, states, groups);
+}
+
 /** Search pool of the current board with pins and exclusions as pool indices. */
 function searchPool(): SearchPool | null {
   const { country, params, pinned, excluded } = useStore.getState();
@@ -196,12 +210,14 @@ function searchPool(): SearchPool | null {
   const indices = (ids: readonly number[]) =>
     ids.map((id) => board.index.get(id)).filter((i): i is number => i !== undefined);
   const labels = getLabels(board, params);
+  const groups = boardGroups();
   return {
     points: board.points,
     population: board.pool.map((c) => c.pop),
     pinned: indices(pinned),
     excluded: indices(excluded),
     labels: labels ? poolLabels(board, labels) : undefined,
+    ...(groups ? { groups: { of: groups.of, min: groups.min, max: groups.max } } : {}),
   };
 }
 
@@ -211,20 +227,54 @@ export function startSearch(): void {
   if (!state.country || !pool) return;
   const board = getBoard(state.country, state.params);
   const runId = state.run.runId + 1;
-  const { selection, conflictingPins } = greedySelection(
-    pool,
-    state.params.n,
-    state.params.minDistanceMm,
-  );
   const fail = (error: NonNullable<RunState['error']>) =>
     useStore.setState({
       run: { status: 'error', runId, progress: null, trace: [], error },
     });
+  // Feasibility before the run: group sizes, pins, labels of the pins, then the greedy start.
+  const groups = boardGroups();
+  const stateName = (g: number) => {
+    const id = groups!.states[g]!;
+    const info = state.country?.states.find((s) => s.id === id);
+    return info ? (state.lang === 'de' ? info.name : info.nameEn) : id;
+  };
+  if (pool.groups) {
+    const g = pool.groups;
+    const size = groupCounts(g, [...pool.points.keys()]);
+    const small = g.min.flatMap((m, i) => (size[i]! < m ? [i] : []));
+    if (small.length > 0) {
+      fail({ kind: 'group-short', names: small.map(stateName).join(', ') });
+      return;
+    }
+    const range = sizeRange(g);
+    if (state.params.n < range.min || state.params.n > range.max) {
+      fail({ kind: 'group-size', min: range.min, max: range.max });
+      return;
+    }
+  }
+  const { selection, conflictingPins, groupShortfall, pinsOverMax } = greedySelection(
+    pool,
+    state.params.n,
+    state.params.minDistanceMm,
+  );
   if (conflictingPins.length > 0) {
     const names = conflictingPins
       .map(([a, b]) => `${board.pool[a]!.name} – ${board.pool[b]!.name}`)
       .join(', ');
     fail({ kind: 'pin-conflict', names });
+    return;
+  }
+  if (pinsOverMax.length > 0) {
+    fail({ kind: 'group-pins', names: pinsOverMax.map(stateName).join(', ') });
+    return;
+  }
+  const unlabelled = unplacedLabelCities(pool, pool.pinned);
+  if (unlabelled.length > 0) {
+    fail({ kind: 'pin-labels', names: unlabelled.map((c) => board.pool[c]!.name).join(', ') });
+    return;
+  }
+  if (groupShortfall.length > 0) {
+    fail({ kind: 'group-short', names: groupShortfall.map(stateName).join(', ') });
     return;
   }
   if (selection.length < state.params.n) {

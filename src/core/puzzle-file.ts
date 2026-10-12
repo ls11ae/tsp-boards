@@ -30,7 +30,8 @@ export interface GroupConstraint {
   /** Group key, e.g. a state id 'DE-NW', or '*' for every state. */
   readonly group: string;
   readonly min: number;
-  readonly max: number;
+  /** null: no maximum. */
+  readonly max: number | null;
 }
 
 export interface MapResults {
@@ -183,10 +184,14 @@ export function parsePuzzleDoc(json: unknown): PuzzleDoc {
     const groups = Array.isArray(c.groups)
       ? c.groups
           .filter(
-            (g): g is { group: string; min: number; max: number } =>
-              isObj(g) && typeof g.group === 'string' && isNum(g.min) && isNum(g.max),
+            (g): g is { group: string; min: number; max?: unknown } =>
+              isObj(g) && typeof g.group === 'string' && isNum(g.min),
           )
-          .map((g) => ({ group: g.group.slice(0, 20), min: g.min, max: g.max }))
+          .map((g) => ({
+            group: g.group.slice(0, 20),
+            min: g.min,
+            max: isNum(g.max) ? g.max : null,
+          }))
       : [];
     const places = parsePlaces(m.places, 500);
     const r = m.results;

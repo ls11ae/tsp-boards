@@ -4,7 +4,7 @@
 import { create } from 'zustand';
 import type { BoardPlan } from '../core/board/plan';
 import type { HeuristicKind } from '../core/overlays';
-import type { Place, Purpose } from '../core/puzzle-file';
+import type { GroupConstraint, Place, Purpose } from '../core/puzzle-file';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
 import { EMPTY_PLAY, type PlayAttempt, type PlayState } from '../core/play';
@@ -43,6 +43,10 @@ export interface LoadedPuzzle {
 export type RunError =
   | { readonly kind: 'too-few'; readonly placed: number; readonly n: number }
   | { readonly kind: 'pin-conflict'; readonly names: string }
+  | { readonly kind: 'pin-labels'; readonly names: string }
+  | { readonly kind: 'group-size'; readonly min: number; readonly max: number }
+  | { readonly kind: 'group-short'; readonly names: string }
+  | { readonly kind: 'group-pins'; readonly names: string }
   | { readonly kind: 'other'; readonly message: string };
 
 export interface RunState {
@@ -200,6 +204,8 @@ export interface AppState {
   readonly pinned: readonly number[];
   /** GeoNames ids the next search must not use. */
   readonly excluded: readonly number[];
+  /** Minimum and maximum number of places per state for the next search. */
+  readonly groups: readonly GroupConstraint[];
   /** Warnings from opening a permalink (data version, missing cities). */
   readonly linkWarnings: readonly string[];
   /** Board plans by plan key (puzzle key and the parameters the plan depends on). */
@@ -296,6 +302,7 @@ export const useStore = create<AppState>()((set) => ({
   overlay: 'none',
   pinned: [],
   excluded: [],
+  groups: [],
   linkWarnings: [],
   boardPlans: {},
   exportOptions: { paper: 'A4', holes: 'cut', strokeMm: 0.1, preview: true },

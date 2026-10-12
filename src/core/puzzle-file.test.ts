@@ -92,7 +92,11 @@ describe('puzzle files', () => {
     expect(messy.map!.params.region).toBe('DE-BY');
     expect(messy.map!.params.boardWidthMm).toBe(500);
     expect(messy.map!.places).toEqual([{ name: 'Ok', lat: 50, lon: 8 }]);
-    expect(messy.map!.constraints).toEqual({ pinned: [7], excluded: [], groups: [] });
+    expect(messy.map!.constraints).toEqual({
+      pinned: [7],
+      excluded: [],
+      groups: [{ group: 'DE-BY', min: 1, max: null }],
+    });
   });
 
   it('name files and collection entries', () => {

@@ -15,6 +15,7 @@
 // (board/labels.ts); labels that do not fit count as infeasible, like a gap below the target.
 
 import {
+  EXPORT_NODE_LIMIT,
   SEARCH_NODE_LIMIT,
   labelCandidates,
   placeLabels,
@@ -34,6 +35,7 @@ import { neighborLists } from '../tsp/local-search';
 import { alternativeTour, scanSecondBest, type GapScanResult } from '../tsp/second-best';
 import { sameTour, stringLength } from '../tsp/tour';
 import { ConflictGraph, Selection, sampleWeighted } from './conflicts';
+import { groupCounts, withinBounds, type PoolGroups } from './groups';
 
 export interface SearchWeights {
   readonly gap: number;
@@ -99,6 +101,8 @@ export interface SearchPool {
   readonly excluded?: readonly number[];
   /** Board labels that must fit (omit for no label constraint). */
   readonly labels?: PoolLabels;
+  /** Minimum and maximum number of cities per group, e.g. per state (omit for none). */
+  readonly groups?: PoolGroups;
 }
 
 export interface PoolLabels {
@@ -115,11 +119,17 @@ export interface Feasibility {
   readonly selection: number[];
   /** Pinned cities closer than the minimum distance to each other (pool indices). */
   readonly conflictingPins: [number, number][];
+  /** Groups whose minimum was not reached (group indices). */
+  readonly groupShortfall: number[];
+  /** Groups with more pinned cities than their maximum (group indices). */
+  readonly pinsOverMax: number[];
 }
 
 /**
  * Greedy start selection; also answers whether n cities fit at the minimum distance (if fewer
- * than n are placed, the region is too small or the distance too large for n cities).
+ * than n are placed, the region is too small or the distance too large for n cities). With
+ * groups: pinned cities, then the minimum of each group (smallest groups first), then the
+ * largest cities of groups below their maximum.
  */
 export function greedySelection(
   pool: SearchPool,
@@ -138,11 +148,49 @@ export function greedySelection(
   const byPopulation = pool.population
     .map((_, i) => i)
     .sort((a, b) => pool.population[b]! - pool.population[a]! || a - b);
+  const groups = pool.groups;
+  const counts = groups ? groupCounts(groups, selection.members) : [];
+  const pinsOverMax = groups ? counts.flatMap((k, g) => (k > groups.max[g]! ? [g] : [])) : [];
+  const take = (c: number) => {
+    selection.add(c);
+    const g = groups?.of[c] ?? -1;
+    if (g >= 0) counts[g]!++;
+  };
+  if (groups) {
+    const size = groupCounts(groups, byPopulation);
+    const order = groups.min.map((_, g) => g).sort((a, b) => size[a]! - size[b]! || a - b);
+    for (const g of order) {
+      for (const c of byPopulation) {
+        if (counts[g]! >= groups.min[g]! || selection.members.length >= n) break;
+        if (groups.of[c] === g && !excluded.has(c) && selection.eligible(c)) take(c);
+      }
+    }
+  }
   for (const c of byPopulation) {
     if (selection.members.length >= n) break;
-    if (!excluded.has(c) && selection.eligible(c)) selection.add(c);
+    const g = groups?.of[c] ?? -1;
+    if (groups && g >= 0 && counts[g]! >= groups.max[g]!) continue;
+    if (!excluded.has(c) && selection.eligible(c)) take(c);
   }
-  return { selection: [...selection.members], conflictingPins };
+  const groupShortfall = groups ? counts.flatMap((k, g) => (k < groups.min[g]! ? [g] : [])) : [];
+  return { selection: [...selection.members], conflictingPins, groupShortfall, pinsOverMax };
+}
+
+/** Pool indices among `members` whose board labels cannot be placed (none without labels). */
+export function unplacedLabelCities(pool: SearchPool, members: readonly number[]): number[] {
+  const labels = pool.labels;
+  if (!labels || members.length === 0) return [];
+  const placement = placeLabels({
+    points: members.map((c) => pool.points[c]!),
+    candidates: members.map((c) =>
+      labelCandidates(pool.points[c]!, labels.metrics[c]!, labels.options),
+    ),
+    width: labels.width,
+    height: labels.height,
+    options: labels.options,
+    nodeLimit: EXPORT_NODE_LIMIT,
+  });
+  return members.filter((_, i) => placement.choice[i] === -1);
 }
 
 export interface Evaluation {
@@ -326,13 +374,15 @@ export class Search {
 
   private initialState(): State {
     const { n } = this.params;
-    const { selection: chosen, conflictingPins } = greedySelection(
-      this.pool,
-      n,
-      this.params.minDistanceMm,
-      this.graph,
-    );
+    const {
+      selection: chosen,
+      conflictingPins,
+      groupShortfall,
+      pinsOverMax,
+    } = greedySelection(this.pool, n, this.params.minDistanceMm, this.graph);
     if (conflictingPins.length > 0) throw new Error('pinned cities violate the minimum distance');
+    if (pinsOverMax.length > 0 || groupShortfall.length > 0)
+      throw new Error('the group bounds cannot be met');
     if (chosen.length < n) {
       throw new Error(
         `only ${chosen.length} cities fit at minimum distance ${this.params.minDistanceMm} mm (need ${n})`,
@@ -356,44 +406,96 @@ export class Search {
     return this.state.selection.members.filter((c) => !this.pinned.has(c));
   }
 
-  /** Replace `out` by a population-weighted eligible city. */
+  private groupOf(c: number): number {
+    return this.pool.groups?.of[c] ?? -1;
+  }
+
+  /** Selected cities per group after removing and adding cities. */
+  private countsAfter(removed: readonly number[], added: readonly number[]): number[] {
+    const groups = this.pool.groups;
+    if (!groups) return [];
+    const counts = groupCounts(groups, this.state.selection.members);
+    for (const c of removed) if (this.groupOf(c) >= 0) counts[this.groupOf(c)]!--;
+    for (const c of added) if (this.groupOf(c) >= 0) counts[this.groupOf(c)]!++;
+    return counts;
+  }
+
+  /** Whether replacing `out` by `inc` keeps the group bounds. */
+  private swapKeepsGroups(out: number, inc: number, counts: readonly number[]): boolean {
+    const groups = this.pool.groups;
+    const a = this.groupOf(out);
+    const b = this.groupOf(inc);
+    if (!groups || a === b) return true;
+    return (a < 0 || counts[a]! > groups.min[a]!) && (b < 0 || counts[b]! < groups.max[b]!);
+  }
+
+  /** Replace `out` by a population-weighted eligible city (within the group bounds). */
   private swapOut(out: number): { removed: number[]; added: number[] } | null {
     const sel = this.state.selection;
+    const counts = this.countsAfter([], []);
     sel.remove(out);
-    const inc = sampleWeighted(this.weights, (i) => i !== out && sel.eligible(i), this.moveRng);
+    const inc = sampleWeighted(
+      this.weights,
+      (i) => i !== out && sel.eligible(i) && this.swapKeepsGroups(out, i, counts),
+      this.moveRng,
+    );
     sel.add(out);
     return inc < 0 ? null : { removed: [out], added: [inc] };
   }
 
-  /** Insert a city, eject all selected cities it conflicts with, refill. */
+  /**
+   * Insert a city, eject all selected cities it conflicts with, refill. Repairs for the group
+   * bounds: if the new city's group is full, one of its members leaves too, and the refill
+   * first serves groups below their minimum.
+   */
   private ejection(): { removed: number[]; added: number[] } | null {
     const sel = this.state.selection;
+    const groups = this.pool.groups;
     const inc = sampleWeighted(this.weights, (i) => !sel.selected[i], this.moveRng);
     if (inc < 0) return null;
-    const conflicting = sel.members.filter((m) => this.graph.near[inc]!.includes(m));
-    if (conflicting.some((m) => this.pinned.has(m))) return null;
-    if (conflicting.length === 0) {
-      const options = this.removable();
+    const out = sel.members.filter((m) => this.graph.near[inc]!.includes(m));
+    const g = this.groupOf(inc);
+    if (groups && g >= 0 && this.countsAfter(out, [inc])[g]! > groups.max[g]!) {
+      const options = sel.members.filter(
+        (m) => this.groupOf(m) === g && !out.includes(m) && !this.pinned.has(m),
+      );
+      if (options.length === 0) return null;
+      out.push(this.moveRng.pick(options));
+    }
+    if (out.some((m) => this.pinned.has(m))) return null;
+    if (out.length === 0) {
+      const counts = this.countsAfter([], []);
+      const options = this.removable().filter((r) => this.swapKeepsGroups(r, inc, counts));
       if (options.length === 0) return null;
       return { removed: [this.moveRng.pick(options)], added: [inc] };
     }
-    for (const m of conflicting) sel.remove(m);
+    for (const m of out) sel.remove(m);
     sel.add(inc);
     const added = [inc];
-    for (let k = 1; k < conflicting.length; k++) {
+    const counts = this.countsAfter(out, added);
+    for (let k = 1; k < out.length; k++) {
+      const below = groups ? counts.some((c, h) => c < groups.min[h]!) : false;
+      const fits = (i: number) => {
+        const h = this.groupOf(i);
+        if (!groups) return true;
+        if (below) return h >= 0 && counts[h]! < groups.min[h]!;
+        return h < 0 || counts[h]! < groups.max[h]!;
+      };
       const fill = sampleWeighted(
         this.weights,
-        (i) => sel.eligible(i) && !conflicting.includes(i),
+        (i) => sel.eligible(i) && !out.includes(i) && fits(i),
         this.moveRng,
       );
       if (fill < 0) break;
       sel.add(fill);
       added.push(fill);
+      if (this.groupOf(fill) >= 0) counts[this.groupOf(fill)]!++;
     }
     for (const a of added) sel.remove(a);
-    for (const m of conflicting) sel.add(m);
-    if (added.length < conflicting.length) return null;
-    return { removed: conflicting, added };
+    for (const m of out) sel.add(m);
+    if (added.length < out.length) return null;
+    if (groups && !withinBounds(groups, counts)) return null;
+    return { removed: out, added };
   }
 
   private propose(): { removed: number[]; added: number[] } | null {

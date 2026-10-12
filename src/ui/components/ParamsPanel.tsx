@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { regionInfo, type RegionInfo } from '../../core/region';
+import { EVERY_STATE } from '../../core/groups';
+import { regionInfo, regionStates, type RegionInfo } from '../../core/region';
 import { offeredRegions } from '../../core/region-check';
 import type { BoardModel } from '../board';
 import { changeParams, startSearch, stopSearch } from '../controller';
@@ -108,6 +109,79 @@ function RegionField() {
   );
 }
 
+/** Minimum and maximum number of places per state (one constraint for every state). */
+function GroupsField() {
+  const t = useT();
+  const fmt = useFormat();
+  const country = useStore((s) => s.country);
+  const region = useStore((s) => s.params.region);
+  const groups = useStore((s) => s.groups);
+  if (!country) return null;
+  let states: string[];
+  try {
+    states = regionStates(country, region) ?? country.states.map((s) => s.id);
+  } catch {
+    return null;
+  }
+  if (states.length < 2) return null;
+  const every = groups.find((g) => g.group === EVERY_STATE);
+  const set = (min: number, max: number | null) => {
+    const others = groups.filter((g) => g.group !== EVERY_STATE);
+    const constraint = min === 0 && max === null ? [] : [{ group: EVERY_STATE, min, max }];
+    useStore.setState({ groups: [...others, ...constraint] });
+  };
+  return (
+    <fieldset>
+      <legend>{t.perState}</legend>
+      <label className="field">
+        <span>{t.perStateMin}</span>
+        <input
+          type="number"
+          min={0}
+          value={every?.min ?? 0}
+          onChange={(e) => {
+            const x = e.target.valueAsNumber;
+            // A larger minimum raises the maximum.
+            const max = every?.max ?? null;
+            if (Number.isInteger(x) && x >= 0) set(x, max === null ? null : Math.max(max, x));
+          }}
+        />
+      </label>
+      <label className="field">
+        <span>{t.perStateMax}</span>
+        <input
+          type="number"
+          min={0}
+          placeholder={t.noLimit}
+          value={every?.max ?? ''}
+          onChange={(e) => {
+            const x = e.target.valueAsNumber;
+            if (e.target.value === '') set(every?.min ?? 0, null);
+            else if (Number.isInteger(x) && x >= 0) set(Math.min(every?.min ?? 0, x), x);
+          }}
+        />
+      </label>
+      <div className="actions">
+        <button type="button" onClick={() => set(1, null)}>
+          {t.everyState}
+        </button>
+        {states.length >= 5 && (
+          <button
+            type="button"
+            onClick={() => {
+              set(1, 1);
+              changeParams({ n: states.length });
+            }}
+          >
+            {t.onePerState(fmt.integer(states.length))}
+          </button>
+        )}
+      </div>
+      <p className="hint">{t.perStateHint}</p>
+    </fieldset>
+  );
+}
+
 export function ParamsPanel({
   board,
   puzzle,
@@ -158,6 +232,7 @@ export function ParamsPanel({
       <NumberField label={t.cityCount} field="n" min={5} />
       <NumberField label={t.minPopulation} field="minPopulation" step={1000} />
       {board && <p className="hint">{t.poolSize(fmt.integer(board.pool.length))}</p>}
+      <GroupsField />
       <fieldset>
         <legend>{t.board}</legend>
         <NumberField label={t.boardWidth} field="boardWidthMm" step={10} />

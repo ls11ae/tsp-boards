@@ -192,7 +192,7 @@ export function downloadBoard(
 ): void {
   const setup = puzzleSetup(board, puzzle);
   if (!setup) return;
-  const { exportOptions, params, country, pinned, excluded } = useStore.getState();
+  const { exportOptions, params, country, pinned, excluded, groups } = useStore.getState();
   const name = fileId(setup);
   if (kind === 'svg') {
     const drawing = drawPuzzleBoard(setup, plan, { holes: exportOptions.holes });
@@ -223,7 +223,7 @@ export function downloadBoard(
     params,
     { country: country.country, version: country.dataVersion },
     setup.cities.map((c) => c.id),
-    { pinned, excluded },
+    { pinned, excluded, groups },
     __APP_VERSION__,
   );
   // Sheets are in the board language, numbers too.

@@ -514,3 +514,18 @@ Short entries: decision; alternatives considered; reason. Newest last.
   places are there (before, it kept stale pool indices and could crash the board).
   Alternatives: unions in the data build (would need a data version bump for each new union),
   a free choice of states (possible with the same ids; a UI for it is left for later).
+- **2026-10-12 Group constraints per state (roadmap 5.6).** Constraints `{group, min, max}`
+  (max `null` = none; `'*'` = every state of the region, a state id overrides it) become pool
+  groups for the search. They are hard constraints: the greedy start fills each group's
+  minimum first (smallest groups first) and then skips full groups; swaps keep the bounds
+  (a full group only swaps within itself), and ejections repair them (if the new city's group
+  is full, one of its members leaves too; the refill serves groups below their minimum first)
+  or are rejected. Without groups the moves draw the same random numbers as before, so old
+  seeds reproduce. Before a run the UI checks, in this order: states whose pool is smaller
+  than the minimum, the size range (Σ min ≤ n ≤ Σ max), pinned conflicts, pins above a
+  maximum, labels of the pinned cities, and the greedy start. The UI offers one constraint for
+  every state (at least / at most, "every state", "exactly one per state" which sets n);
+  links carry `gr=*:1:1`, files `constraints.groups`, the CLI `--groups`. Germany with exactly
+  one place per state: exact string gap 44 mm after 400 iterations (2 s). Alternatives: soft
+  penalties (the walk could leave the feasible set and the archive would need filtering),
+  per-state limits in the UI (kept to files and links for now).

@@ -73,7 +73,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
   are computed in `src/core/metrics.ts` but not shown: show them, and offer them as optional
   objective terms so results can be compared with the thesis.
 
-### 5.6 Regions and group constraints
+### 5.6 Regions and group constraints — done 2026-10-12
 
 - City-states make no sense as regions of their own: with one place per municipality, Berlin
   and Hamburg have a single place and Bremen two. Remove them from the region list and add
