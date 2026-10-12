@@ -75,6 +75,7 @@ export const en = {
   verifying: 'Exact check running…',
   queued: 'Exact check queued',
   stringExact: 'exact (string length)',
+  euclidExact: 'exact (Euclidean length)',
   euclidExactStringLocal: 'Euclidean exact, string checked locally',
   verificationFailed: 'Exact check failed',
   timeLimit: 'time limit reached',
@@ -266,6 +267,15 @@ export const en = {
   incPlaySkip: 'Next instance',
   playLinkIncremental: 'Copy play link',
   playNow: 'Play',
+
+  // Digital puzzles
+  exportDigital:
+    'This is a digital puzzle (judged by Euclidean length). To build a board, set the purpose to "board": the string length is then checked exactly.',
+  gapDigital: (pct: string, km: string) => `${pct} % (${km} km)`,
+  tourLengthKm: 'Length of the round trip',
+  playLongerDigital: (pct: string, km: string) =>
+    `Not yet: ${pct} % (${km} km) longer than the shortest round trip.`,
+  playRevealedDigital: (km: string) => `The shortest round trip is ${km} km long.`,
 
   // Permalink and data
   permalink: 'Copy link',

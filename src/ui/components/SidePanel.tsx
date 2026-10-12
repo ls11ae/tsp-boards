@@ -62,6 +62,7 @@ function PuzzleMetrics({
   const fmt = useFormat();
   const showTour = useStore((s) => s.showTour);
   const setShowTour = useStore((s) => s.setShowTour);
+  const purpose = useStore((s) => s.doc.purpose);
   const e = puzzle.evaluation;
   const v = puzzle.verification;
   const exact = v?.status === 'done' ? v.verification : null;
@@ -73,8 +74,16 @@ function PuzzleMetrics({
     loaded: t.showLoaded,
   }[puzzle.source];
 
+  const digital = purpose === 'digital';
+  const km = (um: number) => fmt.number(um / 1000 / board.projection.mmPerKm, 1);
   let gap: string | null = null;
-  if (exact?.string) gap = `${mm(exact.string.gap)} mm`;
+  if (exact?.string && digital) {
+    // Digital puzzles: Euclidean gap, as share of the length and in km on the map.
+    const g = exact.string.gap;
+    gap = Number.isFinite(g)
+      ? t.gapDigital(fmt.number((100 * g) / exact.string.optimalLength, 2), km(g))
+      : '–';
+  } else if (exact?.string) gap = `${mm(exact.string.gap)} mm`;
   else if (e) gap = e.gapCapped ? t.gapAtLeast(mm(e.gapUm)) : `${mm(e.gapUm)} mm`;
 
   let verification: string;
@@ -86,7 +95,11 @@ function PuzzleMetrics({
     verification = `${t.verificationFailed} (${t.timeLimit})`;
   else
     verification =
-      v.verification.mode === 'string-exact' ? t.stringExact : t.euclidExactStringLocal;
+      v.verification.mode === 'string-exact'
+        ? t.stringExact
+        : purpose === 'digital'
+          ? t.euclidExact
+          : t.euclidExactStringLocal;
 
   const tour = puzzle.tour;
   const euclideanMm = tour
@@ -115,19 +128,25 @@ function PuzzleMetrics({
             <dd>{e.gapCapped ? t.gapAtLeast(mm(e.gapEstUm)) : `${mm(e.gapEstUm)} mm`}</dd>
           </>
         )}
-        {(exact?.euclidean || e?.euclideanGapUm != null) && (
+        {!digital && (exact?.euclidean || e?.euclideanGapUm != null) && (
           <>
             <dt>{t.euclideanGap}</dt>
             <dd>{mm(exact?.euclidean ? exact.euclidean.gap : e!.euclideanGapUm!)} mm</dd>
           </>
         )}
-        {stringMm !== null && (
+        {!digital && stringMm !== null && (
           <>
             <dt>{t.stringLength}</dt>
             <dd>{fmt.number(stringMm, 1)} mm</dd>
           </>
         )}
-        {euclideanMm !== null && (
+        {digital && euclideanMm !== null && (
+          <>
+            <dt>{t.tourLengthKm}</dt>
+            <dd>{fmt.number(euclideanMm / board.projection.mmPerKm, 0)} km</dd>
+          </>
+        )}
+        {!digital && euclideanMm !== null && (
           <>
             <dt>{t.euclideanLength}</dt>
             <dd>{fmt.number(euclideanMm, 1)} mm</dd>

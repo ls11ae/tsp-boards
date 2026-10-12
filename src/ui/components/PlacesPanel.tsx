@@ -5,6 +5,7 @@ import { useState } from 'react';
 import type { RemovalSuggestion } from '../../core/fixed';
 import { closePairs } from '../../core/fixed';
 import type { BoardModel } from '../board';
+import { setPurpose } from '../controller';
 import { useFormat, useT } from '../i18n';
 import {
   DEFAULT_MERGE_KM,
@@ -178,7 +179,6 @@ export function FixedAnalysis({
   const list = useStore((s) => s.list);
   const params = useStore((s) => s.params);
   const purpose = useStore((s) => s.doc.purpose);
-  const setDoc = useStore((s) => s.setDoc);
   const [state, setState] = useState<
     | { status: 'idle' }
     | { status: 'running' }
@@ -220,7 +220,7 @@ export function FixedAnalysis({
         <div className="warning">
           <p>{t.fixedSmallGap(mm(gapUm), fmt.number(params.targetGapMm, 1))}</p>
           <div className="actions">
-            <button type="button" onClick={() => setDoc({ purpose: 'digital' })}>
+            <button type="button" onClick={() => setPurpose('digital')}>
               {t.fixedMakeDigital}
             </button>
             <button

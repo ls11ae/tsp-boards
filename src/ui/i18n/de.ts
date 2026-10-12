@@ -71,6 +71,7 @@ export const de: Messages = {
   verifying: 'Exakte Prüfung läuft …',
   queued: 'Exakte Prüfung in der Warteschlange',
   stringExact: 'exakt (Fadenlänge)',
+  euclidExact: 'exakt (euklidische Länge)',
   euclidExactStringLocal: 'euklidisch exakt, Faden lokal geprüft',
   verificationFailed: 'Exakte Prüfung fehlgeschlagen',
   timeLimit: 'Zeitlimit erreicht',
@@ -258,6 +259,14 @@ export const de: Messages = {
   incPlaySkip: 'Nächste Instanz',
   playLinkIncremental: 'Spiel-Link kopieren',
   playNow: 'Spielen',
+
+  exportDigital:
+    'Dies ist ein digitales Puzzle (bewertet nach euklidischer Länge). Für ein Brett den Zweck auf „Brett“ stellen: Dann wird die Fadenlänge exakt geprüft.',
+  gapDigital: (pct, km) => `${pct} % (${km} km)`,
+  tourLengthKm: 'Länge der Rundreise',
+  playLongerDigital: (pct, km) =>
+    `Noch nicht: ${pct} % (${km} km) länger als die kürzeste Rundreise.`,
+  playRevealedDigital: (km) => `Die kürzeste Rundreise ist ${km} km lang.`,
 
   permalink: 'Link kopieren',
   linkCopied: 'Link kopiert',

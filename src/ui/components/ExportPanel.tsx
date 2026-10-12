@@ -74,6 +74,7 @@ export function ExportPanel({
   const state = useStore((s) => s.boardPlans[planKey(puzzle.key, params)]);
   const v = puzzle.verification;
   const verified = v?.status === 'done' && v.verification.string !== null;
+  const digital = useStore((s) => s.doc.purpose === 'digital');
   const plan = state?.status === 'done' ? state.plan : null;
   const download = (kind: ExportKind) => {
     if (plan) downloadBoard(kind, board, puzzle, plan);
@@ -82,7 +83,9 @@ export function ExportPanel({
   return (
     <section>
       <h2>{t.exportTitle}</h2>
-      {!verified ? (
+      {digital ? (
+        <p className="hint">{t.exportDigital}</p>
+      ) : !verified ? (
         <p className="hint">{t.exportNeedsCheck}</p>
       ) : (
         <>

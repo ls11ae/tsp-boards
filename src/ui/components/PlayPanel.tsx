@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Instance } from '../../core/instance';
-import { rEffMm } from '../../core/params';
+import { effectiveREffMm } from '../../core/params';
 import { pathLength } from '../../core/play';
 import { stringLength } from '../../core/tsp/tour';
 import type { BoardModel } from '../board';
@@ -31,6 +31,7 @@ export function PlayPanel({
   const play = useStore((s) => s.play);
   const playId = useStore((s) => s.playId);
   const params = useStore((s) => s.params);
+  const purpose = useStore((s) => s.doc.purpose);
   const [confirmReveal, setConfirmReveal] = useState(false);
   const v = puzzle?.verification;
   const optimum = v?.status === 'done' ? v.verification.string : null;
@@ -48,7 +49,7 @@ export function PlayPanel({
   }, [puzzle, optimum, pathKey, play.state.closed, id, playId]);
 
   const members = puzzle?.members;
-  const rEff = rEffMm(params);
+  const rEff = effectiveREffMm(params, purpose);
   const inst = useMemo(
     () =>
       members
@@ -65,6 +66,12 @@ export function PlayPanel({
   const path = play.state.path;
   const length = play.state.closed ? stringLength(inst, path) : pathLength(inst, path);
   const mm = (um: number, d = 1) => fmt.number(um / 1000, d);
+  const digital = purpose === 'digital';
+  const km = (um: number, d = 1) => fmt.number(um / 1000 / board.projection.mmPerKm, d);
+  const longer = (excessUm: number) =>
+    digital && optimum
+      ? t.playLongerDigital(fmt.number((100 * excessUm) / optimum.optimalLength, 2), km(excessUm))
+      : t.playLonger(mm(excessUm));
   const last = play.attempts.at(-1);
   const judged = play.state.closed && play.judged === pathKey && last !== undefined;
 
@@ -78,8 +85,8 @@ export function PlayPanel({
           <dd>
             {fmt.integer(path.length)} / {fmt.integer(n)}
           </dd>
-          <dt>{t.stringLength}</dt>
-          <dd>{mm(length)} mm</dd>
+          <dt>{digital ? t.tourLengthKm : t.stringLength}</dt>
+          <dd>{digital ? `${km(length, 0)} km` : `${mm(length)} mm`}</dd>
           <dt>{t.playTime}</dt>
           <dd>
             <Timer startedAt={play.startedAt} stoppedMs={play.solvedMs} />
@@ -92,13 +99,17 @@ export function PlayPanel({
           (last.excessUm === 0 ? (
             <p className="play-result optimal">{t.playOptimal}</p>
           ) : (
-            <p className="play-result">{t.playLonger(mm(last.excessUm))}</p>
+            <p className="play-result">{longer(last.excessUm)}</p>
           ))}
         {play.solvedMs !== null && !judged && (
           <p className="play-result optimal">{t.playSolvedBefore}</p>
         )}
         {play.revealed && optimum && (
-          <p className="hint">{t.playRevealed(mm(optimum.optimalLength))}</p>
+          <p className="hint">
+            {digital
+              ? t.playRevealedDigital(km(optimum.optimalLength, 0))
+              : t.playRevealed(mm(optimum.optimalLength))}
+          </p>
         )}
         <div className="actions">
           <button type="button" onClick={playUndo} disabled={path.length === 0 || play.revealed}>

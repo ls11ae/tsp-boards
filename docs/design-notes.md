@@ -480,3 +480,13 @@ Short entries: decision; alternatives considered; reason. Newest last.
   only if string gap and gap at the scale reach the target and no nails are closer than 12 mm.
   The 2027 list (gap 0.37 mm) and the clusters (2.1 mm) become digital puzzles, the 2019 list
   (15.5 mm) a board.
+- **2026-10-12 Digital puzzles (roadmap 5.4).** Purpose `digital` judges Euclidean length: r_eff
+  is 0 for verification (Euclidean exact, fast), judging and search; the gap requirement is a
+  unique optimum with 0.05 mm on the board (about 50 m on the default Germany board), the gap
+  term saturates at 0.5 mm, and switching the purpose suggests weights 0.3/1/0.5 (difficulty
+  first) unless the user changed them. Play mode shows lengths in km and the excess in % and
+  km; highscores use ppm of the length. Board planning is off for digital puzzles (the stored
+  optimum is Euclidean): switching to `board` re-verifies with the string model. Incremental
+  puzzles stay boards. Alternatives: a relative gap target (e.g. 0.1 % of the length), judging
+  digital puzzles by S too. Reason: without nails the string is irrelevant, and any unique
+  optimum is a fair puzzle on screen.

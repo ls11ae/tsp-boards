@@ -17,6 +17,7 @@ import {
   removeFromLibrary,
   saveToLibrary,
 } from '../documents';
+import { setPurpose } from '../controller';
 import { useFormat, useT } from '../i18n';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
@@ -122,7 +123,7 @@ export function DocumentPanel({ puzzle }: { readonly puzzle: PuzzleView | null }
         <span>{t.docPurpose}</span>
         <select
           value={doc.purpose}
-          onChange={(e) => setDoc({ purpose: e.target.value === 'digital' ? 'digital' : 'board' })}
+          onChange={(e) => setPurpose(e.target.value === 'digital' ? 'digital' : 'board')}
         >
           <option value="board">{t.purposeBoard}</option>
           <option value="digital">{t.purposeDigital}</option>

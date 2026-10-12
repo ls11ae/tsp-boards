@@ -4,7 +4,8 @@
 import { parseCountryFile, type CountryFile, type Manifest } from '../core/data';
 import type { LinkPlace } from '../core/places';
 import type { Place } from '../core/puzzle-file';
-import { rEffMm, searchParams } from '../core/params';
+import { DEFAULT_PARAMS, DIGITAL_WEIGHTS, effectiveREffMm, searchParams } from '../core/params';
+import type { Purpose } from '../core/puzzle-file';
 import { decodePermalink } from '../core/permalink';
 import {
   greedySelection,
@@ -243,7 +244,7 @@ export function startSearch(): void {
     type: 'start',
     runId,
     pool,
-    params: searchParams(state.params),
+    params: searchParams(state.params, state.doc.purpose),
   };
   getSearchWorker().postMessage(message);
 }
@@ -368,7 +369,7 @@ function pump(): void {
   if (busy) return;
   const job = queue.shift();
   if (!job) return;
-  const { country, params } = useStore.getState();
+  const { country, params, doc } = useStore.getState();
   if (!country) return;
   const board = getBoard(country, params);
   const slot = new Map(job.members.map((c, s) => [c, s]));
@@ -381,10 +382,50 @@ function pump(): void {
     key: job.key,
     points: job.members.map((c) => board.points[c]!),
     tour: job.tour ? job.tour.map((c) => slot.get(c)!) : [],
-    rEffMm: rEffMm(params),
+    rEffMm: effectiveREffMm(params, doc.purpose),
     timeLimitSec: VERIFY_TIME_LIMIT_SEC,
+    mode: doc.purpose === 'digital' ? 'euclid-exact-string-local' : 'string-exact',
   };
   getExactWorker().postMessage(request);
+}
+
+/**
+ * The purpose changed (board <-> digital): results judged by the other measure are stale, so
+ * the puzzle on display is checked again.
+ */
+export function setPurpose(purpose: Purpose): void {
+  const { doc, params } = useStore.getState();
+  if (doc.purpose === purpose) return;
+  const weights = (w: {
+    readonly weightGap: number;
+    readonly weightDifficulty: number;
+    readonly weightRecognizability: number;
+  }) =>
+    params.weightGap === w.weightGap &&
+    params.weightDifficulty === w.weightDifficulty &&
+    params.weightRecognizability === w.weightRecognizability;
+  const boardWeights = {
+    weightGap: DEFAULT_PARAMS.weightGap,
+    weightDifficulty: DEFAULT_PARAMS.weightDifficulty,
+    weightRecognizability: DEFAULT_PARAMS.weightRecognizability,
+  };
+  // Suggested weights follow the purpose unless the user changed them.
+  if (purpose === 'digital' && weights(boardWeights))
+    useStore.getState().setParams(DIGITAL_WEIGHTS);
+  if (purpose === 'board' && weights(DIGITAL_WEIGHTS)) useStore.getState().setParams(boardWeights);
+  useStore.getState().setDoc({ purpose });
+  if (useStore.getState().puzzleType === 'map') purposeChanged();
+}
+
+function purposeChanged(): void {
+  const { loaded, shown, run } = useStore.getState();
+  resetVerifications();
+  const key = shown.kind === 'key' ? shown.key : null;
+  const members =
+    loaded && loaded.key === key
+      ? loaded.members
+      : (run.progress?.archive.find((e) => e.key === key)?.members ?? run.progress?.best?.members);
+  if (members) enqueueVerification(members.join(','), members, null, true);
 }
 
 /** Cancels running and queued checks (they belong to an old pool). */

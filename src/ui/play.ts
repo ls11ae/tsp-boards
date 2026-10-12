@@ -3,7 +3,7 @@
 // game record (sent only with consent and only if an endpoint is configured).
 
 import { Instance } from '../core/instance';
-import { rEffMm } from '../core/params';
+import { effectiveREffMm } from '../core/params';
 import { encodePlayLink } from '../core/permalink';
 import { clickNail, judge, puzzleHash, undo, type PlayRecord } from '../core/play';
 import {
@@ -114,6 +114,11 @@ export function updateGame(change: (play: PlayUi) => PlayUi): void {
   if (playId) saveGame(playId, next);
 }
 
+/** Board puzzles are judged by string length, digital ones by Euclidean length. */
+export function currentMeasure(): Measure {
+  return useStore.getState().doc.purpose === 'digital' ? 'euclidean' : 'string';
+}
+
 /** Play id of a map puzzle: the document id, or a hash of its places. */
 export function mapPlayId(puzzle: PuzzleView): string | null {
   const { country, params, doc } = useStore.getState();
@@ -180,7 +185,7 @@ let instanceCache: { key: string; rEff: number; inst: Instance } | null = null;
 function puzzleInstance(puzzle: PuzzleView): Instance | null {
   const { country, params } = useStore.getState();
   if (!country) return null;
-  const rEff = rEffMm(params);
+  const rEff = effectiveREffMm(params, useStore.getState().doc.purpose);
   if (instanceCache?.key === puzzle.key && instanceCache.rEff === rEff) return instanceCache.inst;
   const board = getBoard(country, params);
   const inst = new Instance(
@@ -219,7 +224,7 @@ export function playNewGame(): void {
 
 export function playReveal(puzzle: PuzzleView): void {
   updateGame((p) => ({ ...p, revealed: true }));
-  recordGameScore('string');
+  recordGameScore(currentMeasure());
   sendRecord(puzzle);
 }
 
@@ -238,7 +243,8 @@ export function judgePending(puzzle: PuzzleView): void {
     lengthUm: string.optimalLength,
   });
   const ms = play.startedAt === null ? 0 : Date.now() - play.startedAt;
-  const excess = result.optimal ? 0 : excessValue('string', result.lengthUm, string.optimalLength);
+  const measure = currentMeasure();
+  const excess = result.optimal ? 0 : excessValue(measure, result.lengthUm, string.optimalLength);
   updateGame((p) => ({
     ...p,
     judged: key,
@@ -247,7 +253,7 @@ export function judgePending(puzzle: PuzzleView): void {
     best: p.best && p.best.excess <= excess ? p.best : { excess, path: [...p.state.path] },
   }));
   if (result.optimal) {
-    recordGameScore('string');
+    recordGameScore(measure);
     sendRecord(puzzle);
   }
 }
@@ -268,12 +274,12 @@ function sendRecord(puzzle: PuzzleView): void {
     puzzle: puzzleHash(puzzle.members.map((c) => board.pool[c]!.id)),
     region: params.region,
     n: puzzle.members.length,
-    rEffMm: rEffMm(params),
+    rEffMm: effectiveREffMm(params, useStore.getState().doc.purpose),
     attempts: play.attempts,
     solvedMs: play.solvedMs,
     gaveUp: play.revealed,
     difficulty: puzzle.evaluation?.difficulty.score ?? null,
-    measure: 'string',
+    measure: currentMeasure(),
     points,
     order: play.best ? play.best.path : null,
     nickname,

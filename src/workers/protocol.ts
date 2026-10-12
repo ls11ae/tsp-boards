@@ -15,7 +15,7 @@ import type {
   IncrementalPuzzle,
   SequenceCheck,
 } from '../core/incremental/generate';
-import type { Verification } from '../core/verify';
+import type { Verification, VerificationMode } from '../core/verify';
 
 // --- search worker ---------------------------------------------------------------------------
 
@@ -58,6 +58,8 @@ export interface VerifyJob {
   readonly tour: readonly number[];
   readonly rEffMm: number;
   readonly timeLimitSec: number;
+  /** 'euclid-exact-string-local' for digital puzzles (r_eff 0: the Euclidean check suffices). */
+  readonly mode: VerificationMode;
 }
 
 export interface PlanJob {

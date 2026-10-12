@@ -56,7 +56,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
   recomputes the tour length from the submitted order; nicknames only with consent).
 - Play mode for the incremental puzzle (play instance by instance on one board).
 
-### 5.4 Digital vs. board puzzles
+### 5.4 Digital vs. board puzzles — done 2026-10-12
 
 - Purpose `board`: as now (string length S, gap target in mm, start nail and scale).
 - Purpose `digital`: no nails, so play mode judges the **Euclidean length** and shows the

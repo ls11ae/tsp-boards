@@ -77,7 +77,7 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
           request.tour.length === inst.n
             ? request.tour
             : iteratedLocalSearch(inst, new Rng(1)).tour;
-        const verification = verifyCandidate(highs, inst, tour, 'string-exact', {
+        const verification = verifyCandidate(highs, inst, tour, request.mode, {
           timeLimitSec: request.timeLimitSec,
         });
         reply({
