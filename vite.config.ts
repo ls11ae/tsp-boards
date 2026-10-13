@@ -1,5 +1,6 @@
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
@@ -13,9 +14,21 @@ function appVersion(): string {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   // Relative asset URLs, so the static build works from any sub-path on the chair server.
   base: './',
+  // HiGHS imports node:module only when it runs in Node; the browser build gets a stub (tests
+  // and the CLI run in Node and keep the real module).
+  resolve:
+    command === 'build'
+      ? {
+          alias: {
+            'node:module': fileURLToPath(
+              new URL('./src/workers/node-module-stub.ts', import.meta.url),
+            ),
+          },
+        }
+      : {},
   plugins: [react()],
   define: { __APP_VERSION__: JSON.stringify(appVersion()) },
   worker: { format: 'es' },
@@ -28,4 +41,4 @@ export default defineConfig({
       'server/**/*.test.mjs',
     ],
   },
-});
+}));

@@ -5,7 +5,11 @@ import { useState } from 'react';
 import { stepGapUm } from '../../core/incremental/generate';
 import type { IncrementalUiParams } from '../../core/incremental/params';
 import { useFormat, useT } from '../i18n';
-import { downloadIncremental, generate, incrementalLink, incrementalPreview } from '../incremental';
+import { generate, incrementalLink, incrementalPreview } from '../incremental';
+
+/** The SVG and PDF writers load on first use (roadmap 7.6). */
+const downloadIncremental = (kind: 'svg' | 'template' | 'solution') =>
+  void import('../incremental-export').then((m) => m.downloadIncremental(kind));
 import { useStore } from '../store';
 import { incrementalPlayLink } from '../incremental-play';
 import { DocumentPanel } from './DocumentPanel';

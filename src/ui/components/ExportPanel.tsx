@@ -1,12 +1,7 @@
 import type { BoardPlan, PlanWarning } from '../../core/board/plan';
 import type { BoardModel } from '../board';
-import {
-  downloadBoard,
-  downloadWorksheet,
-  planKey,
-  prepareBoard,
-  type ExportKind,
-} from '../export';
+import type { ExportKind } from '../export';
+import { planKey, prepareBoard } from '../plans';
 import { useFormat, useT } from '../i18n';
 import type { Messages } from '../i18n/en';
 import type { PuzzleView } from '../puzzle';
@@ -162,7 +157,10 @@ function Worksheet({
         </label>
       )}
       <div className="actions">
-        <button type="button" onClick={() => downloadWorksheet(board, puzzle)}>
+        <button
+          type="button"
+          onClick={() => void import('../export').then((m) => m.downloadWorksheet(board, puzzle))}
+        >
           {t.downloadWorksheet}
         </button>
       </div>
@@ -187,7 +185,8 @@ export function ExportPanel({
   const digital = useStore((s) => s.doc.purpose === 'digital');
   const plan = state?.status === 'done' ? state.plan : null;
   const download = (kind: ExportKind) => {
-    if (plan) downloadBoard(kind, board, puzzle, plan);
+    // The downloads (SVG and PDF writers) load on first use.
+    if (plan) void import('../export').then((m) => m.downloadBoard(kind, board, puzzle, plan));
   };
 
   return (

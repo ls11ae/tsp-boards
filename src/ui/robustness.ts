@@ -7,7 +7,7 @@ import { rEffMm } from '../core/params';
 import { robustnessRadii, type RobustnessRow } from '../core/robustness';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
 import type { BoardModel } from './board';
-import { planKey } from './export';
+import { planKey } from './plans';
 import type { PuzzleView } from './puzzle';
 import { useStore } from './store';
 

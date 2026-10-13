@@ -108,7 +108,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
   server and the play data endpoint when access is available. (Open: waits for the prototype
   dimensions and for access to the chair server; everything else of Phase 6 is done.)
 
-## Phase 7: polish, usability and composite places
+## Phase 7: polish, usability and composite places — done 2026-10-13
 
 From Kevin's review of 2026-10-13 (app run in a browser at 1440 × 900 and 390 × 844). Work
 through the items in order.
@@ -168,7 +168,7 @@ through the items in order.
   capitals with Mainz and Wiesbaden 10 mm apart): offer a board variant by showing which
   combinations (7.1) or omissions raise the gap above the target.
 
-### 7.6 Small things
+### 7.6 Small things — done 2026-10-13
 
 - Main bundle 511 KB: load the teaching mode and the PDF/board export lazily.
 - The footer shows "Version 0.0.0": set a real version before deploying.

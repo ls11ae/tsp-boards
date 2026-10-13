@@ -16,7 +16,7 @@ import {
 import { getBoard } from './board';
 import { fetchCountry, openSelection } from './controller';
 import { openListPuzzle } from './lists';
-import { planKey } from './export';
+import { planKey } from './plans';
 import { applyIncrementalPuzzle } from './incremental';
 import type { PuzzleView } from './puzzle';
 import { NEW_DOC, NEW_GAME, useStore } from './store';

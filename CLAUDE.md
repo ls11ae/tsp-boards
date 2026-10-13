@@ -40,8 +40,10 @@ what we change and why, benchmark results, and open questions.
   r_eff, classroom worksheet, points placed by hand on a blank board, city puzzles and themed
   instances from Wikidata (`cli/wikidata.ts`), Austria, Switzerland and the Netherlands.
   **`docs/roadmap.md` is the source of truth for open work**, in its order.
-- **Next: Phase 7** (Kevin's review 2026-10-13): composite places for alliances, gallery and
-  play view usability, designer layout, curated content, small fixes; see `docs/roadmap.md`.
+- Phase 7 complete (2026-10-13): composite places (alliances as one node), gallery grid with
+  thumbnails and filters, play view with screen-size places, zoom and keyboard play, collapsible
+  designer, board variants of curated lists, lazy-loaded export and teaching code, version 0.9.0.
+- **Next: Phase 8** (Europe and world); see `docs/roadmap.md`.
 - Open: prototype board dimensions (and a test board), code license, deploying to the chair
   server, play data endpoint.
 - Code license not chosen yet (decide before going public).

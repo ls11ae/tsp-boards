@@ -1,6 +1,6 @@
 {
   "name": "tsp-boards",
-  "version": "0.0.0",
+  "version": "0.9.0",
   "private": true,
   "description": "Generator for TSP puzzle boards (map puzzle and incremental puzzle)",
   "type": "module",

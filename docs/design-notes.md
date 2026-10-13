@@ -666,3 +666,13 @@ Short entries: decision; alternatives considered; reason. Newest last.
   Bonn/Köln combined (10.15 mm, 13 places). The clusters stay digital: no single change reaches
   5 mm (best 4.35 mm). Alternatives: searching pairs of changes (quadratic in the instance size,
   and the single changes already show the way), lowering the target for these lists.
+- **2026-10-13 Bundle and version (roadmap 7.6).** The board downloads (SVG, print template,
+  solution sheet, worksheet; also for the incremental puzzle) and the teaching mode load on
+  demand (`import()` and `React.lazy`); the plan and the preview, which the designer always
+  needs, moved to `ui/plans.ts`. The initial JavaScript is now 366 + 138 KB (no chunk above
+  500 KB, was one chunk of 531 KB); most of it is React DOM (~190 KB), fflate (links), the board
+  font's outlines and the app itself, so further splitting would gain little. The empty
+  `__vite-browser-external` chunks came from HiGHS importing `node:module` in its Node branch;
+  the browser build aliases it to a stub (tests and the CLI keep the real module). Version
+  0.9.0 (footer "0.9.0+commit"); 1.0.0 is meant for the first public deployment. Fixed on the
+  way: the file name hash could become negative ("…-13--6e1d4.pdf").

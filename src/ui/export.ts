@@ -1,160 +1,19 @@
-// Board export in the app: plans run in their own exact worker (so verifications continue),
-// drawings and files are made on the main thread from the shared core pipeline.
+// Board downloads (roadmap 7.6: loaded on demand): laser SVG, print template, solution sheet
+// and classroom worksheet, drawn on the main thread from the shared core pipeline.
 
-import { planData, type BoardPlan } from '../core/board/plan';
+import type { BoardPlan } from '../core/board/plan';
 import { mapTemplateText, solutionPdf, templatePdf } from '../core/board/print';
-import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
+import { drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import { boardSvg } from '../core/board/svg';
 import { worksheetPdf } from '../core/board/worksheet';
 import { listName } from '../core/data';
-import type { Layer } from '../core/board/drawing';
-import { svgPathData } from '../core/board/shapes';
 import { measuredLength } from '../core/board/measure';
-import { rEffMm, type PuzzleParams } from '../core/params';
 import { encodePermalink } from '../core/permalink';
 import { euclideanLength, stringLength } from '../core/tsp/tour';
-import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
 import type { BoardModel } from './board';
+import { puzzleSetup } from './plans';
 import type { PuzzleView } from './puzzle';
-import { useStore, type BoardPlanState } from './store';
-
-const PLAN_TIME_LIMIT_SEC = 120;
-
-/** The plan depends on the puzzle and on the board, label and gap parameters. */
-export function planKey(puzzleKey: string, p: PuzzleParams): string {
-  return [
-    puzzleKey,
-    useStore.getState().doc.title,
-    p.region,
-    p.boardWidthMm,
-    p.boardHeightMm,
-    p.marginMm,
-    p.minPopulation,
-    p.nailDiameterMm,
-    p.stringThicknessMm,
-    p.targetGapMm,
-    p.labelSizeMm,
-    p.labelLanguage,
-  ].join('|');
-}
-
-let worker: Worker | null = null;
-let running: { jobId: number; key: string } | null = null;
-let jobCounter = 0;
-
-function setPlan(key: string, state: BoardPlanState): void {
-  useStore.setState((s) => ({ boardPlans: { ...s.boardPlans, [key]: state } }));
-}
-
-function getWorker(): Worker {
-  if (worker) return worker;
-  const w = new Worker(new URL('../workers/exact.worker.ts', import.meta.url), { type: 'module' });
-  w.onmessage = (event: MessageEvent<ExactWorkerResponse>) => {
-    const message = event.data;
-    if (!running) return;
-    if (message.type === 'planned' && message.jobId === running.jobId) {
-      setPlan(message.key, { status: 'done', plan: message.plan, ms: message.ms });
-      running = null;
-    } else if (message.type === 'error' && message.jobId === running.jobId) {
-      setPlan(running.key, { status: 'error', message: message.message });
-      running = null;
-    }
-  };
-  w.onerror = (event) => {
-    if (running) setPlan(running.key, { status: 'error', message: event.message });
-    running = null;
-    worker?.terminate();
-    worker = null;
-  };
-  worker = w;
-  return w;
-}
-
-/** Setup of the shown puzzle (slot order = ascending pool index, as in verification). */
-export function puzzleSetup(board: BoardModel, puzzle: PuzzleView): BoardSetup | null {
-  const { country, params } = useStore.getState();
-  if (!country) return null;
-  return boardSetup(
-    country,
-    params,
-    puzzle.members.map((c) => board.pool[c]!.id),
-    useStore.getState().doc.title,
-    useStore.getState().list ? board.pool : null,
-  );
-}
-
-/** Starts planning the board for the shown, exactly verified puzzle. */
-export function prepareBoard(board: BoardModel, puzzle: PuzzleView): void {
-  const v = puzzle.verification;
-  if (v?.status !== 'done' || !v.verification.string) return;
-  const { params } = useStore.getState();
-  const setup = puzzleSetup(board, puzzle);
-  if (!setup) return;
-  const key = planKey(puzzle.key, params);
-  const string = v.verification.string;
-  const input = boardPlanInput(setup, {
-    tour: string.optimal,
-    second: string.second,
-    gapUm: string.gap,
-  });
-  if (running) {
-    // One plan at a time: a new request replaces the running one.
-    worker?.terminate();
-    worker = null;
-    useStore.setState((s) => {
-      const boardPlans = { ...s.boardPlans };
-      delete boardPlans[running!.key];
-      return { boardPlans };
-    });
-  }
-  const jobId = ++jobCounter;
-  running = { jobId, key };
-  setPlan(key, { status: 'running' });
-  const request: ExactWorkerRequest = {
-    type: 'plan',
-    jobId,
-    key,
-    data: planData(input, rEffMm(params)),
-    timeLimitSec: PLAN_TIME_LIMIT_SEC,
-  };
-  getWorker().postMessage(request);
-}
-
-export interface PreviewPaths {
-  readonly score: string;
-  readonly outline: string;
-  readonly cut: string;
-  readonly engrave: string;
-}
-
-const previewCache = new WeakMap<BoardPlan, { holes: string; paths: PreviewPaths }>();
-
-/** SVG path data of the planned board per layer (memoised per plan and hole style). */
-export function previewPaths(
-  board: BoardModel,
-  puzzle: PuzzleView,
-  plan: BoardPlan,
-  holes: 'cut' | 'mark',
-): PreviewPaths | null {
-  const cached = previewCache.get(plan);
-  if (cached?.holes === holes) return cached.paths;
-  const setup = puzzleSetup(board, puzzle);
-  if (!setup) return null;
-  const drawing = drawPuzzleBoard(setup, plan, { holes });
-  const layer = (name: Layer, fill: boolean) =>
-    svgPathData(
-      drawing.items.filter((i) => i.layer === name && i.fill === fill).flatMap((i) => [...i.path]),
-      2,
-    );
-  const paths = {
-    score: layer('score', false),
-    outline: layer('outline', false),
-    cut: layer('cut', false),
-    engrave: layer('engrave', true),
-  };
-  previewCache.set(plan, { holes, paths });
-  return paths;
-}
+import { useStore } from './store';
 
 /** Short stable name part for files: FNV-1a of the city ids. */
 function fileId(setup: BoardSetup): string {
@@ -164,7 +23,8 @@ function fileId(setup: BoardSetup): string {
       h ^= ch.charCodeAt(0);
       h = Math.imul(h, 0x01000193) >>> 0;
     }
-    h ^= 44;
+    // Separator between ids; >>> 0 keeps the hash unsigned (a minus sign in file names).
+    h = (h ^ 44) >>> 0;
   }
   return `${setup.file.country.toLowerCase()}-${setup.params.region.toLowerCase()}-${setup.cities.length}-${h.toString(16).padStart(8, '0').slice(0, 6)}`;
 }

@@ -8,7 +8,7 @@ import type { Point } from '../../core/geometry';
 import type { BoardModel } from '../board';
 import { cycleCity } from '../controller';
 import { addHandPoint, removeHandPoint, toggleCombine } from '../lists';
-import { planKey, previewPaths } from '../export';
+import { planKey, previewPaths } from '../plans';
 import { getLabels, placeBoardLabels } from '../labels';
 import { useOverlay, type OverlayView } from '../overlay';
 import type { TeachingFrame } from '../../core/teaching';

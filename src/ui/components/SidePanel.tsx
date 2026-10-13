@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
 import { Instance } from '../../core/instance';
 import { tourMetrics } from '../../core/metrics';
 import type { Evaluation } from '../../core/search/search';
@@ -11,7 +11,11 @@ import { distance } from '../../core/geometry';
 import { ExportPanel } from './ExportPanel';
 import { FixedAnalysis } from './PlacesPanel';
 import { OverlayPicker } from './OverlayPicker';
-import { TeachingPanel } from './TeachingPanel';
+
+// The teaching mode loads on demand (roadmap 7.6).
+const TeachingPanel = lazy(() =>
+  import('./TeachingPanel').then((m) => ({ default: m.TeachingPanel })),
+);
 
 function SearchStatus() {
   const t = useT();
@@ -364,7 +368,11 @@ export function SidePanel({
           <p className="hint">{t.noPuzzle}</p>
         </section>
       )}
-      {board && puzzle && <TeachingPanel board={board} puzzle={puzzle} />}
+      {board && puzzle && (
+        <Suspense fallback={null}>
+          <TeachingPanel board={board} puzzle={puzzle} />
+        </Suspense>
+      )}
       {board && puzzle && <FixedAnalysis board={board} puzzle={puzzle} />}
       {board && puzzle && <ExportPanel board={board} puzzle={puzzle} />}
       <Candidates />

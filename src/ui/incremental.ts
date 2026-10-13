@@ -2,9 +2,7 @@
 // preview, links and downloads.
 
 import type { Layer } from '../core/board/drawing';
-import { templatePdf } from '../core/board/print';
 import { svgPathData } from '../core/board/shapes';
-import { boardSvg } from '../core/board/svg';
 import { drawIncremental } from '../core/incremental/drawing';
 import type { IncrementalPuzzle } from '../core/incremental/generate';
 import {
@@ -13,7 +11,6 @@ import {
   incrementalParams,
   type IncrementalUiParams,
 } from '../core/incremental/params';
-import { incrementalSolutionPdf, incrementalTemplateText } from '../core/incremental/print';
 import { INCREMENTAL_TEXTS } from '../core/incremental/texts';
 import type { Point } from '../core/geometry';
 import type { IncrementalRequest, IncrementalResponse } from '../workers/protocol';
@@ -123,7 +120,7 @@ export function incrementalLink(): string {
   return `${window.location.origin}${window.location.pathname}${hash}`;
 }
 
-function drawingOptions(params: IncrementalUiParams, holes: 'cut' | 'mark', n: number) {
+export function drawingOptions(params: IncrementalUiParams, holes: 'cut' | 'mark', n: number) {
   const title = useStore.getState().doc.title;
   const line = INCREMENTAL_TEXTS[params.labelLanguage].boardLine(n);
   return {
@@ -170,62 +167,4 @@ export function incrementalPreview(
   };
   previewCache.set(puzzle, { key, paths });
   return paths;
-}
-
-function save(data: BlobPart, type: string, name: string): void {
-  const url = URL.createObjectURL(new Blob([data], { type }));
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10_000);
-}
-
-export function downloadIncremental(kind: 'svg' | 'template' | 'solution'): void {
-  const { inc, exportOptions } = useStore.getState();
-  const { puzzle, params } = inc;
-  if (!puzzle) return;
-  const n = puzzle.points.length;
-  const texts = INCREMENTAL_TEXTS[params.labelLanguage];
-  const name = `tsp-incremental-${n}-s${params.seed}`;
-  if (kind === 'svg') {
-    const { drawing } = drawIncremental(puzzle, drawingOptions(params, exportOptions.holes, n));
-    save(
-      boardSvg(drawing, { strokeMm: exportOptions.strokeMm, title: texts.templateTitle }),
-      'image/svg+xml',
-      `${name}.svg`,
-    );
-    return;
-  }
-  const { drawing } = drawIncremental(puzzle, drawingOptions(params, 'mark', n));
-  if (kind === 'template') {
-    save(
-      templatePdf({
-        drawing,
-        ...incrementalTemplateText(texts, params.nailDiameterMm),
-        paper: exportOptions.paper,
-      }),
-      'application/pdf',
-      `${name}-template-${exportOptions.paper}.pdf`,
-    );
-    return;
-  }
-  const locale = params.labelLanguage === 'de' ? 'de-DE' : 'en-GB';
-  save(
-    incrementalSolutionPdf({
-      puzzle,
-      drawing,
-      texts,
-      link: incrementalLink(),
-      formatNumber: (value, decimals) =>
-        value.toLocaleString(locale, {
-          minimumFractionDigits: decimals,
-          maximumFractionDigits: decimals,
-        }),
-    }),
-    'application/pdf',
-    `${name}-solution.pdf`,
-  );
 }
