@@ -154,7 +154,7 @@ through the items in order.
   (rank, name, excess, time, note).
 - Keyboard play for accessibility (choose the next place from a list or with the keyboard).
 
-### 7.4 Designer
+### 7.4 Designer — done 2026-10-13
 
 - The left column is very long: collapsible groups (puzzle, places, board, search), with the
   advanced settings (weights, thesis metrics, seed, iterations) collapsed by default.

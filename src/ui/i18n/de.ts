@@ -40,6 +40,7 @@ export const de: Messages = {
   poolSize: (count) => `${count} mögliche Städte`,
 
   search: 'Suche',
+  advanced: 'Erweitert: Gewichte, Seed, Iterationen',
   idle: 'Nicht gestartet',
   running: 'Suche läuft …',
   done: 'Fertig',

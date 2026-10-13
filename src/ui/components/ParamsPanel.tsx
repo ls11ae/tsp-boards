@@ -9,6 +9,7 @@ import { encodePermalink } from '../../core/permalink';
 import { linkList } from '../lists';
 import { playLink } from '../play';
 import { DocumentPanel } from './DocumentPanel';
+import { Group } from './Group';
 import { PlacesPanel } from './PlacesPanel';
 import type { PuzzleView } from '../puzzle';
 import { useStore, type UiParams } from '../store';
@@ -283,17 +284,19 @@ export function ParamsPanel({
 
   return (
     <aside className="panel params">
-      <DocumentPanel puzzle={puzzle} />
-      <h2>{t.parameters}</h2>
-      <CountryField />
-      <RegionField />
-      <PlacesPanel board={board} puzzle={puzzle} />
-      <NumberField label={t.cityCount} field="n" min={5} />
-      <NumberField label={t.minPopulation} field="minPopulation" step={1000} />
-      {board && <p className="hint">{t.poolSize(fmt.integer(board.pool.length))}</p>}
-      <GroupsField />
-      <fieldset>
-        <legend>{t.board}</legend>
+      <Group id="puzzle" title={t.puzzleSection}>
+        <DocumentPanel puzzle={puzzle} heading={false} />
+      </Group>
+      <Group id="places" title={t.places}>
+        <CountryField />
+        <RegionField />
+        <PlacesPanel board={board} puzzle={puzzle} framed={false} />
+        <NumberField label={t.cityCount} field="n" min={5} />
+        <NumberField label={t.minPopulation} field="minPopulation" step={1000} />
+        {board && <p className="hint">{t.poolSize(fmt.integer(board.pool.length))}</p>}
+        <GroupsField />
+      </Group>
+      <Group id="board" title={t.board}>
         <NumberField label={t.boardWidth} field="boardWidthMm" step={10} />
         <NumberField label={t.boardHeight} field="boardHeightMm" step={10} />
         <NumberField label={t.margin} field="marginMm" />
@@ -303,19 +306,23 @@ export function ParamsPanel({
         <NumberField label={t.labelSize} field="labelSizeMm" step={0.5} />
         <LabelLanguageField />
         <BlankBoardField />
-      </fieldset>
-      <NumberField label={t.targetGap} field="targetGapMm" step={0.5} />
-      <fieldset>
-        <legend>{t.weights}</legend>
-        <NumberField label={t.weightGap} field="weightGap" step={0.1} />
-        <NumberField label={t.weightDifficulty} field="weightDifficulty" step={0.1} />
-        <NumberField label={t.weightRecognizability} field="weightRecognizability" step={0.1} />
-        <NumberField label={t.weightInterior} field="weightInterior" step={0.1} />
-        <NumberField label={t.weightNonNearest} field="weightNonNearest" step={0.1} />
-      </fieldset>
-      <NumberField label={t.seed} field="seed" />
-      <NumberField label={t.iterations} field="iterations" step={100} min={1} />
-      <div className="actions">
+      </Group>
+      <Group id="search" title={t.search}>
+        <NumberField label={t.targetGap} field="targetGapMm" step={0.5} />
+        <Group id="advanced" title={t.advanced} defaultOpen={false}>
+          <fieldset>
+            <legend>{t.weights}</legend>
+            <NumberField label={t.weightGap} field="weightGap" step={0.1} />
+            <NumberField label={t.weightDifficulty} field="weightDifficulty" step={0.1} />
+            <NumberField label={t.weightRecognizability} field="weightRecognizability" step={0.1} />
+            <NumberField label={t.weightInterior} field="weightInterior" step={0.1} />
+            <NumberField label={t.weightNonNearest} field="weightNonNearest" step={0.1} />
+          </fieldset>
+          <NumberField label={t.seed} field="seed" />
+          <NumberField label={t.iterations} field="iterations" step={100} min={1} />
+        </Group>
+      </Group>
+      <div className="actions params-actions">
         {status === 'running' ? (
           <button type="button" onClick={stopSearch}>
             {t.stop}

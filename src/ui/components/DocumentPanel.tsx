@@ -83,7 +83,14 @@ function DocList({
 const placesOf = (d: PuzzleDoc) =>
   d.map ? d.map.places.length || d.map.params.n : (d.incremental?.points.length ?? 0);
 
-export function DocumentPanel({ puzzle }: { readonly puzzle: PuzzleView | null }) {
+export function DocumentPanel({
+  puzzle,
+  heading = true,
+}: {
+  readonly puzzle: PuzzleView | null;
+  /** Show the section heading (off inside a collapsible group). */
+  readonly heading?: boolean;
+}) {
   const t = useT();
   const doc = useStore((s) => s.doc);
   const setDoc = useStore((s) => s.setDoc);
@@ -100,7 +107,7 @@ export function DocumentPanel({ puzzle }: { readonly puzzle: PuzzleView | null }
 
   return (
     <section className="doc-panel">
-      <h2>{t.puzzleSection}</h2>
+      {heading && <h2>{t.puzzleSection}</h2>}
       <label className="field wide">
         <span>{t.docTitle}</span>
         <input

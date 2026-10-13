@@ -195,6 +195,41 @@ button.selected {
   margin-bottom: 10px;
 }
 
+/* Collapsible groups of the designer (roadmap 7.4). */
+details.group {
+  border-bottom: 1px solid var(--line);
+  padding: 4px 0;
+}
+
+details.group > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 6px 0;
+  list-style-position: inside;
+}
+
+details.group > .group-body {
+  padding: 2px 0 8px;
+}
+
+details.group details.group {
+  border-bottom: none;
+}
+
+details.group details.group > summary {
+  font-weight: normal;
+  color: var(--muted);
+}
+
+.group-body .doc-panel {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.params-actions {
+  margin-top: 12px;
+}
+
 .doc-panel details {
   margin-top: 8px;
 }

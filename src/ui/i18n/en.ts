@@ -43,6 +43,7 @@ export const en = {
 
   // Search progress
   search: 'Search',
+  advanced: 'Advanced: weights, seed, iterations',
   idle: 'Not started',
   running: 'Searching…',
   done: 'Finished',

@@ -1,7 +1,7 @@
 // Places of the map puzzle: the region's towns, or a list (fixed instance or pool) entered as
 // text, with the matches to check and labels to set.
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { RemovalSuggestion } from '../../core/fixed';
 import { closePairs } from '../../core/fixed';
 import type { BoardModel } from '../board';
@@ -161,12 +161,33 @@ function CombineField({
   );
 }
 
+/** A fieldset with a legend, or just the content (inside a collapsible group). */
+function Frame({
+  framed,
+  legend,
+  children,
+}: {
+  readonly framed: boolean;
+  readonly legend: string;
+  readonly children: ReactNode;
+}) {
+  if (!framed) return <div className="places">{children}</div>;
+  return (
+    <fieldset>
+      <legend>{legend}</legend>
+      {children}
+    </fieldset>
+  );
+}
+
 export function PlacesPanel({
   board,
   puzzle,
+  framed = true,
 }: {
   readonly board: BoardModel | null;
   readonly puzzle: PuzzleView | null;
+  readonly framed?: boolean;
 }) {
   const t = useT();
   const fmt = useFormat();
@@ -194,8 +215,7 @@ export function PlacesPanel({
     : null;
 
   return (
-    <fieldset>
-      <legend>{t.places}</legend>
+    <Frame framed={framed} legend={t.places}>
       <label className="field">
         <span>{t.placesSource}</span>
         <select
@@ -287,7 +307,7 @@ export function PlacesPanel({
           )}
         </>
       )}
-    </fieldset>
+    </Frame>
   );
 }
 

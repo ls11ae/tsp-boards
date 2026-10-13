@@ -648,3 +648,9 @@ Short entries: decision; alternatives considered; reason. Newest last.
   are a table, and a "next place" list allows keyboard play. The designer keeps the board in
   millimetres (it previews the physical board). Alternatives: one component with a scale
   switch (the designer must stay true to scale), HTML labels over the SVG (no collision check).
+- **2026-10-13 Designer groups (roadmap 7.4).** The parameter column is split into collapsible
+  groups (`<details>`): puzzle, places, board and search; inside the search group an
+  "advanced" group (weights including the thesis terms, seed, iterations) is closed by
+  default. The open state is remembered per browser (localStorage, a convenience only); the
+  search, link and play buttons stay visible below the groups. Alternatives: tabs (hide the
+  board while editing places, which the designer needs side by side).
