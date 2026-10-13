@@ -327,6 +327,13 @@ export const de: Messages = {
   gallery: 'Galerie',
   galleryIntro:
     'Wähle ein Puzzle zum Spielen oder öffne es im Designer. Fortschritt und Bestleistungen bleiben in diesem Browser.',
+  galleryFilters: 'Filter',
+  filterType: 'Art',
+  filterPurpose: 'Zweck',
+  filterStatus: 'Stand',
+  filterAll: 'alle',
+  filterOpen: 'noch nicht gelöst',
+  galleryNoMatch: 'Kein Puzzle passt zu den Filtern.',
   galleryPlay: 'Spielen',
   galleryEdit: 'Designer',
   gallerySolved: 'gelöst',

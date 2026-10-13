@@ -454,6 +454,101 @@ progress {
   font-size: 1em;
 }
 
+/* Gallery (roadmap 7.2): one column below the header, cards in a responsive grid. */
+.app.gallery-page {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'header' 'gallery' 'footer';
+}
+
+main.gallery {
+  grid-area: gallery;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.gallery-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  max-width: 960px;
+  gap: 8px 16px;
+  margin: 8px 0 16px;
+}
+
+.gallery-filters .field {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+}
+
+.gallery-filters select {
+  width: 100%;
+}
+
+ul.cards {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.card h3 {
+  margin: 4px 0 0;
+  font-size: 1rem;
+}
+
+.card p {
+  margin: 0;
+}
+
+.card .card-description {
+  font-size: 0.9em;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card .actions {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.card-thumb {
+  display: block;
+  width: 100%;
+  height: 160px;
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.thumb-outline {
+  fill: none;
+  stroke: var(--map-country);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.thumb-place {
+  fill: var(--tour);
+}
+
+.card-status.solved {
+  color: var(--ok);
+}
+
 .board.placing {
   cursor: crosshair;
 }

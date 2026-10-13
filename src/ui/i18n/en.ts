@@ -336,6 +336,13 @@ export const en = {
   gallery: 'Gallery',
   galleryIntro:
     'Choose a puzzle to play, or open it in the designer. Your progress and best results stay in this browser.',
+  galleryFilters: 'Filters',
+  filterType: 'Type',
+  filterPurpose: 'Purpose',
+  filterStatus: 'Status',
+  filterAll: 'all',
+  filterOpen: 'not solved yet',
+  galleryNoMatch: 'No puzzle matches the filters.',
   galleryPlay: 'Play',
   galleryEdit: 'Designer',
   gallerySolved: 'solved',

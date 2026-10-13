@@ -628,3 +628,11 @@ Short entries: decision; alternatives considered; reason. Newest last.
   (Bochum/Dortmund, Bonn/Köln, Gießen/Marburg) and Rhein-Main: no nails closer than 25 mm, but
   a gap of 1.14 mm (digital). Alternatives: the geographic mean as the board point (it is off
   the line between the members after projection), merging by distance only (loses the names).
+- **2026-10-13 Gallery layout (roadmap 7.2).** The gallery had no styles of its own and sat in
+  the designer's three-column grid (first column). It now has a one-column page and a card grid
+  (`auto-fill, minmax(260px, 1fr)`: five cards at 1440 px, one on a phone). Each card shows a
+  thumbnail of its board without the tour (region outline and places, drawn from the puzzle
+  file with the same projection, memoised; country data loaded on demand), region names
+  instead of codes, and filters for type, region, purpose and status (solved without help or
+  not). Alternatives: pre-rendered thumbnails in the collection index (stale after data or
+  projection changes, and none for own puzzles).

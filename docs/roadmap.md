@@ -132,7 +132,7 @@ through the items in order.
 - Remove the curated puzzle "Exzellenzuniversitäten 2019–2026" (and its list and index
   entry): the collection is about the new round, in particular the Ruhr Innovation Lab.
 
-### 7.2 Gallery
+### 7.2 Gallery — done 2026-10-13
 
 - Layout bug: on desktop the cards render as a narrow bulleted list in the left column (about
   170 px wide, the rest of the page empty). Use a responsive grid of cards.
