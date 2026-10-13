@@ -1,6 +1,6 @@
 // The board in board millimetres: map layers, candidate cities, nails, labels and the tour.
-// d3 computed the path strings; React renders the SVG. Clicking near a city cycles it through
-// pinned → excluded → neutral.
+// d3 computed the path strings; React renders the SVG (designer; play mode: PlayBoard).
+// Clicking near a city cycles it through pinned → excluded → neutral.
 
 import { memo, useMemo, useRef, type MouseEvent } from 'react';
 import { listName } from '../../core/data';
@@ -9,7 +9,6 @@ import type { BoardModel } from '../board';
 import { cycleCity } from '../controller';
 import { addHandPoint, removeHandPoint, toggleCombine } from '../lists';
 import { planKey, previewPaths } from '../export';
-import { playClick } from '../play';
 import { getLabels, placeBoardLabels } from '../labels';
 import { useOverlay, type OverlayView } from '../overlay';
 import type { TeachingFrame } from '../../core/teaching';
@@ -32,7 +31,7 @@ const PoolDots = memo(function PoolDots({ points }: { readonly points: readonly 
   );
 });
 
-const MapLayers = memo(function MapLayers({ board }: { readonly board: BoardModel }) {
+export const MapLayers = memo(function MapLayers({ board }: { readonly board: BoardModel }) {
   const { widthMm, heightMm } = board.projection.board;
   return (
     <g>
@@ -100,7 +99,7 @@ function TeachingLayer({
 }
 
 /** The comparison tour: dashed, its own edges solid, the optimal edges it leaves out marked. */
-function Overlay({
+export function Overlay({
   board,
   overlay,
   showRemoved,
@@ -130,11 +129,8 @@ export function BoardMap({
   const svgRef = useRef<SVGSVGElement>(null);
   const showTour = useStore((s) => s.showTour);
   const params = useStore((s) => s.params);
-  const mode = useStore((s) => s.mode);
-  const play = useStore((s) => s.play);
-  const playing = mode === 'play';
-  const placing = useStore((s) => s.placing) && !playing;
-  const combining = useStore((s) => (playing ? null : s.combining));
+  const placing = useStore((s) => s.placing);
+  const combining = useStore((s) => s.combining);
   const nailDiameter = params.nailDiameterMm;
   const lang = useStore((s) => s.lang);
   const labels = getLabels(board, params);
@@ -154,48 +150,21 @@ export function BoardMap({
   );
   const { widthMm, heightMm } = board.projection.board;
   const nailRadius = nailDiameter / 2;
-  const showSolution = playing ? play.revealed : showTour;
   const tourPoints =
-    puzzle?.tour && showSolution
+    puzzle?.tour && showTour
       ? puzzle.tour.map((c) => board.points[c]!.map((v) => v.toFixed(2)).join(',')).join(' ')
       : null;
-  const pathPoints =
-    playing && puzzle
-      ? play.state.path
-          .map((s) => board.points[puzzle.members[s]!]!.map((v) => v.toFixed(2)).join(','))
-          .join(' ')
-      : null;
-  const visited = new Set(playing ? play.state.path : []);
-  // Players see comparisons once the puzzle is solved or the solution revealed.
   const overlay = useOverlay(board, puzzle);
   const teaching = useStore((s) => s.teaching);
   const teachFrame =
-    !playing && puzzle && teaching?.key === puzzle.key
-      ? (teaching.frames?.[teaching.index] ?? null)
-      : null;
-  const showOverlay =
-    overlay && !teachFrame && (!playing || play.revealed || play.solvedMs !== null);
+    puzzle && teaching?.key === puzzle.key ? (teaching.frames?.[teaching.index] ?? null) : null;
+  const showOverlay = overlay && !teachFrame;
 
   const onClick = (event: MouseEvent<SVGSVGElement>) => {
     const svg = svgRef.current;
     const matrix = svg?.getScreenCTM();
     if (!svg || !matrix) return;
     const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
-    if (playing) {
-      if (!puzzle) return;
-      let slot = -1;
-      let nearest = CLICK_RADIUS_MM * 1.5;
-      puzzle.members.forEach((c, s) => {
-        const [x, y] = board.points[c]!;
-        const d = Math.hypot(x - p.x, y - p.y);
-        if (d < nearest) {
-          nearest = d;
-          slot = s;
-        }
-      });
-      if (slot >= 0) playClick(puzzle, slot);
-      return;
-    }
     let best = -1;
     let bestDist = CLICK_RADIUS_MM;
     board.points.forEach(([x, y], i) => {
@@ -242,7 +211,7 @@ export function BoardMap({
       ) : (
         <>
           <MapLayers board={board} />
-          {!playing && <PoolDots points={board.points} />}
+          <PoolDots points={board.points} />
         </>
       )}
       {tourPoints && !teachFrame && <polygon className="tour" points={tourPoints} />}
@@ -250,13 +219,7 @@ export function BoardMap({
         <TeachingLayer board={board} members={puzzle.members} frame={teachFrame} />
       )}
       {showOverlay && <Overlay board={board} overlay={overlay} showRemoved={tourPoints !== null} />}
-      {pathPoints &&
-        (play.state.closed ? (
-          <polygon className="play-path" points={pathPoints} />
-        ) : (
-          <polyline className="play-path" points={pathPoints} />
-        ))}
-      {!playing && <Marks board={board} />}
+      <Marks board={board} />
       {combining?.map((c) => {
         const [x, y] = board.points[c]!;
         return <circle key={`c${c}`} className="combine-mark" cx={x} cy={y} r={7} />;
@@ -269,13 +232,11 @@ export function BoardMap({
           ))}
         </g>
       )}
-      {puzzle?.members.map((c, slot) => {
+      {puzzle?.members.map((c) => {
         const [x, y] = board.points[c]!;
         const city = board.pool[c]!;
-        const state =
-          playing && play.state.path[0] === slot ? ' start' : visited.has(slot) ? ' visited' : '';
         return (
-          <g key={c} className={`city${state}`}>
+          <g key={c} className="city">
             <title>
               {city.members
                 ? listName(city, lang)

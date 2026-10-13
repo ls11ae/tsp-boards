@@ -636,3 +636,15 @@ Short entries: decision; alternatives considered; reason. Newest last.
   instead of codes, and filters for type, region, purpose and status (solved without help or
   not). Alternatives: pre-rendered thumbnails in the collection index (stale after data or
   projection changes, and none for own puzzles).
+- **2026-10-13 Play view (roadmap 7.3).** Play mode has its own board (`PlayBoard`): places,
+  labels and lines are drawn at a fixed screen size (7 px markers, 13 px labels, 24 px hit
+  radius) by converting through the current pixels per board millimetre; the view starts at
+  the places' bounding box and fills the stage (flex to the window height on desktop, 64 vh on
+  phones); zoom by buttons, wheel and pinch, pan by dragging (a tap is a click only below 6 px of
+  movement). Labels are placed with the board's solver at screen size inside the starting view
+  and recomputed in 8 % zoom steps; labels without room are hidden with a hint to zoom in.
+  Texts follow the purpose (places and km for digital puzzles), the solution is solid in the
+  tour colour and the player's round trip dashed in a second colour with a legend, highscores
+  are a table, and a "next place" list allows keyboard play. The designer keeps the board in
+  millimetres (it previews the physical board). Alternatives: one component with a scale
+  switch (the designer must stay true to scale), HTML labels over the SVG (no collision check).

@@ -42,8 +42,8 @@ export function OverlayPicker({
   }
   return (
     <div className="overlay-picker">
-      <label>
-        {t.overlay}{' '}
+      <label className="field">
+        <span>{t.overlay}</span>
         <select value={kind} onChange={(e) => setOverlay(e.target.value as OverlayChoice)}>
           {options.map(([value, label]) => (
             <option key={value} value={value} disabled={value === 'second' && !hasSecond}>

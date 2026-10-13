@@ -9,6 +9,7 @@ import {
   judgePending,
   mapPlayId,
   openInDesigner,
+  playClick,
   playNewGame,
   playReveal,
   playRestart,
@@ -19,6 +20,66 @@ import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 import { OverlayPicker } from './OverlayPicker';
 import { Highscores, ShareConsent, Timer } from './PlayParts';
+
+/**
+ * Keyboard play: the next place from a list (unvisited places by name; the start once all
+ * are visited, to close the round trip).
+ */
+function NextPlace({
+  board,
+  puzzle,
+  digital,
+}: {
+  readonly board: BoardModel;
+  readonly puzzle: PuzzleView;
+  readonly digital: boolean;
+}) {
+  const t = useT();
+  const fmt = useFormat();
+  const state = useStore((s) => s.play.state);
+  const [choice, setChoice] = useState('');
+  const n = puzzle.members.length;
+  const name = (slot: number) => board.pool[puzzle.members[slot]!]!.name;
+  const visited = new Set(state.path);
+  const options = puzzle.members
+    .map((_, s) => s)
+    .filter((s) => !visited.has(s))
+    .sort((a, b) => name(a).localeCompare(name(b), fmt.lang));
+  const start = state.path[0];
+  const canClose = !state.closed && state.path.length === n && start !== undefined;
+  if (state.closed) return null;
+  const add = (value: string) => {
+    const slot = Number(value);
+    if (value === '' || !Number.isInteger(slot)) return;
+    playClick(puzzle, slot);
+    setChoice('');
+  };
+  return (
+    <form
+      className="next-place"
+      onSubmit={(e) => {
+        e.preventDefault();
+        add(choice);
+      }}
+    >
+      <label className="field">
+        <span>{digital ? t.nextPlace : t.nextNail}</span>
+        <select value={choice} onChange={(e) => setChoice(e.target.value)}>
+          <option value="">–</option>
+          {canClose && <option value={start}>{t.closeTrip(name(start))}</option>}
+          {options.map((s) => (
+            <option key={s} value={s}>
+              {name(s)}
+            </option>
+          ))}
+        </select>
+      </label>
+      <button type="submit" disabled={choice === ''}>
+        {t.addPlace}
+      </button>
+    </form>
+  );
+}
 
 export function PlayPanel({
   board,
@@ -80,9 +141,9 @@ export function PlayPanel({
     <aside className="panel side">
       <section>
         <h2>{t.playTitle(fmt.integer(n))}</h2>
-        <p className="hint">{t.playHint}</p>
+        <p className="hint">{digital ? t.playHintDigital : t.playHint}</p>
         <dl className="metrics">
-          <dt>{t.playVisited}</dt>
+          <dt>{digital ? t.playVisitedPlaces : t.playVisited}</dt>
           <dd>
             {fmt.integer(path.length)} / {fmt.integer(n)}
           </dd>
@@ -111,6 +172,19 @@ export function PlayPanel({
               ? t.playRevealedDigital(km(optimum.optimalLength, 0))
               : t.playRevealed(mm(optimum.optimalLength))}
           </p>
+        )}
+        {play.revealed && (
+          <p className="legend">
+            <span className="legend-line solution" /> {t.legendOptimum}{' '}
+            {path.length > 1 && (
+              <>
+                <span className="legend-line dashed" /> {t.legendOwn}
+              </>
+            )}
+          </p>
+        )}
+        {!play.revealed && play.solvedMs === null && (
+          <NextPlace puzzle={puzzle} board={board} digital={digital} />
         )}
         <div className="actions">
           <button type="button" onClick={playUndo} disabled={path.length === 0 || play.revealed}>

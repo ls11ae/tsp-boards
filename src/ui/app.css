@@ -16,6 +16,7 @@
   --pool: #7a6a55;
   --tour: #b5482b;
   --overlay: #2a5db0;
+  --play: #17707f;
   --nail: #2b2b2b;
   --label: #1d1d1b;
   --label-halo: #ead9bd;
@@ -47,6 +48,7 @@
     --pool: #b8a688;
     --tour: #f08a5d;
     --overlay: #86aef2;
+    --play: #5fc9d8;
     --nail: #f3efe6;
     --label: #f3efe6;
     --label-halo: #4a3d2c;
@@ -628,6 +630,160 @@ ul.cards {
   stroke-width: 1.6;
 }
 
+/* Play view (roadmap 7.3): the board fills the stage; sizes in screen pixels. */
+.play-board {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 360px;
+}
+
+/* The stage takes the window height below the header; the board fills what the title leaves. */
+.app.play .stage {
+  height: calc(100vh - 110px);
+}
+
+.play-board .board {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: pointer;
+  background: var(--bg);
+}
+
+.play-place circle {
+  fill: var(--panel);
+  stroke: var(--nail);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.play-place.visited circle,
+.play-place.start circle {
+  fill: var(--play);
+  stroke: var(--play);
+}
+
+.play-place .start-ring {
+  fill: none;
+}
+
+.play-label {
+  fill: var(--label);
+  stroke: var(--label-halo);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  vector-effect: non-scaling-stroke;
+}
+
+.solution-tour {
+  fill: none;
+  stroke: var(--tour);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.85;
+}
+
+.play-board .play-path {
+  stroke: var(--play);
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+}
+
+.play-board .play-path.dashed {
+  stroke-dasharray: 9 6;
+}
+
+.play-board .overlay-tour,
+.play-board .overlay-added,
+.play-board .overlay-removed {
+  vector-effect: non-scaling-stroke;
+}
+
+.play-board .overlay-tour {
+  stroke-width: 1.5px;
+}
+
+.play-board .overlay-added {
+  stroke-width: 3px;
+}
+
+.play-board .overlay-removed {
+  stroke-width: 7px;
+}
+
+.zoom-hint {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  margin: 0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.zoom-controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.zoom-controls button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.legend-line {
+  display: inline-block;
+  width: 22px;
+  height: 0;
+  border-top: 3px solid var(--play);
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.legend-line.solution {
+  border-top: 4px solid var(--tour);
+}
+
+.legend-line.dashed {
+  border-top-style: dashed;
+}
+
+table.scores {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  font-variant-numeric: tabular-nums;
+}
+
+table.scores th,
+table.scores td {
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+table.scores td.num,
+table.scores th.num {
+  text-align: right;
+}
+
+table.scores tr.revealed td {
+  color: var(--muted);
+}
+
 .app.play {
   grid-template-columns: minmax(0, 1fr) 340px;
   grid-template-areas:
@@ -640,6 +796,16 @@ ul.cards {
   .app.play {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: 'header' 'stage' 'side' 'footer';
+  }
+
+  .app.play .stage {
+    height: auto;
+  }
+
+  .play-board {
+    flex: none;
+    height: 64vh;
+    min-height: 300px;
   }
 }
 

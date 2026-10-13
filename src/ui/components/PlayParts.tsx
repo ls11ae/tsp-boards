@@ -51,16 +51,28 @@ export function Highscores() {
       {scores.length === 0 ? (
         <p className="hint">{t.highscoresEmpty}</p>
       ) : (
-        <ol className="scores">
-          {scores.slice(0, 10).map((s, i) => (
-            <li key={i} className={s.revealed ? 'revealed' : undefined}>
-              <span>{s.name}</span>
-              <span>{excess(s)}</span>
-              <span>{formatDuration(s.ms)}</span>
-              <span>{s.revealed ? t.highscoreRevealed : ''}</span>
-            </li>
-          ))}
-        </ol>
+        <table className="scores">
+          <thead>
+            <tr>
+              <th className="num">#</th>
+              <th>{t.scoreName}</th>
+              <th className="num">{t.scoreExcess}</th>
+              <th className="num">{t.scoreTime}</th>
+              <th>{t.scoreNote}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scores.slice(0, 10).map((s, i) => (
+              <tr key={i} className={s.revealed ? 'revealed' : undefined}>
+                <td className="num">{i + 1}</td>
+                <td>{s.name || '–'}</td>
+                <td className="num">{excess(s)}</td>
+                <td className="num">{formatDuration(s.ms)}</td>
+                <td>{s.revealed ? t.highscoreRevealed : ''}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
       <p className="hint">{t.highscoresHint}</p>
     </section>

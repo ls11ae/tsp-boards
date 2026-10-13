@@ -139,7 +139,7 @@ through the items in order.
 - A small map thumbnail per card (the board without a tour) and filters (type, region,
   purpose, solved).
 
-### 7.3 Play view
+### 7.3 Play view — done 2026-10-13
 
 - Nails and labels are tiny: unreadable on a phone, and on a desktop the board uses only about
   half of the available width. In play mode, and especially for digital puzzles, draw nails

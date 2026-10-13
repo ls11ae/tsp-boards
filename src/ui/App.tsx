@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useBoard } from './board';
 import { BoardMap } from './components/BoardMap';
+import { PlayBoard } from './components/PlayBoard';
 import { Gallery } from './components/Gallery';
 import { IncrementalPlayBoard, IncrementalPlayPanel } from './components/IncrementalPlay';
 import { IncrementalBoard, IncrementalParams, IncrementalSide } from './components/IncrementalView';
@@ -168,7 +169,11 @@ export function App() {
             {t.loadFailed} ({loadError})
           </p>
         ) : board ? (
-          <BoardMap board={board} puzzle={puzzle} />
+          mode === 'play' ? (
+            <PlayBoard board={board} puzzle={puzzle} />
+          ) : (
+            <BoardMap board={board} puzzle={puzzle} />
+          )
         ) : (
           <p className="hint">{t.loading}</p>
         )}
