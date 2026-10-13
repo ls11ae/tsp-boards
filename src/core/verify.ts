@@ -9,6 +9,8 @@
 
 import type { Instance } from './instance';
 import {
+  DEFAULT_EXACT,
+  ExactTsp,
   optimalAndSecond,
   type ExactOptions,
   type ExactStatus,
@@ -41,6 +43,39 @@ export interface Verification {
   readonly heuristicOptimal: boolean;
   /** The Euclidean optimum differs from the string optimum. */
   readonly optimaDiffer: boolean;
+  /** World puzzles: the shortest round trip on the flat map (null if not solved). */
+  readonly flat?: FlatOptimum | null;
+}
+
+/** The optimum on the flat map of a sphere instance, measured on the map and on the sphere. */
+export interface FlatOptimum {
+  readonly tour: number[];
+  /** Euclidean length on the map, µm. */
+  readonly mapLength: number;
+  /** Great-circle length (in the instance's units), µm. */
+  readonly sphereLength: number;
+}
+
+/**
+ * Teaching point of the world (roadmap 8.2): the shortest round trip when distances are
+ * measured with a ruler on the flat map, exactly, and its length on the sphere.
+ */
+export function flatOptimum(
+  backend: MipBackend,
+  inst: Instance,
+  options: ExactOptions = DEFAULT_EXACT,
+): FlatOptimum | null {
+  if (!inst.sphere) return null;
+  const plane = inst.plane();
+  const result = backend.withModel((model) =>
+    new ExactTsp(model, plane, 'euclidean', options).solve(),
+  );
+  if (result.status !== 'optimal' || !result.tour) return null;
+  return {
+    tour: result.tour,
+    mapLength: euclideanLength(plane, result.tour),
+    sphereLength: euclideanLength(inst, result.tour),
+  };
 }
 
 function pair(

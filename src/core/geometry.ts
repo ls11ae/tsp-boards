@@ -45,3 +45,17 @@ export function distance(a: Point, b: Point): number {
   const dy = a[1] - b[1];
   return Math.sqrt(dx * dx + dy * dy);
 }
+
+/** Mean Earth radius (IUGG), km. */
+export const EARTH_RADIUS_KM = 6371.0088;
+
+/** Great-circle distance in km between two points given as [longitude, latitude] in degrees. */
+export function greatCircleKm(a: Point, b: Point): number {
+  const rad = Math.PI / 180;
+  const phi1 = a[1] * rad;
+  const phi2 = b[1] * rad;
+  const s = Math.sin(((b[1] - a[1]) * rad) / 2);
+  const t = Math.sin(((b[0] - a[0]) * rad) / 2);
+  const h = s * s + Math.cos(phi1) * Math.cos(phi2) * t * t;
+  return 2 * EARTH_RADIUS_KM * Math.asin(Math.min(1, Math.sqrt(h)));
+}

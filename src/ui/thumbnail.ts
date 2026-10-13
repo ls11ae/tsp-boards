@@ -5,7 +5,7 @@ import type { Point } from '../core/geometry';
 import { listCities } from '../core/places';
 import { boardProjection } from '../core/projection';
 import type { PuzzleDoc } from '../core/puzzle-file';
-import { boardPoints, regionOutline } from '../core/region';
+import { boardPoints, projectionKind, regionFrame, regionOutline } from '../core/region';
 import { townsById } from './board';
 import { fetchCountry } from './controller';
 
@@ -29,11 +29,11 @@ async function build(doc: PuzzleDoc): Promise<Thumbnail | null> {
   const { params } = map;
   const country = await fetchCountry(doc.data?.country ?? params.region.slice(0, 2));
   const outline = regionOutline(country, params.region);
-  const projection = boardProjection(outline, {
-    widthMm: params.boardWidthMm,
-    heightMm: params.boardHeightMm,
-    marginMm: params.marginMm,
-  });
+  const projection = boardProjection(
+    regionFrame(country, params.region),
+    { widthMm: params.boardWidthMm, heightMm: params.boardHeightMm, marginMm: params.marginMm },
+    projectionKind(country),
+  );
   const cities = listCities(map.places, townsById(country));
   return {
     width: params.boardWidthMm,

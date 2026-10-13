@@ -22,7 +22,7 @@ import {
   incrementalParams,
   type IncrementalUiParams,
 } from '../src/core/incremental/params';
-import { DEFAULT_PARAMS, searchParams, type PuzzleParams } from '../src/core/params';
+import { DEFAULT_PARAMS, WORLD_PARAMS, searchParams, type PuzzleParams } from '../src/core/params';
 import { decodePermalink } from '../src/core/permalink';
 import {
   PUZZLE_SCHEMA,
@@ -49,7 +49,7 @@ import {
 } from '../src/core/places';
 import { boardPool, loadBackend, loadCountry, poolLabels, type BoardPool } from './lib/country';
 import { boardProjection } from '../src/core/projection';
-import { boardPoints, regionOutline } from '../src/core/region';
+import { boardPoints, citySphere, projectionKind, regionFrame } from '../src/core/region';
 import { runSearch } from './lib/run-search';
 
 const DIR = path.resolve(import.meta.dirname, '../public/puzzles');
@@ -70,6 +70,12 @@ const slug = (s: string) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
+
+/** Parameter defaults of a region: the world map has its own (WORLD_PARAMS). */
+function defaultsFor(region: string): PuzzleParams {
+  const world = loadCountry(region.slice(0, 2)).metric === 'sphere';
+  return world ? { ...DEFAULT_PARAMS, ...WORLD_PARAMS } : DEFAULT_PARAMS;
+}
 
 function meta(kind: 'map' | 'incremental'): Omit<PuzzleDoc, 'data'> {
   const title = arg('title', '');
@@ -104,12 +110,21 @@ async function mapDoc(
   const heuristic = iteratedLocalSearch(setup.inst, new Rng(1)).tour;
   const v = verifyCandidate(backend, setup.inst, heuristic, 'string-exact', { timeLimitSec: 300 });
   if (!v.string) throw new Error('exact check failed');
-  const plan = planBoard(
-    boardPlanInput(setup, { tour: v.string.optimal, second: v.string.second, gapUm: v.string.gap }),
-    backend,
-  );
+  // World files measure on the sphere: digital puzzles without a board plan.
+  const sphere = file.metric === 'sphere';
+  const plan = sphere
+    ? null
+    : planBoard(
+        boardPlanInput(setup, {
+          tour: v.string.optimal,
+          second: v.string.second,
+          gapUm: v.string.gap,
+        }),
+        backend,
+      );
   const close = closePairs(setup.points, params.minDistanceMm);
-  if (arg('purpose', 'auto') === 'auto') {
+  if (sphere) m = { ...m, purpose: 'digital' };
+  else if (arg('purpose', 'auto') === 'auto') {
     // Boards need a gap at the target and room for the nails; else a digital puzzle.
     const board =
       v.string.gap >= params.targetGapMm * 1000 &&
@@ -235,11 +250,12 @@ if (command === 'add') {
 
     ...(p.members ? { members: p.members } : {}),
   }));
+  const defaults = defaultsFor(arg('region', 'DE'));
   const params: PuzzleParams = {
-    ...DEFAULT_PARAMS,
+    ...defaults,
     region: arg('region', 'DE'),
-    minDistanceMm: Number(arg('min-dist', String(DEFAULT_PARAMS.minDistanceMm))),
-    targetGapMm: Number(arg('target', String(DEFAULT_PARAMS.targetGapMm))),
+    minDistanceMm: Number(arg('min-dist', String(defaults.minDistanceMm))),
+    targetGapMm: Number(arg('target', String(defaults.targetGapMm))),
     ...(() => {
       const [bw, bh] = arg('board', '').split('x').map(Number);
       return bw && bh ? { boardWidthMm: bw, boardHeightMm: bh } : {};
@@ -256,12 +272,17 @@ if (command === 'add') {
       places,
       new Map(citiesFromColumns(file.cities, file.states).map((c) => [c.id, c])),
     );
-    const projection = boardProjection(regionOutline(file, params.region), {
-      widthMm: params.boardWidthMm,
-      heightMm: params.boardHeightMm,
-      marginMm: params.marginMm,
-    });
-    const pool: BoardPool = { projection, cities, points: boardPoints(cities, projection) };
+    const projection = boardProjection(
+      regionFrame(file, params.region),
+      { widthMm: params.boardWidthMm, heightMm: params.boardHeightMm, marginMm: params.marginMm },
+      projectionKind(file),
+    );
+    const pool: BoardPool = {
+      projection,
+      cities,
+      points: boardPoints(cities, projection),
+      sphere: citySphere(file, cities, projection),
+    };
     // --pin 'Lübeck,Stralsund': list places the puzzle must contain.
     const pinNames = arg('pin', '')
       .split(',')
@@ -291,19 +312,21 @@ if (command === 'add') {
   } else write(await mapDoc(params, null, { mode: 'fixed', places }));
   rebuildIndex();
 } else if (command === 'search') {
+  const defaults = defaultsFor(arg('region', 'DE'));
+  const world = loadCountry(arg('region', 'DE').slice(0, 2)).metric === 'sphere';
   const params: PuzzleParams = {
-    ...DEFAULT_PARAMS,
+    ...defaults,
     region: arg('region', 'DE'),
     n: Number(arg('n', '40')),
     seed: Number(arg('seed', '1')),
     iterations: Number(arg('iterations', '1000')),
-    minDistanceMm: Number(arg('min-dist', String(DEFAULT_PARAMS.minDistanceMm))),
-    targetGapMm: Number(arg('target', String(DEFAULT_PARAMS.targetGapMm))),
+    minDistanceMm: Number(arg('min-dist', String(defaults.minDistanceMm))),
+    targetGapMm: Number(arg('target', String(defaults.targetGapMm))),
     ...(() => {
       const [bw, bh] = arg('board', '').split('x').map(Number);
       return bw && bh ? { boardWidthMm: bw, boardHeightMm: bh } : {};
     })(),
-    minPopulation: Number(arg('min-pop', String(DEFAULT_PARAMS.minPopulation))),
+    minPopulation: Number(arg('min-pop', String(defaults.minPopulation))),
     // --weights gap,difficulty,recognizability (e.g. 1,0.5,2 for well-known cities).
     ...(() => {
       const [g, d, r] = arg('weights', '').split(',').map(Number);
@@ -319,7 +342,10 @@ if (command === 'add') {
     marginMm: params.marginMm,
   });
   const { search } = runSearch({
-    params: searchParams(params),
+    params: searchParams(
+      params,
+      world || arg('purpose', 'board') === 'digital' ? 'digital' : 'board',
+    ),
     pool,
     backend: await loadBackend(),
     labels: poolLabels(pool, params.labelSizeMm, params.nailDiameterMm, params.labelLanguage),

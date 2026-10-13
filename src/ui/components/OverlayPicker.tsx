@@ -22,12 +22,15 @@ export function OverlayPicker({
   const overlay = useOverlay(board, puzzle);
   const v = puzzle.verification;
   const hasSecond = v?.status === 'done' && Boolean(v.verification.string?.second);
+  const hasFlat = v?.status === 'done' && Boolean(v.verification.flat);
+  const sphere = board.sphere !== null;
   const options: readonly [OverlayChoice, string][] = [
     ['none', t.overlayNone],
     ['second', t.overlaySecond],
+    ...(sphere ? [['flat-map', t.overlayFlatMap] as [OverlayChoice, string]] : []),
     ['nearest-neighbor', t.nearestNeighbor],
     ['greedy-edge', t.greedyEdge],
-    ['hull-insertion', t.hullInsertion],
+    ['hull-insertion', sphere ? t.pairInsertion : t.hullInsertion],
   ];
   let text: string | null = null;
   if (overlay) {
@@ -46,13 +49,20 @@ export function OverlayPicker({
         <span>{t.overlay}</span>
         <select value={kind} onChange={(e) => setOverlay(e.target.value as OverlayChoice)}>
           {options.map(([value, label]) => (
-            <option key={value} value={value} disabled={value === 'second' && !hasSecond}>
+            <option
+              key={value}
+              value={value}
+              disabled={(value === 'second' && !hasSecond) || (value === 'flat-map' && !hasFlat)}
+            >
               {label}
             </option>
           ))}
         </select>
       </label>
-      {kind === 'second' && !hasSecond && <p className="hint">{t.overlayNeedsCheck}</p>}
+      {((kind === 'second' && !hasSecond) || (kind === 'flat-map' && sphere && !hasFlat)) && (
+        <p className="hint">{t.overlayNeedsCheck}</p>
+      )}
+      {kind === 'flat-map' && sphere && <p className="hint">{t.overlayFlatHint}</p>}
       {text && <p className="hint">{text}</p>}
       {overlay && overlay.added.length > 0 && (
         <p className="legend">

@@ -1,6 +1,7 @@
 // Messages between the UI thread and the workers. Plain data only (structured clone).
 
 import type { Point } from '../core/geometry';
+import type { Sphere } from '../core/instance';
 import type {
   Evaluation,
   SearchParams,
@@ -55,6 +56,8 @@ export interface VerifyJob {
   readonly key: string;
   /** Board points (mm) in slot order. */
   readonly points: readonly Point[];
+  /** Great-circle distances (world puzzles); omitted or null: the board's plane. */
+  readonly sphere?: Sphere | null;
   /** Best known tour over slots. */
   readonly tour: readonly number[];
   readonly rEffMm: number;
@@ -83,6 +86,7 @@ export interface RoundsJob {
   readonly jobId: number;
   /** Board points (mm) in slot order. */
   readonly points: readonly Point[];
+  readonly sphere?: Sphere | null;
 }
 
 export interface RobustnessJob {

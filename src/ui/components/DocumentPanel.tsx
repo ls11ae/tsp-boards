@@ -96,6 +96,7 @@ export function DocumentPanel({
   const setDoc = useStore((s) => s.setDoc);
   const puzzleType = useStore((s) => s.puzzleType);
   const hasIncremental = useStore((s) => s.inc.puzzle !== null);
+  const sphere = useStore((s) => puzzleType === 'map' && s.country?.metric === 'sphere');
   useStore((s) => s.libraryVersion);
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -132,10 +133,13 @@ export function DocumentPanel({
           value={doc.purpose}
           onChange={(e) => setPurpose(e.target.value === 'digital' ? 'digital' : 'board')}
         >
-          <option value="board">{t.purposeBoard}</option>
+          <option value="board" disabled={sphere}>
+            {t.purposeBoard}
+          </option>
           <option value="digital">{t.purposeDigital}</option>
         </select>
       </label>
+      {sphere && <p className="hint">{t.purposeWorld}</p>}
       <div className="actions">
         <button
           type="button"

@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Instance } from '../../core/instance';
 import { effectiveREffMm } from '../../core/params';
 import { pathLength } from '../../core/play';
 import { stringLength } from '../../core/tsp/tour';
-import type { BoardModel } from '../board';
+import { boardInstance, type BoardModel } from '../board';
 import { useFormat, useT } from '../i18n';
 import {
   judgePending,
@@ -113,13 +112,7 @@ export function PlayPanel({
   const members = puzzle?.members;
   const rEff = effectiveREffMm(params, purpose);
   const inst = useMemo(
-    () =>
-      members
-        ? new Instance(
-            members.map((c) => board.points[c]!),
-            rEff,
-          )
-        : null,
+    () => (members ? boardInstance(board, members, rEff) : null),
     [board, members, rEff],
   );
 
@@ -142,6 +135,7 @@ export function PlayPanel({
       <section>
         <h2>{t.playTitle(fmt.integer(n))}</h2>
         <p className="hint">{digital ? t.playHintDigital : t.playHint}</p>
+        {board.sphere && <p className="hint">{t.playHintWorld}</p>}
         <dl className="metrics">
           <dt>{digital ? t.playVisitedPlaces : t.playVisited}</dt>
           <dd>

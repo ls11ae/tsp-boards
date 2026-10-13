@@ -5,7 +5,9 @@ import { feature, merge } from 'topojson-client';
 import type { GeometryCollection, MultiPolygon, Polygon } from 'topojson-specification';
 import { citiesFromColumns, type City, type CountryFile } from './data';
 import type { Point } from './geometry';
-import type { BoardProjection } from './projection';
+import type { Sphere } from './instance';
+import type { GeoPermissibleObjects } from 'd3-geo';
+import type { BoardProjection, ProjectionKind } from './projection';
 
 /**
  * Region id: the country code ('DE'), a state id ('DE-NW') or a union of states, the state
@@ -239,6 +241,13 @@ const NAMED_REGIONS: Readonly<Record<string, readonly NamedRegion[]>> = {
       kind: 'multi',
     },
   ],
+  // The world (roadmap 8.2): its "states" are continents.
+  WO: [
+    { states: ['NA', 'SA'], name: 'Amerika', nameEn: 'The Americas', kind: 'multi' },
+    { states: ['AS', 'EU'], name: 'Eurasien', nameEn: 'Eurasia', kind: 'multi' },
+    { states: ['AF', 'EU'], name: 'Europa und Afrika', nameEn: 'Europe and Africa', kind: 'multi' },
+    { states: ['AS', 'OC'], name: 'Asien und Ozeanien', nameEn: 'Asia and Oceania', kind: 'multi' },
+  ],
 };
 
 /** Id of the union of the given states (ISO codes such as 'DE-BE'). */
@@ -376,4 +385,34 @@ export function boardPoints(cities: readonly City[], projection: BoardProjection
       points.reduce((s, p) => s + p[1], 0) / points.length,
     ];
   });
+}
+
+/** The map projection of a data file: Equal Earth for the world (sphere), else conic conformal. */
+export function projectionKind(file: CountryFile): ProjectionKind {
+  return file.metric === 'sphere' ? 'equal-earth' : 'conformal';
+}
+
+/**
+ * Positions for great-circle distances on a world file (null on the plane): each city's
+ * longitude and latitude (a composite place's centre) and the map scale.
+ */
+export function citySphere(
+  file: CountryFile,
+  cities: readonly City[],
+  projection: BoardProjection,
+): Sphere | null {
+  return file.metric === 'sphere'
+    ? { lonLat: cities.map((c): Point => [c.lon, c.lat]), mmPerKm: projection.mmPerKm }
+    : null;
+}
+
+/**
+ * What the board projection is fitted to: the region's outline, or for the whole world the
+ * full outline of the Equal Earth map (the sphere), so that great-circle legs near the poles
+ * and the map's edges stay on the board.
+ */
+export function regionFrame(file: CountryFile, id: RegionId): GeoPermissibleObjects {
+  return file.metric === 'sphere' && id === file.country
+    ? { type: 'Sphere' }
+    : regionOutline(file, id);
 }

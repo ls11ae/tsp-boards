@@ -5,7 +5,7 @@
 import { memo, useMemo, useRef, type MouseEvent } from 'react';
 import { listName } from '../../core/data';
 import type { Point } from '../../core/geometry';
-import type { BoardModel } from '../board';
+import { legsPath, routePath, type BoardModel } from '../board';
 import { cycleCity } from '../controller';
 import { addHandPoint, removeHandPoint, toggleCombine } from '../lists';
 import { planKey, previewPaths } from '../plans';
@@ -36,6 +36,7 @@ export const MapLayers = memo(function MapLayers({ board }: { readonly board: Bo
   return (
     <g>
       <rect className="board-bg" width={widthMm} height={heightMm} />
+      {board.paths.sphere && <path className="map-sphere" d={board.paths.sphere} />}
       <path className="map-neighbors" d={board.paths.neighbors} />
       <path className="map-states" d={board.paths.states} />
       <path className="map-country" d={board.paths.country} />
@@ -83,9 +84,11 @@ function TeachingLayer({
   readonly members: readonly number[];
   readonly frame: TeachingFrame;
 }) {
-  const at = (s: number) => board.points[members[s]!]!.map((v) => v.toFixed(2)).join(',');
   const edges = (list: TeachingFrame['edges']) =>
-    list.map(([a, b]) => `M${at(a)}L${at(b)}`).join('');
+    legsPath(
+      board,
+      list.map(([a, b]) => [members[a]!, members[b]!] as const),
+    );
   return (
     <g>
       <path className="teach-edge" d={edges(frame.edges)} />
@@ -108,13 +111,11 @@ export function Overlay({
   readonly overlay: OverlayView;
   readonly showRemoved: boolean;
 }) {
-  const at = (c: number) => board.points[c]!.map((v) => v.toFixed(2)).join(',');
-  const edges = (list: OverlayView['added']) => list.map(([a, b]) => `M${at(a)}L${at(b)}`).join('');
   return (
     <g>
-      {showRemoved && <path className="overlay-removed" d={edges(overlay.removed)} />}
-      <polygon className="overlay-tour" points={overlay.tour.map(at).join(' ')} />
-      <path className="overlay-added" d={edges(overlay.added)} />
+      {showRemoved && <path className="overlay-removed" d={legsPath(board, overlay.removed)} />}
+      <path className="overlay-tour" d={routePath(board, overlay.tour, true)} />
+      <path className="overlay-added" d={legsPath(board, overlay.added)} />
     </g>
   );
 }
@@ -131,7 +132,7 @@ export function BoardMap({
   const params = useStore((s) => s.params);
   const placing = useStore((s) => s.placing);
   const combining = useStore((s) => s.combining);
-  const nailDiameter = params.nailDiameterMm;
+  const digital = useStore((s) => s.doc.purpose === 'digital');
   const lang = useStore((s) => s.lang);
   const labels = getLabels(board, params);
   const members = puzzle?.members;
@@ -149,11 +150,11 @@ export function BoardMap({
     [board, labels, members],
   );
   const { widthMm, heightMm } = board.projection.board;
-  const nailRadius = nailDiameter / 2;
-  const tourPoints =
-    puzzle?.tour && showTour
-      ? puzzle.tour.map((c) => board.points[c]!.map((v) => v.toFixed(2)).join(',')).join(' ')
-      : null;
+  // Digital puzzles have no nails: places are dots of a size relative to the map.
+  const nailRadius = digital
+    ? Math.max(MIN_VISUAL_RADIUS_MM, 0.004 * Math.max(widthMm, heightMm))
+    : params.nailDiameterMm / 2;
+  const tourPath = puzzle?.tour && showTour ? routePath(board, puzzle.tour, true) : null;
   const overlay = useOverlay(board, puzzle);
   const teaching = useStore((s) => s.teaching);
   const teachFrame =
@@ -193,7 +194,9 @@ export function BoardMap({
   return (
     <svg
       ref={svgRef}
-      className={placing || combining ? 'board placing' : 'board'}
+      className={['board', placing || combining ? 'placing' : '', board.sphere ? 'world' : '']
+        .filter(Boolean)
+        .join(' ')}
       style={boardFit(widthMm, heightMm)}
       viewBox={`0 0 ${widthMm} ${heightMm}`}
       role="img"
@@ -214,11 +217,11 @@ export function BoardMap({
           <PoolDots points={board.points} />
         </>
       )}
-      {tourPoints && !teachFrame && <polygon className="tour" points={tourPoints} />}
+      {tourPath && !teachFrame && <path className="tour" d={tourPath} />}
       {teachFrame && puzzle && (
         <TeachingLayer board={board} members={puzzle.members} frame={teachFrame} />
       )}
-      {showOverlay && <Overlay board={board} overlay={overlay} showRemoved={tourPoints !== null} />}
+      {showOverlay && <Overlay board={board} overlay={overlay} showRemoved={tourPath !== null} />}
       <Marks board={board} />
       {combining?.map((c) => {
         const [x, y] = board.points[c]!;

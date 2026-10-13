@@ -16,6 +16,10 @@ export const de: Messages = {
   regionCantons: 'Kantone',
   regionCountries: 'Länder',
   perCountry: 'Orte pro Land',
+  regionWorld: 'Ganze Welt',
+  worldMap: 'Karte',
+  regionContinents: 'Kontinente',
+  perContinent: 'Orte pro Kontinent',
   regionProvinces: 'Provinzen',
   board: 'Brett',
   boardWidth: 'Breite (mm)',
@@ -91,6 +95,7 @@ export const de: Messages = {
   nearestNeighbor: 'Nächster Nachbar (bester Start)',
   greedyEdge: 'Kürzeste Kanten zuerst',
   hullInsertion: 'Konvexe Hülle + Einfügen',
+  pairInsertion: 'Entferntestes Paar + Einfügen',
   excess: (value) => `+${value} %`,
   interiorFraction: 'Punkte im Innern der Hülle (C)',
   nonNearestEdges: 'Kanten nicht zum nächsten Nachbarn (D)',
@@ -129,6 +134,10 @@ export const de: Messages = {
   robustWarn:
     'Bei manchen Werten ist eine andere Rundreise kürzer: Das Brett genau mit den geplanten Nägeln und dem geplanten Faden bauen.',
   teaching: 'Strategien ansehen',
+  teachingHintSphere:
+    'Wie bauen einfache Strategien eine Rundreise, und wie beweist der exakte Löser das Optimum? Schritt für Schritt an diesem Puzzle (Entfernungen auf der Kugel).',
+  playHintWorld:
+    'Die Verbindungen folgen Großkreisen, den kürzesten Wegen auf der Kugel: Auf der Karte sind sie gebogen, führen oft nah an einen Pol, und wer den Pazifik überquert, verlässt die Karte am Rand und kommt auf der anderen Seite wieder herein.',
   teachingHint:
     'Wie bauen einfache Strategien eine Rundreise, und wie beweist der exakte Löser das Optimum? Schritt für Schritt an diesem Puzzle (Abstände zwischen den Nagelmitten).',
   teachStrategy: 'Strategie',
@@ -150,6 +159,8 @@ export const de: Messages = {
   teachNnClose: (a, b) => `Alle Orte besucht: von ${a} zurück nach ${b}.`,
   teachHull: (count) =>
     `Start mit der konvexen Hülle: die ${count} äußeren Orte in ihrer Reihenfolge am Rand.`,
+  teachPair: (a, b) =>
+    `Start mit den beiden Orten, die am weitesten voneinander entfernt sind: ${a} und ${b} (auf der Kugel gibt es keine konvexe Hülle).`,
   teachInsert: (v, a, b) =>
     `${v} zwischen ${a} und ${b} einfügen: Von allen übrigen Orten verlängert er die Rundreise am wenigsten.`,
   teachGreedy: (a, b) =>
@@ -168,6 +179,9 @@ export const de: Messages = {
   overlay: 'Vergleichen mit',
   overlayNone: 'nichts',
   overlaySecond: 'zweitbeste Tour',
+  overlayFlatMap: 'kürzeste Tour auf der flachen Karte',
+  overlayFlatHint:
+    'Die kürzeste Rundreise, wenn man auf der flachen Weltkarte mit dem Lineal misst. Gemessen wird sie hier auf der Kugel: Auf der Erde ist sie länger als das Optimum.',
   overlayNeedsCheck: 'Verfügbar, sobald die exakte Prüfung fertig ist.',
   overlaySame: 'Gleiche Tour wie das Optimum.',
   overlayDiff: (edges, longer) => `${edges} Kanten anders; ${longer} länger.`,
@@ -178,6 +192,7 @@ export const de: Messages = {
   queued: 'Exakte Prüfung in der Warteschlange',
   stringExact: 'exakt (Fadenlänge)',
   euclidExact: 'exakt (euklidische Länge)',
+  sphereExact: 'exakt (Länge auf der Kugel)',
   euclidExactStringLocal: 'euklidisch exakt, Faden lokal geprüft',
   verificationFailed: 'Exakte Prüfung fehlgeschlagen',
   timeLimit: 'Zeitlimit erreicht',
@@ -294,7 +309,11 @@ export const de: Messages = {
   puzzleSection: 'Puzzle',
   docTitle: 'Titel',
   docDescription: 'Beschreibung',
+  exportWorld:
+    'Weltpuzzles sind digital: Die Rundreise ist auf der Kugel am kürzesten, auf einem Brett oder Papier misst man aber auf der flachen Karte. Daher gibt es für Weltkarten weder Brett noch Arbeitsblatt.',
   docPurpose: 'Zweck',
+  purposeWorld:
+    'Weltkarten messen Entfernungen auf der Kugel (Großkreise). Ein Brett könnte nur Strecken auf der flachen Karte messen, daher sind Weltpuzzles digital.',
   purposeBoard: 'Brett (Nägel, Faden)',
   purposeDigital: 'digital (Bildschirm)',
   docNew: 'Neu',

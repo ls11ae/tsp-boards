@@ -4,7 +4,10 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-13: Phases 1–6 are done except the physical items; Phase 7 is next, then
+Status 2026-10-13 (evening): Phases 1–8 are done except the physical items (test board,
+deployment, play data endpoint, license), which wait for the prototype dimensions and access
+to the chair server.
+Earlier status 2026-10-13: Phases 1–6 are done except the physical items; Phase 7 is next, then
 Phase 8 (Europe and world).
 Earlier status 2026-10-12: Phases 1–4 and the incremental puzzle are done (map puzzle search with
 exact verification, board export with labels, start nail and scale, play mode, deployment
@@ -175,7 +178,7 @@ through the items in order.
 - The build emits a `__vite-browser-external` chunk: check which Node import reaches the
   browser bundle.
 
-## Phase 8: Europe and world
+## Phase 8: Europe and world — done 2026-10-13
 
 Decided by Kevin 2026-10-13. Needs the zoom of 7.3 first (dense areas such as Europe or East
 Asia are not clickable otherwise).
@@ -191,7 +194,7 @@ Asia are not clickable otherwise).
   (exonyms such as Moskau/Moscow) from the alternate names.
 - Curated: European capitals (fixed list), a European board puzzle.
 
-### 8.2 World (digital, great-circle distances)
+### 8.2 World (digital, great-circle distances) — done 2026-10-13
 
 - Cities worldwide above a population threshold (e.g. ≥ 100,000, or ≥ 500,000 for a coarse
   pool), with metropolitan districts merged (e.g. Tokyo wards, New York boroughs) via the
@@ -206,6 +209,12 @@ Asia are not clickable otherwise).
 - Optional teaching point: compare the shortest tour on the sphere with the shortest tour on
   the flat map (same cities, two metrics).
 - A world board, if wanted later, can only measure map distances (state this on the board).
+
+(Done: `wo.json` with 1964 towns and continents as regions, great-circle distances in the
+`Instance`, Equal Earth map with great-circle legs, the flat-map optimum as comparison tour,
+world puzzles always digital without board or worksheet; curated "Olympische Sommerspiele" and
+"Welt: 30 Metropolen". The rotatable globe was not built: the Equal Earth map already shows the
+arcs, the poles and the wrap at the map's edge.)
 
 ## Curated instances wanted by Kevin — done 2026-10-12
 

@@ -22,6 +22,7 @@ import {
 } from '../../src/core/data';
 import { buildContinent } from './continent';
 import { CONTINENTS } from './continent-sources';
+import { WORLD, buildWorld } from './world';
 import { COUNTRIES, type CountryConfig } from './countries';
 import {
   DEFAULT_CLEANING,
@@ -281,6 +282,10 @@ async function buildCountry(config: CountryConfig): Promise<void> {
 
 async function main(): Promise<void> {
   const code = process.argv[2]?.toUpperCase();
+  if (code === WORLD.code) {
+    await buildWorld(DATA_DIR, serialize);
+    return;
+  }
   const continent = code ? CONTINENTS[code] : undefined;
   if (continent) {
     await buildContinent(continent, DATA_DIR, serialize);
@@ -289,7 +294,7 @@ async function main(): Promise<void> {
   const config = code ? COUNTRIES[code] : undefined;
   if (!config)
     throw new Error(
-      `Usage: data:build -- <${[...Object.keys(COUNTRIES), ...Object.keys(CONTINENTS)].join('|').toLowerCase()}>`,
+      `Usage: data:build -- <${[...Object.keys(COUNTRIES), ...Object.keys(CONTINENTS), WORLD.code].join('|').toLowerCase()}>`,
     );
   await buildCountry(config);
 }

@@ -14,7 +14,15 @@ import {
 } from '../../src/core/data';
 import { distance, type Point } from '../../src/core/geometry';
 import { boardProjection, type BoardProjection, type BoardSpec } from '../../src/core/projection';
-import { boardPoints, cityPool, regionOutline, type RegionId } from '../../src/core/region';
+import type { Sphere } from '../../src/core/instance';
+import {
+  boardPoints,
+  citySphere,
+  cityPool,
+  projectionKind,
+  regionFrame,
+  type RegionId,
+} from '../../src/core/region';
 import { Rng } from '../../src/core/rng';
 import type { PoolLabels } from '../../src/core/search/search';
 import type { MipBackend } from '../../src/core/tsp/exact';
@@ -36,6 +44,8 @@ export interface BoardPool {
   readonly projection: BoardProjection;
   readonly cities: City[];
   readonly points: Point[];
+  /** Great-circle distances (world files). */
+  readonly sphere?: Sphere | null;
 }
 
 export function boardPool(
@@ -44,9 +54,14 @@ export function boardPool(
   minPopulation: number,
   board: BoardSpec = DEFAULT_BOARD,
 ): BoardPool {
-  const projection = boardProjection(regionOutline(file, region), board);
+  const projection = boardProjection(regionFrame(file, region), board, projectionKind(file));
   const cities = cityPool(file, region, { minPopulation });
-  return { projection, cities, points: boardPoints(cities, projection) };
+  return {
+    projection,
+    cities,
+    points: boardPoints(cities, projection),
+    sphere: citySphere(file, cities, projection),
+  };
 }
 
 /** Label constraint for the search: board labels of the pool cities at the given font size. */

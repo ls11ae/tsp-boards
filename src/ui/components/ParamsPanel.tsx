@@ -136,7 +136,14 @@ function RegionField() {
   const sorted = (kind: RegionInfo['kind']) =>
     regions.filter((r) => r.kind === kind).sort((a, b) => name(a).localeCompare(name(b), fmt.lang));
   const groups: [string, RegionInfo[]][] = [
-    [country?.country === 'EU' ? t.regionContinent : t.regionCountry, sorted('country')],
+    [
+      country?.country === 'EU'
+        ? t.regionContinent
+        : country?.country === 'WO'
+          ? t.regionWorld
+          : t.regionCountry,
+      sorted('country'),
+    ],
     [t.regionUnions, sorted('multi')],
     [
       country?.country === 'CH'
@@ -145,7 +152,9 @@ function RegionField() {
           ? t.regionProvinces
           : country?.country === 'EU'
             ? t.regionCountries
-            : t.regionStates,
+            : country?.country === 'WO'
+              ? t.regionContinents
+              : t.regionStates,
       sorted('state'),
     ],
   ];
@@ -193,7 +202,13 @@ function GroupsField() {
   };
   return (
     <fieldset>
-      <legend>{country.country === 'EU' ? t.perCountry : t.perState}</legend>
+      <legend>
+        {country.country === 'EU'
+          ? t.perCountry
+          : country.country === 'WO'
+            ? t.perContinent
+            : t.perState}
+      </legend>
       <label className="field">
         <span>{t.perStateMin}</span>
         <input
@@ -255,6 +270,8 @@ export function ParamsPanel({
   const country = useStore((s) => s.country);
   const status = useStore((s) => s.run.status);
   const fixed = useStore((s) => s.list?.mode === 'fixed');
+  const digital = useStore((s) => s.doc.purpose === 'digital');
+  const sphere = country?.metric === 'sphere';
   const [copied, setCopied] = useState<'link' | 'play' | null>(null);
   const copy = (text: string, which: 'link' | 'play') => {
     navigator.clipboard
@@ -298,19 +315,24 @@ export function ParamsPanel({
         {board && <p className="hint">{t.poolSize(fmt.integer(board.pool.length))}</p>}
         <GroupsField />
       </Group>
-      <Group id="board" title={t.board}>
+      <Group id="board" title={sphere ? t.worldMap : t.board}>
         <NumberField label={t.boardWidth} field="boardWidthMm" step={10} />
         <NumberField label={t.boardHeight} field="boardHeightMm" step={10} />
         <NumberField label={t.margin} field="marginMm" />
-        <NumberField label={t.nailDiameter} field="nailDiameterMm" step={0.1} />
-        <NumberField label={t.stringThickness} field="stringThicknessMm" step={0.1} />
+        {/* Digital puzzles have no nails or string (r_eff 0). */}
+        {!digital && (
+          <>
+            <NumberField label={t.nailDiameter} field="nailDiameterMm" step={0.1} />
+            <NumberField label={t.stringThickness} field="stringThicknessMm" step={0.1} />
+          </>
+        )}
         <NumberField label={t.minDistance} field="minDistanceMm" />
         <NumberField label={t.labelSize} field="labelSizeMm" step={0.5} />
         <LabelLanguageField />
         <BlankBoardField />
       </Group>
       <Group id="search" title={t.search}>
-        <NumberField label={t.targetGap} field="targetGapMm" step={0.5} />
+        {!digital && <NumberField label={t.targetGap} field="targetGapMm" step={0.5} />}
         <Group id="advanced" title={t.advanced} defaultOpen={false}>
           <fieldset>
             <legend>{t.weights}</legend>

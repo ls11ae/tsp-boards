@@ -2,7 +2,7 @@
 // board's millimetres; the view starts fitted to the places and can be zoomed (buttons, wheel,
 // pinch) and panned (drag). Clicks pick the nearest place within a finger-sized radius.
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
 import {
   labelCandidates,
   placeLabels,
@@ -14,7 +14,7 @@ import { svgPathData } from '../../core/board/shapes';
 import { measureText, textPath } from '../../core/board/text';
 import { boardLabel, listName } from '../../core/data';
 import type { Point } from '../../core/geometry';
-import type { BoardModel } from '../board';
+import { routePath, type BoardModel } from '../board';
 import { useT } from '../i18n';
 import { useOverlay } from '../overlay';
 import { playClick } from '../play';
@@ -36,11 +36,14 @@ interface View {
   readonly h: number;
 }
 
-/** The places' bounding box with room for labels, inside the board. */
+/**
+ * The places' bounding box with room for labels, inside the board. World maps show the whole
+ * map: great-circle legs pass near the poles and leave the map at its edges.
+ */
 function fitView(board: BoardModel, members: readonly number[]): View {
   const { widthMm: W, heightMm: H } = board.projection.board;
   const pts = members.length > 0 ? members.map((c) => board.points[c]!) : board.points;
-  if (pts.length === 0) return { x: 0, y: 0, w: W, h: H };
+  if (pts.length === 0 || board.sphere) return { x: 0, y: 0, w: W, h: H };
   const xs = pts.map((p) => p[0]);
   const ys = pts.map((p) => p[1]);
   const pad = Math.max(30, 0.08 * Math.max(W, H));
@@ -231,16 +234,25 @@ export function PlayBoard({
   const overlay = useOverlay(board, puzzle);
   const revealed = play.revealed;
   const showOverlay = overlay && (revealed || play.solvedMs !== null);
-  const at = (c: number) => board.points[c]!.map((v) => v.toFixed(2)).join(',');
-  const solution = revealed && puzzle?.tour ? puzzle.tour.map(at).join(' ') : null;
-  const path = puzzle ? play.state.path.map((s) => at(puzzle.members[s]!)).join(' ') : '';
+  const solution = revealed && puzzle?.tour ? routePath(board, puzzle.tour, true) : null;
+  const path = puzzle
+    ? routePath(
+        board,
+        play.state.path.map((s) => puzzle.members[s]!),
+        play.state.closed,
+      )
+    : '';
   const visited = new Set(play.state.path);
   const r = mm(MARKER_PX);
   const zoomBy = (factor: number) =>
     setView((v) => zoomAt(v, factor, v.x + v.w / 2, v.y + v.h / 2, maxW));
 
   return (
-    <div className="play-board" ref={wrapRef}>
+    <div
+      className="play-board"
+      ref={wrapRef}
+      style={{ '--view-aspect': fitted.w / fitted.h } as CSSProperties}
+    >
       <svg
         ref={svgRef}
         className="board"
@@ -254,14 +266,9 @@ export function PlayBoard({
         onPointerCancel={onPointerUp}
       >
         <MapLayers board={board} />
-        {solution && <polygon className="solution-tour" points={solution} />}
+        {solution && <path className="solution-tour" d={solution} />}
         {showOverlay && <Overlay board={board} overlay={overlay} showRemoved={solution !== null} />}
-        {path &&
-          (play.state.closed ? (
-            <polygon className={revealed ? 'play-path dashed' : 'play-path'} points={path} />
-          ) : (
-            <polyline className={revealed ? 'play-path dashed' : 'play-path'} points={path} />
-          ))}
+        {path && <path className={revealed ? 'play-path dashed' : 'play-path'} d={path} />}
         <g className="play-labels">
           {labels.map((d, i) => (
             <path key={i} className="play-label" d={d} />

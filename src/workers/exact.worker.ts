@@ -10,7 +10,7 @@ import { Rng } from '../core/rng';
 import { checkRobustness } from '../core/robustness';
 import { subtourRounds } from '../core/teaching';
 import { iteratedLocalSearch } from '../core/tsp/ils';
-import { verifyCandidate } from '../core/verify';
+import { flatOptimum, verifyCandidate } from '../core/verify';
 import { loadHighsInWorker } from './highs';
 import type { ExactWorkerRequest, ExactWorkerResponse } from './protocol';
 
@@ -50,7 +50,7 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
       break;
     }
     case 'rounds': {
-      const rounds = subtourRounds(highs, new Instance(request.points, 0));
+      const rounds = subtourRounds(highs, new Instance(request.points, 0, request.sphere ?? null));
       reply({ type: 'rounds', jobId: request.jobId, rounds });
       break;
     }
@@ -85,15 +85,21 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
     case 'verify': {
       const start = performance.now();
       try {
-        const inst = new Instance(request.points, request.rEffMm);
+        const inst = new Instance(request.points, request.rEffMm, request.sphere ?? null);
         // Puzzles from a link come without a tour: start from a heuristic one.
         const tour =
           request.tour.length === inst.n
             ? request.tour
             : iteratedLocalSearch(inst, new Rng(1)).tour;
-        const verification = verifyCandidate(highs, inst, tour, request.mode, {
+        const checked = verifyCandidate(highs, inst, tour, request.mode, {
           timeLimitSec: request.timeLimitSec,
         });
+        const verification = inst.sphere
+          ? {
+              ...checked,
+              flat: flatOptimum(highs, inst, { timeLimitSec: request.timeLimitSec }),
+            }
+          : checked;
         reply({
           type: 'verified',
           jobId: request.jobId,

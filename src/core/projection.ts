@@ -1,16 +1,20 @@
 // Board projection: one region-fitted conformal conic projection, used for the screen, all
 // metrics and the physical board. Output coordinates are millimetres on the board, y down.
+// World files (roadmap 8.2) use the Equal Earth projection instead: their distances are
+// great-circle distances, the map only shows them.
 
-import type { Point } from './geometry';
+import { EARTH_RADIUS_KM, type Point } from './geometry';
 import {
   geoBounds,
   geoConicConformal,
   geoDistance,
+  geoEqualEarth,
   geoPath,
   type GeoPermissibleObjects,
 } from 'd3-geo';
 
-const EARTH_RADIUS_KM = 6371.0088;
+/** 'conformal': conic conformal (boards); 'equal-earth': world maps. */
+export type ProjectionKind = 'conformal' | 'equal-earth';
 
 export interface BoardSpec {
   readonly widthMm: number;
@@ -21,6 +25,7 @@ export interface BoardSpec {
 
 export interface BoardProjection {
   readonly board: BoardSpec;
+  readonly kind: ProjectionKind;
   /** Standard parallels and central meridian in degrees. */
   readonly parallels: readonly [number, number];
   readonly centralMeridian: number;
@@ -38,22 +43,30 @@ export interface BoardProjection {
   lines(object: GeoPermissibleObjects, clip: readonly [number, number, number, number]): Point[][];
 }
 
-export function boardProjection(region: GeoPermissibleObjects, board: BoardSpec): BoardProjection {
-  const [[west, south], [east, north]] = geoBounds(region);
+export function boardProjection(
+  region: GeoPermissibleObjects,
+  board: BoardSpec,
+  kind: ProjectionKind = 'conformal',
+): BoardProjection {
+  const [[west, south], [eastBound, north]] = geoBounds(region);
+  // A region across the antimeridian (Oceania) has its eastern bound west of its western one.
+  const east = eastBound < west ? eastBound + 360 : eastBound;
   const span = north - south;
   const parallels: [number, number] = [south + span / 6, north - span / 6];
-  const centralMeridian = (west + east) / 2;
+  const middle = (west + east) / 2;
+  const centralMeridian = middle > 180 ? middle - 360 : middle;
+  const make = () =>
+    kind === 'equal-earth'
+      ? geoEqualEarth().rotate([-centralMeridian, 0])
+      : geoConicConformal().parallels(parallels).rotate([-centralMeridian, 0]);
   const m = board.marginMm;
-  const projection = geoConicConformal()
-    .parallels(parallels)
-    .rotate([-centralMeridian, 0])
-    .fitExtent(
-      [
-        [m, m],
-        [board.widthMm - m, board.heightMm - m],
-      ],
-      region,
-    );
+  const projection = make().fitExtent(
+    [
+      [m, m],
+      [board.widthMm - m, board.heightMm - m],
+    ],
+    region,
+  );
   const project = (lon: number, lat: number): [number, number] => {
     const p = projection([lon, lat]);
     if (!p) throw new Error(`cannot project ${lon}, ${lat}`);
@@ -87,9 +100,7 @@ export function boardProjection(region: GeoPermissibleObjects, board: BoardSpec)
       beginPath() {},
     };
     // d3-geo projections cannot be copied: rebuild the fitted one with a clip extent.
-    const clipped = geoConicConformal()
-      .parallels(parallels)
-      .rotate([-centralMeridian, 0])
+    const clipped = make()
       .scale(projection.scale())
       .translate(projection.translate())
       .clipExtent([
@@ -101,6 +112,7 @@ export function boardProjection(region: GeoPermissibleObjects, board: BoardSpec)
   };
   return {
     board,
+    kind,
     parallels,
     centralMeridian,
     mmPerKm,

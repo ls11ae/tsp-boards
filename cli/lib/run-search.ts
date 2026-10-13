@@ -36,6 +36,7 @@ export function runSearch(options: RunOptions): { search: Search; elapsedMs: num
   const search = new Search(
     {
       points: pool.points,
+      ...(pool.sphere ? { sphere: pool.sphere } : {}),
       population: pool.cities.map((c) => c.pop),
       pinned,
       labels: options.labels,
@@ -100,6 +101,9 @@ export function verify(
   const inst = new Instance(
     e.members.map((i) => pool.points[i]!),
     rEffMm,
+    pool.sphere
+      ? { lonLat: e.members.map((i) => pool.sphere!.lonLat[i]!), mmPerKm: pool.sphere.mmPerKm }
+      : null,
   );
   const slot = new Map(e.members.map((c, s) => [c, s]));
   const tour = e.tour.map((c) => slot.get(c)!);

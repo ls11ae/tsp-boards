@@ -9,7 +9,14 @@ import type { Point } from '../geometry';
 import { Instance } from '../instance';
 import { rEffMm, type PuzzleParams } from '../params';
 import { boardProjection, type BoardProjection } from '../projection';
-import { boardPoints, cityPool, regionInfo, regionOutline } from '../region';
+import {
+  boardPoints,
+  citySphere,
+  cityPool,
+  projectionKind,
+  regionFrame,
+  regionInfo,
+} from '../region';
 import { boardLabel } from '../data';
 import type { Tour } from '../tsp/tour';
 import {
@@ -61,12 +68,11 @@ export function boardSetup(
   /** Pool to take the cities from (default: the region's towns); e.g. a place list. */
   poolCities: readonly City[] | null = null,
 ): BoardSetup {
-  const outline = regionOutline(file, params.region);
-  const projection = boardProjection(outline, {
-    widthMm: params.boardWidthMm,
-    heightMm: params.boardHeightMm,
-    marginMm: params.marginMm,
-  });
+  const projection = boardProjection(
+    regionFrame(file, params.region),
+    { widthMm: params.boardWidthMm, heightMm: params.boardHeightMm, marginMm: params.marginMm },
+    projectionKind(file),
+  );
   const pool = poolCities ?? cityPool(file, params.region, { minPopulation: params.minPopulation });
   const index = new Map(pool.map((c, i) => [c.id, i]));
   const members = cityIds
@@ -94,7 +100,7 @@ export function boardSetup(
     projection,
     cities,
     points,
-    inst: new Instance(points, rEffMm(params)),
+    inst: new Instance(points, rEffMm(params), citySphere(file, cities, projection)),
     labels,
     texts,
     title: [

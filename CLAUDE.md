@@ -43,7 +43,11 @@ what we change and why, benchmark results, and open questions.
 - Phase 7 complete (2026-10-13): composite places (alliances as one node), gallery grid with
   thumbnails and filters, play view with screen-size places, zoom and keyboard play, collapsible
   designer, board variants of curated lists, lazy-loaded export and teaching code, version 0.9.0.
-- **Next: Phase 8** (Europe and world); see `docs/roadmap.md`.
+- Phase 8 complete (2026-10-13): Europe as a planar, board-capable data file (`eu.json`,
+  countries as regions) and the world as a digital data file (`wo.json`, continents as regions,
+  great-circle distances, Equal Earth map, flat-map comparison tour).
+- **Next: Phase 9** (physical: test board, deployment, play data endpoint, license); it waits
+  for the prototype dimensions and access to the chair server. See `docs/roadmap.md`.
 - Open: prototype board dimensions (and a test board), code license, deploying to the chair
   server, play data endpoint.
 - Code license not chosen yet (decide before going public).
@@ -63,6 +67,8 @@ what we change and why, benchmark results, and open questions.
 - **Board-first:** one region-fitted conformal projection (e.g. conic conformal via d3-geo) is
   used for the screen, for all metrics, and for the printed/lasered board. All physical
   parameters in millimetres (board size, nail diameter, min city distance, min gap in string).
+  Exception: world files (`metric: 'sphere'`) measure great-circle distances (in map mm at the
+  map's scale) on an Equal Earth map; their puzzles are digital only.
 
 ## Domain facts (do not rediscover)
 
@@ -137,13 +143,8 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–6 are done except the physical items (test board, deployment). Open work, in order,
+Phases 1–8 are done except the physical items (test board, deployment). Open work, in order,
 is in `docs/roadmap.md`:
 
-7. **Polish, usability and composite places** (current): alliances as one place at the
-   centroid of their members, gallery grid, readable play view on phones, distinct solution
-   overlay, highscore table, collapsible designer, curated content, small fixes.
-8. **Europe and world:** continents as planar regions (board-capable), then a digital world
-   mode with great-circle distances and a globe or world map.
 9. **Physical:** test board with the prototype dimensions, deployment to the chair server,
    play data endpoint, code license.

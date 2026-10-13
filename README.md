@@ -18,9 +18,11 @@ board export) are implemented; deployment is prepared (see below). Design notes,
 
 ## Using the app
 
-1. Choose a country (Germany, Austria, Switzerland, the Netherlands) or Europe, and a region (the whole
-   country, a state or canton, or a larger region), the number of cities and the board: size,
-   margin, nail diameter, string thickness and minimum distance between nails (all in mm).
+1. Choose a country (Germany, Austria, Switzerland, the Netherlands), Europe or the world, and a
+   region (the whole country, a state or canton, a continent, or a larger region), the number of
+   cities and the board: size, margin, nail diameter, string thickness and minimum distance
+   between nails (all in mm). World puzzles are digital: they measure great-circle distances on
+   the sphere and show the round trip on an Equal Earth world map.
 2. Set the target gap: how much longer (in mm of string) the second-best round trip must be
    than the optimal one, so that players can check their solution with the string.
 3. Start the search. The board shows the best candidate so far; the side panel shows
@@ -108,7 +110,9 @@ to `docs/data/de-report.md`. The data version only increases when the content ch
 same works for `at`, `ch` and `nl` (one place per municipality; the municipality level and the
 cleaning of official names are set per country in `scripts/build-data/geonames.ts`) and for
 `eu` (Europe: GeoNames' global town list and the 47 countries' alternate names, about 70 MB
-of downloads besides Natural Earth; see `scripts/build-data/continent-sources.ts`).
+of downloads besides Natural Earth; see `scripts/build-data/continent-sources.ts`) and `wo`
+(the world: towns of at least 250,000 inhabitants, continents as regions, the alternate names
+of about 150 countries, about 200 MB of downloads; see `scripts/build-data/world.ts`).
 
 ### Experiments (Node)
 

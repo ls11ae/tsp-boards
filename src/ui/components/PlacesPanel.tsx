@@ -387,7 +387,7 @@ export function FixedAnalysis({
           </div>
         </div>
       )}
-      {!small && (purpose === 'digital' || close.length > 0) && (
+      {!small && !board.sphere && (purpose === 'digital' || close.length > 0) && (
         <div className="actions">
           <button type="button" disabled={state.status === 'running'} onClick={analyse}>
             {state.status === 'running' ? t.fixedSearching : t.fixedBoardVariant}

@@ -4,7 +4,13 @@
 import { parseCountryFile, type City, type CountryFile, type Manifest } from '../core/data';
 import { compositePlace, type LinkMember, type LinkPlace } from '../core/places';
 import type { Member, Place } from '../core/puzzle-file';
-import { DEFAULT_PARAMS, DIGITAL_WEIGHTS, effectiveREffMm, searchParams } from '../core/params';
+import {
+  DEFAULT_PARAMS,
+  DIGITAL_WEIGHTS,
+  WORLD_PARAMS,
+  effectiveREffMm,
+  searchParams,
+} from '../core/params';
 import type { Purpose } from '../core/puzzle-file';
 import { decodePermalink } from '../core/permalink';
 import {
@@ -20,7 +26,7 @@ import type {
   SearchRequest,
   SearchResponse,
 } from '../workers/protocol';
-import { getBoard, townsById } from './board';
+import { getBoard, slotSphere, townsById } from './board';
 import { openListPuzzle } from './lists';
 import { applyIncrementalLink } from './incremental';
 import { getLabels, poolLabels } from './labels';
@@ -94,9 +100,15 @@ export async function switchCountry(code: string): Promise<void> {
   const country = await fetchCountry(code);
   stopSearch();
   const { params, run } = useStore.getState();
+  // The world map has its own shape and scale; back on a country, the board defaults return.
+  const sphere = country.metric === 'sphere';
+  const wasSphere = useStore.getState().country?.metric === 'sphere';
+  const board = (Object.keys(WORLD_PARAMS) as (keyof typeof WORLD_PARAMS)[]).reduce<
+    Partial<UiParams>
+  >((p, key) => ({ ...p, [key]: (sphere ? WORLD_PARAMS : DEFAULT_PARAMS)[key] }), {});
   useStore.setState({
     country,
-    params: { ...params, region: country.country },
+    params: { ...params, ...(sphere !== wasSphere ? board : {}), region: country.country },
     list: null,
     loaded: null,
     shown: { kind: 'auto' },
@@ -295,6 +307,7 @@ function searchPool(): SearchPool | null {
   const groups = boardGroups();
   return {
     points: board.points,
+    ...(board.sphere ? { sphere: board.sphere } : {}),
     population: board.pool.map((c) => c.pop),
     pinned: indices(pinned),
     excluded: indices(excluded),
@@ -514,6 +527,7 @@ function pump(): void {
     jobId,
     key: job.key,
     points: job.members.map((c) => board.points[c]!),
+    sphere: slotSphere(board, job.members),
     tour: job.tour ? job.tour.map((c) => slot.get(c)!) : [],
     rEffMm: effectiveREffMm(params, doc.purpose),
     timeLimitSec: VERIFY_TIME_LIMIT_SEC,
@@ -549,6 +563,11 @@ export function setPurpose(purpose: Purpose): void {
   useStore.getState().setDoc({ purpose });
   if (useStore.getState().puzzleType === 'map') purposeChanged();
 }
+
+// World files measure great-circle distances: their puzzles are digital (roadmap 8.2).
+useStore.subscribe((s) => {
+  if (s.country?.metric === 'sphere' && s.doc.purpose !== 'digital') setPurpose('digital');
+});
 
 function purposeChanged(): void {
   const { loaded, shown, run } = useStore.getState();

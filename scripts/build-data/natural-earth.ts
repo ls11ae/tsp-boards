@@ -212,3 +212,58 @@ export async function buildContinentRegions(
     bbox: [Math.max(w, bw), Math.max(s, bs), Math.min(e, be), Math.min(n, bn)],
   };
 }
+
+export interface WorldRegionOptions {
+  /** State id of an admin-1 unit (its continent, e.g. 'WO-AS'); null: map context only. */
+  readonly stateOf: (f: Feature<Geometry, NeProperties>) => string | null;
+  readonly simplifyMetres: number;
+}
+
+/**
+ * Regions of the world (roadmap 8.2): one state per continent (its admin-1 units dissolved);
+ * the rest (Antarctica, remote islands) is context. Islands smaller than 300 km² are dropped:
+ * on a world map they are specks.
+ */
+export async function buildWorldRegions(
+  admin1: FeatureCollection<Geometry, NeProperties>,
+  options: WorldRegionOptions,
+): Promise<{ topology: Topology; stateIds: string[]; bbox: [number, number, number, number] }> {
+  const own = admin1.features.filter((f) => options.stateOf(f) !== null);
+  const context = admin1.features.filter((f) => options.stateOf(f) === null);
+  const collection = (
+    features: readonly Feature<Geometry, NeProperties>[],
+    id: (f: Feature<Geometry, NeProperties>) => string,
+  ): FeatureCollection => ({
+    type: 'FeatureCollection',
+    features: features.map((f) => ({
+      type: 'Feature',
+      geometry: f.geometry,
+      properties: { id: id(f) },
+    })),
+  });
+  const commands = [
+    '-i states.json neighbors.json combine-files',
+    '-dissolve2 id target=states',
+    '-dissolve2 target=neighbors',
+    `-simplify interval=${options.simplifyMetres}`,
+    '-filter-islands min-area=300km2 target=*',
+    '-filter-slivers target=*',
+    '-dissolve target=states + name=country',
+    '-o format=topojson quantization=100000 target=* regions.json',
+  ].join(' ');
+  const output = await mapshaper.applyCommands(commands, {
+    'states.json': collection(own, (f) => options.stateOf(f)!),
+    'neighbors.json': collection(context, () => 'context'),
+  });
+  const text = output['regions.json'];
+  if (typeof text !== 'string' && !(text instanceof Uint8Array))
+    throw new Error('mapshaper: no output');
+  const topology = JSON.parse(
+    typeof text === 'string' ? text : new TextDecoder().decode(text),
+  ) as Topology;
+  const states = topology.objects.states as { geometries: { properties?: { id?: string } }[] };
+  const stateIds = [...new Set(states.geometries.map((g) => g.properties?.id ?? ''))].filter(
+    Boolean,
+  );
+  return { topology, stateIds, bbox: bboxOf(own) };
+}

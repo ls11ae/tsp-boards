@@ -1,0 +1,27 @@
+# Host cities of the Summer Olympic Games 1896–2024 (roadmap 8.2), one place per city (Athens,
+# Paris, London, Los Angeles and Tokyo hosted more than once). Source: International Olympic
+# Committee, list of the Olympic Games, https://www.olympics.com/en/olympic-games (retrieved
+# 2026-10-13). Places are the towns of the world data (public/data/countries/wo.json).
+Athen
+Paris
+St. Louis
+London
+Stockholm
+Antwerpen
+Amsterdam
+Los Angeles
+Berlin
+Helsinki
+Melbourne
+Rom
+Tokio
+Mexiko-Stadt
+München
+Montreal
+Moskau
+Seoul
+Barcelona
+Atlanta
+Sydney
+Peking
+Rio de Janeiro

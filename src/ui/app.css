@@ -400,6 +400,13 @@ progress {
   vector-effect: non-scaling-stroke;
 }
 
+.map-sphere {
+  fill: none;
+  stroke: var(--map-line);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
 .map-states {
   fill: none;
   stroke: var(--map-line);
@@ -417,6 +424,11 @@ progress {
 
 .map-region {
   stroke-width: 2.5px;
+}
+
+/* World maps: coastlines, not a country border. */
+.board.world .map-country {
+  stroke-width: 0.8px;
 }
 
 .pool circle {
@@ -837,10 +849,24 @@ table.scores tr.revealed td {
     height: auto;
   }
 
+  /* As high as the fitted view needs at full width (no empty bands around wide maps such as
+     the world), between the zoom buttons' room and 64 % of the screen. */
   .play-board {
     flex: none;
-    height: 64vh;
-    min-height: 300px;
+    height: clamp(280px, calc(100vw / var(--view-aspect, 0.75)), 64vh);
+    min-height: 0;
+  }
+
+  /* In a row: on wide maps they sit in the band above the map. */
+  .zoom-controls {
+    top: 4px;
+    right: 4px;
+    flex-direction: row;
+  }
+
+  .zoom-controls button {
+    width: 40px;
+    height: 40px;
   }
 }
 

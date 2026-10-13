@@ -14,7 +14,7 @@ import {
   type ScoreEntry,
 } from '../core/scores';
 import { euclideanLength } from '../core/tsp/tour';
-import { getBoard } from './board';
+import { boardInstance, getBoard } from './board';
 import { linkList } from './lists';
 import type { PuzzleView } from './puzzle';
 import { NEW_GAME, useStore, type PlayUi } from './store';
@@ -187,11 +187,7 @@ function puzzleInstance(puzzle: PuzzleView): Instance | null {
   if (!country) return null;
   const rEff = effectiveREffMm(params, useStore.getState().doc.purpose);
   if (instanceCache?.key === puzzle.key && instanceCache.rEff === rEff) return instanceCache.inst;
-  const board = getBoard(country, params);
-  const inst = new Instance(
-    puzzle.members.map((c) => board.points[c]!),
-    rEff,
-  );
+  const inst = boardInstance(getBoard(country, params), puzzle.members, rEff);
   instanceCache = { key: puzzle.key, rEff, inst };
   return inst;
 }

@@ -5,11 +5,24 @@
 // thickness). Distances and per-triple turn costs are rounded to whole µm once, so all tour
 // costs are exact integers: comparisons, deltas and ties are exact, and the MIP objective is
 // integral.
+//
+// World puzzles (roadmap 8.2) measure great-circle distances instead: the instance keeps the
+// map points (for drawing and for geometric heuristics such as hull insertion) and each
+// point's longitude and latitude; distances are kilometres on the sphere times the map scale,
+// so they stay in board units (µm) and the app shows them in km like other digital puzzles.
+// There is no string on a sphere: r_eff is 0.
 
-import { turningAngle, type Point } from './geometry';
+import { greatCircleKm, turningAngle, type Point } from './geometry';
 
 /** Board units are mm; costs are integers in µm. */
 export const UM_PER_MM = 1000;
+
+/** Great-circle distances: [longitude, latitude] of each point and the map scale. */
+export interface Sphere {
+  readonly lonLat: readonly Point[];
+  /** Board millimetres per kilometre on the sphere. */
+  readonly mmPerKm: number;
+}
 
 export class Instance {
   readonly n: number;
@@ -22,15 +35,22 @@ export class Instance {
   readonly t: Int32Array;
   /** r_eff in µm; 0 means the string length equals the Euclidean length. */
   readonly rEffUm: number;
+  /** Great-circle distances (null: Euclidean distances on the board). */
+  readonly sphere: { readonly lonLat: Point[]; readonly mmPerKm: number } | null;
 
   /**
    * @param pointsMm board coordinates in mm
-   * @param rEffMm nail radius + half string thickness in mm (0 for Euclidean costs)
+   * @param rEffMm nail radius + half string thickness in mm (0 for Euclidean costs; ignored on
+   *   the sphere)
+   * @param sphere longitude and latitude of each point for great-circle distances
    */
-  constructor(pointsMm: readonly Point[], rEffMm: number) {
+  constructor(pointsMm: readonly Point[], rEffMm: number, sphere: Sphere | null = null) {
     const n = pointsMm.length;
     this.n = n;
-    this.rEffUm = Math.round(rEffMm * UM_PER_MM);
+    if (sphere && sphere.lonLat.length !== n)
+      throw new Error(`sphere: ${sphere.lonLat.length} positions for ${n} points`);
+    this.sphere = sphere ? { lonLat: [...sphere.lonLat], mmPerKm: sphere.mmPerKm } : null;
+    this.rEffUm = sphere ? 0 : Math.round(rEffMm * UM_PER_MM);
     this.x = new Int32Array(n);
     this.y = new Int32Array(n);
     this.d = new Int32Array(n * n);
@@ -40,8 +60,13 @@ export class Instance {
     for (let i = 0; i < n; i++) this.updateCosts(i);
   }
 
-  /** Same points with zero turn costs (the Euclidean instance). */
+  /** Same points with zero turn costs (the Euclidean instance; on the sphere: itself). */
   euclidean(): Instance {
+    return new Instance(this.pointsMm(), 0, this.sphere);
+  }
+
+  /** The same map points measured on the flat map (Euclidean, r_eff 0). */
+  plane(): Instance {
     return new Instance(this.pointsMm(), 0);
   }
 
@@ -55,6 +80,7 @@ export class Instance {
       y: this.y.slice(),
       d: this.d.slice(),
       t: this.t.slice(),
+      sphere: this.sphere && { lonLat: [...this.sphere.lonLat], mmPerKm: this.sphere.mmPerKm },
     });
   }
 
@@ -90,8 +116,15 @@ export class Instance {
     return this.t[(j * this.n + i) * this.n + k]!;
   }
 
-  /** Moves point `index` and updates all costs involving it in O(n²). */
-  movePoint(index: number, xMm: number, yMm: number): void {
+  /**
+   * Moves point `index` and updates all costs involving it in O(n²). On the sphere, `lonLat`
+   * is the new position's longitude and latitude.
+   */
+  movePoint(index: number, xMm: number, yMm: number, lonLat?: Point): void {
+    if (this.sphere) {
+      if (!lonLat) throw new Error('movePoint: a sphere instance needs the new lon/lat');
+      this.sphere.lonLat[index] = lonLat;
+    }
     this.setPointUm(index, xMm * UM_PER_MM, yMm * UM_PER_MM);
     this.updateCosts(index);
   }
@@ -102,11 +135,17 @@ export class Instance {
   }
 
   private updateCosts(p: number): void {
-    const { n, x, y, d, t } = this;
+    const { n, x, y, d, t, sphere } = this;
     for (let j = 0; j < n; j++) {
-      const dx = x[p]! - x[j]!;
-      const dy = y[p]! - y[j]!;
-      const dist = Math.round(Math.sqrt(dx * dx + dy * dy));
+      let dist: number;
+      if (sphere) {
+        const km = greatCircleKm(sphere.lonLat[p]!, sphere.lonLat[j]!);
+        dist = Math.round(km * sphere.mmPerKm * UM_PER_MM);
+      } else {
+        const dx = x[p]! - x[j]!;
+        const dy = y[p]! - y[j]!;
+        dist = Math.round(Math.sqrt(dx * dx + dy * dy));
+      }
       d[p * n + j] = dist;
       d[j * n + p] = dist;
     }

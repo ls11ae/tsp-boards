@@ -192,7 +192,9 @@ export function ExportPanel({
   return (
     <section>
       <h2>{t.exportTitle}</h2>
-      {digital ? (
+      {board.sphere ? (
+        <p className="hint">{t.exportWorld}</p>
+      ) : digital ? (
         <>
           <p className="hint">{t.exportDigital}</p>
           {verified && <Worksheet board={board} puzzle={puzzle} paperField />}

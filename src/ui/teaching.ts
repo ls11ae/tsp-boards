@@ -1,7 +1,6 @@
 // Teaching mode (Phase 6): a strategy step by step on the puzzle on display. The simple
 // strategies are computed here; the exact solver's rounds in a worker.
 
-import { Instance } from '../core/instance';
 import {
   greedyEdgeFrames,
   insertionFrames,
@@ -13,7 +12,7 @@ import {
 } from '../core/teaching';
 import { nearestNeighbor } from '../core/tsp/construct';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
-import type { BoardModel } from './board';
+import { boardInstance, slotSphere, type BoardModel } from './board';
 import type { PuzzleView } from './puzzle';
 import { useStore } from './store';
 
@@ -45,10 +44,7 @@ export function startTeaching(
   kind: TeachingKind,
   start: number,
 ): void {
-  const inst = new Instance(
-    puzzle.members.map((c) => board.points[c]!),
-    0,
-  );
+  const inst = boardInstance(board, puzzle.members, 0);
   worker?.terminate();
   worker = null;
   const base = { key: puzzle.key, kind, start, index: 0, playing: true, error: null };
@@ -83,6 +79,7 @@ export function startTeaching(
     type: 'rounds',
     jobId: id,
     points: inst.pointsMm(),
+    sphere: slotSphere(board, puzzle.members),
   } satisfies ExactWorkerRequest);
 }
 

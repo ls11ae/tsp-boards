@@ -3,7 +3,7 @@
 // lengths in the notes are Euclidean too. The exact solver's subtour elimination rounds come
 // from `subtourRounds` (they need the MIP backend, so the app runs them in a worker).
 
-import { convexHull, type Point } from './geometry';
+import { insertionStart } from './tsp/construct';
 import type { Instance } from './instance';
 import { ExactTsp, type MipBackend } from './tsp/exact';
 import type { Tour } from './tsp/tour';
@@ -26,6 +26,7 @@ export type TeachingNote =
   | { readonly kind: 'nn-step'; readonly a: number; readonly b: number }
   | { readonly kind: 'nn-close'; readonly a: number; readonly b: number }
   | { readonly kind: 'hull'; readonly count: number }
+  | { readonly kind: 'pair'; readonly a: number; readonly b: number }
   | { readonly kind: 'insert'; readonly a: number; readonly v: number; readonly b: number }
   | { readonly kind: 'greedy'; readonly a: number; readonly b: number }
   | { readonly kind: 'greedy-close'; readonly a: number; readonly b: number }
@@ -92,16 +93,19 @@ export function nearestNeighborFrames(inst: Instance, start: number): TeachingFr
   return frames;
 }
 
-/** Convex hull first, then always the place that lengthens the round trip least. */
+/**
+ * Convex hull first (on the sphere: the two places farthest apart), then always the place
+ * that lengthens the round trip least.
+ */
 export function insertionFrames(inst: Instance): TeachingFrame[] {
   const n = inst.n;
-  const points: Point[] = Array.from({ length: n }, (_, i) => [inst.x[i]!, inst.y[i]!] as const);
-  const tour = convexHull(points);
+  const tour = insertionStart(inst);
   const inTour = new Uint8Array(n);
   for (const v of tour) inTour[v] = 1;
-  const frames = [
-    frame(inst, tourEdges(tour), { kind: 'hull', count: tour.length }, tourEdges(tour), []),
-  ];
+  const note: TeachingNote = inst.sphere
+    ? { kind: 'pair', a: tour[0]!, b: tour[1]! }
+    : { kind: 'hull', count: tour.length };
+  const frames = [frame(inst, tourEdges(tour), note, tourEdges(tour), [])];
   while (tour.length < n) {
     let bestCost = Infinity;
     let bestNode = -1;

@@ -1,0 +1,15 @@
+{
+  "_comment": "Manual corrections for the world data build (scripts/build-data/world.ts), keyed by GeoNames id of the town: 'names' sets name and/or nameEn, 'exclude' drops towns.",
+  "names": {
+    "292968": {
+      "nameEn": "Abu Dhabi",
+      "_why": "GeoNames' English name is 'Abu Dhabi Island and Internal Islands City'"
+    },
+    "1816670": {
+      "name": "Peking",
+      "_why": "GeoNames prefers 'Beijing' in German; the common German name is Peking"
+    }
+  },
+  "exclude": [1790842],
+  "_exclude": "1790842 Wuzhong (Ningxia): GeoNames population 7.2 million, the city has about 1.4 million"
+}

@@ -74,6 +74,19 @@ export const DIGITAL_WEIGHTS = {
   weightRecognizability: 0.5,
 } as const;
 
+/**
+ * The map of world files (roadmap 8.2): Equal Earth is about twice as wide as high, places
+ * stay apart at about 800 km, and the pool starts with the cities of a million or more.
+ */
+export const WORLD_PARAMS = {
+  n: 30,
+  boardWidthMm: 1000,
+  boardHeightMm: 520,
+  marginMm: 10,
+  minDistanceMm: 20,
+  minPopulation: 1_000_000,
+} as const satisfies Partial<PuzzleParams>;
+
 /** r_eff used for judging and verifying: 0 for digital puzzles. */
 export function effectiveREffMm(p: PuzzleParams, purpose: Purpose): number {
   return purpose === 'digital' ? 0 : rEffMm(p);

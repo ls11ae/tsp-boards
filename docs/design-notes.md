@@ -695,3 +695,37 @@ Short entries: decision; alternatives considered; reason. Newest last.
   Curated: 40 European capitals (digital, 0.72 mm) and "Europa: 30 Städte" on an 800 × 600 mm
   landscape board (8.87 mm). Alternatives: merging the country files (different municipality
   rules per country), one global alternate-names file (190 MB).
+- **2026-10-13 World (roadmap 8.2).** A data file `wo.json` (1964 towns, 200 KB) marked as
+  metric `sphere`: towns of GeoNames' cities15000 with at least 250,000 inhabitants; "states"
+  are the six continents (GeoNames' continent of the country; Russia's Urals, Siberian and Far
+  Eastern federal districts count as Asia, Turkey's East Thrace and Istanbul as Europe, as in
+  the Europe file), borders from Natural Earth admin-1 dissolved per continent (25 km
+  simplification, islands below 300 km² dropped; Antarctica as context). City districts are
+  merged within a country only (Brazzaville stays beside Kinshasa) and the capital, else the
+  more prominent town (population × (1 + alternate names / 20)) stands for its cluster with the
+  cluster's largest population: Manila over Quezon City, Guadalajara over Zapopan, New York City
+  over its boroughs, New Delhi with Delhi's 11 million. The same rule now builds Europe (data
+  version 2: e.g. Hamilton instead of "Meikle Earnock", Giurgiu kept beside Ruse); population
+  order alone kept districts (Zapopan, Quezon City), state capitals first kept Ikeja over Lagos.
+  Overrides: Peking (GeoNames prefers "Beijing" in German), Abu Dhabi, and Wuzhong left out
+  (GeoNames: 7.2 million inhabitants, really about 1.4 million). Distances: the `Instance`
+  takes each point's longitude and latitude and measures great-circle kilometres times the
+  map's scale (mm/km at the centre), so all lengths stay in board units, integer µm, and the
+  app's km display for digital puzzles is exact on the sphere; r_eff is 0 (no string on a
+  sphere). The search pool, the verification and the teaching rounds carry the positions; exact
+  solver and heuristics use only the distance matrix. Planar parts: the minimum distance and
+  the labels stay on the map (legibility); insertion starts from the two places farthest apart
+  instead of the convex hull; the convex-hull thesis metrics are hidden; board, robustness,
+  worksheet (a km scale is wrong on Equal Earth) and board variants are not offered, and world
+  puzzles are always digital (also when a file says otherwise). Map: Equal Earth, for the whole
+  world fitted to the full sphere (its edge drawn) so legs near the poles stay on the map;
+  regions are centred on their meridian (also across the antimeridian). Legs are great-circle
+  arcs from d3-geo, cut at the map's edge; the play view starts with the whole map and, on
+  phones, takes the map's aspect ratio. Teaching point: the exact worker also solves the
+  flat-map instance (Euclidean on the map points) and the overlay "shortest tour on the flat
+  map" shows it with its excess on the sphere (Welt: 30 Metropolen: 638 km longer). Search: 400
+  iterations at n = 30 over 502 cities of a million take about 20 s in Node; the exact check
+  about 3 s. Curated: Olympic host cities (23, gap 88 km) and 30 world cities (gap 123 km).
+  Alternatives: a rotatable orthographic globe (needs hit-testing and labels on a rotating
+  view; the map already shows arcs, poles and the wrap at the edge), distances in integer
+  metres (would need a second unit in the UI), one global alternate-names file (205 MB).

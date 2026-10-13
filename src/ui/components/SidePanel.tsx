@@ -1,13 +1,11 @@
 import { lazy, Suspense, useMemo } from 'react';
-import { Instance } from '../../core/instance';
 import { tourMetrics } from '../../core/metrics';
 import type { Evaluation } from '../../core/search/search';
-import type { BoardModel } from '../board';
+import { boardInstance, legMm, type BoardModel } from '../board';
 import { clearMarks, showCandidate } from '../controller';
 import { useFormat, useT } from '../i18n';
 import type { PuzzleView } from '../puzzle';
 import { useStore, type RunError } from '../store';
-import { distance } from '../../core/geometry';
 import { ExportPanel } from './ExportPanel';
 import { FixedAnalysis } from './PlacesPanel';
 import { OverlayPicker } from './OverlayPicker';
@@ -116,27 +114,22 @@ function PuzzleMetrics({
     verification =
       v.verification.mode === 'string-exact'
         ? t.stringExact
-        : purpose === 'digital'
-          ? t.euclidExact
-          : t.euclidExactStringLocal;
+        : board.sphere
+          ? t.sphereExact
+          : purpose === 'digital'
+            ? t.euclidExact
+            : t.euclidExactStringLocal;
 
   const tour = puzzle.tour;
   const euclideanMm = tour
-    ? tour.reduce(
-        (sum, c, i) =>
-          sum + distance(board.points[c]!, board.points[tour[(i + 1) % tour.length]!]!),
-        0,
-      )
+    ? tour.reduce((sum, c, i) => sum + legMm(board, c, tour[(i + 1) % tour.length]!), 0)
     : null;
   const stringMm = exact?.string ? exact.string.optimalLength / 1000 : e ? e.lengthUm / 1000 : null;
   const thesis = useMemo(
     () =>
       tour
         ? tourMetrics(
-            new Instance(
-              puzzle.members.map((c) => board.points[c]!),
-              0,
-            ),
+            boardInstance(board, puzzle.members, 0),
             tour.map((c) => puzzle.members.indexOf(c)),
           )
         : null,
@@ -194,11 +187,11 @@ function PuzzleMetrics({
             <dd>{t.excess(fmt.number(e.difficulty.nearestNeighborBest * 100, 1))}</dd>
             <dt className="sub">{t.greedyEdge}</dt>
             <dd>{t.excess(fmt.number(e.difficulty.greedyEdge * 100, 1))}</dd>
-            <dt className="sub">{t.hullInsertion}</dt>
+            <dt className="sub">{board.sphere ? t.pairInsertion : t.hullInsertion}</dt>
             <dd>{t.excess(fmt.number(e.difficulty.hullInsertion * 100, 1))}</dd>
           </>
         )}
-        {thesis && (
+        {thesis && !board.sphere && (
           <>
             <dt>{t.interiorFraction}</dt>
             <dd>{fmt.integer(thesis.interiorFraction * 100)} %</dd>

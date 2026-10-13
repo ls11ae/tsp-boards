@@ -47,8 +47,21 @@ export const GEONAMES_CITIES15000: RawSource = {
   file: 'geonames/cities15000.zip',
 };
 
-/** Continents (e.g. EU) use the global town list; countries their own dumps. */
+/** Countries with their continent (the world's regions). */
+export const GEONAMES_COUNTRY_INFO: RawSource = {
+  key: 'geonames/countryInfo',
+  url: 'https://download.geonames.org/export/dump/countryInfo.txt',
+  file: 'geonames/countryInfo.txt',
+};
+
+/**
+ * Continents (e.g. EU) use the global town list; countries their own dumps. The world ('WO')
+ * also needs the alternate names of every country with towns, known only from the town list
+ * (world.ts, worldNameSources).
+ */
 export function sourcesForCountry(countryCode: string): readonly RawSource[] {
+  if (countryCode.toUpperCase() === 'WO')
+    return [GEONAMES_CITIES15000, GEONAMES_COUNTRY_INFO, NATURAL_EARTH_ADMIN1];
   const continent = CONTINENTS[countryCode.toUpperCase()];
   if (continent) {
     const codes = [...new Set(Object.values(continent.countries))].sort();

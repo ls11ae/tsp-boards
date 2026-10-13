@@ -25,7 +25,7 @@ import {
 import type { TextMetrics } from '../board/text';
 import { difficulty, type Difficulty } from '../difficulty';
 import type { Point } from '../geometry';
-import { Instance } from '../instance';
+import { Instance, type Sphere } from '../instance';
 import { recognizability, tourMetrics } from '../metrics';
 import { Rng, hashSeed } from '../rng';
 import { cheapestInsertion } from '../tsp/construct';
@@ -94,6 +94,11 @@ const SIMILARITY = 0.8;
 export interface SearchPool {
   /** Board coordinates in mm. */
   readonly points: readonly Point[];
+  /**
+   * Great-circle distances (world files): each pool city's longitude and latitude. The minimum
+   * distance and the labels stay on the map.
+   */
+  readonly sphere?: Sphere;
   readonly population: readonly number[];
   /** Pool indices that must be selected. */
   readonly pinned: readonly number[];
@@ -391,9 +396,11 @@ export class Search {
     const selection = new Selection(this.graph, this.pool.points.length);
     for (const c of chosen) selection.add(c);
     const slots = [...selection.members];
+    const sphere = this.pool.sphere;
     const inst = new Instance(
       slots.map((c) => this.pool.points[c]!),
       this.params.rEffMm,
+      sphere ? { lonLat: slots.map((c) => sphere.lonLat[c]!), mmPerKm: sphere.mmPerKm } : null,
     );
     let evaluation = this.evaluate(inst, slots, null);
     if (this.needsRefinement(evaluation)) evaluation = this.refine(inst, slots, evaluation);
@@ -723,7 +730,8 @@ export class Search {
     const instance = () => {
       if (!inst) {
         inst = cur.inst.clone();
-        for (const s of changed) inst.movePoint(s, ...this.pool.points[slots[s]!]!);
+        for (const s of changed)
+          inst.movePoint(s, ...this.pool.points[slots[s]!]!, this.pool.sphere?.lonLat[slots[s]!]);
       }
       return inst;
     };

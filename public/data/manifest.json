@@ -80,6 +80,22 @@
         7.1985,
         53.5581
       ]
+    },
+    {
+      "country": "WO",
+      "name": {
+        "en": "World",
+        "de": "Welt"
+      },
+      "file": "countries/wo.json",
+      "dataVersion": 1,
+      "cityCount": 1964,
+      "bbox": [
+        -180,
+        -55.9185,
+        180,
+        83.6341
+      ]
     }
   ]
 }

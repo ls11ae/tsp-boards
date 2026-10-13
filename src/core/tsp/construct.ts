@@ -83,10 +83,29 @@ export function greedyEdge(inst: Instance): number[] {
   return tour;
 }
 
-/** Convex hull first, then repeatedly the cheapest insertion (by distance). */
+/**
+ * Start of the insertion heuristic: the convex hull; on the sphere, which has no convex hull,
+ * the two places farthest apart.
+ */
+export function insertionStart(inst: Instance): number[] {
+  if (!inst.sphere) return convexHull(points(inst));
+  let best: number[] = [0, 1];
+  let far = -1;
+  for (let i = 0; i < inst.n; i++) {
+    for (let j = i + 1; j < inst.n; j++) {
+      if (inst.dist(i, j) > far) {
+        far = inst.dist(i, j);
+        best = [i, j];
+      }
+    }
+  }
+  return best;
+}
+
+/** Convex hull (sphere: farthest pair) first, then repeatedly the cheapest insertion. */
 export function hullInsertion(inst: Instance): number[] {
   const n = inst.n;
-  const tour = convexHull(points(inst));
+  const tour = insertionStart(inst);
   if (tour.length === n) return tour;
   const inTour = new Uint8Array(n);
   for (const v of tour) inTour[v] = 1;

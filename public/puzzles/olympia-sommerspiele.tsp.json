@@ -1,0 +1,359 @@
+{
+  "schema": 1,
+  "id": "olympia-sommerspiele",
+  "kind": "map",
+  "title": "Olympische Sommerspiele",
+  "description": "Alle Austragungsorte der Olympischen Sommerspiele von Athen 1896 bis Paris 2024: eine Rundreise um die Welt, gemessen auf der Kugel.",
+  "purpose": "digital",
+  "language": "de",
+  "app": "0.9.0",
+  "updated": "2026-10-13",
+  "data": {
+    "country": "WO",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "WO",
+      "n": 23,
+      "boardWidthMm": 1000,
+      "boardHeightMm": 520,
+      "marginMm": 10,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 20,
+      "targetGapMm": 5,
+      "minPopulation": 1000000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "id": 264371,
+        "name": "Athen",
+        "lat": 37.9838,
+        "lon": 23.7278
+      },
+      {
+        "id": 2988507,
+        "name": "Paris",
+        "lat": 48.8534,
+        "lon": 2.3488
+      },
+      {
+        "id": 4407066,
+        "name": "St. Louis",
+        "lat": 38.6273,
+        "lon": -90.1979
+      },
+      {
+        "id": 2643743,
+        "name": "London",
+        "lat": 51.5085,
+        "lon": -0.1257
+      },
+      {
+        "id": 2673730,
+        "name": "Stockholm",
+        "lat": 59.3294,
+        "lon": 18.0687
+      },
+      {
+        "id": 2803138,
+        "name": "Antwerpen",
+        "lat": 51.2205,
+        "lon": 4.4003
+      },
+      {
+        "id": 2759794,
+        "name": "Amsterdam",
+        "lat": 52.374,
+        "lon": 4.8897
+      },
+      {
+        "id": 5368361,
+        "name": "Los Angeles",
+        "lat": 34.0522,
+        "lon": -118.2437
+      },
+      {
+        "id": 2950159,
+        "name": "Berlin",
+        "lat": 52.5244,
+        "lon": 13.4105
+      },
+      {
+        "id": 658225,
+        "name": "Helsinki",
+        "lat": 60.1695,
+        "lon": 24.9355
+      },
+      {
+        "id": 2158177,
+        "name": "Melbourne",
+        "lat": -37.814,
+        "lon": 144.9633
+      },
+      {
+        "id": 3169070,
+        "name": "Rom",
+        "lat": 41.8919,
+        "lon": 12.5113
+      },
+      {
+        "id": 1850147,
+        "name": "Tokio",
+        "lat": 35.6895,
+        "lon": 139.6917
+      },
+      {
+        "id": 3530597,
+        "name": "Mexiko-Stadt",
+        "lat": 19.4285,
+        "lon": -99.1277
+      },
+      {
+        "id": 2867714,
+        "name": "München",
+        "lat": 48.1374,
+        "lon": 11.5755
+      },
+      {
+        "id": 6077243,
+        "name": "Montreal",
+        "lat": 45.5088,
+        "lon": -73.5878
+      },
+      {
+        "id": 524901,
+        "name": "Moskau",
+        "lat": 55.752,
+        "lon": 37.6178
+      },
+      {
+        "id": 1835848,
+        "name": "Seoul",
+        "lat": 37.566,
+        "lon": 126.9784
+      },
+      {
+        "id": 3128760,
+        "name": "Barcelona",
+        "lat": 41.3888,
+        "lon": 2.159
+      },
+      {
+        "id": 4180439,
+        "name": "Atlanta",
+        "lat": 33.749,
+        "lon": -84.388
+      },
+      {
+        "id": 2147714,
+        "name": "Sydney",
+        "lat": -33.8678,
+        "lon": 151.2073
+      },
+      {
+        "id": 1816670,
+        "name": "Peking",
+        "lat": 39.9075,
+        "lon": 116.3972
+      },
+      {
+        "id": 3451190,
+        "name": "Rio de Janeiro",
+        "lat": -22.9064,
+        "lon": -43.1822
+      }
+    ],
+    "list": {
+      "mode": "fixed",
+      "places": [
+        {
+          "id": 264371,
+          "name": "Athen",
+          "lat": 37.9838,
+          "lon": 23.7278
+        },
+        {
+          "id": 2988507,
+          "name": "Paris",
+          "lat": 48.8534,
+          "lon": 2.3488
+        },
+        {
+          "id": 4407066,
+          "name": "St. Louis",
+          "lat": 38.6273,
+          "lon": -90.1979
+        },
+        {
+          "id": 2643743,
+          "name": "London",
+          "lat": 51.5085,
+          "lon": -0.1257
+        },
+        {
+          "id": 2673730,
+          "name": "Stockholm",
+          "lat": 59.3294,
+          "lon": 18.0687
+        },
+        {
+          "id": 2803138,
+          "name": "Antwerpen",
+          "lat": 51.2205,
+          "lon": 4.4003
+        },
+        {
+          "id": 2759794,
+          "name": "Amsterdam",
+          "lat": 52.374,
+          "lon": 4.8897
+        },
+        {
+          "id": 5368361,
+          "name": "Los Angeles",
+          "lat": 34.0522,
+          "lon": -118.2437
+        },
+        {
+          "id": 2950159,
+          "name": "Berlin",
+          "lat": 52.5244,
+          "lon": 13.4105
+        },
+        {
+          "id": 658225,
+          "name": "Helsinki",
+          "lat": 60.1695,
+          "lon": 24.9355
+        },
+        {
+          "id": 2158177,
+          "name": "Melbourne",
+          "lat": -37.814,
+          "lon": 144.9633
+        },
+        {
+          "id": 3169070,
+          "name": "Rom",
+          "lat": 41.8919,
+          "lon": 12.5113
+        },
+        {
+          "id": 1850147,
+          "name": "Tokio",
+          "lat": 35.6895,
+          "lon": 139.6917
+        },
+        {
+          "id": 3530597,
+          "name": "Mexiko-Stadt",
+          "lat": 19.4285,
+          "lon": -99.1277
+        },
+        {
+          "id": 2867714,
+          "name": "München",
+          "lat": 48.1374,
+          "lon": 11.5755
+        },
+        {
+          "id": 6077243,
+          "name": "Montreal",
+          "lat": 45.5088,
+          "lon": -73.5878
+        },
+        {
+          "id": 524901,
+          "name": "Moskau",
+          "lat": 55.752,
+          "lon": 37.6178
+        },
+        {
+          "id": 1835848,
+          "name": "Seoul",
+          "lat": 37.566,
+          "lon": 126.9784
+        },
+        {
+          "id": 3128760,
+          "name": "Barcelona",
+          "lat": 41.3888,
+          "lon": 2.159
+        },
+        {
+          "id": 4180439,
+          "name": "Atlanta",
+          "lat": 33.749,
+          "lon": -84.388
+        },
+        {
+          "id": 2147714,
+          "name": "Sydney",
+          "lat": -33.8678,
+          "lon": 151.2073
+        },
+        {
+          "id": 1816670,
+          "name": "Peking",
+          "lat": 39.9075,
+          "lon": 116.3972
+        },
+        {
+          "id": 3451190,
+          "name": "Rio de Janeiro",
+          "lat": -22.9064,
+          "lon": -43.1822
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        11,
+        18,
+        1,
+        5,
+        6,
+        3,
+        15,
+        19,
+        2,
+        7,
+        13,
+        22,
+        10,
+        20,
+        12,
+        17,
+        21,
+        16,
+        9,
+        4,
+        8,
+        14
+      ],
+      "lengthMm": 1899.042,
+      "gapMm": 2.908,
+      "model": "string",
+      "scaleGapMm": null,
+      "startPlace": null
+    }
+  }
+}

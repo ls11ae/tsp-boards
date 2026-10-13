@@ -23,7 +23,8 @@ export type Language = 'en' | 'de';
 export type UiParams = PuzzleParams;
 
 /** Tour drawn over the board for comparison: none, the runner-up or a simple strategy. */
-export type OverlayChoice = 'none' | 'second' | HeuristicKind;
+/** 'flat-map': the shortest round trip on the flat map (world puzzles). */
+export type OverlayChoice = 'none' | 'second' | 'flat-map' | HeuristicKind;
 
 export type RunStatus = 'idle' | 'running' | 'done' | 'stopped' | 'error';
 

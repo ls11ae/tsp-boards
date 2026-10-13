@@ -1,0 +1,265 @@
+{
+  "schema": 1,
+  "id": "welt-30",
+  "kind": "map",
+  "title": "Welt: 30 Metropolen",
+  "description": "Rundreise durch 30 Metropolen auf allen Kontinenten, gemessen auf der Kugel: Die kürzesten Wege sind Großkreise. Nach dem Lösen lohnt der Vergleich mit der kürzesten Tour auf der flachen Karte.",
+  "purpose": "digital",
+  "language": "de",
+  "app": "0.9.0",
+  "updated": "2026-10-13",
+  "data": {
+    "country": "WO",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "WO",
+      "n": 30,
+      "boardWidthMm": 1000,
+      "boardHeightMm": 520,
+      "marginMm": 10,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 20,
+      "targetGapMm": 5,
+      "minPopulation": 2000000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 0.3,
+      "weightDifficulty": 1,
+      "weightRecognizability": 3,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "id": 1796236,
+        "name": "Shanghai",
+        "lat": 31.2222,
+        "lon": 121.4581
+      },
+      {
+        "id": 1814906,
+        "name": "Chongqing",
+        "lat": 29.5603,
+        "lon": 106.5577
+      },
+      {
+        "id": 1795565,
+        "name": "Shenzhen",
+        "lat": 22.5455,
+        "lon": 114.0683
+      },
+      {
+        "id": 2314302,
+        "name": "Kinshasa",
+        "lat": -4.3276,
+        "lon": 15.3136
+      },
+      {
+        "id": 745044,
+        "name": "Istanbul",
+        "lat": 41.0138,
+        "lon": 28.9497
+      },
+      {
+        "id": 2332459,
+        "name": "Lagos",
+        "lat": 6.4541,
+        "lon": 3.3947
+      },
+      {
+        "id": 1566083,
+        "name": "Ho-Chi-Minh-Stadt",
+        "lat": 10.823,
+        "lon": 106.6297
+      },
+      {
+        "id": 1792947,
+        "name": "Tianjin",
+        "lat": 39.1422,
+        "lon": 117.1767
+      },
+      {
+        "id": 1275339,
+        "name": "Mumbai",
+        "lat": 19.0728,
+        "lon": 72.8826
+      },
+      {
+        "id": 3530597,
+        "name": "Mexiko-Stadt",
+        "lat": 19.4285,
+        "lon": -99.1277
+      },
+      {
+        "id": 1174872,
+        "name": "Karatschi",
+        "lat": 24.8608,
+        "lon": 67.0104
+      },
+      {
+        "id": 1261481,
+        "name": "Neu-Delhi",
+        "lat": 28.6214,
+        "lon": 77.2148
+      },
+      {
+        "id": 524901,
+        "name": "Moskau",
+        "lat": 55.752,
+        "lon": 37.6178
+      },
+      {
+        "id": 1835848,
+        "name": "Seoul",
+        "lat": 37.566,
+        "lon": 126.9784
+      },
+      {
+        "id": 1850147,
+        "name": "Tokio",
+        "lat": 35.6895,
+        "lon": 139.6917
+      },
+      {
+        "id": 360630,
+        "name": "Kairo",
+        "lat": 30.0626,
+        "lon": 31.2497
+      },
+      {
+        "id": 993800,
+        "name": "Johannesburg",
+        "lat": -26.2023,
+        "lon": 28.0436
+      },
+      {
+        "id": 2643743,
+        "name": "London",
+        "lat": 51.5085,
+        "lon": -0.1257
+      },
+      {
+        "id": 5128581,
+        "name": "New York City",
+        "lat": 40.7143,
+        "lon": -74.006
+      },
+      {
+        "id": 1642911,
+        "name": "Jakarta",
+        "lat": -6.2146,
+        "lon": 106.8451
+      },
+      {
+        "id": 1277333,
+        "name": "Bengaluru",
+        "lat": 12.9719,
+        "lon": 77.5937
+      },
+      {
+        "id": 1581130,
+        "name": "Hanoi",
+        "lat": 21.0245,
+        "lon": 105.8412
+      },
+      {
+        "id": 3688689,
+        "name": "Bogotá",
+        "lat": 4.6097,
+        "lon": -74.0817
+      },
+      {
+        "id": 98182,
+        "name": "Bagdad",
+        "lat": 33.3406,
+        "lon": 44.4009
+      },
+      {
+        "id": 2293538,
+        "name": "Abidjan",
+        "lat": 5.3544,
+        "lon": -4.0017
+      },
+      {
+        "id": 2147714,
+        "name": "Sydney",
+        "lat": -33.8678,
+        "lon": 151.2073
+      },
+      {
+        "id": 2158177,
+        "name": "Melbourne",
+        "lat": -37.814,
+        "lon": 144.9633
+      },
+      {
+        "id": 1275004,
+        "name": "Kolkata",
+        "lat": 22.5626,
+        "lon": 88.363
+      },
+      {
+        "id": 1298824,
+        "name": "Yangon",
+        "lat": 16.8053,
+        "lon": 96.1561
+      },
+      {
+        "id": 108410,
+        "name": "Riad",
+        "lat": 24.6877,
+        "lon": 46.7219
+      }
+    ],
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        2,
+        6,
+        19,
+        25,
+        26,
+        16,
+        3,
+        5,
+        24,
+        22,
+        9,
+        18,
+        17,
+        12,
+        4,
+        15,
+        23,
+        29,
+        10,
+        11,
+        8,
+        20,
+        27,
+        28,
+        21,
+        1,
+        7,
+        13,
+        14
+      ],
+      "lengthMm": 2283.535,
+      "gapMm": 4.073,
+      "model": "string",
+      "scaleGapMm": null,
+      "startPlace": null
+    }
+  }
+}

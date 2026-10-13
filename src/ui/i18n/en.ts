@@ -18,6 +18,10 @@ export const en = {
   regionCantons: 'Cantons',
   regionCountries: 'Countries',
   perCountry: 'Places per country',
+  regionWorld: 'Whole world',
+  worldMap: 'Map',
+  regionContinents: 'Continents',
+  perContinent: 'Places per continent',
   regionProvinces: 'Provinces',
   board: 'Board',
   boardWidth: 'Width (mm)',
@@ -96,6 +100,7 @@ export const en = {
   nearestNeighbor: 'Nearest neighbour (best start)',
   greedyEdge: 'Shortest edges first',
   hullInsertion: 'Convex hull + insertion',
+  pairInsertion: 'Farthest pair + insertion',
   excess: (value: string) => `+${value} %`,
   interiorFraction: 'Points inside the hull (C)',
   nonNearestEdges: 'Edges not to a nearest neighbour (D)',
@@ -134,6 +139,10 @@ export const en = {
   robustWarn:
     'For some values another round trip is shorter: build the board with exactly the planned nails and string.',
   teaching: 'Watch a strategy',
+  teachingHintSphere:
+    'How do simple strategies build a round trip, and how does the exact solver prove the optimum? Step by step on this puzzle (distances on the sphere).',
+  playHintWorld:
+    'Connections follow great circles, the shortest paths on the sphere: on the map they are curved, often pass close to a pole, and a leg across the Pacific leaves the map at one edge and comes back in at the other.',
   teachingHint:
     'How do simple strategies build a round trip, and how does the exact solver prove the optimum? Step by step on this puzzle (distances between nail centres).',
   teachStrategy: 'Strategy',
@@ -155,6 +164,8 @@ export const en = {
   teachNnClose: (a: string, b: string) => `All places visited: from ${a} back to ${b}.`,
   teachHull: (count: string) =>
     `Start with the convex hull: the ${count} outer places in their order around the edge.`,
+  teachPair: (a: string, b: string) =>
+    `Start with the two places farthest apart: ${a} and ${b} (a sphere has no convex hull).`,
   teachInsert: (v: string, a: string, b: string) =>
     `Insert ${v} between ${a} and ${b}: of all places left, it lengthens the round trip least.`,
   teachGreedy: (a: string, b: string) =>
@@ -173,6 +184,9 @@ export const en = {
   overlay: 'Compare with',
   overlayNone: 'nothing',
   overlaySecond: 'second-best tour',
+  overlayFlatMap: 'shortest tour on the flat map',
+  overlayFlatHint:
+    'The shortest round trip when distances are measured with a ruler on the flat world map. Here it is measured on the sphere: on the Earth it is longer than the optimum.',
   overlayNeedsCheck: 'Available once the exact check has finished.',
   overlaySame: 'Same tour as the optimum.',
   overlayDiff: (edges: string, longer: string) => `${edges} edges differ; ${longer} longer.`,
@@ -183,6 +197,7 @@ export const en = {
   queued: 'Exact check queued',
   stringExact: 'exact (string length)',
   euclidExact: 'exact (Euclidean length)',
+  sphereExact: 'exact (length on the sphere)',
   euclidExactStringLocal: 'Euclidean exact, string checked locally',
   verificationFailed: 'Exact check failed',
   timeLimit: 'time limit reached',
@@ -300,7 +315,11 @@ export const en = {
   puzzleSection: 'Puzzle',
   docTitle: 'Title',
   docDescription: 'Description',
+  exportWorld:
+    'World puzzles are digital: the round trip is shortest on the sphere, but a board or paper measures on the flat map. So world maps have neither a board nor a worksheet.',
   docPurpose: 'Purpose',
+  purposeWorld:
+    'World maps measure distances on the sphere (great circles). A board could only measure distances on the flat map, so world puzzles are digital.',
   purposeBoard: 'board (nails, string)',
   purposeDigital: 'digital (screen)',
   docNew: 'New',

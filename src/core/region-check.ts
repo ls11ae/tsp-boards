@@ -5,7 +5,14 @@
 import type { CountryFile } from './data';
 import { DEFAULT_PARAMS, type PuzzleParams } from './params';
 import { boardProjection } from './projection';
-import { boardPoints, cityPool, regionOutline, regionsOf, type RegionInfo } from './region';
+import {
+  boardPoints,
+  cityPool,
+  projectionKind,
+  regionFrame,
+  regionsOf,
+  type RegionInfo,
+} from './region';
 import { greedySelection } from './search/search';
 
 /** Places a region must hold at the minimum distance to be offered. */
@@ -18,11 +25,11 @@ export function regionCapacity(
   params: PuzzleParams = DEFAULT_PARAMS,
   places = MIN_PUZZLE_PLACES,
 ): number {
-  const projection = boardProjection(regionOutline(file, id), {
-    widthMm: params.boardWidthMm,
-    heightMm: params.boardHeightMm,
-    marginMm: params.marginMm,
-  });
+  const projection = boardProjection(
+    regionFrame(file, id),
+    { widthMm: params.boardWidthMm, heightMm: params.boardHeightMm, marginMm: params.marginMm },
+    projectionKind(file),
+  );
   const pool = cityPool(file, id, { minPopulation: params.minPopulation });
   const points = boardPoints(pool, projection);
   return greedySelection(

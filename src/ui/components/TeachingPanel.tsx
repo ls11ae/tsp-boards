@@ -58,6 +58,8 @@ export function TeachingPanel({
         return t.teachNnClose(name(n.a), name(n.b));
       case 'hull':
         return t.teachHull(fmt.integer(n.count));
+      case 'pair':
+        return t.teachPair(name(n.a), name(n.b));
       case 'insert':
         return t.teachInsert(name(n.v), name(n.a), name(n.b));
       case 'greedy':
@@ -80,7 +82,7 @@ export function TeachingPanel({
   };
   const labels: Record<TeachingKind, string> = {
     'nearest-neighbor': t.nearestNeighbor,
-    insertion: t.hullInsertion,
+    insertion: board.sphere ? t.pairInsertion : t.hullInsertion,
     'greedy-edge': t.greedyEdge,
     'two-opt': t.teachTwoOpt,
     subtours: t.teachSubtours,
@@ -95,7 +97,7 @@ export function TeachingPanel({
   return (
     <section>
       <h2>{t.teaching}</h2>
-      <p className="hint">{t.teachingHint}</p>
+      <p className="hint">{board.sphere ? t.teachingHintSphere : t.teachingHint}</p>
       <label className="field">
         <span>{t.teachStrategy}</span>
         <select value={kind} onChange={(e) => setKind(e.target.value as TeachingKind)}>

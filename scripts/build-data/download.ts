@@ -14,6 +14,7 @@ import {
   type DownloadsManifest,
   type RawSource,
 } from './sources';
+import { WORLD, worldNameSources } from './world';
 
 async function readManifest(): Promise<DownloadsManifest> {
   if (!existsSync(DOWNLOADS_MANIFEST)) return {};
@@ -45,18 +46,23 @@ async function main(): Promise<void> {
   if (!country) throw new Error('Usage: data:download -- <country code> [--force]');
 
   const manifest = await readManifest();
-  for (const source of sourcesForCountry(country)) {
-    const target = path.join(RAW_DIR, source.file);
-    if (!force && existsSync(target) && manifest[source.key]) {
-      console.log(`skip ${source.file} (already downloaded; --force to refresh)`);
-      continue;
+  const fetchAll = async (sources: readonly RawSource[]) => {
+    for (const source of sources) {
+      const target = path.join(RAW_DIR, source.file);
+      if (!force && existsSync(target) && manifest[source.key]) {
+        console.log(`skip ${source.file} (already downloaded; --force to refresh)`);
+        continue;
+      }
+      console.log(`download ${source.url}`);
+      const record = await download(source);
+      manifest[source.key] = record;
+      console.log(`  ${(record.bytes / 1e6).toFixed(1)} MB, sha256 ${record.sha256.slice(0, 12)}…`);
+      await writeFile(DOWNLOADS_MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
     }
-    console.log(`download ${source.url}`);
-    const record = await download(source);
-    manifest[source.key] = record;
-    console.log(`  ${(record.bytes / 1e6).toFixed(1)} MB, sha256 ${record.sha256.slice(0, 12)}…`);
-    await writeFile(DOWNLOADS_MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
-  }
+  };
+  await fetchAll(sourcesForCountry(country));
+  // The world's name files follow from its town list (downloaded above).
+  if (country.toUpperCase() === WORLD.code) await fetchAll(await worldNameSources());
 }
 
 main().catch((error: unknown) => {

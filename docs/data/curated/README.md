@@ -86,3 +86,17 @@ inhabitants in 47 countries, see the decision log).
 | --- | --- | --- | --- |
 | `europa-hauptstaedte.txt` | Europas Hauptstädte | 40 capitals (fixed; capitals below 50,000 inhabitants are not in the data) | digital (string gap 0.72 mm, many close pairs in the Balkans) |
 | search `--region EU --n 30 --weights 1,0.5,2 --min-pop 300000 --board 800x600` | Europa: 30 Städte | 30 cities | board (string gap 8.87 mm, landscape board 800 × 600 mm) |
+
+## World (roadmap 8.2)
+
+From the world data file (`public/data/countries/wo.json`: GeoNames towns with at least 250,000
+inhabitants, city districts merged, continents as regions; distances on the sphere, see the
+decision log). World puzzles are digital; lengths are great-circle kilometres.
+
+| list / search | puzzle | places | purpose |
+| --- | --- | --- | --- |
+| `olympia-sommerspiele.txt` | Olympische Sommerspiele | 23 host cities 1896–2024 (fixed) | digital (gap 88 km = 0.15 %; Rio de Janeiro → Melbourne runs past Antarctica) |
+| search `--region WO --n 30 --seed 1 --weights 0.3,1,3 --min-pop 2000000` | Welt: 30 Metropolen | 30 cities on all continents | digital (gap 123 km = 0.18 %; the optimum on the flat map is 638 km longer on the sphere) |
+
+Source of the Olympic list: International Olympic Committee, list of the Olympic Games,
+<https://www.olympics.com/en/olympic-games> (retrieved 2026-10-13); one place per city.
