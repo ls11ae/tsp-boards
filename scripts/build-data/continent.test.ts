@@ -3,7 +3,7 @@ import { CONTINENTS } from './continent-sources';
 import {
   cityRadiusKm,
   continentRows,
-  dropNearLarger,
+  mergeDistricts,
   parseCityTable,
   type CityRow,
 } from './continent';
@@ -37,7 +37,26 @@ describe('continent towns', () => {
     const big = row(1, 52.52, 13.4, 3_400_000);
     const district = row(2, 52.6, 13.45, 300_000); // ~9 km
     const potsdam = row(3, 52.4, 13.06, 180_000); // ~27 km
-    expect(dropNearLarger([district, potsdam, big], 5).map((r) => r.id)).toEqual([1, 3]);
+    expect(mergeDistricts([district, potsdam, big], 5).map((r) => r.id)).toEqual([1, 3]);
+  });
+
+  it('merge districts within a country only; the capital stands for its cluster', () => {
+    const kinshasa = row(1, -4.33, 15.31, 16_000_000, { country: 'CD', featureCode: 'PPLC' });
+    const brazzaville = row(2, -4.27, 15.28, 1_300_000, { country: 'CG', featureCode: 'PPLC' });
+    const delhi = row(3, 28.65, 77.23, 11_000_000, { country: 'IN' });
+    const newDelhi = row(4, 28.61, 77.21, 320_000, { country: 'IN', featureCode: 'PPLC' });
+    const merged = mergeDistricts([kinshasa, brazzaville, delhi, newDelhi], 10);
+    expect(merged.map((r) => [r.id, r.population])).toEqual([
+      [1, 16_000_000],
+      [4, 11_000_000],
+      [2, 1_300_000],
+    ]);
+  });
+
+  it('prefer the town known under more names in a cluster', () => {
+    const guadalajara = row(1, 20.67, -103.39, 1_400_000, { alternates: ['a', 'b', 'c', 'd'] });
+    const zapopan = row(2, 20.72, -103.39, 1_500_000);
+    expect(mergeDistricts([zapopan, guadalajara], 10).map((r) => r.id)).toEqual([1]);
   });
 
   it('keep towns of the continent: countries, extent, population, feature codes', () => {

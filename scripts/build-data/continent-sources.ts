@@ -107,7 +107,8 @@ export const CONTINENTS: Readonly<Record<string, ContinentConfig>> = {
 
 const DESIGNATION_DE =
   /^(Kreisfreie Stadt|Landeshauptstadt|Stadtkreis|Stadtgemeinde|Stadt|Gemeinde|Hansestadt|Universitätsstadt|Bezirk) /u;
-const DESIGNATION_EN = /^(City of|Municipality of) | (city|City|municipality|Municipality)$/u;
+// A capitalised "City" is part of the name (Mexico City, Kuwait City, Ho Chi Minh City).
+const DESIGNATION_EN = /^(City of|Municipality of) | (city|municipality|Municipality)$/u;
 
 /** German name without a designation ("Kreisfreie Stadt München" -> "München"). */
 export function cleanGerman(name: string): string {

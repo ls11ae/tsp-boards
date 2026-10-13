@@ -56,8 +56,8 @@
         "de": "Europa"
       },
       "file": "countries/eu.json",
-      "dataVersion": 1,
-      "cityCount": 1453,
+      "dataVersion": 2,
+      "cityCount": 1454,
       "bbox": [
         -25,
         34,

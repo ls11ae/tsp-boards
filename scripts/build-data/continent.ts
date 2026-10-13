@@ -11,6 +11,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { strFromU8, unzipSync } from 'fflate';
 import type { FeatureCollection, Geometry } from 'geojson';
+import type { Topology } from 'topojson-specification';
 import {
   DATA_FORMAT,
   citiesToColumns,
@@ -19,6 +20,8 @@ import {
   type DataSource,
   type Manifest,
   type ManifestEntry,
+  type LocalizedText,
+  type StateInfo,
 } from '../../src/core/data';
 import { geodesicKm } from '../../src/core/projection';
 import { geoContains } from 'd3-geo';
@@ -87,18 +90,34 @@ export function cityRadiusKm(population: number, minKm: number): number {
 }
 
 /**
- * Drops towns within the radius of a larger kept town (city districts that GeoNames codes as
- * towns, e.g. the districts of Istanbul or Moscow); the largest town of a cluster stays.
+ * Which town of a cluster stands for it: the capital, else the larger town, where a town known
+ * under many names counts as larger (Manila over Quezon City, Guadalajara over Zapopan, New
+ * York City over Brooklyn, Birmingham over West Bromwich).
  */
-export function dropNearLarger(rows: readonly CityRow[], minKm: number): CityRow[] {
+function prominence(r: CityRow): number {
+  return (r.featureCode === 'PPLC' ? 1e12 : 0) + r.population * (1 + r.alternates.length / 20);
+}
+
+/**
+ * Merges the districts of a city that GeoNames codes as towns (the districts of Istanbul,
+ * Moscow or Shanghai, the boroughs of New York, Yokohama with Tokyo): a town within the larger
+ * of the two radii (cityRadiusKm) of a more prominent town of the same country joins that
+ * town, which keeps the cluster's largest population (New Delhi stands for Delhi).
+ */
+export function mergeDistricts(rows: readonly CityRow[], minKm: number): CityRow[] {
   const kept: CityRow[] = [];
-  for (const r of [...rows].sort((a, b) => b.population - a.population || a.id - b.id)) {
-    const near = kept.some(
-      (k) => geodesicKm([k.lon, k.lat], [r.lon, r.lat]) < cityRadiusKm(k.population, minKm),
+  for (const r of [...rows].sort((a, b) => prominence(b) - prominence(a) || a.id - b.id)) {
+    const at = kept.findIndex(
+      (k) =>
+        k.country === r.country &&
+        geodesicKm([k.lon, k.lat], [r.lon, r.lat]) <
+          Math.max(cityRadiusKm(k.population, minKm), cityRadiusKm(r.population, minKm)),
     );
-    if (!near) kept.push(r);
+    if (at < 0) kept.push(r);
+    else if (r.population > kept[at]!.population)
+      kept[at] = { ...kept[at]!, population: r.population };
   }
-  return kept;
+  return kept.sort((a, b) => b.population - a.population || a.id - b.id);
 }
 
 export async function readCityTable(): Promise<CityRow[]> {
@@ -132,59 +151,55 @@ function countryName(iso2: string): { name: string; nameEn: string } {
   return { name: de, nameEn: en };
 }
 
-export async function buildContinent(
-  config: ContinentConfig,
-  dataDir: string,
-  serialize: (file: CountryFile) => string,
-): Promise<void> {
-  const downloads = JSON.parse(
-    await readFile(path.join(RAW_DIR, 'downloads.json'), 'utf8'),
-  ) as DownloadsManifest;
-  const overridesPath = path.join(
-    import.meta.dirname,
-    'overrides',
-    `${config.code.toLowerCase()}.json`,
-  );
-  const overrides = existsSync(overridesPath)
-    ? (JSON.parse(await readFile(overridesPath, 'utf8')) as {
-        names: Record<string, { name?: string; nameEn?: string }>;
-      })
-    : { names: {} };
-  const admin1 = JSON.parse(
-    await readFile(path.join(RAW_DIR, NATURAL_EARTH_ADMIN1.file), 'utf8'),
-  ) as FeatureCollection<Geometry, NeProperties>;
-  // Countries reaching beyond the continent: towns inside their continental part only.
-  const partial = new Map(
-    Object.entries(config.partOnly ?? {}).map(([adm0, codes]) => [
-      config.countries[adm0]!,
-      admin1.features.filter(
-        (f) => f.properties.adm0_a3 === adm0 && codes.includes(f.properties.iso_3166_2),
-      ),
-    ]),
-  );
-  const inside = (r: CityRow) => {
-    const parts = partial.get(r.country);
-    return !parts || parts.some((f) => geoContains(f, [r.lon, r.lat]));
-  };
-  const rows = dropNearLarger(
-    continentRows(await readCityTable(), config).filter(inside),
-    config.mergeKm,
-  );
-  const prefix = config.code;
-  // Alternate names (language-tagged) of the kept towns, per country file.
+/**
+ * Language-tagged alternate names of the towns, read from the countries' alternate-name files.
+ * A missing file only costs the exonyms (the town keeps its GeoNames name).
+ */
+export async function readAlternates(
+  rows: readonly CityRow[],
+): Promise<Map<number, readonly AltName[]>> {
   const ids = new Set(rows.map((r) => r.id));
   const alts = new Map<number, readonly AltName[]>();
-  for (const cc of new Set(rows.map((r) => r.country))) {
+  for (const cc of [...new Set(rows.map((r) => r.country))].sort()) {
     const { alternateNames } = geonamesSources(cc);
-    const zip = unzipSync(await readFile(path.join(RAW_DIR, alternateNames.file)), {
-      filter: (f) => f.name === `${cc}.txt`,
-    });
+    const file = path.join(RAW_DIR, alternateNames.file);
+    if (!existsSync(file)) {
+      console.warn(`missing ${alternateNames.file}: GeoNames names for ${cc}`);
+      continue;
+    }
+    const zip = unzipSync(await readFile(file), { filter: (f) => f.name === `${cc}.txt` });
     const data = zip[`${cc}.txt`];
     if (!data) throw new Error(`${alternateNames.file}: missing ${cc}.txt`);
     for (const [id, list] of parseAlternateNames(strFromU8(data), ids)) alts.set(id, list);
   }
+  return alts;
+}
+
+interface NameOverrides {
+  readonly names: Readonly<Record<string, { name?: string; nameEn?: string }>>;
+  /** Towns left out (e.g. a population error in GeoNames). */
+  readonly exclude?: readonly number[];
+}
+
+async function readOverrides(code: string): Promise<NameOverrides> {
+  const file = path.join(import.meta.dirname, 'overrides', `${code.toLowerCase()}.json`);
+  return existsSync(file)
+    ? (JSON.parse(await readFile(file, 'utf8')) as NameOverrides)
+    : { names: {} };
+}
+
+/** Towns with German and English names (exonyms such as Moskau / Moscow). */
+export async function namedCities(
+  code: string,
+  rows: readonly CityRow[],
+  stateOf: (r: CityRow) => string,
+): Promise<{ cities: City[]; unnamed: number }> {
+  const overrides = await readOverrides(code);
+  const excluded = new Set(overrides.exclude ?? []);
+  const kept = rows.filter((r) => !excluded.has(r.id));
+  const alts = await readAlternates(kept);
   let unnamed = 0;
-  const cities: City[] = rows.map((r) => {
+  const cities = kept.map((r): City => {
     const de = altName(alts, r.id, 'de');
     const en = altName(alts, r.id, 'en');
     if (!de) unnamed++;
@@ -198,28 +213,39 @@ export async function buildContinent(
       lat: round4(r.lat),
       lon: round4(r.lon),
       pop: r.population,
-      state: `${prefix}-${r.country}`,
+      state: stateOf(r),
       wikidata: alts.get(r.id)?.find((a) => a.lang === 'wkdt')?.name ?? null,
       flags: 0,
     };
   });
+  return { cities, unnamed };
+}
 
-  console.log('build regions');
-  const regions = await buildContinentRegions(admin1, {
-    ...(config.partOnly ? { partOnly: config.partOnly } : {}),
-    countries: Object.fromEntries(
-      Object.entries(config.countries).map(([adm0, iso2]) => [adm0, `${prefix}-${iso2}`]),
-    ),
-    bbox: config.bbox,
-    contextMarginDeg: 3,
-    simplifyMetres: config.simplifyMetres,
-  });
-  const states = regions.stateIds
-    .map((id) => ({ id, ...countryName(id.slice(prefix.length + 1)) }))
-    .sort((a, b) => a.id.localeCompare(b.id));
-  const known = new Set(states.map((s) => s.id));
-  const placed = cities.filter((c) => known.has(c.state));
+/** A data file built from GeoNames' global town list (a continent or the world). */
+export interface AreaContent {
+  readonly code: string;
+  readonly name: LocalizedText;
+  readonly minPopulation: number;
+  readonly states: readonly StateInfo[];
+  readonly cities: readonly City[];
+  readonly topology: Topology;
+  readonly bbox: readonly [number, number, number, number];
+  /** Countries whose alternate names were used. */
+  readonly countries: readonly string[];
+  /** Further GeoNames downloads used (e.g. the country table). */
+  readonly extraGeoNames?: readonly string[];
+  readonly metric?: 'sphere';
+}
 
+/** Writes the data file (a new data version only when the content changed) and the manifest. */
+export async function writeAreaFile(
+  area: AreaContent,
+  dataDir: string,
+  serialize: (file: CountryFile) => string,
+): Promise<number> {
+  const downloads = JSON.parse(
+    await readFile(path.join(RAW_DIR, 'downloads.json'), 'utf8'),
+  ) as DownloadsManifest;
   const record = (key: string) => {
     const r = downloads[key];
     if (!r) throw new Error(`missing download ${key}`);
@@ -240,8 +266,10 @@ export async function buildContinent(
       licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
       files: [
         record(GEONAMES_CITIES15000.key),
-        ...[...new Set(rows.map((r) => r.country))]
+        ...(area.extraGeoNames ?? []).map(record),
+        ...[...area.countries]
           .sort()
+          .filter((cc) => downloads[geonamesSources(cc).alternateNames.key])
           .map((cc) => record(geonamesSources(cc).alternateNames.key)),
       ],
     },
@@ -253,14 +281,16 @@ export async function buildContinent(
       files: [record(NATURAL_EARTH_ADMIN1.key)],
     },
   ];
+  const prefix = area.code;
   const content = {
     format: DATA_FORMAT,
     country: prefix,
-    name: config.name,
-    minPopulation: config.minPopulation,
-    states,
-    cities: citiesToColumns(placed, states),
-    regions: regions.topology,
+    name: area.name,
+    minPopulation: area.minPopulation,
+    states: area.states,
+    cities: citiesToColumns(area.cities, area.states),
+    regions: area.topology,
+    ...(area.metric ? { metric: area.metric } : {}),
   };
   const contentHash =
     'sha256:' + createHash('sha256').update(JSON.stringify(content)).digest('hex');
@@ -276,7 +306,7 @@ export async function buildContinent(
     file = {
       format: DATA_FORMAT,
       country: prefix,
-      name: config.name,
+      name: area.name,
       dataVersion: (previous?.dataVersion ?? 0) + 1,
       contentHash,
       generated: new Date().toISOString().slice(0, 10),
@@ -285,32 +315,96 @@ export async function buildContinent(
         en: `City data: GeoNames (geonames.org), CC BY 4.0, as of ${geoDate}. Boundaries: Natural Earth, public domain.`,
         de: `Städtedaten: GeoNames (geonames.org), CC BY 4.0, Stand ${d}.${m}.${y}. Grenzen: Natural Earth, gemeinfrei.`,
       },
-      minPopulation: config.minPopulation,
+      minPopulation: area.minPopulation,
       states: content.states,
       cities: content.cities,
       regions: content.regions,
+      ...(area.metric ? { metric: area.metric } : {}),
     };
     await mkdir(path.dirname(outPath), { recursive: true });
     await writeFile(outPath, serialize(file));
     console.log(`wrote ${outPath} (data version ${file.dataVersion})`);
   }
-  const bytes = (await readFile(outPath)).length;
   const manifestPath = path.join(dataDir, 'manifest.json');
   const manifest: Manifest = existsSync(manifestPath)
     ? (JSON.parse(await readFile(manifestPath, 'utf8')) as Manifest)
     : { format: DATA_FORMAT, countries: [] };
   const entry: ManifestEntry = {
     country: prefix,
-    name: config.name,
+    name: area.name,
     file: `countries/${prefix.toLowerCase()}.json`,
     dataVersion: file.dataVersion,
-    cityCount: placed.length,
-    bbox: regions.bbox.map(round4) as unknown as ManifestEntry['bbox'],
+    cityCount: area.cities.length,
+    bbox: area.bbox.map(round4) as unknown as ManifestEntry['bbox'],
   };
   const countries = [...manifest.countries.filter((c) => c.country !== prefix), entry].sort(
     (a, b) => a.country.localeCompare(b.country),
   );
   await writeFile(manifestPath, JSON.stringify({ format: DATA_FORMAT, countries }, null, 2) + '\n');
+  return (await readFile(outPath)).length;
+}
+
+export async function readAdmin1(): Promise<FeatureCollection<Geometry, NeProperties>> {
+  return JSON.parse(
+    await readFile(path.join(RAW_DIR, NATURAL_EARTH_ADMIN1.file), 'utf8'),
+  ) as FeatureCollection<Geometry, NeProperties>;
+}
+
+export async function buildContinent(
+  config: ContinentConfig,
+  dataDir: string,
+  serialize: (file: CountryFile) => string,
+): Promise<void> {
+  const admin1 = await readAdmin1();
+  // Countries reaching beyond the continent: towns inside their continental part only.
+  const partial = new Map(
+    Object.entries(config.partOnly ?? {}).map(([adm0, codes]) => [
+      config.countries[adm0]!,
+      admin1.features.filter(
+        (f) => f.properties.adm0_a3 === adm0 && codes.includes(f.properties.iso_3166_2),
+      ),
+    ]),
+  );
+  const inside = (r: CityRow) => {
+    const parts = partial.get(r.country);
+    return !parts || parts.some((f) => geoContains(f, [r.lon, r.lat]));
+  };
+  const rows = mergeDistricts(
+    continentRows(await readCityTable(), config).filter(inside),
+    config.mergeKm,
+  );
+  const prefix = config.code;
+  const { cities, unnamed } = await namedCities(prefix, rows, (r) => `${prefix}-${r.country}`);
+
+  console.log('build regions');
+  const regions = await buildContinentRegions(admin1, {
+    ...(config.partOnly ? { partOnly: config.partOnly } : {}),
+    countries: Object.fromEntries(
+      Object.entries(config.countries).map(([adm0, iso2]) => [adm0, `${prefix}-${iso2}`]),
+    ),
+    bbox: config.bbox,
+    contextMarginDeg: 3,
+    simplifyMetres: config.simplifyMetres,
+  });
+  const states = regions.stateIds
+    .map((id) => ({ id, ...countryName(id.slice(prefix.length + 1)) }))
+    .sort((a, b) => a.id.localeCompare(b.id));
+  const known = new Set(states.map((s) => s.id));
+  const placed = cities.filter((c) => known.has(c.state));
+  const bytes = await writeAreaFile(
+    {
+      code: prefix,
+      name: config.name,
+      minPopulation: config.minPopulation,
+      states,
+      cities: placed,
+      topology: regions.topology,
+      bbox: regions.bbox,
+      countries: [...new Set(rows.map((r) => r.country))],
+    },
+    dataDir,
+    serialize,
+  );
   console.log(
     `${placed.length} towns in ${states.length} countries (${unnamed} without a German name), ${Math.round(bytes / 1024)} KB`,
   );

@@ -86,6 +86,11 @@ export interface CountryFile {
   readonly cities: CityColumns;
   /** Objects: 'country' (outline), 'states' (id = StateInfo.id), 'neighbors' (context). */
   readonly regions: Topology;
+  /**
+   * 'sphere': distances are great-circle distances (the world, roadmap 8.2; digital puzzles
+   * only). Absent: distances on the board's plane.
+   */
+  readonly metric?: 'sphere';
 }
 
 export interface ManifestEntry {
