@@ -40,6 +40,8 @@ what we change and why, benchmark results, and open questions.
   r_eff, classroom worksheet, points placed by hand on a blank board, city puzzles and themed
   instances from Wikidata (`cli/wikidata.ts`), Austria, Switzerland and the Netherlands.
   **`docs/roadmap.md` is the source of truth for open work**, in its order.
+- **Next: Phase 7** (Kevin's review 2026-10-13): composite places for alliances, gallery and
+  play view usability, designer layout, curated content, small fixes; see `docs/roadmap.md`.
 - Open: prototype board dimensions (and a test board), code license, deploying to the chair
   server, play data endpoint.
 - Code license not chosen yet (decide before going public).
@@ -133,9 +135,13 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–4 are done (see Status). Open work, in order, is in `docs/roadmap.md`:
+Phases 1–6 are done except the physical items (test board, deployment). Open work, in order,
+is in `docs/roadmap.md`:
 
-5. **Digital features** (current): puzzle files and gallery, city lists and custom points,
-   highscores, digital vs. board puzzles, overlays and thesis metrics, group constraints.
-6. **Later:** teaching mode, robustness over r_eff, classroom worksheets, more countries, play
-   mode for the incremental puzzle, test board with the prototype dimensions, deployment.
+7. **Polish, usability and composite places** (current): alliances as one place at the
+   centroid of their members, gallery grid, readable play view on phones, distinct solution
+   overlay, highscore table, collapsible designer, curated content, small fixes.
+8. **Europe and world:** continents as planar regions (board-capable), then a digital world
+   mode with great-circle distances and a globe or world map.
+9. **Physical:** test board with the prototype dimensions, deployment to the chair server,
+   play data endpoint, code license.

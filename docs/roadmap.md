@@ -4,7 +4,9 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-12: Phases 1–4 and the incremental puzzle are done (map puzzle search with
+Status 2026-10-13: Phases 1–6 are done except the physical items; Phase 7 is next, then
+Phase 8 (Europe and world).
+Earlier status 2026-10-12: Phases 1–4 and the incremental puzzle are done (map puzzle search with
 exact verification, board export with labels, start nail and scale, play mode, deployment
 preparation). Kevin decided to extend the digital side next, before building physical boards.
 
@@ -105,6 +107,105 @@ preparation). Kevin decided to extend the digital side next, before building phy
 - Physical: test board with the prototype dimensions once known; deployment to the chair
   server and the play data endpoint when access is available. (Open: waits for the prototype
   dimensions and for access to the chair server; everything else of Phase 6 is done.)
+
+## Phase 7: polish, usability and composite places
+
+From Kevin's review of 2026-10-13 (app run in a browser at 1440 × 900 and 390 × 844). Work
+through the items in order.
+
+### 7.1 Composite places (alliances)
+
+- A place can combine several towns or points, e.g. "Ruhr Innovation Lab (Bochum/Dortmund)" or
+  "Rhein-Main-Universitäten (Frankfurt/Mainz/Darmstadt)". It is one node at the centroid of
+  its members (the mean of the members' coordinates; compute it in the board projection so it
+  lies between them on the board), labelled with the combined name. Keep the member names for
+  the description, a tooltip and the solution sheet.
+- Input: in place lists, e.g. `Ruhr Innovation Lab = Bochum + Dortmund` (members are matched
+  like single places; custom points allowed); in the designer, select places and "combine".
+  Puzzle files and links store the members, not only the centroid.
+- Use it in the curated "Exzellenzuniversitäten ab 2027" puzzle for every alliance (Ruhr
+  Innovation Lab, Rhein-Main-Universitäten; the Berlin University Alliance is one city
+  anyway) and re-check the gap and the purpose: the close pairs (Bochum–Dortmund,
+  Frankfurt–Mainz–Darmstadt) are the likely reason for the string gap of only 0.37 mm, so a
+  board version may become possible. Offer the same for clusters of excellence shared by
+  several towns.
+- Remove the curated puzzle "Exzellenzuniversitäten 2019–2026" (and its list and index
+  entry): the collection is about the new round, in particular the Ruhr Innovation Lab.
+
+### 7.2 Gallery
+
+- Layout bug: on desktop the cards render as a narrow bulleted list in the left column (about
+  170 px wide, the rest of the page empty). Use a responsive grid of cards.
+- A small map thumbnail per card (the board without a tour) and filters (type, region,
+  purpose, solved).
+
+### 7.3 Play view
+
+- Nails and labels are tiny: unreadable on a phone, and on a desktop the board uses only about
+  half of the available width. In play mode, and especially for digital puzzles, draw nails
+  and labels at a screen size independent of the board millimetres, let the board fill the
+  available space, support zoom (pinch, buttons) and use larger touch targets.
+- Digital puzzles still speak of nails and string ("Besuchte Nägel", "Der Faden legt sich um
+  die Nägel …"): word the texts by purpose (places and kilometres for `digital`).
+- After "show solution" the player's tour and the optimum are both red and cannot be told
+  apart: use distinct styles (e.g. optimum solid, own tour dashed in another colour) and a
+  legend. Style the "compare with" select like the other controls.
+- Highscore rows run together ("1. −+18,66 %0:02Lösung angesehen"): show a small table
+  (rank, name, excess, time, note).
+- Keyboard play for accessibility (choose the next place from a list or with the keyboard).
+
+### 7.4 Designer
+
+- The left column is very long: collapsible groups (puzzle, places, board, search), with the
+  advanced settings (weights, thesis metrics, seed, iterations) collapsed by default.
+
+### 7.5 Curated content
+
+- "Deutschland: 40 Städte" contains many little-known towns (Gangkofen, Treuenbrietzen,
+  Neunkirchen-Seelscheid, ...): rebuild it with a higher weight for well-known cities or with
+  pinned major cities.
+- Fixed lists that only work as digital puzzles (clusters of excellence 2.1 mm; state
+  capitals with Mainz and Wiesbaden 10 mm apart): offer a board variant by showing which
+  combinations (7.1) or omissions raise the gap above the target.
+
+### 7.6 Small things
+
+- Main bundle 511 KB: load the teaching mode and the PDF/board export lazily.
+- The footer shows "Version 0.0.0": set a real version before deploying.
+- The build emits a `__vite-browser-external` chunk: check which Node import reaches the
+  browser bundle.
+
+## Phase 8: Europe and world
+
+Decided by Kevin 2026-10-13. Needs the zoom of 7.3 first (dense areas such as Europe or East
+Asia are not clickable otherwise).
+
+### 8.1 Continents as regions (planar, board-capable)
+
+- Europe first (then other continents): towns from several countries in one region, with the
+  existing region-fitted conformal projection, so the whole pipeline (search, string model,
+  board export) works unchanged. Country borders from Natural Earth admin-0.
+- Data: per-country GeoNames files or one global file filtered by population (e.g. ≥ 50,000 for
+  Europe); the municipality deduplication is country-specific, so for countries without a
+  variant merge places within a few km and keep the largest. German and English names
+  (exonyms such as Moskau/Moscow) from the alternate names.
+- Curated: European capitals (fixed list), a European board puzzle.
+
+### 8.2 World (digital, great-circle distances)
+
+- Cities worldwide above a population threshold (e.g. ≥ 100,000, or ≥ 500,000 for a coarse
+  pool), with metropolitan districts merged (e.g. Tokyo wards, New York boroughs) via the
+  composite places of 7.1 or distance-based merging.
+- Distances are great-circle distances (integer metres or km): the exact solver and the
+  heuristics only need the distance matrix, but code that assumes the plane (convex hull, hull
+  insertion, turning angles, teaching mode, label placement) must use a local projection or be
+  disabled. The string model and the board export stay planar: world puzzles are `digital`.
+- Rendering: a world map (e.g. Equal Earth) or a rotatable globe (orthographic) with
+  great-circle arcs; d3-geo draws geodesic lines and cuts them at the antimeridian. Show that a
+  tour may cross the Pacific or pass near a pole.
+- Optional teaching point: compare the shortest tour on the sphere with the shortest tour on
+  the flat map (same cities, two metrics).
+- A world board, if wanted later, can only measure map distances (state this on the board).
 
 ## Curated instances wanted by Kevin — done 2026-10-12
 
