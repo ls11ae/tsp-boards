@@ -1,0 +1,580 @@
+{
+  "schema": 1,
+  "id": "europa-hauptstaedte",
+  "kind": "map",
+  "title": "Europas Hauptstädte",
+  "description": "Die Hauptstädte der europäischen Länder mit mindestens 50.000 Einwohnern (40 Städte).",
+  "purpose": "digital",
+  "language": "de",
+  "app": "0.9.0",
+  "updated": "2026-10-13",
+  "data": {
+    "country": "EU",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "EU",
+      "n": 40,
+      "boardWidthMm": 800,
+      "boardHeightMm": 600,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "id": 2759794,
+        "name": "Amsterdam",
+        "lat": 52.374,
+        "lon": 4.8897
+      },
+      {
+        "id": 264371,
+        "name": "Athen",
+        "lat": 37.9838,
+        "lon": 23.7278
+      },
+      {
+        "id": 792680,
+        "name": "Belgrad",
+        "lat": 44.804,
+        "lon": 20.4651
+      },
+      {
+        "id": 2950159,
+        "name": "Berlin",
+        "lat": 52.5244,
+        "lon": 13.4105
+      },
+      {
+        "id": 2661552,
+        "name": "Bern",
+        "lat": 46.9481,
+        "lon": 7.4474
+      },
+      {
+        "id": 3060972,
+        "name": "Bratislava",
+        "lat": 48.1482,
+        "lon": 17.1067
+      },
+      {
+        "id": 2800866,
+        "name": "Brüssel",
+        "lat": 50.8505,
+        "lon": 4.3488
+      },
+      {
+        "id": 3054643,
+        "name": "Budapest",
+        "lat": 47.4984,
+        "lon": 19.0405
+      },
+      {
+        "id": 683506,
+        "name": "Bukarest",
+        "lat": 44.4323,
+        "lon": 26.1063
+      },
+      {
+        "id": 618426,
+        "name": "Chişinău",
+        "lat": 47.009,
+        "lon": 28.8594
+      },
+      {
+        "id": 2964574,
+        "name": "Dublin",
+        "lat": 53.3331,
+        "lon": -6.2489
+      },
+      {
+        "id": 658225,
+        "name": "Helsinki",
+        "lat": 60.1695,
+        "lon": 24.9355
+      },
+      {
+        "id": 2618425,
+        "name": "Kopenhagen",
+        "lat": 55.6759,
+        "lon": 12.5655
+      },
+      {
+        "id": 703448,
+        "name": "Kyjiw",
+        "lat": 50.4547,
+        "lon": 30.5238
+      },
+      {
+        "id": 2267057,
+        "name": "Lissabon",
+        "lat": 38.7251,
+        "lon": -9.1498
+      },
+      {
+        "id": 3196359,
+        "name": "Ljubljana",
+        "lat": 46.0511,
+        "lon": 14.5051
+      },
+      {
+        "id": 2643743,
+        "name": "London",
+        "lat": 51.5085,
+        "lon": -0.1257
+      },
+      {
+        "id": 2960316,
+        "name": "Luxemburg",
+        "lat": 49.6098,
+        "lon": 6.1327
+      },
+      {
+        "id": 3117735,
+        "name": "Madrid",
+        "lat": 40.4165,
+        "lon": -3.7026
+      },
+      {
+        "id": 625144,
+        "name": "Minsk",
+        "lat": 53.9002,
+        "lon": 27.5665
+      },
+      {
+        "id": 524901,
+        "name": "Moskau",
+        "lat": 55.752,
+        "lon": 37.6178
+      },
+      {
+        "id": 146268,
+        "name": "Nikosia",
+        "lat": 35.1728,
+        "lon": 33.354
+      },
+      {
+        "id": 3143244,
+        "name": "Oslo",
+        "lat": 59.9127,
+        "lon": 10.7461
+      },
+      {
+        "id": 2988507,
+        "name": "Paris",
+        "lat": 48.8534,
+        "lon": 2.3488
+      },
+      {
+        "id": 3193044,
+        "name": "Podgorica",
+        "lat": 42.4412,
+        "lon": 19.2631
+      },
+      {
+        "id": 3067696,
+        "name": "Prag",
+        "lat": 50.088,
+        "lon": 14.4208
+      },
+      {
+        "id": 786714,
+        "name": "Pristina",
+        "lat": 42.6727,
+        "lon": 21.1669
+      },
+      {
+        "id": 3413829,
+        "name": "Reykjavík",
+        "lat": 64.1355,
+        "lon": -21.8954
+      },
+      {
+        "id": 456172,
+        "name": "Riga",
+        "lat": 56.946,
+        "lon": 24.1059
+      },
+      {
+        "id": 3169070,
+        "name": "Rom",
+        "lat": 41.8919,
+        "lon": 12.5113
+      },
+      {
+        "id": 3191281,
+        "name": "Sarajevo",
+        "lat": 43.8486,
+        "lon": 18.3564
+      },
+      {
+        "id": 785842,
+        "name": "Skopje",
+        "lat": 41.9965,
+        "lon": 21.4314
+      },
+      {
+        "id": 727011,
+        "name": "Sofia",
+        "lat": 42.6975,
+        "lon": 23.3242
+      },
+      {
+        "id": 2673730,
+        "name": "Stockholm",
+        "lat": 59.3294,
+        "lon": 18.0687
+      },
+      {
+        "id": 588409,
+        "name": "Tallinn",
+        "lat": 59.437,
+        "lon": 24.7535
+      },
+      {
+        "id": 3183875,
+        "name": "Tirana",
+        "lat": 41.3274,
+        "lon": 19.8187
+      },
+      {
+        "id": 593116,
+        "name": "Vilnius",
+        "lat": 54.6892,
+        "lon": 25.2798
+      },
+      {
+        "id": 756135,
+        "name": "Warschau",
+        "lat": 52.2298,
+        "lon": 21.0118
+      },
+      {
+        "id": 2761369,
+        "name": "Wien",
+        "lat": 48.2085,
+        "lon": 16.3721
+      },
+      {
+        "id": 3186886,
+        "name": "Zagreb",
+        "lat": 45.8144,
+        "lon": 15.978
+      }
+    ],
+    "list": {
+      "mode": "fixed",
+      "places": [
+        {
+          "id": 2759794,
+          "name": "Amsterdam",
+          "lat": 52.374,
+          "lon": 4.8897
+        },
+        {
+          "id": 264371,
+          "name": "Athen",
+          "lat": 37.9838,
+          "lon": 23.7278
+        },
+        {
+          "id": 792680,
+          "name": "Belgrad",
+          "lat": 44.804,
+          "lon": 20.4651
+        },
+        {
+          "id": 2950159,
+          "name": "Berlin",
+          "lat": 52.5244,
+          "lon": 13.4105
+        },
+        {
+          "id": 2661552,
+          "name": "Bern",
+          "lat": 46.9481,
+          "lon": 7.4474
+        },
+        {
+          "id": 3060972,
+          "name": "Bratislava",
+          "lat": 48.1482,
+          "lon": 17.1067
+        },
+        {
+          "id": 2800866,
+          "name": "Brüssel",
+          "lat": 50.8505,
+          "lon": 4.3488
+        },
+        {
+          "id": 3054643,
+          "name": "Budapest",
+          "lat": 47.4984,
+          "lon": 19.0405
+        },
+        {
+          "id": 683506,
+          "name": "Bukarest",
+          "lat": 44.4323,
+          "lon": 26.1063
+        },
+        {
+          "id": 618426,
+          "name": "Chişinău",
+          "lat": 47.009,
+          "lon": 28.8594
+        },
+        {
+          "id": 2964574,
+          "name": "Dublin",
+          "lat": 53.3331,
+          "lon": -6.2489
+        },
+        {
+          "id": 658225,
+          "name": "Helsinki",
+          "lat": 60.1695,
+          "lon": 24.9355
+        },
+        {
+          "id": 2618425,
+          "name": "Kopenhagen",
+          "lat": 55.6759,
+          "lon": 12.5655
+        },
+        {
+          "id": 703448,
+          "name": "Kyjiw",
+          "lat": 50.4547,
+          "lon": 30.5238
+        },
+        {
+          "id": 2267057,
+          "name": "Lissabon",
+          "lat": 38.7251,
+          "lon": -9.1498
+        },
+        {
+          "id": 3196359,
+          "name": "Ljubljana",
+          "lat": 46.0511,
+          "lon": 14.5051
+        },
+        {
+          "id": 2643743,
+          "name": "London",
+          "lat": 51.5085,
+          "lon": -0.1257
+        },
+        {
+          "id": 2960316,
+          "name": "Luxemburg",
+          "lat": 49.6098,
+          "lon": 6.1327
+        },
+        {
+          "id": 3117735,
+          "name": "Madrid",
+          "lat": 40.4165,
+          "lon": -3.7026
+        },
+        {
+          "id": 625144,
+          "name": "Minsk",
+          "lat": 53.9002,
+          "lon": 27.5665
+        },
+        {
+          "id": 524901,
+          "name": "Moskau",
+          "lat": 55.752,
+          "lon": 37.6178
+        },
+        {
+          "id": 146268,
+          "name": "Nikosia",
+          "lat": 35.1728,
+          "lon": 33.354
+        },
+        {
+          "id": 3143244,
+          "name": "Oslo",
+          "lat": 59.9127,
+          "lon": 10.7461
+        },
+        {
+          "id": 2988507,
+          "name": "Paris",
+          "lat": 48.8534,
+          "lon": 2.3488
+        },
+        {
+          "id": 3193044,
+          "name": "Podgorica",
+          "lat": 42.4412,
+          "lon": 19.2631
+        },
+        {
+          "id": 3067696,
+          "name": "Prag",
+          "lat": 50.088,
+          "lon": 14.4208
+        },
+        {
+          "id": 786714,
+          "name": "Pristina",
+          "lat": 42.6727,
+          "lon": 21.1669
+        },
+        {
+          "id": 3413829,
+          "name": "Reykjavík",
+          "lat": 64.1355,
+          "lon": -21.8954
+        },
+        {
+          "id": 456172,
+          "name": "Riga",
+          "lat": 56.946,
+          "lon": 24.1059
+        },
+        {
+          "id": 3169070,
+          "name": "Rom",
+          "lat": 41.8919,
+          "lon": 12.5113
+        },
+        {
+          "id": 3191281,
+          "name": "Sarajevo",
+          "lat": 43.8486,
+          "lon": 18.3564
+        },
+        {
+          "id": 785842,
+          "name": "Skopje",
+          "lat": 41.9965,
+          "lon": 21.4314
+        },
+        {
+          "id": 727011,
+          "name": "Sofia",
+          "lat": 42.6975,
+          "lon": 23.3242
+        },
+        {
+          "id": 2673730,
+          "name": "Stockholm",
+          "lat": 59.3294,
+          "lon": 18.0687
+        },
+        {
+          "id": 588409,
+          "name": "Tallinn",
+          "lat": 59.437,
+          "lon": 24.7535
+        },
+        {
+          "id": 3183875,
+          "name": "Tirana",
+          "lat": 41.3274,
+          "lon": 19.8187
+        },
+        {
+          "id": 593116,
+          "name": "Vilnius",
+          "lat": 54.6892,
+          "lon": 25.2798
+        },
+        {
+          "id": 756135,
+          "name": "Warschau",
+          "lat": 52.2298,
+          "lon": 21.0118
+        },
+        {
+          "id": 2761369,
+          "name": "Wien",
+          "lat": 48.2085,
+          "lon": 16.3721
+        },
+        {
+          "id": 3186886,
+          "name": "Zagreb",
+          "lat": 45.8144,
+          "lon": 15.978
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        6,
+        17,
+        4,
+        18,
+        14,
+        23,
+        16,
+        10,
+        27,
+        22,
+        33,
+        11,
+        34,
+        28,
+        36,
+        37,
+        19,
+        20,
+        13,
+        9,
+        8,
+        21,
+        1,
+        32,
+        26,
+        31,
+        35,
+        24,
+        2,
+        30,
+        29,
+        15,
+        39,
+        7,
+        5,
+        38,
+        25,
+        3,
+        12
+      ],
+      "lengthMm": 2632.779,
+      "gapMm": 0.725,
+      "model": "string",
+      "scaleGapMm": 0.725,
+      "startPlace": 2
+    }
+  }
+}

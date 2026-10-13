@@ -50,6 +50,22 @@
       ]
     },
     {
+      "country": "EU",
+      "name": {
+        "en": "Europe",
+        "de": "Europa"
+      },
+      "file": "countries/eu.json",
+      "dataVersion": 1,
+      "cityCount": 1453,
+      "bbox": [
+        -25,
+        34,
+        45,
+        71.5
+      ]
+    },
+    {
       "country": "NL",
       "name": {
         "en": "Netherlands",

@@ -180,7 +180,7 @@ through the items in order.
 Decided by Kevin 2026-10-13. Needs the zoom of 7.3 first (dense areas such as Europe or East
 Asia are not clickable otherwise).
 
-### 8.1 Continents as regions (planar, board-capable)
+### 8.1 Continents as regions (planar, board-capable) — done 2026-10-13 (Europe)
 
 - Europe first (then other continents): towns from several countries in one region, with the
   existing region-fitted conformal projection, so the whole pipeline (search, string model,

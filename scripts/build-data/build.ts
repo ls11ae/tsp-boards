@@ -20,6 +20,8 @@ import {
   type Manifest,
   type ManifestEntry,
 } from '../../src/core/data';
+import { buildContinent } from './continent';
+import { CONTINENTS } from './continent-sources';
 import { COUNTRIES, type CountryConfig } from './countries';
 import {
   DEFAULT_CLEANING,
@@ -279,9 +281,16 @@ async function buildCountry(config: CountryConfig): Promise<void> {
 
 async function main(): Promise<void> {
   const code = process.argv[2]?.toUpperCase();
+  const continent = code ? CONTINENTS[code] : undefined;
+  if (continent) {
+    await buildContinent(continent, DATA_DIR, serialize);
+    return;
+  }
   const config = code ? COUNTRIES[code] : undefined;
   if (!config)
-    throw new Error(`Usage: data:build -- <${Object.keys(COUNTRIES).join('|').toLowerCase()}>`);
+    throw new Error(
+      `Usage: data:build -- <${[...Object.keys(COUNTRIES), ...Object.keys(CONTINENTS)].join('|').toLowerCase()}>`,
+    );
   await buildCountry(config);
 }
 

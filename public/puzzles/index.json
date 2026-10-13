@@ -32,6 +32,26 @@
       "n": 40
     },
     {
+      "file": "europa-30.tsp.json",
+      "id": "europa-30",
+      "kind": "map",
+      "title": "Europa: 30 Städte",
+      "description": "Rundreise durch 30 bekannte europäische Städte (ab 300.000 Einwohnern).",
+      "purpose": "board",
+      "region": "EU",
+      "n": 30
+    },
+    {
+      "file": "europa-hauptstaedte.tsp.json",
+      "id": "europa-hauptstaedte",
+      "kind": "map",
+      "title": "Europas Hauptstädte",
+      "description": "Die Hauptstädte der europäischen Länder mit mindestens 50.000 Einwohnern (40 Städte).",
+      "purpose": "digital",
+      "region": "EU",
+      "n": 40
+    },
+    {
       "file": "exzellenzcluster-2026-verbuende.tsp.json",
       "id": "exzellenzcluster-2026-verbuende",
       "kind": "map",

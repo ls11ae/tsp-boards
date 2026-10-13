@@ -1,6 +1,7 @@
 // Raw data sources for the offline data build. Downloads go to data/raw/ (gitignored).
 
 import path from 'node:path';
+import { CONTINENTS } from './continent-sources';
 
 export const RAW_DIR = path.resolve(import.meta.dirname, '../../data/raw');
 export const DOWNLOADS_MANIFEST = path.join(RAW_DIR, 'downloads.json');
@@ -39,7 +40,24 @@ export function geonamesSources(countryCode: string): {
   };
 }
 
+/** All places with at least 15,000 inhabitants (or capitals) worldwide: continents and the world. */
+export const GEONAMES_CITIES15000: RawSource = {
+  key: 'geonames/cities15000',
+  url: 'https://download.geonames.org/export/dump/cities15000.zip',
+  file: 'geonames/cities15000.zip',
+};
+
+/** Continents (e.g. EU) use the global town list; countries their own dumps. */
 export function sourcesForCountry(countryCode: string): readonly RawSource[] {
+  const continent = CONTINENTS[countryCode.toUpperCase()];
+  if (continent) {
+    const codes = [...new Set(Object.values(continent.countries))].sort();
+    return [
+      GEONAMES_CITIES15000,
+      NATURAL_EARTH_ADMIN1,
+      ...codes.map((cc) => geonamesSources(cc).alternateNames),
+    ];
+  }
   const { geonames, alternateNames } = geonamesSources(countryCode);
   return [geonames, alternateNames, NATURAL_EARTH_ADMIN1];
 }

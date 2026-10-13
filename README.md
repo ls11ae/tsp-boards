@@ -18,7 +18,7 @@ board export) are implemented; deployment is prepared (see below). Design notes,
 
 ## Using the app
 
-1. Choose a country (Germany, Austria, Switzerland, the Netherlands) and a region (the whole
+1. Choose a country (Germany, Austria, Switzerland, the Netherlands) or Europe, and a region (the whole
    country, a state or canton, or a larger region), the number of cities and the board: size,
    margin, nail diameter, string thickness and minimum distance between nails (all in mm).
 2. Set the target gap: how much longer (in mm of string) the second-best round trip must be
@@ -106,7 +106,9 @@ The download goes to `data/raw/` (gitignored, about 52 MB). The build writes
 `public/data/countries/de.json`, updates `public/data/manifest.json` and writes a review report
 to `docs/data/de-report.md`. The data version only increases when the content changes. The
 same works for `at`, `ch` and `nl` (one place per municipality; the municipality level and the
-cleaning of official names are set per country in `scripts/build-data/geonames.ts`).
+cleaning of official names are set per country in `scripts/build-data/geonames.ts`) and for
+`eu` (Europe: GeoNames' global town list and the 47 countries' alternate names, about 70 MB
+of downloads besides Natural Earth; see `scripts/build-data/continent-sources.ts`).
 
 ### Experiments (Node)
 

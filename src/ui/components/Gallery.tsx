@@ -164,6 +164,7 @@ function matches(card: Card, f: Filters): boolean {
 /** Readable region name (the loaded country's names, else the code). */
 function useRegionName(): (code: string) => string {
   const country = useStore((s) => s.country);
+  const manifest = useStore((s) => s.manifest);
   const lang = useStore((s) => s.lang);
   return (code) => {
     if (country && code.startsWith(country.country)) {
@@ -174,7 +175,9 @@ function useRegionName(): (code: string) => string {
         // Unknown region: its code.
       }
     }
-    return code;
+    // A whole country or continent of another data file: its name from the manifest.
+    const entry = manifest?.countries.find((c) => c.country === code);
+    return entry ? entry.name[lang] : code;
   };
 }
 

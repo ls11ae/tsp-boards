@@ -676,3 +676,22 @@ Short entries: decision; alternatives considered; reason. Newest last.
   the browser build aliases it to a stub (tests and the CLI keep the real module). Version
   0.9.0 (footer "0.9.0+commit"); 1.0.0 is meant for the first public deployment. Fixed on the
   way: the file name hash could become negative ("…-13--6e1d4.pdf").
+- **2026-10-13 Europe (roadmap 8.1).** A data file `eu.json` in the country format whose
+  "states" are 47 countries (`EU-DE`, …), so search, string model, board export and the app
+  work unchanged. Towns: GeoNames' global cities15000 list, populated places (no sections,
+  historical or abandoned places) with at least 50,000 inhabitants inside the extent 25° W–45° E,
+  34–71.5° N (no Canaries, Madeira, Azores, Svalbard; Russia cut at 45° E); Turkey only with
+  East Thrace and Istanbul (admin-1 units and a point-in-polygon test). Districts that GeoNames
+  codes as towns are dropped within max(5 km, 3 km · √(population/100,000)) of a larger town
+  (Istanbul ~37 km, Berlin ~17 km): 1453 towns. German and English names (Moskau / Moscow,
+  Neapel, Genf, Kyjiw) and Wikidata ids from the countries' GeoNames alternate names; a first
+  attempt via Wikidata's GeoNames id (P1566) linked many cities to wrong items ("Thomson
+  Reuters (Switzerland)" for Geneva, historic "Christiania" for Oslo) and was dropped. Borders:
+  Natural Earth admin-1 dissolved per country and clipped (258 KB file, 2 km simplification);
+  country names from ICU (`Intl.DisplayNames`). Regions are offered by the usual capacity test
+  (35 of 59: small countries such as Austria have too few towns of 50,000; their own country
+  files remain); named groups: DACH, Benelux, British Isles, Iberian Peninsula, Scandinavia,
+  Nordic countries, Baltic states, Central Europe, Western Balkans, Mediterranean EU, EU-27.
+  Curated: 40 European capitals (digital, 0.72 mm) and "Europa: 30 Städte" on an 800 × 600 mm
+  landscape board (8.87 mm). Alternatives: merging the country files (different municipality
+  rules per country), one global alternate-names file (190 MB).

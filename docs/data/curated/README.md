@@ -76,3 +76,13 @@ only needed Mainz and Wiesbaden (10 mm apart) as one place; the 2027 list reache
 Bonn and Köln combined (20.6 mm apart, partners in three clusters). For the clusters no single
 change reaches the target (best 4.35 mm in both lists), so they stay digital; a larger board
 (the gap grows with the scale) would make them boards.
+
+## Europe (roadmap 8.1)
+
+From the Europe data file (`public/data/countries/eu.json`: GeoNames towns with at least 50,000
+inhabitants in 47 countries, see the decision log).
+
+| list / search | puzzle | places | purpose |
+| --- | --- | --- | --- |
+| `europa-hauptstaedte.txt` | Europas Hauptstädte | 40 capitals (fixed; capitals below 50,000 inhabitants are not in the data) | digital (string gap 0.72 mm, many close pairs in the Balkans) |
+| search `--region EU --n 30 --weights 1,0.5,2 --min-pop 300000 --board 800x600` | Europa: 30 Städte | 30 cities | board (string gap 8.87 mm, landscape board 800 × 600 mm) |

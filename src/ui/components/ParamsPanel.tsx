@@ -136,14 +136,16 @@ function RegionField() {
   const sorted = (kind: RegionInfo['kind']) =>
     regions.filter((r) => r.kind === kind).sort((a, b) => name(a).localeCompare(name(b), fmt.lang));
   const groups: [string, RegionInfo[]][] = [
-    [t.regionCountry, sorted('country')],
+    [country?.country === 'EU' ? t.regionContinent : t.regionCountry, sorted('country')],
     [t.regionUnions, sorted('multi')],
     [
       country?.country === 'CH'
         ? t.regionCantons
         : country?.country === 'NL'
           ? t.regionProvinces
-          : t.regionStates,
+          : country?.country === 'EU'
+            ? t.regionCountries
+            : t.regionStates,
       sorted('state'),
     ],
   ];
@@ -191,7 +193,7 @@ function GroupsField() {
   };
   return (
     <fieldset>
-      <legend>{t.perState}</legend>
+      <legend>{country.country === 'EU' ? t.perCountry : t.perState}</legend>
       <label className="field">
         <span>{t.perStateMin}</span>
         <input

@@ -1,0 +1,44 @@
+# European capitals (roadmap 8.1): the capitals (GeoNames feature code PPLC) of the countries of
+# the Europe data that have at least 50,000 inhabitants; smaller capitals (Andorra la Vella,
+# Monaco, San Marino, Vaduz, Valletta, Vatican City, …) are not in the data.
+# Built from public/data/countries/eu.json and GeoNames cities15000 (CC BY 4.0).
+Amsterdam
+Athen
+Belgrad
+Berlin
+Bern
+Bratislava
+Brüssel
+Budapest
+Bukarest
+Chişinău
+Dublin
+Helsinki
+Kopenhagen
+Kyjiw
+Lissabon
+Ljubljana
+London
+Luxemburg
+Madrid
+Minsk
+Moskau
+Nikosia
+Oslo
+Paris
+Podgorica
+Prag
+Pristina
+Reykjavík
+Riga
+Rom
+Sarajevo
+Skopje
+Sofia
+Stockholm
+Tallinn
+Tirana
+Vilnius
+Warschau
+Wien
+Zagreb

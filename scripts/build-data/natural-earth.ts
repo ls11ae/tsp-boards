@@ -129,3 +129,86 @@ export async function buildRegions(
   ) as Topology;
   return { topology, states, admin1ToState, bbox };
 }
+
+export interface ContinentRegionOptions {
+  /** Natural Earth adm0_a3 -> state id of the country, e.g. 'DEU' -> 'EU-DE'. */
+  readonly countries: Readonly<Record<string, string>>;
+  /** Extent [west, south, east, north]: parts outside are cut off. */
+  readonly bbox: readonly [number, number, number, number];
+  readonly contextMarginDeg: number;
+  readonly simplifyMetres: number;
+  /** Countries of which only these admin-1 units (ISO 3166-2) belong to the continent. */
+  readonly partOnly?: Readonly<Record<string, readonly string[]>>;
+}
+
+/** Whether an admin-1 unit belongs to the continent (all of a country, or its listed part). */
+export function inContinent(
+  f: Feature<Geometry, NeProperties>,
+  options: Pick<ContinentRegionOptions, 'countries' | 'partOnly'>,
+): boolean {
+  const part = options.partOnly?.[f.properties.adm0_a3];
+  return (
+    options.countries[f.properties.adm0_a3] !== undefined &&
+    (!part || part.includes(f.properties.iso_3166_2))
+  );
+}
+
+/**
+ * Regions of a continent (roadmap 8.1): one state per country (its admin-1 units dissolved),
+ * cut to the extent; the outline is the dissolved countries, neighbours are the other
+ * countries around it.
+ */
+export async function buildContinentRegions(
+  admin1: FeatureCollection<Geometry, NeProperties>,
+  options: ContinentRegionOptions,
+): Promise<{ topology: Topology; stateIds: string[]; bbox: [number, number, number, number] }> {
+  const idOf = (f: Feature<Geometry, NeProperties>) => options.countries[f.properties.adm0_a3];
+  const own = admin1.features.filter((f) => inContinent(f, options));
+  const [w, s, e, n] = options.bbox;
+  const m = options.contextMarginDeg;
+  const context = [w - m, s - m, e + m, n + m];
+  const neighbours = admin1.features.filter(
+    (f) => !inContinent(f, options) && overlaps(bboxOf([f]), context),
+  );
+  const collection = (
+    features: readonly Feature<Geometry, NeProperties>[],
+    id: (f: Feature<Geometry, NeProperties>) => string,
+  ): FeatureCollection => ({
+    type: 'FeatureCollection',
+    features: features.map((f) => ({
+      type: 'Feature',
+      geometry: f.geometry,
+      properties: { id: id(f) },
+    })),
+  });
+  const commands = [
+    '-i states.json neighbors.json combine-files',
+    `-clip bbox=${options.bbox.join(',')} target=states`,
+    '-dissolve id target=states',
+    `-clip bbox=${context.join(',')} target=neighbors`,
+    '-dissolve id target=neighbors',
+    `-simplify interval=${options.simplifyMetres} keep-shapes`,
+    '-dissolve target=states + name=country',
+    '-o format=topojson quantization=100000 target=* regions.json',
+  ].join(' ');
+  const output = await mapshaper.applyCommands(commands, {
+    'states.json': collection(own, (f) => idOf(f)!),
+    'neighbors.json': collection(neighbours, (f) => f.properties.adm0_a3),
+  });
+  const text = output['regions.json'];
+  if (typeof text !== 'string' && !(text instanceof Uint8Array))
+    throw new Error('mapshaper: no output');
+  const topology = JSON.parse(
+    typeof text === 'string' ? text : new TextDecoder().decode(text),
+  ) as Topology;
+  const states = topology.objects.states as { geometries: { properties?: { id?: string } }[] };
+  const stateIds = [...new Set(states.geometries.map((g) => g.properties?.id ?? ''))].filter(
+    Boolean,
+  );
+  const [bw, bs, be, bn] = bboxOf(own);
+  return {
+    topology,
+    stateIds,
+    bbox: [Math.max(w, bw), Math.max(s, bs), Math.min(e, be), Math.min(n, bn)],
+  };
+}
