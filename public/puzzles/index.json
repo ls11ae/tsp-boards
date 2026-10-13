@@ -32,6 +32,16 @@
       "n": 40
     },
     {
+      "file": "exzellenzcluster-2026-verbuende.tsp.json",
+      "id": "exzellenzcluster-2026-verbuende",
+      "kind": "map",
+      "title": "Exzellenzcluster 2026–2032, Nachbarstandorte zusammengefasst",
+      "description": "Die 70 Exzellenzcluster ab 2026 in 32 Orten: Nachbarstädte mit gemeinsamen Clustern sind ein Ort zwischen ihnen (Bochum/Dortmund, Bonn/Köln, Gießen/Marburg, Rhein-Main).",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 32
+    },
+    {
       "file": "exzellenzcluster-2026.tsp.json",
       "id": "exzellenzcluster-2026",
       "kind": "map",
@@ -42,24 +52,14 @@
       "n": 37
     },
     {
-      "file": "exzellenzuniversitaeten-2019.tsp.json",
-      "id": "exzellenzuniversitaeten-2019",
-      "kind": "map",
-      "title": "Exzellenzuniversitäten 2019–2026",
-      "description": "Die 11 Exzellenzuniversitäten und der Exzellenzverbund der Förderperiode 2019–2026 (Entscheidung vom 19. Juli 2019), ein Ort pro Stadt.",
-      "purpose": "board",
-      "region": "DE",
-      "n": 10
-    },
-    {
       "file": "exzellenzuniversitaeten-2027.tsp.json",
       "id": "exzellenzuniversitaeten-2027",
       "kind": "map",
       "title": "Exzellenzuniversitäten ab 2027",
-      "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 (DFG/WR, Entscheidungen vom 11. März und 2. Oktober 2026), ein Ort pro Stadt.",
+      "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 (DFG/WR, Entscheidungen vom 11. März und 2. Oktober 2026). Verbünde mit mehreren Städten sind ein Ort zwischen ihren Städten: Ruhr Innovation Lab (Bochum, Dortmund), Rhein-Main-Universitäten (Darmstadt, Frankfurt am Main, Mainz).",
       "purpose": "digital",
       "region": "DE",
-      "n": 17
+      "n": 14
     },
     {
       "file": "hamburg-stadtteile-20.tsp.json",

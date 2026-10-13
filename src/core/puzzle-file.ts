@@ -15,14 +15,26 @@ export const PUZZLE_SCHEMA = 1;
 /** `board`: a physical board (string length, gap in mm); `digital`: played on screen only. */
 export type Purpose = 'board' | 'digital';
 
-export interface Place {
-  /** GeoNames id for a town of the country data; absent for custom places. */
+/** A town or point that is part of a composite place. */
+export interface Member {
+  /** GeoNames id for a town of the country data; absent for custom points. */
   readonly id?: number;
   readonly name: string;
   readonly lat: number;
   readonly lon: number;
+}
+
+export interface Place {
+  /** GeoNames id for a town of the country data; absent for custom and composite places. */
+  readonly id?: number;
+  readonly name: string;
+  /** Position; for a composite place the mean of its members (the board uses the projected mean). */
+  readonly lat: number;
+  readonly lon: number;
   /** Board label, if not the town's default label. */
   readonly label?: string;
+  /** Members of a composite place (e.g. an alliance of universities in two towns). */
+  readonly members?: readonly Member[];
 }
 
 /** Minimum and maximum number of places per group (e.g. per federal state). */
@@ -110,7 +122,7 @@ const isObj = (v: unknown): v is Record<string, unknown> =>
 const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const str = (v: unknown, max = 2000): string => (typeof v === 'string' ? v.slice(0, max) : '');
 
-function parsePlace(v: unknown): Place | null {
+function parseMember(v: unknown): Member | null {
   if (!isObj(v) || !isNum(v.lat) || !isNum(v.lon)) return null;
   if (Math.abs(v.lat) > 90 || Math.abs(v.lon) > 180) return null;
   const name = str(v.name, 200);
@@ -120,8 +132,31 @@ function parsePlace(v: unknown): Place | null {
     name,
     lat: v.lat,
     lon: v.lon,
-    ...(typeof v.label === 'string' && v.label ? { label: str(v.label, 200) } : {}),
   };
+}
+
+function parsePlace(v: unknown): Place | null {
+  const base = parseMember(v);
+  if (!base || !isObj(v)) return null;
+  const label = typeof v.label === 'string' && v.label ? { label: str(v.label, 200) } : {};
+  const members = Array.isArray(v.members)
+    ? v.members
+        .slice(0, 20)
+        .map(parseMember)
+        .filter((m): m is Member => m !== null)
+    : [];
+  // A composite place: at least two members; its position is their mean.
+  if (members.length >= 2) {
+    return { name: base.name, ...compositeCentre(members), ...label, members };
+  }
+  return { ...base, ...label };
+}
+
+/** Mean latitude and longitude of the members (stored position of a composite place). */
+export function compositeCentre(members: readonly Member[]): { lat: number; lon: number } {
+  const lat = members.reduce((s, m) => s + m.lat, 0) / members.length;
+  const lon = members.reduce((s, m) => s + m.lon, 0) / members.length;
+  return { lat: Math.round(lat * 1e5) / 1e5, lon: Math.round(lon * 1e5) / 1e5 };
 }
 
 function parsePlaces(v: unknown, max = 5000): Place[] {

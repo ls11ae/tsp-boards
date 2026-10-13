@@ -3,11 +3,11 @@
   "id": "exzellenzuniversitaeten-2027",
   "kind": "map",
   "title": "Exzellenzuniversitäten ab 2027",
-  "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 (DFG/WR, Entscheidungen vom 11. März und 2. Oktober 2026), ein Ort pro Stadt.",
+  "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 (DFG/WR, Entscheidungen vom 11. März und 2. Oktober 2026). Verbünde mit mehreren Städten sind ein Ort zwischen ihren Städten: Ruhr Innovation Lab (Bochum, Dortmund), Rhein-Main-Universitäten (Darmstadt, Frankfurt am Main, Mainz).",
   "purpose": "digital",
   "language": "de",
   "app": "0.0.0",
-  "updated": "2026-10-12",
+  "updated": "2026-10-13",
   "data": {
     "country": "DE",
     "version": 1
@@ -15,7 +15,7 @@
   "map": {
     "params": {
       "region": "DE",
-      "n": 17,
+      "n": 14,
       "boardWidthMm": 600,
       "boardHeightMm": 800,
       "marginMm": 30,
@@ -29,8 +29,11 @@
       "weightGap": 1,
       "weightDifficulty": 0.5,
       "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
       "labelSizeMm": 8,
-      "labelLanguage": "de"
+      "labelLanguage": "de",
+      "blankBoard": false
     },
     "places": [
       {
@@ -106,34 +109,48 @@
         "lon": 6.95
       },
       {
-        "id": 2938913,
-        "name": "Darmstadt",
-        "lat": 49.8717,
-        "lon": 8.6503
+        "name": "Rhein-Main-Universitäten",
+        "lat": 49.9897,
+        "lon": 8.5382,
+        "members": [
+          {
+            "id": 2938913,
+            "name": "Darmstadt",
+            "lat": 49.8717,
+            "lon": 8.6503
+          },
+          {
+            "id": 2925533,
+            "name": "Frankfurt am Main",
+            "lat": 50.1155,
+            "lon": 8.6842
+          },
+          {
+            "id": 2874225,
+            "name": "Mainz",
+            "lat": 49.9819,
+            "lon": 8.2801
+          }
+        ]
       },
       {
-        "id": 2925533,
-        "name": "Frankfurt am Main",
-        "lat": 50.1155,
-        "lon": 8.6842
-      },
-      {
-        "id": 2874225,
-        "name": "Mainz",
-        "lat": 49.9819,
-        "lon": 8.2801
-      },
-      {
-        "id": 2947416,
-        "name": "Bochum",
-        "lat": 51.4817,
-        "lon": 7.2165
-      },
-      {
-        "id": 2935517,
-        "name": "Dortmund",
-        "lat": 51.5149,
-        "lon": 7.466
+        "name": "Ruhr Innovation Lab",
+        "lat": 51.4983,
+        "lon": 7.34125,
+        "members": [
+          {
+            "id": 2947416,
+            "name": "Bochum",
+            "lat": 51.4817,
+            "lon": 7.2165
+          },
+          {
+            "id": 2935517,
+            "name": "Dortmund",
+            "lat": 51.5149,
+            "lon": 7.466
+          }
+        ]
       }
     ],
     "list": {
@@ -212,34 +229,48 @@
           "lon": 6.95
         },
         {
-          "id": 2938913,
-          "name": "Darmstadt",
-          "lat": 49.8717,
-          "lon": 8.6503
+          "name": "Rhein-Main-Universitäten",
+          "lat": 49.9897,
+          "lon": 8.5382,
+          "members": [
+            {
+              "id": 2938913,
+              "name": "Darmstadt",
+              "lat": 49.8717,
+              "lon": 8.6503
+            },
+            {
+              "id": 2925533,
+              "name": "Frankfurt am Main",
+              "lat": 50.1155,
+              "lon": 8.6842
+            },
+            {
+              "id": 2874225,
+              "name": "Mainz",
+              "lat": 49.9819,
+              "lon": 8.2801
+            }
+          ]
         },
         {
-          "id": 2925533,
-          "name": "Frankfurt am Main",
-          "lat": 50.1155,
-          "lon": 8.6842
-        },
-        {
-          "id": 2874225,
-          "name": "Mainz",
-          "lat": 49.9819,
-          "lon": 8.2801
-        },
-        {
-          "id": 2947416,
-          "name": "Bochum",
-          "lat": 51.4817,
-          "lon": 7.2165
-        },
-        {
-          "id": 2935517,
-          "name": "Dortmund",
-          "lat": 51.5149,
-          "lon": 7.466
+          "name": "Ruhr Innovation Lab",
+          "lat": 51.4983,
+          "lon": 7.34125,
+          "members": [
+            {
+              "id": 2947416,
+              "name": "Bochum",
+              "lat": 51.4817,
+              "lon": 7.2165
+            },
+            {
+              "id": 2935517,
+              "name": "Dortmund",
+              "lat": 51.5149,
+              "lon": 7.466
+            }
+          ]
         }
       ]
     },
@@ -251,10 +282,7 @@
     "results": {
       "tour": [
         0,
-        11,
         2,
-        14,
-        13,
         12,
         5,
         6,
@@ -265,13 +293,13 @@
         3,
         1,
         4,
-        16,
-        15
+        13,
+        11
       ],
-      "lengthMm": 1787.23,
-      "gapMm": 0.368,
+      "lengthMm": 1747.92,
+      "gapMm": 3.243,
       "model": "string",
-      "scaleGapMm": 0.368,
+      "scaleGapMm": 3.243,
       "startPlace": 9
     }
   }

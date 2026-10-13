@@ -2,8 +2,8 @@
 // and the queue of exact verifications.
 
 import { parseCountryFile, type City, type CountryFile, type Manifest } from '../core/data';
-import type { LinkPlace } from '../core/places';
-import type { Place } from '../core/puzzle-file';
+import { compositePlace, type LinkMember, type LinkPlace } from '../core/places';
+import type { Member, Place } from '../core/puzzle-file';
 import { DEFAULT_PARAMS, DIGITAL_WEIGHTS, effectiveREffMm, searchParams } from '../core/params';
 import type { Purpose } from '../core/puzzle-file';
 import { decodePermalink } from '../core/permalink';
@@ -151,7 +151,20 @@ function applyPermalink(hash: string): void {
 function linkPlaces(country: CountryFile, rows: readonly LinkPlace[], warnings: string[]): Place[] {
   const towns = townsById(country);
   const missing: number[] = [];
+  const member = (m: LinkMember): Member | null => {
+    if ('lat' in m) return m;
+    const town = towns.get(m.id);
+    if (!town) {
+      missing.push(m.id);
+      return null;
+    }
+    return { id: town.id, name: town.name, lat: town.lat, lon: town.lon };
+  };
   const places = rows.flatMap((row): Place[] => {
+    if ('members' in row) {
+      const members = (row.members ?? []).map(member).filter((m): m is Member => m !== null);
+      return members.length >= 2 ? [compositePlace(row.name, members, row.label)] : [];
+    }
     if ('lat' in row) return [row];
     const town = towns.get(row.id);
     if (!town) {

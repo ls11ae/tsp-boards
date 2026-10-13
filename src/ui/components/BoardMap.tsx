@@ -3,10 +3,11 @@
 // pinned → excluded → neutral.
 
 import { memo, useMemo, useRef, type MouseEvent } from 'react';
+import { listName } from '../../core/data';
 import type { Point } from '../../core/geometry';
 import type { BoardModel } from '../board';
 import { cycleCity } from '../controller';
-import { addHandPoint, removeHandPoint } from '../lists';
+import { addHandPoint, removeHandPoint, toggleCombine } from '../lists';
 import { planKey, previewPaths } from '../export';
 import { playClick } from '../play';
 import { getLabels, placeBoardLabels } from '../labels';
@@ -133,6 +134,7 @@ export function BoardMap({
   const play = useStore((s) => s.play);
   const playing = mode === 'play';
   const placing = useStore((s) => s.placing) && !playing;
+  const combining = useStore((s) => (playing ? null : s.combining));
   const nailDiameter = params.nailDiameterMm;
   const lang = useStore((s) => s.lang);
   const labels = getLabels(board, params);
@@ -203,6 +205,11 @@ export function BoardMap({
         best = i;
       }
     });
+    if (combining) {
+      // Places of the puzzle on display (or of the list) can be combined.
+      if (best >= 0 && (!puzzle || puzzle.members.includes(best))) toggleCombine(best);
+      return;
+    }
     if (placing) {
       if (best >= 0) removeHandPoint(best);
       else {
@@ -217,7 +224,7 @@ export function BoardMap({
   return (
     <svg
       ref={svgRef}
-      className={placing ? 'board placing' : 'board'}
+      className={placing || combining ? 'board placing' : 'board'}
       style={boardFit(widthMm, heightMm)}
       viewBox={`0 0 ${widthMm} ${heightMm}`}
       role="img"
@@ -250,6 +257,10 @@ export function BoardMap({
           <polyline className="play-path" points={pathPoints} />
         ))}
       {!playing && <Marks board={board} />}
+      {combining?.map((c) => {
+        const [x, y] = board.points[c]!;
+        return <circle key={`c${c}`} className="combine-mark" cx={x} cy={y} r={7} />;
+      })}
       {/* Board labels are a board property (label language), not the UI language. */}
       {!preview && (
         <g className="labels">
@@ -265,7 +276,11 @@ export function BoardMap({
           playing && play.state.path[0] === slot ? ' start' : visited.has(slot) ? ' visited' : '';
         return (
           <g key={c} className={`city${state}`}>
-            <title>{`${city.name} (${city.pop.toLocaleString(lang === 'de' ? 'de-DE' : 'en-GB')})`}</title>
+            <title>
+              {city.members
+                ? listName(city, lang)
+                : `${city.name} (${city.pop.toLocaleString(lang === 'de' ? 'de-DE' : 'en-GB')})`}
+            </title>
             <circle
               className="nail-halo"
               cx={x}

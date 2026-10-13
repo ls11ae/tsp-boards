@@ -81,7 +81,7 @@ export interface ListEntry {
   readonly line: number;
   readonly text: string;
   readonly query: string;
-  readonly status: 'matched' | 'ambiguous' | 'not-found' | 'custom';
+  readonly status: 'matched' | 'ambiguous' | 'not-found' | 'custom' | 'composite';
   /** Candidate towns (GeoNames ids), best first. */
   readonly options: readonly {
     readonly id: number;
@@ -94,6 +94,8 @@ export interface ListEntry {
   /** Custom place (CSV row). */
   readonly custom?: { readonly lat: number; readonly lon: number };
   readonly label?: string;
+  /** Members of a composite place, each resolved like a line of its own. */
+  readonly members?: readonly ListEntry[];
 }
 
 /** A place list replacing the region's towns (roadmap 5.2). */
@@ -204,6 +206,8 @@ export interface AppState {
   readonly overlay: OverlayChoice;
   /** Clicks on the board place and remove points (free-form instance). */
   readonly placing: boolean;
+  /** Pool indices chosen to be combined into one place (roadmap 7.1), or null. */
+  readonly combining: readonly number[] | null;
   /** A strategy shown step by step (teaching mode), or null. */
   readonly teaching: TeachingState | null;
   /** Robustness check of a planned board (rows arrive one by one), or null. */
@@ -309,6 +313,7 @@ export const useStore = create<AppState>()((set) => ({
   showTour: true,
   overlay: 'none',
   placing: false,
+  combining: null,
   teaching: null,
   robustness: null,
   pinned: [],

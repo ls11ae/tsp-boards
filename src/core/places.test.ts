@@ -2,8 +2,12 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { citiesFromColumns, parseCountryFile } from './data';
+import { boardProjection } from './projection';
+import { parsePuzzleDoc } from './puzzle-file';
+import { boardPoints, regionOutline } from './region';
 import {
   NameIndex,
+  compositePlace,
   decodePlaceList,
   encodePlaceList,
   listCities,
@@ -141,5 +145,76 @@ describe('place lists in links', () => {
     expect(decodePlaceList(encodePlaceList('pool', []))).toEqual({ mode: 'pool', places: [] });
     expect(decodePlaceList('not!base64')).toBeNull();
     expect(decodePlaceList('AAAA')).toBeNull();
+  });
+});
+
+describe('composite places', () => {
+  const bochum = { id: 2947416, name: 'Bochum', lat: 51.4818, lon: 7.2162 };
+  const dortmund = { id: 2935517, name: 'Dortmund', lat: 51.5149, lon: 7.466 };
+
+  it('read "name = A + B" with town names and points, and an optional label', () => {
+    const [ril, campus] = parsePlaceLines(
+      [
+        'Ruhr Innovation Lab = Bochum + Dortmund; RIL',
+        'Campus = Nord (51.49, 7.41) + Süd (51,48; 7,40) + Essen',
+      ].join('\n'),
+    );
+    expect(ril).toMatchObject({
+      name: 'Ruhr Innovation Lab',
+      label: 'RIL',
+      members: [{ name: 'Bochum' }, { name: 'Dortmund' }],
+    });
+    expect(campus!.members).toEqual([
+      { name: 'Nord', lat: 51.49, lon: 7.41 },
+      { name: 'Süd', lat: 51.48, lon: 7.4 },
+      { name: 'Essen' },
+    ]);
+    // One member is no composite: an ordinary line.
+    expect(parsePlaceLines('A = B')[0]!.members).toBeUndefined();
+  });
+
+  it('are one node at the mean of the projected members, never merged', () => {
+    const ril = compositePlace('Ruhr Innovation Lab', [bochum, dortmund]);
+    expect(ril.lat).toBeCloseTo((bochum.lat + dortmund.lat) / 2, 5);
+    const towns = new Map(cities.map((c) => [c.id, c]));
+    const [city] = listCities([ril], towns);
+    expect(city!.id).toBeLessThan(0);
+    expect(city!.members).toHaveLength(2);
+    expect(city!.state).toBe('DE-NW');
+    expect(city!.pop).toBe(towns.get(bochum.id)!.pop + towns.get(dortmund.id)!.pop);
+    const projection = boardProjection(regionOutline(file, 'DE-NW'), {
+      widthMm: 600,
+      heightMm: 800,
+      marginMm: 30,
+    });
+    const [p] = boardPoints([city!], projection);
+    const a = projection.project(bochum.lon, bochum.lat);
+    const b = projection.project(dortmund.lon, dortmund.lat);
+    expect(p![0]).toBeCloseTo((a[0] + b[0]) / 2, 6);
+    expect(p![1]).toBeCloseTo((a[1] + b[1]) / 2, 6);
+    const near = { ...dortmund, lines: [2], names: ['Dortmund'] };
+    const merged = mergePlaces([{ ...ril, lines: [1], names: ['RIL'] }, near], 50);
+    expect(merged).toHaveLength(2);
+  });
+
+  it('keep their members in links and puzzle files', () => {
+    const ril = compositePlace('Ruhr Innovation Lab', [
+      bochum,
+      { name: 'Campus', lat: 51.49, lon: 7.41 },
+    ]);
+    const decoded = decodePlaceList(encodePlaceList('fixed', [ril]))!;
+    expect(decoded.places[0]).toEqual({
+      name: 'Ruhr Innovation Lab',
+      members: [{ id: bochum.id }, { name: 'Campus', lat: 51.49, lon: 7.41 }],
+    });
+    const doc = parsePuzzleDoc({
+      schema: 1,
+      id: 'x',
+      kind: 'map',
+      title: 'X',
+      map: { params: {}, places: [{ ...ril, lat: 0, lon: 0 }] },
+    });
+    // The stored position is recomputed from the members.
+    expect(doc.map!.places[0]).toEqual(ril);
   });
 });

@@ -6,6 +6,7 @@ import { mapTemplateText, solutionPdf, templatePdf } from '../core/board/print';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import { boardSvg } from '../core/board/svg';
 import { worksheetPdf } from '../core/board/worksheet';
+import { listName } from '../core/data';
 import type { Layer } from '../core/board/drawing';
 import { svgPathData } from '../core/board/shapes';
 import { measuredLength } from '../core/board/measure';
@@ -207,7 +208,7 @@ export function downloadWorksheet(board: BoardModel, puzzle: PuzzleView): void {
     tour: e.optimal,
     lengthUm: e.optimalLength,
     gapUm: e.gap,
-    names: setup.cities.map((c) => (setup.params.labelLanguage === 'en' ? c.nameEn : c.name)),
+    names: setup.cities.map((c) => listName(c, setup.params.labelLanguage)),
     formatNumber: boardNumberFormat(setup),
   });
   save(pdf, 'application/pdf', `tsp-worksheet-${fileId(setup)}-${exportOptions.paper}.pdf`);
@@ -264,7 +265,7 @@ export function downloadBoard(
     plan,
     points: setup.points,
     tour,
-    names: setup.cities.map((c) => (setup.params.labelLanguage === 'en' ? c.nameEn : c.name)),
+    names: setup.cities.map((c) => listName(c, setup.params.labelLanguage)),
     stringLengthUm: stringLength(setup.inst, tour),
     centreLengthUm: euclideanLength(setup.inst, tour),
     measuredLengthUm: measuredLength(setup.inst, tour, plan.scale.slot, plan.scale.direction),

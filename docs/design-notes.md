@@ -613,3 +613,18 @@ Short entries: decision; alternatives considered; reason. Newest last.
   the maintainers' request instead of waiting two weeks. All four country files rebuild with
   identical content hashes. Alternative: npm `overrides` for adm-zip/fflate under 0.7.67
   (outside mapshaper's declared range).
+- **2026-10-13 Composite places (roadmap 7.1).** A place may have `members` (towns by id or
+  points with coordinates): one node whose board point is the mean of the members' projected
+  points (`boardPoints`), stored with the geographic mean as its position; population is the
+  members' sum, the state the first member town's. Input: list lines
+  `Name = A + B (lat, lon)[; label]` (members matched like single lines, each with its own
+  choice), and in the designer "combine places" (click places, name, combine; without a list the
+  puzzle on display becomes a fixed list first). Links carry composites as
+  `[name, [members], label?]`, files as `members`; composites never merge by distance; lists,
+  tooltips, the solution sheet and the worksheet name the members. Curated: the 2027 list with
+  Rhein-Main-Universitäten and Ruhr Innovation Lab as composites raises the string gap from
+  0.37 to 3.24 mm (14 places; still below the 5 mm board target, so digital), the 2019–2026
+  puzzle is removed, and a cluster variant combines close sites that share clusters
+  (Bochum/Dortmund, Bonn/Köln, Gießen/Marburg) and Rhein-Main: no nails closer than 25 mm, but
+  a gap of 1.14 mm (digital). Alternatives: the geographic mean as the board point (it is off
+  the line between the members after projection), merging by distance only (loses the names).

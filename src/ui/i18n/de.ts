@@ -90,6 +90,12 @@ export const de: Messages = {
   excess: (value) => `+${value} %`,
   interiorFraction: 'Punkte im Innern der Hülle (C)',
   nonNearestEdges: 'Kanten nicht zum nächsten Nachbarn (D)',
+  combineStart: 'Orte zusammenfassen',
+  combineHint:
+    'Klicke die Orte an, die ein Knoten werden sollen (z. B. die Städte eines Verbunds); er liegt zwischen ihnen.',
+  combineName: 'Name',
+  combineApply: 'Zusammenfassen',
+  combineCancel: 'Abbrechen',
   placeByHand: 'Punkte von Hand setzen',
   placeByHandDone: 'Fertig mit Punkten',
   placeByHandHint:
@@ -291,7 +297,8 @@ export const de: Messages = {
   placesRegion: 'Städte der Region',
   placesFixed: 'eine Liste: genau diese',
   placesPool: 'eine Liste: daraus auswählen',
-  listHint: 'Eine Stadt pro Zeile oder „Name, Breite, Länge, Beschriftung“ für andere Orte.',
+  listHint:
+    'Eine Stadt pro Zeile, „Name, Breite, Länge, Beschriftung“ für andere Orte, oder „Name = Ort + Ort“ für einen Ort aus mehreren (z. B. einen Verbund).',
   listPlaceholder: 'Dortmund\nBochum\nTU Dortmund, 51.4924, 7.4127, TU',
   listMerge: 'Zusammenfassen bis (km)',
   listApply: 'Liste übernehmen',
@@ -299,6 +306,7 @@ export const de: Messages = {
     `${places} Orte aus ${lines} Zeilen; ${ambiguous} zu prüfen, ${notFound} nicht gefunden.`,
   listCheck: 'Zuordnung prüfen',
   listCustom: 'eigener Ort',
+  listComposite: (n) => `ein Knoten für ${n} Orte`,
   listNotFound: 'nicht gefunden',
   listSkip: '(weglassen)',
   listLabel: 'Beschriftung',

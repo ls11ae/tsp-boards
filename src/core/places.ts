@@ -2,11 +2,20 @@
 // Lines are town names (matched fuzzily against the country data, with a choice when
 // ambiguous) or CSV rows "name, latitude, longitude[, label]" for places that are not towns.
 // Identical or very close places merge into one node whose label can name all of them.
+// A composite place (roadmap 7.1) is one node for several towns or points:
+// "Ruhr Innovation Lab = Bochum + Dortmund", members as town names or "name (lat, lon)".
 
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import type { City } from './data';
 import { geodesicKm } from './projection';
-import type { Place } from './puzzle-file';
+import { compositeCentre, type Member, type Place } from './puzzle-file';
+
+/** A member of a composite line: a town name, or a point with coordinates. */
+export interface ParsedMember {
+  readonly name: string;
+  readonly lat?: number;
+  readonly lon?: number;
+}
 
 export interface ParsedLine {
   /** 1-based line number in the input. */
@@ -18,6 +27,50 @@ export interface ParsedLine {
   readonly lat?: number;
   readonly lon?: number;
   readonly label?: string;
+  /** Members of a composite place ("name = A + B"). */
+  readonly members?: readonly ParsedMember[];
+}
+
+const COMPOSITE = /^([^=]+?)\s*=\s*(.+)$/;
+const MEMBER_POINT = /^(.*?)\s*\(\s*(-?\d+(?:[.,]\d+)?)\s*[,;]\s*(-?\d+(?:[.,]\d+)?)\s*\)$/;
+
+/** "Bochum" or "Campus Nord (51.49, 7.41)". */
+function parseMember(token: string): ParsedMember | null {
+  const point = MEMBER_POINT.exec(token);
+  if (point) {
+    const lat = Number(point[2]!.replace(',', '.'));
+    const lon = Number(point[3]!.replace(',', '.'));
+    if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180 && point[1])
+      return { name: point[1], lat, lon };
+  }
+  return token ? { name: token } : null;
+}
+
+/** "Name = A + B[; label]" as a composite line (null if it is none). */
+function parseComposite(line: string): Omit<ParsedLine, 'line' | 'text'> | null {
+  // The label follows a semicolon outside parentheses (inside: decimal-comma coordinates).
+  let depth = 0;
+  let cut = -1;
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === '(') depth++;
+    else if (line[i] === ')') depth--;
+    else if (line[i] === ';' && depth === 0) cut = i;
+  }
+  const head = cut >= 0 ? line.slice(0, cut).trim() : line;
+  const label = cut >= 0 ? line.slice(cut + 1).trim() : '';
+  const m = COMPOSITE.exec(head);
+  if (!m) return null;
+  const members = m[2]!
+    .split(/\s*\+\s*/)
+    .map((t) => parseMember(t.trim()))
+    .filter((x): x is ParsedMember => x !== null);
+  if (members.length < 2) return null;
+  return { name: m[1]!.trim(), members, ...(label ? { label } : {}) };
+}
+
+/** A composite place from its members; its stored position is their mean. */
+export function compositePlace(name: string, members: readonly Member[], label?: string): Place {
+  return { name, ...compositeCentre(members), ...(label ? { label } : {}), members };
 }
 
 /**
@@ -29,6 +82,11 @@ export function parsePlaceLines(text: string): ParsedLine[] {
   text.split(/\r?\n/).forEach((raw, i) => {
     const line = raw.replace(/#.*$/, '').trim();
     if (!line) return;
+    const composite = parseComposite(line);
+    if (composite) {
+      out.push({ line: i + 1, text: raw, ...composite });
+      return;
+    }
     const semicolon = /[;\t]/.test(line);
     const cells = line.split(semicolon ? /\s*[;\t]\s*/ : /\s*,\s*/);
     const [name = '', a, b, ...rest] = cells;
@@ -170,13 +228,17 @@ export interface ListPlace extends Place {
 export function mergePlaces(places: readonly ListPlace[], radiusKm: number): ListPlace[] {
   const groups: ListPlace[][] = [];
   for (const p of places) {
-    const group = groups.find((g) =>
-      g.some(
-        (q) =>
-          (p.id !== undefined && p.id === q.id) ||
-          geodesicKm([p.lon, p.lat], [q.lon, q.lat]) <= radiusKm,
-      ),
-    );
+    // Composite places are nodes of their own; they never merge.
+    const group = p.members
+      ? undefined
+      : groups.find((g) =>
+          g.some(
+            (q) =>
+              !q.members &&
+              ((p.id !== undefined && p.id === q.id) ||
+                geodesicKm([p.lon, p.lat], [q.lon, q.lat]) <= radiusKm),
+          ),
+        );
     if (group) group.push(p);
     else groups.push([p]);
   }
@@ -203,6 +265,23 @@ export const customId = (index: number) => -1 - index;
 /** The list as City records for the board pool (custom places: population 1, no state). */
 export function listCities(places: readonly Place[], towns: ReadonlyMap<number, City>): City[] {
   return places.map((p, i) => {
+    if (p.members && p.members.length >= 2) {
+      // Population and state from the member towns (custom points count 1).
+      const memberTowns = p.members.map((m) => (m.id !== undefined ? towns.get(m.id) : undefined));
+      return {
+        id: customId(i),
+        name: p.name,
+        label: p.label ?? p.name,
+        nameEn: p.name,
+        lat: p.lat,
+        lon: p.lon,
+        pop: memberTowns.reduce((s, t) => s + (t?.pop ?? 1), 0),
+        state: memberTowns.find((t) => t !== undefined)?.state ?? '',
+        wikidata: null,
+        flags: 0,
+        members: p.members.map((m) => ({ name: m.name, lat: m.lat, lon: m.lon })),
+      };
+    }
     const town = p.id !== undefined ? towns.get(p.id) : undefined;
     if (town) return p.label ? { ...town, label: p.label } : town;
     return {
@@ -252,30 +331,71 @@ function fromBase64url(text: string): Uint8Array {
   return Uint8Array.from(bytes);
 }
 
-/** A list row as decoded from a link: a town (id, optional label) or a custom place. */
-export type LinkPlace = Place | { readonly id: number; readonly label?: string };
+/** A member as decoded from a link: a town id, or a point with name and coordinates. */
+export type LinkMember = Member | { readonly id: number };
+
+/**
+ * A list row as decoded from a link: a town (id, optional label), a custom place, or a
+ * composite place whose members are towns (ids) or points.
+ */
+export type LinkPlace =
+  | Place
+  | { readonly id: number; readonly label?: string }
+  | {
+      readonly name: string;
+      readonly label?: string;
+      readonly members: readonly LinkMember[];
+    };
 
 /**
  * Compact, compressed form of a place list for links: towns as ids (with a label if set),
- * custom places with name and coordinates (5 decimals, ~1 m).
+ * custom places with name and coordinates (5 decimals, ~1 m), composite places as
+ * [name, [members], label?] with members as ids or [name, lat, lon].
  */
 export function encodePlaceList(mode: 'fixed' | 'pool', places: readonly Place[]): string {
   const round = (v: number) => Math.round(v * 1e5) / 1e5;
   const rows = places.map((p) =>
-    p.id !== undefined
-      ? p.label
-        ? [p.id, p.label]
-        : p.id
-      : [p.name, round(p.lat), round(p.lon), ...(p.label ? [p.label] : [])],
+    p.members
+      ? [
+          p.name,
+          p.members.map((m) => m.id ?? [m.name, round(m.lat), round(m.lon)]),
+          ...(p.label ? [p.label] : []),
+        ]
+      : p.id !== undefined
+        ? p.label
+          ? [p.id, p.label]
+          : p.id
+        : [p.name, round(p.lat), round(p.lon), ...(p.label ? [p.label] : [])],
   );
   const json = JSON.stringify([mode === 'fixed' ? 0 : 1, rows]);
   return base64url(deflateSync(strToU8(json), { level: 9 }));
+}
+
+function decodeMember(m: unknown): LinkMember | null {
+  if (Number.isInteger(m) && (m as number) > 0) return { id: m as number };
+  if (!Array.isArray(m)) return null;
+  const [name, lat, lon] = m as unknown[];
+  if (typeof name !== 'string' || typeof lat !== 'number' || typeof lon !== 'number') return null;
+  if (Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
+  return { name: name.slice(0, 200), lat, lon };
 }
 
 function decodeRow(row: unknown): LinkPlace | null {
   if (Number.isInteger(row) && (row as number) > 0) return { id: row as number };
   if (!Array.isArray(row)) return null;
   const [a, b, c, d] = row as unknown[];
+  if (typeof a === 'string' && Array.isArray(b)) {
+    const members = b
+      .slice(0, 20)
+      .map(decodeMember)
+      .filter((m): m is LinkMember => m !== null);
+    if (members.length < 2) return null;
+    return {
+      name: a.slice(0, 200),
+      members,
+      ...(typeof c === 'string' && c ? { label: c.slice(0, 200) } : {}),
+    };
+  }
   if (Number.isInteger(a) && (a as number) > 0 && typeof b === 'string')
     return { id: a as number, label: b.slice(0, 200) };
   if (typeof a !== 'string' || typeof b !== 'number' || typeof c !== 'number') return null;

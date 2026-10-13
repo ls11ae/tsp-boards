@@ -10,8 +10,12 @@ import { useFormat, useT } from '../i18n';
 import {
   DEFAULT_MERGE_KM,
   applyList,
+  cancelCombining,
   changeEntry,
   clearList,
+  combinePlaces,
+  combinedName,
+  startCombining,
   removePlace,
   setListMode,
   suggestRemovals,
@@ -21,12 +25,51 @@ import { useStore, type ListEntry } from '../store';
 
 type Source = 'region' | 'fixed' | 'pool';
 
-function EntryRow({ entry }: { readonly entry: ListEntry }) {
+/** One list line; a composite line lists its members below (each with its own choice). */
+function EntryRow({
+  entry,
+  member = null,
+}: {
+  readonly entry: ListEntry;
+  /** Index of the member within its composite line, for member rows. */
+  readonly member?: number | null;
+}) {
   const t = useT();
   const fmt = useFormat();
-  const mark = { matched: '✓', ambiguous: '?', 'not-found': '✗', custom: '◆' }[entry.status];
+  const mark = {
+    matched: '✓',
+    ambiguous: '?',
+    'not-found': '✗',
+    custom: '◆',
+    composite: '⊕',
+  }[entry.status];
+  if (entry.members) {
+    return (
+      <>
+        <tr className="entry-composite">
+          <td title={entry.text}>
+            {mark} {entry.query}
+          </td>
+          <td>
+            <span className="hint">{t.listComposite(fmt.integer(entry.members.length))}</span>
+          </td>
+          <td>
+            <input
+              type="text"
+              value={entry.label ?? ''}
+              placeholder={t.listLabel}
+              onChange={(e) => changeEntry(entry.line, { label: e.target.value || undefined })}
+            />
+          </td>
+        </tr>
+        {entry.members.map((m, i) => (
+          <EntryRow key={i} entry={m} member={i} />
+        ))}
+      </>
+    );
+  }
   return (
-    <tr className={`entry-${entry.status}`}>
+    <tr className={`entry-${entry.status}${member !== null ? ' entry-member' : ''}`}>
       <td title={entry.text}>
         {mark} {entry.query}
       </td>
@@ -38,7 +81,7 @@ function EntryRow({ entry }: { readonly entry: ListEntry }) {
         ) : (
           <select
             value={entry.choice}
-            onChange={(e) => changeEntry(entry.line, { choice: Number(e.target.value) })}
+            onChange={(e) => changeEntry(entry.line, { choice: Number(e.target.value) }, member)}
           >
             {entry.options.map((o, i) => (
               <option key={o.id} value={i}>
@@ -51,18 +94,80 @@ function EntryRow({ entry }: { readonly entry: ListEntry }) {
         )}
       </td>
       <td>
-        <input
-          type="text"
-          value={entry.label ?? ''}
-          placeholder={t.listLabel}
-          onChange={(e) => changeEntry(entry.line, { label: e.target.value || undefined })}
-        />
+        {member === null && (
+          <input
+            type="text"
+            value={entry.label ?? ''}
+            placeholder={t.listLabel}
+            onChange={(e) => changeEntry(entry.line, { label: e.target.value || undefined })}
+          />
+        )}
       </td>
     </tr>
   );
 }
 
-export function PlacesPanel() {
+/** Combining places into one node: choose them on the board, name it, combine. */
+function CombineField({
+  board,
+  puzzle,
+}: {
+  readonly board: BoardModel | null;
+  readonly puzzle: PuzzleView | null;
+}) {
+  const t = useT();
+  const combining = useStore((s) => s.combining);
+  const [name, setName] = useState('');
+  if (!combining) {
+    return (
+      <div className="actions">
+        <button type="button" onClick={startCombining} disabled={!board}>
+          {t.combineStart}
+        </button>
+      </div>
+    );
+  }
+  const chosen = board ? combining.map((c) => board.pool[c]!) : [];
+  return (
+    <div className="combine">
+      <p className="hint">{t.combineHint}</p>
+      <p>{chosen.length > 0 ? chosen.map((c) => c.label).join(' + ') : '–'}</p>
+      <label className="field">
+        <span>{t.combineName}</span>
+        <input
+          type="text"
+          value={name}
+          placeholder={combinedName(chosen)}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </label>
+      <div className="actions">
+        <button
+          type="button"
+          className="primary"
+          disabled={chosen.length < 2}
+          onClick={() => {
+            combinePlaces(name, puzzle?.members ?? null);
+            setName('');
+          }}
+        >
+          {t.combineApply}
+        </button>
+        <button type="button" onClick={cancelCombining}>
+          {t.combineCancel}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function PlacesPanel({
+  board,
+  puzzle,
+}: {
+  readonly board: BoardModel | null;
+  readonly puzzle: PuzzleView | null;
+}) {
   const t = useT();
   const fmt = useFormat();
   const list = useStore((s) => s.list);
@@ -123,6 +228,7 @@ export function PlacesPanel() {
         </button>
       </div>
       {placing && <p className="hint">{t.placeByHandHint}</p>}
+      <CombineField board={board} puzzle={puzzle} />
       {shown !== 'region' && (
         <>
           <label className="field wide">

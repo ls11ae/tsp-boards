@@ -29,6 +29,7 @@ import {
   parsePuzzleDoc,
   serializePuzzleDoc,
   type CollectionIndex,
+  type Member,
   type Place,
   type PuzzleDoc,
 } from '../src/core/puzzle-file';
@@ -42,6 +43,7 @@ import {
   listCities,
   mergePlaces,
   parsePlaceLines,
+  compositePlace,
   type ListPlace,
 } from '../src/core/places';
 import { boardPool, loadBackend, loadCountry, poolLabels, type BoardPool } from './lib/country';
@@ -173,7 +175,32 @@ if (command === 'add') {
   const text = readFileSync(arg('file', ''), 'utf8');
   const file = loadCountry(arg('region', 'DE').slice(0, 2));
   const index = new NameIndex(citiesFromColumns(file.cities, file.states));
+  /** A town by exact name (first option if ambiguous, with a note). */
+  const townOf = (name: string, lineNo: number) => {
+    const match = index.match(name);
+    const town = match.options[0];
+    if (!town || match.kind !== 'exact')
+      throw new Error(`line ${lineNo}: "${name}" is ${match.status}`);
+    if (match.status === 'ambiguous')
+      console.error(`line ${lineNo}: "${name}" is ambiguous, using ${town.name} (${town.state})`);
+    return town;
+  };
   const listPlaces: ListPlace[] = parsePlaceLines(text).flatMap((line): ListPlace[] => {
+    if (line.members) {
+      const members: Member[] = line.members.map((m) => {
+        if (m.lat !== undefined && m.lon !== undefined)
+          return { name: m.name, lat: m.lat, lon: m.lon };
+        const town = townOf(m.name, line.line);
+        return { id: town.id, name: town.name, lat: town.lat, lon: town.lon };
+      });
+      return [
+        {
+          ...compositePlace(line.name, members, line.label),
+          lines: [line.line],
+          names: [line.label ?? line.name],
+        },
+      ];
+    }
     if (line.lat !== undefined && line.lon !== undefined) {
       return [
         {
@@ -186,14 +213,7 @@ if (command === 'add') {
         },
       ];
     }
-    const match = index.match(line.name);
-    const town = match.options[0];
-    if (!town || match.kind !== 'exact')
-      throw new Error(`line ${line.line}: "${line.name}" is ${match.status}`);
-    if (match.status === 'ambiguous')
-      console.error(
-        `line ${line.line}: "${line.name}" is ambiguous, using ${town.name} (${town.state})`,
-      );
+    const town = townOf(line.name, line.line);
     return [
       {
         id: town.id,
@@ -211,6 +231,8 @@ if (command === 'add') {
     lat: p.lat,
     lon: p.lon,
     ...(p.label ? { label: p.label } : {}),
+
+    ...(p.members ? { members: p.members } : {}),
   }));
   const params: PuzzleParams = {
     ...DEFAULT_PARAMS,

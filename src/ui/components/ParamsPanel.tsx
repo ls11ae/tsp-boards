@@ -287,7 +287,7 @@ export function ParamsPanel({
       <h2>{t.parameters}</h2>
       <CountryField />
       <RegionField />
-      <PlacesPanel />
+      <PlacesPanel board={board} puzzle={puzzle} />
       <NumberField label={t.cityCount} field="n" min={5} />
       <NumberField label={t.minPopulation} field="minPopulation" step={1000} />
       {board && <p className="hint">{t.poolSize(fmt.integer(board.pool.length))}</p>}

@@ -113,7 +113,7 @@ preparation). Kevin decided to extend the digital side next, before building phy
 From Kevin's review of 2026-10-13 (app run in a browser at 1440 × 900 and 390 × 844). Work
 through the items in order.
 
-### 7.1 Composite places (alliances)
+### 7.1 Composite places (alliances) — done 2026-10-13
 
 - A place can combine several towns or points, e.g. "Ruhr Innovation Lab (Bochum/Dortmund)" or
   "Rhein-Main-Universitäten (Frankfurt/Mainz/Darmstadt)". It is one node at the centroid of

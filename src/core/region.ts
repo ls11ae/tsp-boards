@@ -291,7 +291,17 @@ export function cityPool(file: CountryFile, id: RegionId, options: PoolOptions):
   );
 }
 
-/** Board coordinates (mm) of cities. */
+/**
+ * Board coordinates (mm) of cities. A composite place lies at the mean of its members'
+ * board points, so it is between them on the board.
+ */
 export function boardPoints(cities: readonly City[], projection: BoardProjection): Point[] {
-  return cities.map((c) => projection.project(c.lon, c.lat));
+  return cities.map((c): Point => {
+    if (!c.members || c.members.length === 0) return projection.project(c.lon, c.lat);
+    const points = c.members.map((m) => projection.project(m.lon, m.lat));
+    return [
+      points.reduce((s, p) => s + p[0], 0) / points.length,
+      points.reduce((s, p) => s + p[1], 0) / points.length,
+    ];
+  });
 }

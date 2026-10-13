@@ -116,9 +116,21 @@ export interface City {
   readonly state: string;
   readonly wikidata: string | null;
   readonly flags: number;
+  /** Members of a composite place; the board point is the mean of their projections. */
+  readonly members?: readonly {
+    readonly name: string;
+    readonly lat: number;
+    readonly lon: number;
+  }[];
 }
 
 export type LabelLanguage = 'de' | 'en';
+
+/** Name for lists and sheets; a composite place names its members: "RIL (Bochum, Dortmund)". */
+export function listName(city: City, language: LabelLanguage): string {
+  const name = language === 'en' ? city.nameEn : city.name;
+  return city.members ? `${name} (${city.members.map((m) => m.name).join(', ')})` : name;
+}
 
 /** Text on the board: the short label, or the English exonym (Munich) for English boards. */
 export function boardLabel(city: City, language: LabelLanguage): string {

@@ -458,6 +458,12 @@ progress {
   cursor: crosshair;
 }
 
+.combine-mark {
+  fill: none;
+  stroke: var(--overlay);
+  stroke-width: 2;
+}
+
 .teach-edge {
   fill: none;
   stroke: var(--overlay);
@@ -743,4 +749,12 @@ polyline.trace-quality {
   background: var(--tour);
   opacity: 0.4;
   margin-left: 8px;
+}
+
+.entry-member td:first-child {
+  padding-left: 1.4em;
+}
+
+.entry-composite td:first-child {
+  font-weight: 600;
 }

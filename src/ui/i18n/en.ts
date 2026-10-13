@@ -95,6 +95,12 @@ export const en = {
   excess: (value: string) => `+${value} %`,
   interiorFraction: 'Points inside the hull (C)',
   nonNearestEdges: 'Edges not to a nearest neighbour (D)',
+  combineStart: 'Combine places',
+  combineHint:
+    'Click the places that become one node (e.g. the towns of an alliance); it lies between them.',
+  combineName: 'Name',
+  combineApply: 'Combine',
+  combineCancel: 'Cancel',
   placeByHand: 'Place points by hand',
   placeByHandDone: 'Done placing points',
   placeByHandHint:
@@ -298,7 +304,8 @@ export const en = {
   placesRegion: "the region's towns",
   placesFixed: 'a list: exactly these',
   placesPool: 'a list: choose from it',
-  listHint: 'One town per line, or "name, latitude, longitude, label" for other places.',
+  listHint:
+    'One town per line, "name, latitude, longitude, label" for other places, or "name = place + place" for one place made of several (e.g. an alliance).',
   listPlaceholder: 'Dortmund\nBochum\nTU Dortmund, 51.4924, 7.4127, TU',
   listMerge: 'Merge within (km)',
   listApply: 'Apply list',
@@ -306,6 +313,7 @@ export const en = {
     `${places} places from ${lines} lines; ${ambiguous} to check, ${notFound} not found.`,
   listCheck: 'Check the matches',
   listCustom: 'own place',
+  listComposite: (n: string) => `one node for ${n} places`,
   listNotFound: 'not found',
   listSkip: '(leave out)',
   listLabel: 'label',

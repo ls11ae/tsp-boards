@@ -1,12 +1,18 @@
 // Place lists in the app (roadmap 5.2): text input matched against the country data, choices
 // for ambiguous names, labels, merging, and the fixed-instance analysis.
 
-import { citiesFromColumns, type CountryFile } from '../core/data';
+import { citiesFromColumns, type City, type CountryFile } from '../core/data';
 import type { RemovalSuggestion } from '../core/fixed';
 import { rEffMm } from '../core/params';
-import { mergePlaces, NameIndex, parsePlaceLines, type ListPlace } from '../core/places';
+import {
+  compositePlace,
+  mergePlaces,
+  NameIndex,
+  parsePlaceLines,
+  type ListPlace,
+} from '../core/places';
 import type { LinkList } from '../core/permalink';
-import type { Place } from '../core/puzzle-file';
+import type { Member, Place } from '../core/puzzle-file';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
 import { getBoard, townsById } from './board';
 import { openMembers } from './controller';
@@ -26,6 +32,25 @@ function names(country: CountryFile): NameIndex {
   return nameIndex.index;
 }
 
+/** Resolves one name (or point) of a line or a composite member. */
+function resolveName(
+  index: NameIndex,
+  base: Pick<ListEntry, 'line' | 'text' | 'query' | 'label'>,
+  lat: number | undefined,
+  lon: number | undefined,
+): ListEntry {
+  if (lat !== undefined && lon !== undefined) {
+    return { ...base, status: 'custom', options: [], choice: 0, custom: { lat, lon } };
+  }
+  const m = index.match(base.query);
+  return {
+    ...base,
+    status: m.status,
+    options: m.options.map((c) => ({ id: c.id, name: c.name, state: c.state, pop: c.pop })),
+    choice: m.status === 'not-found' ? -1 : 0,
+  };
+}
+
 /** Resolves the text into entries (towns matched, CSV rows as custom places). */
 export function resolveLines(country: CountryFile, text: string): ListEntry[] {
   const index = names(country);
@@ -36,23 +61,23 @@ export function resolveLines(country: CountryFile, text: string): ListEntry[] {
       query: line.name,
       ...(line.label ? { label: line.label } : {}),
     };
-    if (line.lat !== undefined && line.lon !== undefined) {
-      return {
-        ...base,
-        status: 'custom',
-        options: [],
-        choice: 0,
-        custom: { lat: line.lat, lon: line.lon },
-      };
+    if (line.members) {
+      const members = line.members.map((m) =>
+        resolveName(index, { line: line.line, text: m.name, query: m.name }, m.lat, m.lon),
+      );
+      return { ...base, status: 'composite', options: [], choice: 0, members };
     }
-    const m = index.match(line.name);
-    return {
-      ...base,
-      status: m.status,
-      options: m.options.map((c) => ({ id: c.id, name: c.name, state: c.state, pop: c.pop })),
-      choice: m.status === 'not-found' ? -1 : 0,
-    };
+    return resolveName(index, base, line.lat, line.lon);
   });
+}
+
+/** The town or point an entry stands for (null if skipped or not found). */
+function entryMember(entry: ListEntry, towns: ReadonlyMap<number, City>): Member | null {
+  if (entry.choice < 0) return null;
+  if (entry.custom) return { name: entry.query, lat: entry.custom.lat, lon: entry.custom.lon };
+  const option = entry.options[entry.choice];
+  const town = option ? towns.get(option.id) : undefined;
+  return town ? { id: town.id, name: town.name, lat: town.lat, lon: town.lon } : null;
 }
 
 /** The places of the entries (chosen towns and custom places), merged. */
@@ -65,6 +90,19 @@ export function entryPlaces(
   const list: ListPlace[] = [];
   for (const e of entries) {
     const label = e.label ? { label: e.label } : {};
+    if (e.members) {
+      // A composite place needs at least two resolved members.
+      const members = e.members
+        .map((m) => entryMember(m, towns))
+        .filter((m): m is Member => m !== null);
+      if (e.choice < 0 || members.length < 2) continue;
+      list.push({
+        ...compositePlace(e.query, members, e.label),
+        lines: [e.line],
+        names: [e.label ?? e.query],
+      });
+      continue;
+    }
     if (e.custom) {
       if (e.choice < 0) continue;
       list.push({
@@ -97,6 +135,7 @@ export function entryPlaces(
       lat: p.lat,
       lon: p.lon,
       ...(p.label ? { label: p.label } : {}),
+      ...(p.members ? { members: p.members } : {}),
     };
     return place;
   });
@@ -128,14 +167,19 @@ export function applyList(text: string, mode: 'fixed' | 'pool', mergeKm: number)
   update({ mode, text, entries, mergeKm, places: entryPlaces(country, entries, mergeKm) });
 }
 
-/** Changes one entry (choice or label) and recomputes the places. */
+/** Changes one entry (choice or label), or a member of a composite entry, and recomputes. */
 export function changeEntry(
   line: number,
   change: Partial<Pick<ListEntry, 'choice' | 'label'>>,
+  member: number | null = null,
 ): void {
   const { country, list } = useStore.getState();
   if (!country || !list) return;
-  const entries = list.entries.map((e) => (e.line === line ? { ...e, ...change } : e));
+  const entries = list.entries.map((e) => {
+    if (e.line !== line) return e;
+    if (member === null || !e.members) return { ...e, ...change };
+    return { ...e, members: e.members.map((m, i) => (i === member ? { ...m, ...change } : m)) };
+  });
   update({ ...list, entries, places: entryPlaces(country, entries, list.mergeKm) });
 }
 
@@ -156,23 +200,49 @@ export function clearList(): void {
   useStore.setState({ list: null, loaded: null, shown: { kind: 'auto' } });
 }
 
-/** Sets a list from places (a file or a link); entries mirror the places one to one. */
-export function setListPlaces(mode: 'fixed' | 'pool', places: readonly Place[]): void {
-  const entries: ListEntry[] = places.map((p, i) => ({
-    line: i + 1,
+/** An entry mirroring a town or point (from a file or a link). */
+function mirrorEntry(line: number, p: Member): ListEntry {
+  return {
+    line,
     text: p.name,
     query: p.name,
     status: p.id !== undefined ? 'matched' : 'custom',
     options: p.id !== undefined ? [{ id: p.id, name: p.name, state: '', pop: 0 }] : [],
     choice: 0,
     ...(p.id === undefined ? { custom: { lat: p.lat, lon: p.lon } } : {}),
-    ...(p.label ? { label: p.label } : {}),
-  }));
+  };
+}
+
+/** A member in list syntax: a town name, or a point with coordinates. */
+function memberText(m: Member): string {
+  return m.id !== undefined ? m.name : `${m.name} (${m.lat}, ${m.lon})`;
+}
+
+/** Sets a list from places (a file or a link); entries mirror the places one to one. */
+export function setListPlaces(mode: 'fixed' | 'pool', places: readonly Place[]): void {
+  const entries: ListEntry[] = places.map((p, i) => {
+    const label = p.label ? { label: p.label } : {};
+    if (p.members) {
+      return {
+        line: i + 1,
+        text: p.name,
+        query: p.name,
+        status: 'composite',
+        options: [],
+        choice: 0,
+        members: p.members.map((m) => mirrorEntry(i + 1, m)),
+        ...label,
+      };
+    }
+    return { ...mirrorEntry(i + 1, p), ...label };
+  });
   const text = places
     .map((p) =>
-      p.id !== undefined
-        ? p.name
-        : [p.name, p.lat, p.lon, ...(p.label ? [p.label] : [])].join(', '),
+      p.members
+        ? `${p.name} = ${p.members.map(memberText).join(' + ')}${p.label ? `; ${p.label}` : ''}`
+        : p.id !== undefined
+          ? p.name
+          : [p.name, p.lat, p.lon, ...(p.label ? [p.label] : [])].join(', '),
     )
     .join('\n');
   useStore.setState({
@@ -229,6 +299,66 @@ export function removeHandPoint(index: number): void {
   applyList(text, list.mode, list.mergeKm);
 }
 
+// --- combining places into one (roadmap 7.1) ------------------------------------------------
+
+export function startCombining(): void {
+  useStore.setState({ combining: [], placing: false });
+}
+
+export function cancelCombining(): void {
+  useStore.setState({ combining: null });
+}
+
+/** Adds or removes a pool index from the places to combine. */
+export function toggleCombine(index: number): void {
+  const { combining } = useStore.getState();
+  if (!combining) return;
+  useStore.setState({
+    combining: combining.includes(index)
+      ? combining.filter((i) => i !== index)
+      : [...combining, index],
+  });
+}
+
+/** Default name of a composite: the members' labels joined by "/". */
+export function combinedName(cities: readonly City[]): string {
+  return cities.map((c) => c.label).join('/');
+}
+
+/**
+ * Combines the chosen places into one composite place. Without a list, the puzzle on display
+ * (`members`, pool indices) becomes a fixed list first.
+ */
+export function combinePlaces(name: string, members: readonly number[] | null): void {
+  const { country, params, list, combining } = useStore.getState();
+  if (!country || !combining || combining.length < 2) return;
+  const board = getBoard(country, params);
+  const asPlace = (c: City): Place =>
+    c.members
+      ? { name: c.name, lat: c.lat, lon: c.lon, members: c.members }
+      : { id: c.id, name: c.name, lat: c.lat, lon: c.lon };
+  const indices = list ? board.pool.map((_, i) => i) : (members ?? []);
+  const places = list ? list.places : indices.map((c) => asPlace(board.pool[c]!));
+  const chosen = indices.flatMap((c, i) => (combining.includes(c) ? [i] : []));
+  if (chosen.length < 2) return;
+  // Members of a chosen composite join the new one directly.
+  const memberList: Member[] = chosen.flatMap((i): Member[] => {
+    const p = places[i]!;
+    return p.members
+      ? [...p.members]
+      : [{ ...(p.id !== undefined ? { id: p.id } : {}), name: p.name, lat: p.lat, lon: p.lon }];
+  });
+  const combined = compositePlace(
+    name.trim() || combinedName(chosen.map((i) => board.pool[indices[i]!]!)),
+    memberList,
+  );
+  const rest = places.filter((_, i) => !chosen.includes(i));
+  const mode = list?.mode ?? 'fixed';
+  useStore.setState({ combining: null });
+  setListPlaces(mode, [...rest, combined]);
+  if (mode === 'fixed') openAll();
+}
+
 /** Removes the place at pool index `index` from the list (its entries are skipped). */
 export function removePlace(index: number): void {
   const { list } = useStore.getState();
@@ -236,9 +366,11 @@ export function removePlace(index: number): void {
   if (!list || !place) return;
   const entries = list.entries.map((e) => {
     const option = e.options[e.choice];
-    const hit = e.custom
-      ? e.query === place.name && e.custom.lat === place.lat && e.custom.lon === place.lon
-      : option !== undefined && option.id === place.id;
+    const hit = e.members
+      ? place.members !== undefined && e.query === place.name
+      : e.custom
+        ? e.query === place.name && e.custom.lat === place.lat && e.custom.lon === place.lon
+        : option !== undefined && option.id === place.id;
     return hit ? { ...e, choice: -1 } : e;
   });
   update({ ...list, entries, places: list.places.filter((_, i) => i !== index) });
