@@ -336,7 +336,13 @@ export const de: Messages = {
   fixedSmallGap: (gap, target) =>
     `Die Lücke (${gap} mm) liegt unter dem Ziel für Bretter (${target} mm): Auf einem Brett kann der Faden das Optimum nicht sicher unterscheiden.`,
   fixedMakeDigital: 'Als digitales Puzzle verwenden',
-  fixedRemovals: 'Welches Weglassen hilft am meisten?',
+  fixedChanges: 'Was würde die Lücke vergrößern?',
+  fixedBoardVariant: 'Brettvariante suchen',
+  fixedChangesHint: (target) =>
+    `Orte weglassen oder zusammenfassen (ein Knoten zwischen ihnen), geprüft mit der Fadenlänge; Ziel ${target} mm, * = Schätzung.`,
+  fixedCombined: (a, b, gap) => `${a} + ${b} zusammengefasst: Lücke ${gap} mm`,
+  fixedBoardOk: 'Brett möglich',
+  fixedStillClose: (n) => `noch ${n} zu enge Paare`,
   fixedSearching: 'Wird berechnet …',
   fixedWithout: (name, gap) => `ohne ${name}: Lücke ${gap} mm`,
   fixedLeaveOut: 'Weglassen',

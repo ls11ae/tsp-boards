@@ -9,7 +9,7 @@ import type {
   TracePoint,
 } from '../core/search/search';
 import type { BoardPlan, PlanData } from '../core/board/plan';
-import type { RemovalSuggestion } from '../core/fixed';
+import type { RatedChange } from '../core/fixed';
 import type { RobustnessRow, ScalePosition } from '../core/robustness';
 import type {
   IncrementalParams,
@@ -70,11 +70,12 @@ export interface PlanJob {
   readonly timeLimitSec: number;
 }
 
-export interface RemovalsJob {
+export interface ChangesJob {
   readonly jobId: number;
   readonly points: readonly Point[];
   readonly rEffMm: number;
   readonly model: 'string' | 'euclidean';
+  readonly minDistanceMm: number;
   readonly top: number;
 }
 
@@ -100,7 +101,7 @@ export type ExactWorkerRequest =
   | ({ readonly type: 'rounds' } & RoundsJob)
   | ({ readonly type: 'verify' } & VerifyJob)
   | ({ readonly type: 'plan' } & PlanJob)
-  | ({ readonly type: 'removals' } & RemovalsJob);
+  | ({ readonly type: 'changes' } & ChangesJob);
 
 export type ExactWorkerResponse =
   | {
@@ -128,9 +129,9 @@ export type ExactWorkerResponse =
       readonly ms: number;
     }
   | {
-      readonly type: 'removals';
+      readonly type: 'changes';
       readonly jobId: number;
-      readonly suggestions: readonly RemovalSuggestion[];
+      readonly suggestions: readonly RatedChange[];
     }
   | { readonly type: 'robustness-row'; readonly jobId: number; readonly row: RobustnessRow }
   | { readonly type: 'robustness-done'; readonly jobId: number }

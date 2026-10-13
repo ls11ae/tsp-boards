@@ -26,7 +26,7 @@
       "id": "deutschland-40",
       "kind": "map",
       "title": "Deutschland: 40 Städte",
-      "description": "Die Rundreise durch 40 deutsche Städte, gesucht mit Standardgewichten.",
+      "description": "Die Rundreise durch 40 bekannte deutsche Städte (ab 50.000 Einwohnern, hohes Gewicht für bekannte Städte).",
       "purpose": "board",
       "region": "DE",
       "n": 40
@@ -50,6 +50,16 @@
       "purpose": "digital",
       "region": "DE",
       "n": 37
+    },
+    {
+      "file": "exzellenzuniversitaeten-2027-brett.tsp.json",
+      "id": "exzellenzuniversitaeten-2027-brett",
+      "kind": "map",
+      "title": "Exzellenzuniversitäten ab 2027 (Brett)",
+      "description": "Die Exzellenzuniversitäten und -verbünde ab 2027 als Brett: Verbünde sind ein Nagel zwischen ihren Städten (Ruhr Innovation Lab, Rhein-Main-Universitäten), ebenso Bonn und Köln, die eng beieinander liegen und drei Exzellenzcluster teilen.",
+      "purpose": "board",
+      "region": "DE",
+      "n": 13
     },
     {
       "file": "exzellenzuniversitaeten-2027.tsp.json",
@@ -80,6 +90,16 @@
       "purpose": "board",
       "region": "DE",
       "n": 25
+    },
+    {
+      "file": "landeshauptstaedte-brett.tsp.json",
+      "id": "landeshauptstaedte-brett",
+      "kind": "map",
+      "title": "Landeshauptstädte (Brett)",
+      "description": "Die 16 Landeshauptstädte als Brett: Mainz und Wiesbaden liegen so nah beieinander, dass sie ein Nagel zwischen beiden Städten sind.",
+      "purpose": "board",
+      "region": "DE",
+      "n": 15
     },
     {
       "file": "landeshauptstaedte.tsp.json",

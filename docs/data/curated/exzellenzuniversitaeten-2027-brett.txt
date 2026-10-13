@@ -1,0 +1,39 @@
+# Board variant of exzellenzuniversitaeten-2027.txt (roadmap 7.5): Bonn and Köln, 20.6 mm apart on the
+# default board and partners in three clusters, are one composite place between them.
+# Universities of Excellence and excellence alliances, funding period from 1 January 2027 (2027-2033):
+# 10 sites continued (Excellence Commission, 11 March 2026) and 5 new sites (2 October 2026);
+# 15 funding cases (12 universities, 3 alliances), one place per university or alliance:
+# the alliances with members in several cities are composite places at the centre of their
+# cities (Rhein-Main-Universitäten, Ruhr Innovation Lab); the Berlin University Alliance and
+# the two Munich universities share their city.
+# Sources: https://www.dfg.de/resource/blob/390424/260311-exstra-exu-liste.pdf (2026-03-11),
+# https://www.wissenschaftsrat.de/SharedDocs/Pressemitteilungen/DE/PM_2026/PM_2126_ExStra.html (2026-10-02).
+# Full data with universities: excellence-strategy-2026-10-12.json (retrieved 2026-10-12).
+# Rheinisch-Westfälische Technische Hochschule Aachen (Aachen)
+# Berlin University Alliance (Berlin)
+# Rheinische Friedrich-Wilhelms-Universität Bonn (Bonn)
+# Technische Universität Dresden (Dresden)
+# Universität Hamburg (Hamburg)
+# Ruprecht-Karls-Universität Heidelberg (Heidelberg)
+# Karlsruher Institut für Technologie (Karlsruhe)
+# Ludwig-Maximilians-Universität München (München)
+# Technische Universität München (München)
+# Eberhard Karls Universität Tübingen (Tübingen)
+# Albert-Ludwigs-Universität Freiburg (Freiburg im Breisgau)
+# Friedrich-Schiller-Universität Jena (Jena)
+# Universität zu Köln (Köln)
+# Rhein-Main-Universitäten (Darmstadt, Frankfurt am Main, Mainz)
+# Ruhr Innovation Lab (Bochum, Dortmund)
+Aachen
+Berlin
+Dresden
+Hamburg
+Heidelberg
+Karlsruhe
+München
+Tübingen
+Freiburg im Breisgau
+Jena
+Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
+Ruhr Innovation Lab = Bochum + Dortmund
+Bonn/Köln = Bonn + Köln

@@ -159,7 +159,7 @@ through the items in order.
 - The left column is very long: collapsible groups (puzzle, places, board, search), with the
   advanced settings (weights, thesis metrics, seed, iterations) collapsed by default.
 
-### 7.5 Curated content
+### 7.5 Curated content — done 2026-10-13
 
 - "Deutschland: 40 Städte" contains many little-known towns (Gangkofen, Treuenbrietzen,
   Neunkirchen-Seelscheid, ...): rebuild it with a higher weight for well-known cities or with

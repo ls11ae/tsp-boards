@@ -7,6 +7,7 @@ One place per line (town names of the country data); lines starting with `#` are
 | list                              | puzzle                                         | places | purpose |
 | --------------------------------- | ---------------------------------------------- | ------ | ------- |
 | `exzellenzuniversitaeten-2027.txt` | Universities of Excellence and alliances, 2027–2033 | 14 places (2 composite: Rhein-Main-Universitäten, Ruhr Innovation Lab) | digital (string gap 3.24 mm, 0.37 mm with one place per city) |
+| `exzellenzuniversitaeten-2027-brett.txt` | board variant: Bonn/Köln also combined | 13 places (3 composite) | board (string gap 10.15 mm) |
 | `exzellenzcluster-2026.txt`        | Clusters of Excellence, 2026–2032 (70 clusters) | 37 cities | digital (string gap 2.1 mm) |
 | `exzellenzcluster-2026-verbuende.txt` | Clusters of Excellence, neighbouring sites combined | 32 places (4 composite) | digital (string gap 1.14 mm; no nails closer than 25 mm) |
 
@@ -57,6 +58,7 @@ file header).
 | list                       | puzzle                      | places          | purpose |
 | -------------------------- | --------------------------- | --------------- | ------- |
 | `landeshauptstaedte.txt`   | Landeshauptstädte (fixed)   | 16 capitals     | digital (string gap 18.6 mm, but Mainz–Wiesbaden only 10 mm apart on the default board) |
+| `landeshauptstaedte-brett.txt` | Landeshauptstädte (Brett): Mainz/Wiesbaden combined | 15 places (1 composite) | board (string gap 18.6 mm) |
 | `hansestaedte.txt`         | Hansestädte: 25 Orte (pool) | 136 Hanseatic towns (class "Hansestadt") | board (8.9 mm); Lübeck, Stralsund, Wismar pinned |
 | `universitaetsstaedte.txt` | Universitätsstädte: 30 Orte (pool) | 74 towns with a university | board (10.0 mm) |
 
@@ -64,3 +66,13 @@ Notes: "university" means an institution of a subclass of Q3918 whose German nam
 "Universität" (plus RWTH Aachen and KIT), located in (P131) the town; universities of applied
 sciences are not included. The title class "Universitätsstadt" is incomplete in Wikidata
 (45 towns, without Heidelberg or Leipzig) and was not used.
+
+## Board variants (roadmap 7.5)
+
+Found with `npx tsx cli/variants.ts public/puzzles/<id>.tsp.json` (the same analysis as
+"Find a board variant" in the designer): which single removal or combination of two places
+raises the string gap above the 5 mm target with no nails closer than 25 mm. The state capitals
+only needed Mainz and Wiesbaden (10 mm apart) as one place; the 2027 list reaches 10.15 mm with
+Bonn and Köln combined (20.6 mm apart, partners in three clusters). For the clusters no single
+change reaches the target (best 4.35 mm in both lists), so they stay digital; a larger board
+(the gap grows with the scale) would make them boards.

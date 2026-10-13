@@ -344,7 +344,13 @@ export const en = {
   fixedSmallGap: (gap: string, target: string) =>
     `The gap (${gap} mm) is below the board target (${target} mm): on a board the string cannot reliably tell the optimum apart.`,
   fixedMakeDigital: 'Make it a digital puzzle',
-  fixedRemovals: 'Which removal helps most?',
+  fixedChanges: 'What would raise the gap?',
+  fixedBoardVariant: 'Find a board variant',
+  fixedChangesHint: (target: string) =>
+    `Leaving out or combining places (one node between them), checked with the string length; target ${target} mm, * = estimate.`,
+  fixedCombined: (a: string, b: string, gap: string) => `${a} + ${b} combined: gap ${gap} mm`,
+  fixedBoardOk: 'board possible',
+  fixedStillClose: (n: string) => `${n} pairs still too close`,
   fixedSearching: 'Computing…',
   fixedWithout: (name: string, gap: string) => `without ${name}: gap ${gap} mm`,
   fixedLeaveOut: 'Leave out',

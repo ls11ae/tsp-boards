@@ -3,6 +3,7 @@
 //   npx tsx cli/collection.ts add --link '<permalink>' --title 'Deutschland' [--description …]
 //       [--purpose board|digital] [--id de-40] [--lang de]
 //   npx tsx cli/collection.ts search --region DE --n 40 --seed 1 --title … [same options]
+//       [--weights 1,0.5,2] [--min-pop 5000] [--iterations 1000]
 //   npx tsx cli/collection.ts incremental --n 12 --seed 1 --title … [--id …]
 //   npx tsx cli/collection.ts list --file places.txt --title … [--purpose auto|board|digital]
 //       (a fixed instance from a place list; auto: board if the gap allows it, else digital)
@@ -294,6 +295,14 @@ if (command === 'add') {
     iterations: Number(arg('iterations', '1000')),
     minDistanceMm: Number(arg('min-dist', String(DEFAULT_PARAMS.minDistanceMm))),
     targetGapMm: Number(arg('target', String(DEFAULT_PARAMS.targetGapMm))),
+    minPopulation: Number(arg('min-pop', String(DEFAULT_PARAMS.minPopulation))),
+    // --weights gap,difficulty,recognizability (e.g. 1,0.5,2 for well-known cities).
+    ...(() => {
+      const [g, d, r] = arg('weights', '').split(',').map(Number);
+      return g !== undefined && Number.isFinite(g) && Number.isFinite(d) && Number.isFinite(r)
+        ? { weightGap: g, weightDifficulty: d!, weightRecognizability: r! }
+        : {};
+    })(),
   };
   const country = loadCountry(params.region.slice(0, 2));
   const pool = boardPool(country, params.region, params.minPopulation, {

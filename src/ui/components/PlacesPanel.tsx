@@ -2,7 +2,7 @@
 // text, with the matches to check and labels to set.
 
 import { useState, type ReactNode } from 'react';
-import type { RemovalSuggestion } from '../../core/fixed';
+import type { RatedChange } from '../../core/fixed';
 import { closePairs } from '../../core/fixed';
 import type { BoardModel } from '../board';
 import { setPurpose } from '../controller';
@@ -16,9 +16,10 @@ import {
   combinePlaces,
   combinedName,
   startCombining,
+  combinePair,
   removePlace,
   setListMode,
-  suggestRemovals,
+  suggestChanges,
 } from '../lists';
 import type { PuzzleView } from '../puzzle';
 import { useStore, type ListEntry } from '../store';
@@ -327,7 +328,7 @@ export function FixedAnalysis({
   const [state, setState] = useState<
     | { status: 'idle' }
     | { status: 'running' }
-    | { status: 'done'; suggestions: readonly RemovalSuggestion[] }
+    | { status: 'done'; suggestions: readonly RatedChange[] }
     | { status: 'error'; message: string }
   >({ status: 'idle' });
   if (list?.mode !== 'fixed') return null;
@@ -342,6 +343,18 @@ export function FixedAnalysis({
   const gapUm = v?.status === 'done' && v.verification.string ? v.verification.string.gap : null;
   const small = gapUm !== null && purpose === 'board' && gapUm < params.targetGapMm * 1000;
   const mm = (um: number) => fmt.number(um / 1000, 2);
+  const target = params.targetGapMm * 1000;
+  const analyse = () => {
+    setState({ status: 'running' });
+    suggestChanges()
+      .then((suggestions) => setState({ status: 'done', suggestions }))
+      .catch((error: unknown) =>
+        setState({
+          status: 'error',
+          message: error instanceof Error ? error.message : String(error),
+        }),
+      );
+  };
   return (
     <section>
       <h2>{t.fixedTitle}</h2>
@@ -368,47 +381,56 @@ export function FixedAnalysis({
             <button type="button" onClick={() => setPurpose('digital')}>
               {t.fixedMakeDigital}
             </button>
-            <button
-              type="button"
-              disabled={state.status === 'running'}
-              onClick={() => {
-                setState({ status: 'running' });
-                suggestRemovals()
-                  .then((suggestions) => setState({ status: 'done', suggestions }))
-                  .catch((error: unknown) =>
-                    setState({
-                      status: 'error',
-                      message: error instanceof Error ? error.message : String(error),
-                    }),
-                  );
-              }}
-            >
-              {state.status === 'running' ? t.fixedSearching : t.fixedRemovals}
+            <button type="button" disabled={state.status === 'running'} onClick={analyse}>
+              {state.status === 'running' ? t.fixedSearching : t.fixedChanges}
             </button>
           </div>
         </div>
       )}
+      {!small && (purpose === 'digital' || close.length > 0) && (
+        <div className="actions">
+          <button type="button" disabled={state.status === 'running'} onClick={analyse}>
+            {state.status === 'running' ? t.fixedSearching : t.fixedBoardVariant}
+          </button>
+        </div>
+      )}
       {state.status === 'error' && <p className="error">{state.message}</p>}
       {state.status === 'done' && (
-        <ul className="removals">
-          {state.suggestions.map((s) => (
-            <li key={s.point}>
-              <span>
-                {t.fixedWithout(name(s.point), mm(s.gapUm))}
-                {s.exact ? '' : ' *'}
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setState({ status: 'idle' });
-                  removePlace(puzzle.members[s.point]!);
-                }}
-              >
-                {t.fixedLeaveOut}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <>
+          <p className="hint">{t.fixedChangesHint(fmt.number(params.targetGapMm, 1))}</p>
+          <ul className="removals">
+            {state.suggestions.map((s) => {
+              const fits = s.gapUm >= target && s.closePairs === 0;
+              const text =
+                s.kind === 'remove'
+                  ? t.fixedWithout(name(s.point), mm(s.gapUm))
+                  : t.fixedCombined(name(s.a), name(s.b), mm(s.gapUm));
+              return (
+                <li key={s.kind === 'remove' ? `r${s.point}` : `c${s.a}-${s.b}`}>
+                  <span>
+                    {text}
+                    {s.exact ? '' : ' *'}
+                    {fits
+                      ? ` · ${t.fixedBoardOk}`
+                      : s.closePairs > 0
+                        ? ` · ${t.fixedStillClose(fmt.integer(s.closePairs))}`
+                        : ''}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setState({ status: 'idle' });
+                      if (s.kind === 'remove') removePlace(puzzle.members[s.point]!);
+                      else combinePair(puzzle.members[s.a]!, puzzle.members[s.b]!);
+                    }}
+                  >
+                    {s.kind === 'remove' ? t.fixedLeaveOut : t.combineApply}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </>
       )}
     </section>
   );

@@ -654,3 +654,15 @@ Short entries: decision; alternatives considered; reason. Newest last.
   default. The open state is remembered per browser (localStorage, a convenience only); the
   search, link and play buttons stay visible below the groups. Alternatives: tabs (hide the
   board while editing places, which the designer needs side by side).
+- **2026-10-13 Curated content (roadmap 7.5).** "Deutschland: 40 Städte" is rebuilt with towns of
+  at least 50,000 inhabitants and weights 1/0.5/3 (well-known cities): 40 well-known cities,
+  string gap 17.6 mm (was 10.1 mm with Gangkofen, Treuenbrietzen, …); the collection CLI search
+  got `--weights` and `--min-pop`. The fixed-instance analysis now rates removals and
+  combinations of two places (all pairs below the minimum distance and the eight shortest
+  pairs; a combination is the midpoint, as a composite place) with the string model for a board
+  variant, also for digital puzzles, shows which reach the target with no close pairs, and
+  applies one with a click; `cli/variants.ts` runs it for curated files. Board variants:
+  Landeshauptstädte with Mainz/Wiesbaden combined (18.6 mm, 15 places) and the 2027 list with
+  Bonn/Köln combined (10.15 mm, 13 places). The clusters stay digital: no single change reaches
+  5 mm (best 4.35 mm). Alternatives: searching pairs of changes (quadratic in the instance size,
+  and the single changes already show the way), lowering the target for these lists.

@@ -3,7 +3,7 @@
 // by terminating and recreating this worker, and runs plans in a second instance.
 
 import { planBoard } from '../core/board/plan';
-import { removalSuggestions } from '../core/fixed';
+import { changeSuggestions } from '../core/fixed';
 import { Instance } from '../core/instance';
 import { runLpSelfTest } from '../core/lp/selftest';
 import { Rng } from '../core/rng';
@@ -54,15 +54,12 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
       reply({ type: 'rounds', jobId: request.jobId, rounds });
       break;
     }
-    case 'removals': {
-      const suggestions = removalSuggestions(
-        request.points,
-        request.rEffMm,
-        request.model,
-        highs,
-        request.top,
-      );
-      reply({ type: 'removals', jobId: request.jobId, suggestions });
+    case 'changes': {
+      const suggestions = changeSuggestions(request.points, request.rEffMm, request.model, highs, {
+        minDistanceMm: request.minDistanceMm,
+        top: request.top,
+      });
+      reply({ type: 'changes', jobId: request.jobId, suggestions });
       break;
     }
     case 'plan': {

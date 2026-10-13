@@ -2,7 +2,7 @@
 // for ambiguous names, labels, merging, and the fixed-instance analysis.
 
 import { citiesFromColumns, type City, type CountryFile } from '../core/data';
-import type { RemovalSuggestion } from '../core/fixed';
+import type { RatedChange } from '../core/fixed';
 import { rEffMm } from '../core/params';
 import {
   compositePlace,
@@ -320,6 +320,12 @@ export function toggleCombine(index: number): void {
   });
 }
 
+/** Combines two places of the list (pool indices) into one, named by their labels. */
+export function combinePair(a: number, b: number): void {
+  useStore.setState({ combining: [a, b] });
+  combinePlaces('', null);
+}
+
 /** Default name of a composite: the members' labels joined by "/". */
 export function combinedName(cities: readonly City[]): string {
   return cities.map((c) => c.label).join('/');
@@ -381,9 +387,12 @@ export function removePlace(index: number): void {
 let worker: Worker | null = null;
 let job = 0;
 
-/** Which single removal raises the gap most (exact for the best three). */
-export function suggestRemovals(): Promise<readonly RemovalSuggestion[]> {
-  const { country, params, list, doc } = useStore.getState();
+/**
+ * Which removal or combination raises the string gap most, for a board variant (exact for the
+ * best four).
+ */
+export function suggestChanges(): Promise<readonly RatedChange[]> {
+  const { country, params, list } = useStore.getState();
   if (!country || !list) return Promise.resolve([]);
   const board = getBoard(country, params, list.places);
   worker?.terminate();
@@ -395,17 +404,18 @@ export function suggestRemovals(): Promise<readonly RemovalSuggestion[]> {
   return new Promise((resolve, reject) => {
     w.onmessage = (event: MessageEvent<ExactWorkerResponse>) => {
       const m = event.data;
-      if (m.type === 'removals' && m.jobId === id) resolve(m.suggestions);
+      if (m.type === 'changes' && m.jobId === id) resolve(m.suggestions);
       else if (m.type === 'error' && m.jobId === id) reject(new Error(m.message));
     };
     w.onerror = (event) => reject(new Error(event.message));
     const request: ExactWorkerRequest = {
-      type: 'removals',
+      type: 'changes',
       jobId: id,
       points: board.points,
       rEffMm: rEffMm(params),
-      model: doc.purpose === 'digital' ? 'euclidean' : 'string',
-      top: 3,
+      model: 'string',
+      minDistanceMm: params.minDistanceMm,
+      top: 4,
     };
     w.postMessage(request);
   });
