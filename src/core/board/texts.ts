@@ -112,3 +112,53 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
     worksheetSecond: (km) => `The second-shortest round trip is ${km} km longer.`,
   },
 };
+
+/** Texts of a poster (roadmap 9.7), in the poster's language. */
+export interface PosterTexts {
+  /** Caption under the length: what the length is. */
+  readonly lengthCaption: (n: string) => string;
+  readonly places: string;
+  readonly tours: string;
+  readonly second: string;
+  /** How the round trip was found and proven shortest. */
+  readonly proof: string;
+  /** Composite places as one stop at the centre of their members. */
+  readonly centroid: string;
+  /** Legend line of a group: the members of an alliance as separate stops. */
+  readonly groupLegend: string;
+  /** Legend line for marked places if the puzzle brings none. */
+  readonly markedLegend: string;
+  readonly chair: string;
+  readonly attribution: string;
+}
+
+export const POSTER_TEXTS: Record<LabelLanguage, PosterTexts> = {
+  de: {
+    lengthCaption: (n) => `ist die kürzeste Rundreise durch alle ${n} Orte (Luftlinie).`,
+    places: 'Orte',
+    tours: 'mögliche Rundreisen',
+    second: 'länger ist die zweitkürzeste Rundreise',
+    proof:
+      'Die Rundreise wurde mit ganzzahliger linearer Optimierung (Löser HiGHS) berechnet und als kürzeste bewiesen: Keine andere Rundreise durch diese Orte ist kürzer.',
+    centroid:
+      'Ein Verbund mit Universitäten in mehreren Städten ist ein Halt in der Mitte seiner Standorte; bis dorthin wird gemessen.',
+    groupLegend: 'Verbund: jeder Standort ist ein eigener Halt',
+    markedLegend: 'markierter Ort',
+    chair: 'Lehrstuhl 11 Algorithm Engineering, TU Dortmund',
+    attribution: 'Städte: GeoNames (CC BY 4.0) · Grenzen: Natural Earth · TSP Boards',
+  },
+  en: {
+    lengthCaption: (n) => `is the shortest round trip through all ${n} places (as the crow flies).`,
+    places: 'places',
+    tours: 'possible round trips',
+    second: 'longer is the second-shortest round trip',
+    proof:
+      'The round trip was computed with integer linear optimisation (solver HiGHS) and proven shortest: no other round trip through these places is shorter.',
+    centroid:
+      'An alliance with universities in several cities is one stop at the centre of its sites; lengths are measured to there.',
+    groupLegend: 'alliance: every site is a stop of its own',
+    markedLegend: 'marked place',
+    chair: 'Chair 11 Algorithm Engineering, TU Dortmund',
+    attribution: 'Cities: GeoNames (CC BY 4.0) · Borders: Natural Earth · TSP Boards',
+  },
+};
