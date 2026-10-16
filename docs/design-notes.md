@@ -833,3 +833,13 @@ Short entries: decision; alternatives considered; reason. Newest last.
   the solution and the flown legs are drawn). World data version 3: German "Sues" → "Suez" by
   override (also in "In 80 Tagen um die Welt"). On narrow screens the globe's zoom buttons sit
   at the bottom so they do not cover the northern places.
+- **2026-10-16 No clip edges on the screen (roadmap 9.6).** The data build clips Europe at
+  45° E and the neighbouring countries to a box; the app drew those edges as borders (a straight
+  diagonal through Russia, also in the gallery thumbnails). The screen now draws, like the board
+  export since 9.1, the borders as topojson meshes without the segments along the layer's
+  bounding box in longitude and latitude (`withoutBoxEdges`, moved to `core/region.ts`): the
+  country or continent outline, the borders between states, the neighbours' borders and coasts,
+  and the selected region's outline; the neighbours' areas are filled without a stroke. Only
+  their fill still ends at the box, in the corner of the Europe board, where it reads as the
+  edge of the map. Alternative: cut Europe along the Ural in the data build (a new boundary
+  to source and maintain for one edge that nobody needs to see).

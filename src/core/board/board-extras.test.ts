@@ -16,7 +16,7 @@ import { iteratedLocalSearch } from '../tsp/ils';
 import { verifyCandidate } from '../verify';
 import { layoutLegend, wrapText } from './legend';
 import { parsePathData, parseSvgLogo, parseTransform, placeLogo } from './logo';
-import { withoutBoxEdges } from './map-lines';
+import { withoutBoxEdges } from '../region';
 import {
   calibrationTour,
   checkMeasurement,

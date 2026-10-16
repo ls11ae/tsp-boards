@@ -29,13 +29,13 @@ function solved(id: string): boolean {
   return best !== undefined && best.excess === 0 && !best.revealed;
 }
 
-/** The board without a tour: region outline and places. */
 /** A collection entry's thumbnail (also on the kiosk's cards). */
 export function EntryThumbnail({ entry }: { readonly entry: CollectionEntry }) {
   const card = useMemo(() => fromEntry(entry), [entry]);
   return <CardThumbnail card={card} />;
 }
 
+/** The board without a tour: region outline and places. */
 function CardThumbnail({ card }: { readonly card: Card }) {
   const [thumb, setThumb] = useState<Thumbnail | null>(null);
   useEffect(() => {

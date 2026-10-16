@@ -429,6 +429,7 @@ Do these first; the board items are the critical path (lasering and a test board
 - Europe: the cut at 45° E is drawn as a straight diagonal line through Russia (also in the
   thumbnails) and looks like a border. Cut along the Ural or do not draw the clip edge. (Done
   for the board export in 9.1; still drawn in the app's play view, designer and thumbnails.)
+  (done: not drawn on the screen either)
 - "Welt: 30 Metropolen" is Asia-heavy (Chongqing, Tianjin, Shenzhen, …), with only three
   cities in the Americas and without Paris, Los Angeles, São Paulo or Buenos Aires. For the
   world, measure recognisability by prominence (alternate names or Wikipedia), not

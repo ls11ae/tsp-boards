@@ -13,6 +13,8 @@ import {
   citySphere,
   cityPool,
   mapLayers,
+  mapLines,
+  outlineLines,
   projectionKind,
   regionFrame,
   regionOutline,
@@ -27,8 +29,13 @@ export interface BoardModel {
   /** GeoNames id -> pool index. */
   readonly index: ReadonlyMap<number, number>;
   readonly paths: {
+    /** Neighbouring countries as areas (filled, without a stroke: see `neighborLines`). */
     readonly neighbors: string;
+    /** Their borders and coasts, without the edges of the data's clip box (roadmap 9.6). */
+    readonly neighborLines: string;
+    /** Borders between the states. */
     readonly states: string;
+    /** Outline of the country (or the continents), without the clip box's edges. */
     readonly country: string;
     /** Outline of the selected state (null for the whole country). */
     readonly region: string | null;
@@ -77,6 +84,7 @@ export function getBoard(
     ? listCities(list, townsById(country))
     : cityPool(country, params.region, { minPopulation: params.minPopulation });
   const layers = mapLayers(country);
+  const lines = mapLines(country);
   const model: BoardModel = {
     projection,
     pool,
@@ -84,12 +92,13 @@ export function getBoard(
     sphere: citySphere(country, pool, projection),
     index: new Map(pool.map((c, i) => [c.id, i])),
     paths: params.blankBoard
-      ? { neighbors: '', states: '', country: '', region: null, sphere: null }
+      ? { neighbors: '', neighborLines: '', states: '', country: '', region: null, sphere: null }
       : {
           neighbors: projection.path(layers.neighbors),
-          states: projection.path(layers.states),
-          country: projection.path(layers.country),
-          region: params.region === country.country ? null : projection.path(outline),
+          neighborLines: projection.path(lines.neighbors),
+          states: projection.path(lines.states),
+          country: projection.path(lines.country),
+          region: params.region === country.country ? null : projection.path(outlineLines(outline)),
           sphere: country.metric === 'sphere' ? projection.path({ type: 'Sphere' }) : null,
         },
   };

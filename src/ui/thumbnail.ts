@@ -5,14 +5,21 @@ import type { Point } from '../core/geometry';
 import { listCities } from '../core/places';
 import { boardProjection } from '../core/projection';
 import type { PuzzleDoc } from '../core/puzzle-file';
-import { boardPoints, projectionKind, regionFrame, regionOutline } from '../core/region';
+import {
+  boardPoints,
+  outlineLines,
+  projectionKind,
+  regionFrame,
+  regionOutline,
+} from '../core/region';
 import { townsById } from './board';
 import { fetchCountry } from './controller';
 
 export interface Thumbnail {
   readonly width: number;
   readonly height: number;
-  /** SVG path of the region outline ('' for blank and incremental boards). */
+  /** SVG path of the region outline, without the data's clip edges ('' for blank and
+   * incremental boards). */
   readonly outline: string;
   readonly points: readonly Point[];
 }
@@ -38,7 +45,7 @@ async function build(doc: PuzzleDoc): Promise<Thumbnail | null> {
   return {
     width: params.boardWidthMm,
     height: params.boardHeightMm,
-    outline: params.blankBoard ? '' : projection.path(outline),
+    outline: params.blankBoard ? '' : projection.path(outlineLines(outline)),
     points: boardPoints(cities, projection),
   };
 }

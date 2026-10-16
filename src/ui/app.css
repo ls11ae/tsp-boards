@@ -395,6 +395,10 @@ progress {
 
 .map-neighbors {
   fill: var(--map-neighbors);
+}
+
+.map-neighbor-lines {
+  fill: none;
   stroke: var(--map-line);
   stroke-width: 0.5px;
   vector-effect: non-scaling-stroke;

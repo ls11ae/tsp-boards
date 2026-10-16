@@ -1,7 +1,7 @@
 // Regions (a country, one of its states or a union of states) and the city pool inside them.
 
-import type { Feature, FeatureCollection, Geometry } from 'geojson';
-import { feature, merge } from 'topojson-client';
+import type { Feature, FeatureCollection, Geometry, MultiLineString, Position } from 'geojson';
+import { feature, merge, mesh } from 'topojson-client';
 import type { GeometryCollection, MultiPolygon, Polygon } from 'topojson-specification';
 import { citiesFromColumns, type City, type CountryFile } from './data';
 import type { Point } from './geometry';
@@ -339,6 +339,74 @@ export function regionOutline(file: CountryFile, id: RegionId): Feature<Geometry
     return features.find((f) => f.properties?.id === id)!;
   }
   return { type: 'Feature', properties: { id }, geometry: merge(file.regions, geometries) };
+}
+
+/**
+ * Drops segments along the edges of the layer's bounding box in longitude and latitude: the
+ * data build clips neighbouring countries (and continents) to a box, and its edges are no
+ * borders (a straight line through Sweden or Russia on a tall board).
+ */
+export function withoutBoxEdges(lines: MultiLineString): MultiLineString {
+  let [w, s, e, n] = [Infinity, Infinity, -Infinity, -Infinity];
+  for (const line of lines.coordinates) {
+    for (const [x, y] of line) {
+      w = Math.min(w, x!);
+      e = Math.max(e, x!);
+      s = Math.min(s, y!);
+      n = Math.max(n, y!);
+    }
+  }
+  const eps = 1e-6;
+  const onEdge = (a: Position, b: Position) =>
+    (Math.abs(a[0]! - b[0]!) < eps && (Math.abs(a[0]! - w) < eps || Math.abs(a[0]! - e) < eps)) ||
+    (Math.abs(a[1]! - b[1]!) < eps && (Math.abs(a[1]! - s) < eps || Math.abs(a[1]! - n) < eps));
+  const out: Position[][] = [];
+  for (const line of lines.coordinates) {
+    let current: Position[] = [];
+    for (let i = 1; i < line.length; i++) {
+      if (onEdge(line[i - 1]!, line[i]!)) {
+        if (current.length >= 2) out.push(current);
+        current = [];
+        continue;
+      }
+      if (current.length === 0) current.push(line[i - 1]!);
+      current.push(line[i]!);
+    }
+    if (current.length >= 2) out.push(current);
+  }
+  return { type: 'MultiLineString', coordinates: out };
+}
+
+/**
+ * Border lines of the map layers for the screen, without the edges of the data's clip box: the
+ * country outline (coasts and outer borders), the borders between its states, and the
+ * neighbouring countries. The layers' areas are filled without a stroke.
+ */
+export interface MapLines {
+  readonly country: MultiLineString;
+  readonly states: MultiLineString;
+  readonly neighbors: MultiLineString;
+}
+
+export function mapLines(file: CountryFile): MapLines {
+  const object = (name: 'country' | 'states' | 'neighbors') => {
+    const o = file.regions.objects[name] as GeometryCollection | undefined;
+    if (!o) throw new Error(`country file has no '${name}' layer`);
+    return o;
+  };
+  return {
+    country: withoutBoxEdges(mesh(file.regions, object('country'))),
+    states: withoutBoxEdges(mesh(file.regions, object('states'), (a, b) => a !== b)),
+    neighbors: withoutBoxEdges(mesh(file.regions, object('neighbors'))),
+  };
+}
+
+/** The rings of an area as lines, without the edges of the data's clip box. */
+export function outlineLines(area: Feature<Geometry>): MultiLineString {
+  const g = area.geometry;
+  const rings: Position[][] =
+    g.type === 'Polygon' ? g.coordinates : g.type === 'MultiPolygon' ? g.coordinates.flat() : [];
+  return withoutBoxEdges({ type: 'MultiLineString', coordinates: rings });
 }
 
 export interface MapLayers {

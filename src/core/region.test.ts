@@ -6,6 +6,8 @@ import { boardProjection } from './projection';
 import {
   REGION_ID_PATTERN,
   cityPool,
+  mapLines,
+  outlineLines,
   regionInfo,
   regionOutline,
   regionStates,
@@ -96,5 +98,24 @@ describe('regions of other countries', () => {
     expect(nl.states.map((s) => s.id)).not.toContain('NL-BQ1');
     const projection = boardProjection(regionOutline(nl, 'NL'), board);
     expect(projection.mmPerKm).toBeGreaterThan(1.5);
+  });
+
+  it('draws Europe without the cut at 45° E (roadmap 9.6)', () => {
+    const eu = load('eu');
+    // The data clips Russia at 45° E (quantised: 45.00025°).
+    const at45 = (x: number) => Math.abs(x - 45) < 1e-3;
+    const onCut = (lines: { coordinates: number[][][] }) =>
+      lines.coordinates.some((line) =>
+        line.some((p, i) => i > 0 && at45(p[0]!) && at45(line[i - 1]![0]!)),
+      );
+    const outline = regionOutline(eu, 'EU');
+    const rings =
+      outline.geometry.type === 'MultiPolygon' ? outline.geometry.coordinates.flat() : [];
+    expect(onCut({ coordinates: rings })).toBe(true);
+    expect(onCut(outlineLines(outline))).toBe(false);
+    const lines = mapLines(eu);
+    expect(onCut(lines.country)).toBe(false);
+    expect(onCut(lines.states)).toBe(false);
+    expect(lines.states.coordinates.length).toBeGreaterThan(40);
   });
 });

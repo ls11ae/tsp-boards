@@ -38,6 +38,7 @@ export const MapLayers = memo(function MapLayers({ board }: { readonly board: Bo
       <rect className="board-bg" width={widthMm} height={heightMm} />
       {board.paths.sphere && <path className="map-sphere" d={board.paths.sphere} />}
       <path className="map-neighbors" d={board.paths.neighbors} />
+      <path className="map-neighbor-lines" d={board.paths.neighborLines} />
       <path className="map-states" d={board.paths.states} />
       <path className="map-country" d={board.paths.country} />
       {board.paths.region && <path className="map-region" d={board.paths.region} />}
