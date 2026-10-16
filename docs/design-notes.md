@@ -855,8 +855,8 @@ Short entries: decision; alternatives considered; reason. Newest last.
   proposals and recognisability, which is a log scale between the pool's extremes, so it grows
   linearly with the number of editions (a log scale of fame itself gave Bamako 0.88 next to
   Paris). GeoNames' alternate-name count was tried first and is too noisy (Mogadishu above
-  Paris, Cairo far down). Rebuilt "Welt: 30 Metropolen" with the same search settings: Paris,
-  London's place taken by Paris (8 mm apart on the map), Tokyo, Los Angeles, Rome, Madrid, Rio,
+  Paris, Cairo far down). Rebuilt "Welt: 30 Metropolen" with the same search settings: Paris
+  (London stays out, 8 mm from Paris on the map), Tokyo, Los Angeles, Rome, Madrid, Rio,
   Sydney and Singapore are in; Asia 11, Europe 7, North America 4, Africa 4, South America 2,
   Oceania 2, so no minimum per continent is needed; gap 248 km (0.34 %), the flat-map optimum
   3,164 km longer on the sphere. World data version 4 (the towns are unchanged; the GeoNames
