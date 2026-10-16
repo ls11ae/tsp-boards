@@ -1,6 +1,7 @@
 // Choice of the comparison tour on the board (runner-up or a simple strategy) and what it
 // costs compared with the optimum.
 
+import { useId } from 'react';
 import type { BoardModel } from '../board';
 import { useFormat, useT } from '../i18n';
 import { useOverlay } from '../overlay';
@@ -15,6 +16,7 @@ export function OverlayPicker({
   readonly puzzle: PuzzleView;
 }) {
   const t = useT();
+  const id = useId();
   const fmt = useFormat();
   const kind = useStore((s) => s.overlay);
   const setOverlay = useStore((s) => s.setOverlay);
@@ -45,9 +47,14 @@ export function OverlayPicker({
   }
   return (
     <div className="overlay-picker">
-      <label className="field">
+      <label className="field" htmlFor={id}>
         <span>{t.overlay}</span>
-        <select value={kind} onChange={(e) => setOverlay(e.target.value as OverlayChoice)}>
+        <select
+          id={id}
+          name="overlay"
+          value={kind}
+          onChange={(e) => setOverlay(e.target.value as OverlayChoice)}
+        >
           {options.map(([value, label]) => (
             <option
               key={value}

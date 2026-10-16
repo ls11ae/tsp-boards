@@ -219,7 +219,11 @@ export function playNewGame(): void {
 }
 
 export function playReveal(puzzle: PuzzleView): void {
-  updateGame((p) => ({ ...p, revealed: true }));
+  updateGame((p) => ({
+    ...p,
+    revealed: true,
+    revealedMs: p.revealedMs ?? (p.startedAt === null ? 0 : Date.now() - p.startedAt),
+  }));
   recordGameScore(currentMeasure());
   sendRecord(puzzle);
 }

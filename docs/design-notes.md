@@ -757,3 +757,11 @@ Short entries: decision; alternatives considered; reason. Newest last.
   holes 0.6 mm below to the nail diameter and `--hole` for a press fit, and a report with
   robustness, tour and runner-up. Lists say "Orte" in the subtitle. The collection index is
   ordered by theme, Excellence first.
+- **2026-10-16 Open-day fixes (roadmap 9.2).** Every view change scrolls to the top (the
+  board's position differs too much between views to keep the scroll position). The clock stops
+  when the solution is shown (`revealedMs`, older stored games default to null), and a solved
+  puzzle no longer offers "Lösung zeigen". Play titles say "Orte" for place lists (alliances and
+  points are no towns) and keep "Städte" for the region's towns; counts of one use the singular;
+  the teaching hint names straight-line distances for digital puzzles; scores always carry their
+  unit ("0 mm", "+0,12 %"); the header tagline drops nails and string while a digital puzzle is
+  played. The overlay select has an explicit id and label; a favicon (nails and a string).

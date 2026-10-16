@@ -97,7 +97,9 @@ export function TeachingPanel({
   return (
     <section>
       <h2>{t.teaching}</h2>
-      <p className="hint">{board.sphere ? t.teachingHintSphere : t.teachingHint}</p>
+      <p className="hint">
+        {board.sphere ? t.teachingHintSphere : digital ? t.teachingHintDigital : t.teachingHint}
+      </p>
       <label className="field">
         <span>{t.teachStrategy}</span>
         <select value={kind} onChange={(e) => setKind(e.target.value as TeachingKind)}>

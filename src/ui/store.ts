@@ -164,6 +164,8 @@ export interface PlayUi {
   readonly judged: string | null;
   readonly solvedMs: number | null;
   readonly revealed: boolean;
+  /** Time when the solution was shown (the clock stops there). */
+  readonly revealedMs: number | null;
   /** The record of this game was sent (with consent). */
   readonly sent: boolean;
   /** Best judged round trip so far (excess in the puzzle's measure, path in slots). */
@@ -181,6 +183,7 @@ export const NEW_GAME: PlayUi = {
   judged: null,
   solvedMs: null,
   revealed: false,
+  revealedMs: null,
   sent: false,
   best: null,
   scored: false,

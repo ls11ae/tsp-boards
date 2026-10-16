@@ -21,6 +21,10 @@ function Header() {
   const page = useStore((s) => s.page);
   const puzzleType = useStore((s) => s.puzzleType);
   const setPuzzleType = useStore((s) => s.setPuzzleType);
+  // A digital puzzle in play has no nails or string.
+  const digitalPlay = useStore(
+    (s) => s.page === 'app' && s.mode === 'play' && s.doc.purpose === 'digital',
+  );
   const types: [PuzzleType, string][] = [
     ['map', t.mapPuzzle],
     ['incremental', t.incrementalPuzzle],
@@ -29,7 +33,7 @@ function Header() {
     <header className="header">
       <div>
         <h1>{t.appTitle}</h1>
-        <p className="tagline">{t.appTagline}</p>
+        <p className="tagline">{digitalPlay ? t.appTaglineDigital : t.appTagline}</p>
       </div>
       <div className="lang" role="group" aria-label={t.puzzleType}>
         <button
@@ -118,6 +122,11 @@ export function App() {
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+  // Every view starts at its top (on a phone, "Spielen" in the gallery otherwise lands below
+  // the board).
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page, mode, puzzleType]);
 
   if (page === 'gallery') {
     return (

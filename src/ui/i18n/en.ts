@@ -4,6 +4,7 @@
 export const en = {
   appTitle: 'TSP Boards',
   appTagline: 'Puzzle boards: find the shortest round trip with nails and a string',
+  appTaglineDigital: 'Puzzles on screen: find the shortest round trip',
   language: 'Language',
 
   // Parameters
@@ -46,7 +47,7 @@ export const en = {
   weightNonNearest: 'Edges not to a nearest neighbour (thesis D)',
   start: 'Start search',
   stop: 'Stop',
-  poolSize: (count: string) => `${count} candidate cities`,
+  poolSize: (count: string) => (count === '1' ? '1 candidate city' : `${count} candidate cities`),
 
   // Search progress
   search: 'Search',
@@ -107,7 +108,7 @@ export const en = {
   zoomIn: 'Zoom in',
   zoomOut: 'Zoom out',
   zoomFit: 'Show all places',
-  zoomForNames: (n: number) => `${n} names hidden: zoom in to see them`,
+  zoomForNames: (n: number) => `${n} ${n === 1 ? 'name' : 'names'} hidden: zoom in to see them`,
   combineStart: 'Combine places',
   combineHint:
     'Click the places that become one node (e.g. the towns of an alliance); it lies between them.',
@@ -143,6 +144,8 @@ export const en = {
     'How do simple strategies build a round trip, and how does the exact solver prove the optimum? Step by step on this puzzle (distances on the sphere).',
   playHintWorld:
     'Connections follow great circles, the shortest paths on the sphere: on the map they are curved, often pass close to a pole, and a leg across the Pacific leaves the map at one edge and comes back in at the other.',
+  teachingHintDigital:
+    'How do simple strategies build a round trip, and how does the exact solver prove the optimum? Step by step on this puzzle (straight-line distances between the places).',
   teachingHint:
     'How do simple strategies build a round trip, and how does the exact solver prove the optimum? Step by step on this puzzle (distances between nail centres).',
   teachStrategy: 'Strategy',
@@ -189,7 +192,10 @@ export const en = {
     'The shortest round trip when distances are measured with a ruler on the flat world map. Here it is measured on the sphere: on the Earth it is longer than the optimum.',
   overlayNeedsCheck: 'Available once the exact check has finished.',
   overlaySame: 'Same tour as the optimum.',
-  overlayDiff: (edges: string, longer: string) => `${edges} edges differ; ${longer} longer.`,
+  overlayDiff: (edges: string, longer: string) =>
+    edges === '1'
+      ? `1 edge differs; ${longer} longer.`
+      : `${edges} edges differ; ${longer} longer.`,
   overlayAdded: 'its own edges',
   overlayRemoved: 'optimal edges it leaves out',
   verification: 'Verification',
@@ -223,7 +229,8 @@ export const en = {
   startNail: 'Start nail',
   measuredGap: 'Gap at the scale',
   lowerBound: (value: string) => `≥ ${value} mm (bound)`,
-  warnLabels: (count: string) => `${count} labels do not fit.`,
+  warnLabels: (count: string) =>
+    count === '1' ? '1 label does not fit.' : `${count} labels do not fit.`,
   warnTitle: 'There is no room for the title.',
   warnGap: (value: string) => `The gap at the scale (${value} mm) is below the target.`,
   logos: 'Logos for the board',
@@ -233,7 +240,8 @@ export const en = {
   logoFile: 'SVG file',
   logoLegend: 'Logo in the legend',
   logoRemove: 'Remove',
-  warnLegend: (n: string) => `${n} nails lie in the legend box.`,
+  warnLegend: (n: string) =>
+    n === '1' ? '1 nail lies in the legend box.' : `${n} nails lie in the legend box.`,
   warnStart:
     'The preferred start nail has no room for the scale or too small a gap; the scale is at another nail.',
   warnOptimum:
@@ -252,7 +260,8 @@ export const en = {
     'SVG colours: red = cut, blue = score, green = outline (more power), black = engrave. Text is converted to outlines. The solution sheet explains how to calibrate the string.',
 
   // Play mode
-  playTitle: (n: string) => `Find the shortest round trip through ${n} cities`,
+  playTitle: (n: string, places: boolean) =>
+    `Find the shortest round trip through ${n} ${places ? (n === '1' ? 'place' : 'places') : 'cities'}`,
   playHint:
     'Click the nails in the order of your round trip and click the first nail again to close it. Click a visited nail to go back to it. The string wraps around the nails, so sharp turns cost a little extra string.',
   playVisited: 'Nails visited',
@@ -348,7 +357,7 @@ export const en = {
   untitled: 'Untitled puzzle',
   remove: 'Delete',
   removeConfirm: 'Really delete?',
-  placesCount: (n: string) => `${n} places`,
+  placesCount: (n: string) => (n === '1' ? '1 place' : `${n} places`),
 
   // Place lists and fixed instances
   places: 'Places',
@@ -372,7 +381,9 @@ export const en = {
   fixedTitle: 'Fixed instance',
   fixedHint: (n: string) => `${n} places, no search: the puzzle is exactly this list.`,
   fixedClose: (count: string, min: string) =>
-    `${count} pairs are closer than the minimum distance (${min} mm):`,
+    count === '1'
+      ? `1 pair is closer than the minimum distance (${min} mm):`
+      : `${count} pairs are closer than the minimum distance (${min} mm):`,
   fixedOutside: (names: string) =>
     `Outside the board: ${names}. Choose a larger region or another list.`,
   fixedSmallGap: (gap: string, target: string) =>
@@ -384,7 +395,8 @@ export const en = {
     `Leaving out or combining places (one node between them), checked with the string length; target ${target} mm, * = estimate.`,
   fixedCombined: (a: string, b: string, gap: string) => `${a} + ${b} combined: gap ${gap} mm`,
   fixedBoardOk: 'board possible',
-  fixedStillClose: (n: string) => `${n} pairs still too close`,
+  fixedStillClose: (n: string) =>
+    n === '1' ? '1 pair still too close' : `${n} pairs still too close`,
   fixedSearching: 'Computing…',
   fixedWithout: (name: string, gap: string) => `without ${name}: gap ${gap} mm`,
   fixedLeaveOut: 'Leave out',

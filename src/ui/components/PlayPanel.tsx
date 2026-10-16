@@ -94,6 +94,7 @@ export function PlayPanel({
   const playId = useStore((s) => s.playId);
   const params = useStore((s) => s.params);
   const purpose = useStore((s) => s.doc.purpose);
+  const list = useStore((s) => s.list);
   const [confirmReveal, setConfirmReveal] = useState(false);
   const v = puzzle?.verification;
   const optimum = v?.status === 'done' ? v.verification.string : null;
@@ -123,6 +124,8 @@ export function PlayPanel({
   const length = play.state.closed ? stringLength(inst, path) : pathLength(inst, path);
   const mm = (um: number, d = 1) => fmt.number(um / 1000, d);
   const digital = purpose === 'digital';
+  // A place list may hold alliances and points: "Orte", not "Städte".
+  const places = list !== null;
   const km = (um: number, d = 1) => fmt.number(um / 1000 / board.projection.mmPerKm, d);
   const longer = (excessUm: number) =>
     digital && optimum
@@ -134,7 +137,7 @@ export function PlayPanel({
   return (
     <aside className="panel side">
       <section>
-        <h2>{t.playTitle(fmt.integer(n))}</h2>
+        <h2>{t.playTitle(fmt.integer(n), places)}</h2>
         <p className="hint">{digital ? t.playHintDigital : t.playHint}</p>
         <PlaceLegend board={board} members={puzzle.members} />
         {board.sphere && <p className="hint">{t.playHintWorld}</p>}
@@ -147,7 +150,7 @@ export function PlayPanel({
           <dd>{digital ? `${km(length, 0)} km` : `${mm(length)} mm`}</dd>
           <dt>{t.playTime}</dt>
           <dd>
-            <Timer startedAt={play.startedAt} stoppedMs={play.solvedMs} />
+            <Timer startedAt={play.startedAt} stoppedMs={play.solvedMs ?? play.revealedMs} />
           </dd>
           <dt>{t.playAttempts}</dt>
           <dd>{fmt.integer(play.attempts.length)}</dd>
@@ -189,7 +192,9 @@ export function PlayPanel({
           <button type="button" onClick={playRestart} disabled={path.length === 0}>
             {t.playRestart}
           </button>
+          {/* After an optimal round trip there is nothing left to show. */}
           {!play.revealed &&
+            play.solvedMs === null &&
             (confirmReveal ? (
               <button
                 type="button"

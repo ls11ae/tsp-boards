@@ -310,7 +310,7 @@ must fit the bed in one piece: **300 × 600 mm, portrait**.
 - Also add the digital puzzle "Exzellenzstrategie: alle 34 Standorte" (fixed list) to the
   collection, and put the Excellence puzzles first in the gallery (see 9.5).
 
-### 9.2 Fixes needed for the open day
+### 9.2 Fixes needed for the open day — done 2026-10-16
 
 - Switching views keeps the scroll position (no scroll to the top): on a phone or tablet,
   "Spielen" in the gallery lands below the board. Scroll to the top (or to the board) on every

@@ -3,6 +3,7 @@ import type { Messages } from './en';
 export const de: Messages = {
   appTitle: 'TSP Boards',
   appTagline: 'Puzzle-Bretter: die kürzeste Rundreise mit Nägeln und Faden finden',
+  appTaglineDigital: 'Rätsel am Bildschirm: die kürzeste Rundreise finden',
   language: 'Sprache',
 
   parameters: 'Parameter',
@@ -44,7 +45,7 @@ export const de: Messages = {
   weightNonNearest: 'Kanten nicht zum nächsten Nachbarn (Arbeit D)',
   start: 'Suche starten',
   stop: 'Anhalten',
-  poolSize: (count) => `${count} mögliche Städte`,
+  poolSize: (count) => (count === '1' ? '1 mögliche Stadt' : `${count} mögliche Städte`),
 
   search: 'Suche',
   advanced: 'Erweitert: Gewichte, Seed, Iterationen',
@@ -95,14 +96,14 @@ export const de: Messages = {
   nearestNeighbor: 'Nächster Nachbar (bester Start)',
   greedyEdge: 'Kürzeste Kanten zuerst',
   hullInsertion: 'Konvexe Hülle + Einfügen',
-  pairInsertion: 'Entferntestes Paar + Einfügen',
+  pairInsertion: 'Am weitesten entferntes Paar + Einfügen',
   excess: (value) => `+${value} %`,
   interiorFraction: 'Punkte im Innern der Hülle (C)',
   nonNearestEdges: 'Kanten nicht zum nächsten Nachbarn (D)',
   zoomIn: 'Vergrößern',
   zoomOut: 'Verkleinern',
   zoomFit: 'Alle Orte zeigen',
-  zoomForNames: (n) => `${n} Namen ausgeblendet: zum Lesen vergrößern`,
+  zoomForNames: (n) => `${n} ${n === 1 ? 'Name' : 'Namen'} ausgeblendet: zum Lesen vergrößern`,
   combineStart: 'Orte zusammenfassen',
   combineHint:
     'Klicke die Orte an, die ein Knoten werden sollen (z. B. die Städte eines Verbunds); er liegt zwischen ihnen.',
@@ -138,6 +139,8 @@ export const de: Messages = {
     'Wie bauen einfache Strategien eine Rundreise, und wie beweist der exakte Löser das Optimum? Schritt für Schritt an diesem Puzzle (Entfernungen auf der Kugel).',
   playHintWorld:
     'Die Verbindungen folgen Großkreisen, den kürzesten Wegen auf der Kugel: Auf der Karte sind sie gebogen, führen oft nah an einen Pol, und wer den Pazifik überquert, verlässt die Karte am Rand und kommt auf der anderen Seite wieder herein.',
+  teachingHintDigital:
+    'Wie bauen einfache Strategien eine Rundreise, und wie beweist der exakte Löser das Optimum? Schritt für Schritt an diesem Puzzle (Luftlinie zwischen den Orten).',
   teachingHint:
     'Wie bauen einfache Strategien eine Rundreise, und wie beweist der exakte Löser das Optimum? Schritt für Schritt an diesem Puzzle (Abstände zwischen den Nagelmitten).',
   teachStrategy: 'Strategie',
@@ -184,7 +187,8 @@ export const de: Messages = {
     'Die kürzeste Rundreise, wenn man auf der flachen Weltkarte mit dem Lineal misst. Gemessen wird sie hier auf der Kugel: Auf der Erde ist sie länger als das Optimum.',
   overlayNeedsCheck: 'Verfügbar, sobald die exakte Prüfung fertig ist.',
   overlaySame: 'Gleiche Tour wie das Optimum.',
-  overlayDiff: (edges, longer) => `${edges} Kanten anders; ${longer} länger.`,
+  overlayDiff: (edges, longer) =>
+    `${edges} ${edges === '1' ? 'Kante' : 'Kanten'} anders; ${longer} länger.`,
   overlayAdded: 'eigene Kanten',
   overlayRemoved: 'ausgelassene Kanten des Optimums',
   verification: 'Prüfung',
@@ -218,7 +222,8 @@ export const de: Messages = {
   startNail: 'Startnagel',
   measuredGap: 'Lücke an der Skala',
   lowerBound: (value) => `≥ ${value} mm (Schranke)`,
-  warnLabels: (count) => `${count} Beschriftungen passen nicht.`,
+  warnLabels: (count) =>
+    count === '1' ? '1 Beschriftung passt nicht.' : `${count} Beschriftungen passen nicht.`,
   warnTitle: 'Für den Titel ist kein Platz.',
   warnGap: (value) => `Die Lücke an der Skala (${value} mm) liegt unter dem Ziel.`,
   logos: 'Logos für das Brett',
@@ -228,7 +233,8 @@ export const de: Messages = {
   logoFile: 'SVG-Datei',
   logoLegend: 'Logo in der Legende',
   logoRemove: 'Entfernen',
-  warnLegend: (n) => `${n} Nägel liegen im Kasten der Legende.`,
+  warnLegend: (n) =>
+    n === '1' ? '1 Nagel liegt im Kasten der Legende.' : `${n} Nägel liegen im Kasten der Legende.`,
   warnStart:
     'Der gewünschte Startnagel hat keinen Platz für die Skala oder eine zu kleine Lücke; die Skala sitzt an einem anderen Nagel.',
   warnOptimum:
@@ -247,7 +253,8 @@ export const de: Messages = {
   exportHint:
     'SVG-Farben: Rot = schneiden, Blau = ritzen, Grün = Umriss (mehr Leistung), Schwarz = gravieren. Texte sind in Pfade umgewandelt. Das Lösungsblatt erklärt, wie der Faden kalibriert wird.',
 
-  playTitle: (n) => `Finde die kürzeste Rundreise durch ${n} Städte`,
+  playTitle: (n, places) =>
+    `Finde die kürzeste Rundreise durch ${n} ${places ? (n === '1' ? 'Ort' : 'Orte') : 'Städte'}`,
   playHint:
     'Klicke die Nägel in der Reihenfolge deiner Rundreise an und zum Schluss wieder den ersten Nagel. Ein Klick auf einen besuchten Nagel geht zu ihm zurück. Der Faden legt sich um die Nägel, scharfe Kurven kosten also etwas mehr Faden.',
   playVisited: 'Besuchte Nägel',
@@ -342,7 +349,7 @@ export const de: Messages = {
   untitled: 'Puzzle ohne Titel',
   remove: 'Löschen',
   removeConfirm: 'Wirklich löschen?',
-  placesCount: (n) => `${n} Orte`,
+  placesCount: (n) => (n === '1' ? '1 Ort' : `${n} Orte`),
 
   places: 'Orte',
   placesSource: 'Verwenden',
@@ -364,7 +371,10 @@ export const de: Messages = {
   listLabel: 'Beschriftung',
   fixedTitle: 'Feste Instanz',
   fixedHint: (n) => `${n} Orte, keine Suche: Das Puzzle ist genau diese Liste.`,
-  fixedClose: (count, min) => `${count} Paare liegen näher als der Mindestabstand (${min} mm):`,
+  fixedClose: (count, min) =>
+    count === '1'
+      ? `1 Paar liegt näher als der Mindestabstand (${min} mm):`
+      : `${count} Paare liegen näher als der Mindestabstand (${min} mm):`,
   fixedOutside: (names) =>
     `Außerhalb des Bretts: ${names}. Eine größere Region oder eine andere Liste wählen.`,
   fixedSmallGap: (gap, target) =>
@@ -376,7 +386,7 @@ export const de: Messages = {
     `Orte weglassen oder zusammenfassen (ein Knoten zwischen ihnen), geprüft mit der Fadenlänge; Ziel ${target} mm, * = Schätzung.`,
   fixedCombined: (a, b, gap) => `${a} + ${b} zusammengefasst: Lücke ${gap} mm`,
   fixedBoardOk: 'Brett möglich',
-  fixedStillClose: (n) => `noch ${n} zu enge Paare`,
+  fixedStillClose: (n) => (n === '1' ? 'noch 1 zu enges Paar' : `noch ${n} zu enge Paare`),
   fixedSearching: 'Wird berechnet …',
   fixedWithout: (name, gap) => `ohne ${name}: Lücke ${gap} mm`,
   fixedLeaveOut: 'Weglassen',
