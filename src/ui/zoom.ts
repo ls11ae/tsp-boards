@@ -9,7 +9,9 @@ import {
   placeLabels,
   SEARCH_NODE_LIMIT,
   DEFAULT_LABELS,
+  type Box,
   type LabelOptions,
+  type Obstacle,
 } from '../core/board/labels';
 import { svgPathData } from '../core/board/shapes';
 import { measureText, textPath } from '../core/board/text';
@@ -198,17 +200,25 @@ export function labelSizeMm(mm: (px: number) => number): number {
   return Math.pow(1.08, Math.round(Math.log(mm(LABEL_PX)) / Math.log(1.08)));
 }
 
+/** A label at screen size: SVG path data and its ink box (board mm). */
+export interface ScreenLabel {
+  readonly d: string;
+  readonly box: Box;
+}
+
 /**
- * Labels at screen size: SVG path data per point, or null where no free spot is left at this
- * zoom (zooming in places it). They stay inside `area` (the area the view starts with), so they
- * do not run off the screen there and do not jump while the player pans.
+ * Labels at screen size, or null where no free spot is left at this zoom (zooming in places
+ * it). They stay inside `area` (the area the view starts with), so they do not run off the
+ * screen there and do not jump while the player pans; `obstacles` (board mm) stay free, e.g.
+ * the places and labels of the puzzle under the names of the surrounding towns.
  */
 export function screenLabels(
   points: readonly Point[],
   texts: readonly string[],
   labelMm: number,
   area: View,
-): (string | null)[] {
+  obstacles: readonly Obstacle[] = [],
+): (ScreenLabel | null)[] {
   if (points.length === 0) return [];
   const markerMm = (MARKER_PX / LABEL_PX) * labelMm;
   const options: LabelOptions = {
@@ -219,13 +229,19 @@ export function screenLabels(
     spacingMm: labelMm * 0.2,
     edgeMm: 0,
   };
-  const relative = points.map((p): Point => [p[0] - area.x, p[1] - area.y]);
+  const shift = (p: Point): Point => [p[0] - area.x, p[1] - area.y];
+  const relative = points.map(shift);
   const candidates = relative.map((p, i) =>
     labelCandidates(p, measureText(texts[i]!, labelMm), options),
   );
   const placement = placeLabels({
     points: relative,
     candidates,
+    obstacles: obstacles.map((o): Obstacle =>
+      o.kind === 'circle'
+        ? { kind: 'circle', centre: shift(o.centre), radius: o.radius }
+        : { kind: 'polygon', points: o.points.map(shift) },
+    ),
     width: area.w,
     height: area.h,
     options,
@@ -233,7 +249,12 @@ export function screenLabels(
   });
   return placement.choice.map((choice, i) => {
     if (choice < 0) return null;
-    const [x, y] = candidates[i]![choice]!.baseline;
-    return svgPathData(textPath(texts[i]!, x + area.x, y + area.y, labelMm), 2);
+    const c = candidates[i]![choice]!;
+    const [x, y] = c.baseline;
+    const [x0, y0, x1, y1] = c.box;
+    return {
+      d: svgPathData(textPath(texts[i]!, x + area.x, y + area.y, labelMm), 2),
+      box: [x0 + area.x, y0 + area.y, x1 + area.x, y1 + area.y],
+    };
   });
 }

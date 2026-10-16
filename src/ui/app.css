@@ -768,6 +768,21 @@ ul.cards {
   fill: var(--nail);
 }
 
+/* Surrounding towns of city-scale puzzles (roadmap 9.8): background only. */
+.context-towns circle {
+  fill: var(--map-line);
+  opacity: 0.55;
+}
+
+.context-label {
+  fill: var(--map-line);
+  stroke: var(--board);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  vector-effect: non-scaling-stroke;
+}
+
 .play-label {
   fill: var(--label);
   stroke: var(--label-halo);

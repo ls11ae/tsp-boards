@@ -123,7 +123,7 @@ export function IncrementalPlayBoard() {
         <g className="play-labels">
           {labels.map((d, i) =>
             d === null ? null : (
-              <path key={i} className={i < k ? 'play-label' : 'play-label inactive'} d={d} />
+              <path key={i} className={i < k ? 'play-label' : 'play-label inactive'} d={d.d} />
             ),
           )}
         </g>
