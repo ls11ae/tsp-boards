@@ -50,7 +50,9 @@ what we change and why, benchmark results, and open questions.
   the Excellence Strategy board (files and build note in `docs/boards/exzellenzstrategie-2027/`,
   logo versions only in the git-ignored `local/`), fixes from Kevin's review, a rotatable globe
   for world puzzles with a flight along the tour, and an event mode (`#kiosk`).
-- **Next: 9.5** (further review items), then Phase 10. See `docs/roadmap.md`.
+- **Next: 9.5** (follow-ups from Kevin's review of 9.1–9.4: board build variant with 12 mm
+  plywood and drilled holes, kiosk, globe), then 9.6 (further review items), then Phase 10. See
+  `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - Code license not chosen yet (decide before going public).

@@ -4,9 +4,11 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-16: Phases 1–8 are done. Next is Phase 9 for the open day on 2026-11-07 (the
-Excellence Strategy board first, then fixes, a rotatable globe and an event mode); the
-remaining physical items, deployment and the license are Phase 10.
+Status 2026-10-16 (later): 9.1–9.4 are done. Next is 9.5 (follow-ups from Kevin's review:
+the board as 12 mm plywood with drilled holes, kiosk and globe details), then 9.6.
+Earlier status 2026-10-16: Phases 1–8 are done. Next is Phase 9 for the open day on
+2026-11-07 (the Excellence Strategy board first, then fixes, a rotatable globe and an event
+mode); the remaining physical items, deployment and the license are Phase 10.
 Earlier status 2026-10-13 (evening): Phases 1–8 are done except the physical items (test board,
 deployment, play data endpoint, license), which wait for the prototype dimensions and access
 to the chair server.
@@ -360,24 +362,87 @@ world.
 - Works offline from a laptop (`npm run build` + `vite preview`, or the `dist` folder);
   document how to run it in `docs/deployment.md`.
 
-### 9.5 Further items from the review (after 9.1–9.4)
+### 9.5 Follow-ups from Kevin's review of 9.1–9.4 (2026-10-16)
+
+Do these first; the board items are the critical path (lasering and a test board before
+2026-11-07).
+
+**Board: build variant (Kevin's decision)**
+
+- Kevin builds the boards from **12 mm birch plywood** (HORNBACH "Fixmaß Multiplexplatte Birke
+  BB/WG" 1200 × 600 × 12 mm, cut by the store into four pieces of about 298 × 600 mm), engraves
+  them directly and **drills** the nail holes by hand. A CO2 laser cannot cut clean holes of
+  1.2–1.6 mm through 12 mm. The 6 mm variant with laser-cut press-fit holes stays as an
+  alternative in the build note, not as the default.
+- Nail positions: a new hole mode (e.g. `--holes pit`, the default for this board) that marks
+  each nail as a small engraved pit (about 1 mm wide, engraved deeper than the map, e.g. by
+  repeated passes or a separate layer/colour with more power) in which a 1.2 mm drill centres
+  itself. Crosses are harder to hit with a drill.
+- Put the **board outline on its own layer and colour**, separate from the nail holes (today
+  both are red "cut"), so it can be switched off in xTool Creative Space when the board is
+  pre-cut; or an option `--no-outline`. Default for this board: no outline cut.
+- The pieces are 1–2 mm narrower than 300 mm: keep the file at 300 × 600 mm (margin 15 mm) and
+  say in the build note to centre it on the board with the P2S camera, or take the measured
+  size if Kevin gives it.
+- Nails and string as planned: **1.6 × 20 mm wire nails with flat heads**, polyester string
+  about 1 mm. Use these values (`--nail 1.6 --string 1`) until Kevin gives measured ones, and
+  keep re-exporting with measured values a one-line command.
+- Rewrite the build note (`docs/boards/exzellenzstrategie-2027/README.md`) for this variant:
+  masking tape against smoke stains; engrave, then score; pre-drill each pit with a 1.2 mm drill
+  about 9 mm deep (tape on the drill as a depth mark, a drill stand if available, straight up);
+  nails with about 11 mm protruding, set with a gauge (an M12/M14 hex nut or a wooden block of
+  that height) so all have the same height; sand and oil; one quarter as a test board first;
+  then calibration and checking the scale as now. Mention the 6 mm variant briefly.
+- The logo versions: keep writing them to the git-ignored `local/boards/`; the build note says
+  which file to laser (`…-logo-bed.svg`).
+
+**Event mode**
+
+- Today's leaderboard only gets an entry for the optimum or after "Lösung zeigen". Also record
+  the best closed round trip of a game when "Nächste Person" is pressed or the inactivity reset
+  happens, so that visitors who did not find the optimum appear too. Show "optimal" instead of
+  "0 %" / "0 mm".
+- Board puzzles in the kiosk are judged in "mm Faden": fine next to the wooden board, but say
+  so on screen (e.g. "wie am Holzbrett: gemessen wird der Faden") or decide on a clearer
+  presentation for visitors; record the decision.
+- `#kiosk` and `#kiosk/scores` only work on a fresh page load: react to `hashchange` as well.
+- The easy level has two nearly identical puzzles ("Exzellenzuniversitäten ab 2027" with and
+  without "(Brett)"): keep one and add another easy puzzle, if possible with a local touch
+  (e.g. a small Ruhr area or Dortmund puzzle), else "Landeshauptstädte (Brett)".
+- Kiosk cards with the map thumbnails of the gallery (more inviting for visitors).
+
+**Globe**
+
+- Start view: centre the globe on the places (spherical centroid, or the pole when the places
+  surround it), so that "Einmal um die Welt" starts with the whole loop visible, seen from
+  above the North Pole.
+- While "Rundreise abfliegen" runs, hide or fade the player's own dashed tour.
+- German name "Sues" → "Suez" (override in the world data).
+
+**Small things**
+
+- Highscore column "Mehr": a clearer header (e.g. "über Optimum").
+
+### 9.6 Further items from the review (after 9.1–9.5)
 
 - Europe: the cut at 45° E is drawn as a straight diagonal line through Russia (also in the
-  thumbnails) and looks like a border. Cut along the Ural or do not draw the clip edge.
+  thumbnails) and looks like a border. Cut along the Ural or do not draw the clip edge. (Done
+  for the board export in 9.1; still drawn in the app's play view, designer and thumbnails.)
 - "Welt: 30 Metropolen" is Asia-heavy (Chongqing, Tianjin, Shenzhen, …), with only three
   cities in the Americas and without Paris, Los Angeles, São Paulo or Buenos Aires. For the
   world, measure recognisability by prominence (alternate names or Wikipedia), not
   population, and consider a minimum per continent (the group constraints exist).
 - Flat-map comparison: draw the comparison tour as straight lines on the map (that is how it
   is measured) and hide the player's tour while comparing (three tours on top of each other
-  are hard to read).
+  are hard to read). (Straight lines done in 9.3; hiding the player's tour is open.)
 - Incremental play still uses the old millimetre drawing (small nails, measuring track, no
   zoom): use the screen-size approach of `PlayBoard`.
 - Board variant suggestions are purely geometric (e.g. "Aachen + Köln zusammengefasst"):
   allow marking places that must not be removed or combined.
 - Gallery: thumbnails load `de.json`, `eu.json` and `wo.json` (about 1.6 MB, 550 KB gzip):
   load them when a card becomes visible. Order by theme (Excellence first, then Germany,
-  cities, Europe, world, step by step) instead of alphabetically.
+  cities, Europe, world, step by step) instead of alphabetically. (Order done in 9.1; lazy
+  thumbnails open.)
 
 ## Phase 10: physical and public
 
