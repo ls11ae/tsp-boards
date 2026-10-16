@@ -55,8 +55,11 @@ what we change and why, benchmark results, and open questions.
   until measured; every visitor on the kiosk leaderboard, a Ruhr puzzle; world cities ranked
   by Wikipedia editions (`fame` column, world data version 4); incremental play with zoom;
   pinned places kept in board variants; lazy gallery thumbnails.
-- **Next:** the test board is lasered and built (re-export with measured nails and string,
-  see `docs/boards/exzellenzstrategie-2027/README.md`), then Phase 10. See `docs/roadmap.md`.
+- **Next:** 9.7, a poster export in DIN formats (A4–A0) with the shortest round trip and its
+  length, with Excellence Strategy variants for Kevin to choose from; then the small items in
+  9.8, then Phase 10. In parallel Kevin lasers and builds the test board (re-export with the
+  measured nails and string, see `docs/boards/exzellenzstrategie-2027/README.md`). See
+  `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - Code license not chosen yet (decide before going public).
@@ -152,10 +155,11 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–9 are done (the open day board is being built). Open work, in order, is in
-`docs/roadmap.md`:
+Phases 1–8 and 9.1–9.6 are done (the open day board is being built). Open work, in order, is
+in `docs/roadmap.md`:
 
 9. **Open day (2026-11-07):** Excellence Strategy board (first wooden board), fixes from the
-   review, rotatable globe with an animated round trip, event mode, further review items.
+   review, rotatable globe with an animated round trip, event mode, further review items;
+   open: a poster export in DIN formats with the shortest round trip (9.7), small items.
 10. **Physical and public:** incremental test board, deployment to the chair server, play data
     endpoint, code license; later a physical globe.

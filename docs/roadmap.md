@@ -4,9 +4,13 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-16 (night): Phase 9 (9.1–9.6) is done. Open for the open day: lasering and
-building the test board, then re-exporting it with the measured nails and string (one command
-in `docs/boards/exzellenzstrategie-2027/README.md`). Next is Phase 10.
+Status 2026-10-16, after Kevin's review of 9.5–9.6: 9.1–9.6 are done. Next is 9.7, a poster
+export in DIN formats with the shortest round trip and its length (Excellence Strategy
+variants for Kevin to choose from), then the small items in 9.8. In parallel, Kevin lasers and
+builds the test board. Then Phase 10.
+Earlier status 2026-10-16 (night): Phase 9 (9.1–9.6) is done. Open for the open day:
+lasering and building the test board, then re-exporting it with the measured nails and
+string (one command in `docs/boards/exzellenzstrategie-2027/README.md`). Next is Phase 10.
 Earlier status 2026-10-16 (evening): 9.1–9.5 are done (the board as 12 mm plywood with
 drilled holes, re-exported for 1.6 mm nails and 1 mm string).
 Earlier status 2026-10-16 (later): 9.1–9.4 are done.
@@ -226,7 +230,7 @@ world puzzles always digital without board or worksheet; curated "Olympische Som
 "Welt: 30 Metropolen". The rotatable globe was not built: the Equal Earth map already shows the
 arcs, the poles and the wrap at the map's edge.)
 
-## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07) — done 2026-10-16
+## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07)
 
 Decided by Kevin 2026-10-16, from his review of the app after Phases 7 and 8 (run in a browser
 at 1440 × 900 and 390 × 844). Work through the items in order. 9.1 comes first because the
@@ -450,6 +454,83 @@ Do these first; the board items are the critical path (lasering and a test board
   load them when a card becomes visible. Order by theme (Excellence first, then Germany,
   cities, Europe, world, step by step) instead of alphabetically. (Order done in 9.1; lazy
   thumbnails open.) (done: thumbnails load near the screen)
+
+### 9.7 Poster export (DIN formats)
+
+Kevin's wish 2026-10-16: print a puzzle as a poster in a DIN format, with the shortest round
+trip drawn and its length, above all for the Excellence Strategy and the Ruhr Innovation Lab.
+He has not decided the number of places yet and chooses after seeing the poster variants
+below. A poster is not a puzzle: the solution is shown, so the string gap and the difficulty
+do not matter here.
+
+- A poster PDF (`src/core/board/poster.ts`, building on the classroom worksheet in
+  `worksheet.ts` and the PDF writer): one page, DIN A4 to A0, portrait or landscape, vector,
+  text as outlines, white margin of at least 10 mm (no bleed). The map is scaled to fit, as
+  on the worksheet. The optimal round trip is a strong line above the map. The places are
+  dots with labels. Highlighted places (`*`) get rings and a legend, as on the board. Add a
+  km scale bar, a title and a subtitle.
+  - Typography scales with the paper size. The title and the length must be readable from
+    about 3 m on A1 and A0.
+- Facts on the poster, in large type:
+  - The length of the round trip in km, rounded to whole km.
+  - The number of places.
+  - The number of possible round trips (n − 1)!/2, in readable form (e.g. "3,1 · 10²³").
+  - How much longer the second-best round trip is.
+  - One sentence that the tour was computed and proven optimal with integer linear
+    optimisation (HiGHS).
+  - Suggest the wording, in German; e.g. title "Die kürzeste Rundreise durch Deutschlands
+    Exzellenz", subtitle "Alle 34 Standorte der Exzellenzstrategie 2026–2033".
+- The footer contains Lehrstuhl 11 Algorithm Engineering, TU Dortmund and the data credits
+  (GeoNames CC BY 4.0). Optionally it also has a QR code to the play link, but only once the
+  app is online (Phase 10), so it is off by default.
+- Length in km: the great-circle length ("Luftlinie") of the tour. The export checks that the
+  map-Euclidean optimum (the one the app judges against) is also the great-circle optimum,
+  states the result in a short report, and warns and uses the great-circle optimum if they
+  differ.
+  - Kevin's check 2026-10-16 found them identical in all six variants below. The map lengths
+    were 1–1.5 km longer than the great-circle lengths.
+- Composite places come in two forms:
+  - One point at the centroid, as on the board. The poster says that the tour is measured to
+    the centroid of each alliance's universities.
+  - Members as separate stops (`--members separate`): each member is its own place, and the
+    alliance is drawn as one highlighted group with its name, e.g. a common outline or ring
+    around Bochum and Dortmund.
+- Logos come only from local SVG files, as in `cli/export-board.ts`: `--logo` puts one next
+  to its place (e.g. `"Ruhr Innovation Lab=local/ruhr-innovation-lab.svg"`) and
+  `--legend-logo` puts one in the legend. Logo versions are written to the git-ignored
+  `local/posters/`, never to the repository.
+- Interfaces:
+  - `cli/export-poster.ts` (`--puzzle` or `--list`, `--paper A0…A4`, `--orientation`,
+    `--members`, logos, `--out`, `--name`, `--png <dpi>` for previews).
+  - A "Poster" button in the app's export panel, with paper size and orientation selects.
+    In the app a logo can be chosen as a local SVG file; it stays in the browser.
+- Variants for Kevin's choice, each as A1 portrait plus a PNG preview, in
+  `docs/posters/exzellenzstrategie-2027/`. Logo versions go to `local/posters/`. Add a README
+  with a comparison table (places, length, second-best, possible tours) and one contact
+  sheet PNG with all six variants side by side. The variants, with Kevin's check 2026-10-16
+  (great-circle km, exact):
+
+  | Variant                                                                   | Places | Length  | Second-best | Possible tours |
+  | ------------------------------------------------------------------------- | ------ | ------- | ----------- | -------------- |
+  | Universities of Excellence and alliances (`exzellenzuniversitaeten-2027`) | 14     | 2039 km | +3.5 km     | 3.1 · 10⁹      |
+  | the same, members as separate stops                                       | 17     | 2078 km | +0.6 km     | 1.0 · 10¹³     |
+  | universities plus sites with at least two clusters                        | 22     | 2521 km | +1.4 km     | 2.6 · 10¹⁹     |
+  | the board selection (`exzellenzstrategie-2027-brett`, with NRW)           | 25     | 2534 km | +8.0 km     | 3.1 · 10²³     |
+  | all sites (`exzellenzstrategie-2027`)                                     | 34     | 2838 km | +1.7 km     | 4.3 · 10³⁶     |
+  | all sites, members as separate stops                                      | 37     | 2879 km | +2.4 km     | 1.9 · 10⁴¹     |
+
+  The 22 variant has no list file yet. Use the board list without Düsseldorf, Münster and
+  Siegen.
+
+- Tests: the page sizes of all DIN formats; the tour on the poster equals the exact optimum;
+  the km figures; no logo file in the repository.
+
+### 9.8 Small items from the review of 9.5–9.6
+
+- "Ruhrgebiet: 11 Städte" looks empty, with no municipal borders. Draw municipal or
+  district borders for city-scale puzzles if they are cheap to add, else a light background
+  of the surrounding towns.
+- The thumbnail of the Ruhr puzzle in the gallery is tiny: crop it to the places.
 
 ## Phase 10: physical and public
 
