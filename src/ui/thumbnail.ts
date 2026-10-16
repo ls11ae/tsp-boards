@@ -16,8 +16,8 @@ import { townsById } from './board';
 import { fetchCountry } from './controller';
 
 export interface Thumbnail {
-  readonly width: number;
-  readonly height: number;
+  /** The part of the board shown (board mm): all of it, or the places of a small cluster. */
+  readonly view: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
   /** SVG path of the region outline, without the data's clip edges ('' for blank and
    * incremental boards). */
   readonly outline: string;
@@ -26,10 +26,36 @@ export interface Thumbnail {
 
 const cache = new Map<string, Promise<Thumbnail | null>>();
 
+/** Places spanning less than this share of the board are shown cropped (roadmap 9.8). */
+const CROP_SHARE = 0.45;
+
+/**
+ * The whole board, or the places' box with a margin of a fifth of its size when they cluster
+ * in a small part of it (a city-scale puzzle on a state's board).
+ */
+export function thumbnailView(
+  points: readonly Point[],
+  width: number,
+  height: number,
+): Thumbnail['view'] {
+  const whole = { x: 0, y: 0, w: width, h: height };
+  if (points.length < 2) return whole;
+  const xs = points.map((p) => p[0]);
+  const ys = points.map((p) => p[1]);
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  if (Math.max((x1 - x0) / width, (y1 - y0) / height) >= CROP_SHARE) return whole;
+  const pad = Math.max(10, 0.2 * Math.max(x1 - x0, y1 - y0));
+  return { x: x0 - pad, y: y0 - pad, w: x1 - x0 + 2 * pad, h: y1 - y0 + 2 * pad };
+}
+
 async function build(doc: PuzzleDoc): Promise<Thumbnail | null> {
   if (doc.incremental) {
     const { widthMm, heightMm } = doc.incremental.params;
-    return { width: widthMm, height: heightMm, outline: '', points: doc.incremental.points };
+    return {
+      view: { x: 0, y: 0, w: widthMm, h: heightMm },
+      outline: '',
+      points: doc.incremental.points,
+    };
   }
   const map = doc.map;
   if (!map) return null;
@@ -42,11 +68,11 @@ async function build(doc: PuzzleDoc): Promise<Thumbnail | null> {
     projectionKind(country),
   );
   const cities = listCities(map.places, townsById(country));
+  const points = boardPoints(cities, projection);
   return {
-    width: params.boardWidthMm,
-    height: params.boardHeightMm,
+    view: thumbnailView(points, params.boardWidthMm, params.boardHeightMm),
     outline: params.blankBoard ? '' : projection.path(outlineLines(outline)),
-    points: boardPoints(cities, projection),
+    points,
   };
 }
 

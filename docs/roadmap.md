@@ -529,12 +529,12 @@ do not matter here.
 report and contact sheet in `docs/posters/exzellenzstrategie-2027/`, logo versions in
 `local/posters/`. The QR code waits for Phase 10.)
 
-### 9.8 Small items from the review of 9.5–9.6
+### 9.8 Small items from the review of 9.5–9.6 — done 2026-10-16
 
 - "Ruhrgebiet: 11 Städte" looks empty, with no municipal borders. Draw municipal or
   district borders for city-scale puzzles if they are cheap to add, else a light background
-  of the surrounding towns.
-- The thumbnail of the Ruhr puzzle in the gallery is tiny: crop it to the places.
+  of the surrounding towns. (done: surrounding towns; municipal borders are not in the data)
+- The thumbnail of the Ruhr puzzle in the gallery is tiny: crop it to the places. (done)
 
 ## Phase 10: physical and public
 

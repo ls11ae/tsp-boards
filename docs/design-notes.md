@@ -921,3 +921,15 @@ Short entries: decision; alternatives considered; reason. Newest last.
   planar). Alternatives: scaling the board drawing onto the page as the worksheet does (the
   labels would scale with it and the map would not use the page's aspect), a raster
   renderer of our own for the previews (more code than a dev dependency).
+- **2026-10-16 City-scale puzzles (roadmap 9.8).** "Ruhrgebiet: 11 Städte" looked empty: the
+  map of North Rhine-Westphalia has no inner borders, and our data has no municipal outlines
+  (Natural Earth has states only, GeoNames points only; official municipal borders would be a
+  new data source with its own licence). Instead, play views narrower than 200 km show the
+  surrounding towns of the country data as light dots (at least 20,000 inhabitants, not within
+  3 km of a place of the puzzle, so a city does not appear among its own districts), with
+  smaller grey names for those of at least 50,000 inhabitants where there is room; the names
+  keep clear of the puzzle's places and labels (`screenLabels` takes obstacles now). A small
+  cluster also gets a margin of a fifth of its size instead of 30 mm or more, so the view starts
+  closer. Gallery thumbnails crop to the places when they span less than 45 % of the board
+  (only the Ruhr puzzle today). Alternative: municipal borders from the BKG (VG250, dl-de/by-2-0)
+  or OpenStreetMap (ODbL) in the data build, for one puzzle.

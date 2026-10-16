@@ -71,15 +71,16 @@ function CardThumbnail({ card }: { readonly card: Card }) {
   }, [card, near]);
   if (!thumb) return <div className="card-thumb" ref={placeholder} aria-hidden="true" />;
   // Dots of about 2 % of the board's smaller side stay visible at thumbnail size.
-  const r = Math.min(thumb.width, thumb.height) * 0.012;
+  const { x, y, w, h } = thumb.view;
+  const r = Math.min(w, h) * 0.012;
   return (
     <svg
       className="card-thumb"
-      viewBox={`0 0 ${thumb.width} ${thumb.height}`}
+      viewBox={`${x} ${y} ${w} ${h}`}
       preserveAspectRatio="xMidYMid meet"
       aria-hidden="true"
     >
-      <rect className="board-bg" width={thumb.width} height={thumb.height} rx={r * 2} />
+      <rect className="board-bg" x={x} y={y} width={w} height={h} rx={r * 2} />
       {thumb.outline && <path className="thumb-outline" d={thumb.outline} />}
       {thumb.points.map(([x, y], i) => (
         <circle key={i} className="thumb-place" cx={x} cy={y} r={r} />
