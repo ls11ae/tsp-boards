@@ -68,7 +68,8 @@ export function PlayGlobe({
     routes.push({ cities: puzzle.tour, closed: true, className: 'solution-tour' });
   if (overlay && (revealed || play.solvedMs !== null))
     routes.push({ cities: overlay.tour, closed: true, className: 'overlay-tour' });
-  if (play.state.path.length > 1)
+  // During a flight only the solution and the flown legs are drawn.
+  if (play.state.path.length > 1 && !flight)
     routes.push({
       cities: play.state.path.map((s) => members[s]!),
       closed: play.state.closed,

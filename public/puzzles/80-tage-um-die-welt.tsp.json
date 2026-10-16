@@ -10,7 +10,7 @@
   "updated": "2026-10-16",
   "data": {
     "country": "WO",
-    "version": 2
+    "version": 3
   },
   "map": {
     "params": {
@@ -44,7 +44,7 @@
       },
       {
         "id": 359796,
-        "name": "Sues",
+        "name": "Suez",
         "lat": 29.9737,
         "lon": 32.5263
       },
@@ -102,7 +102,7 @@
         },
         {
           "id": 359796,
-          "name": "Sues",
+          "name": "Suez",
           "lat": 29.9737,
           "lon": 32.5263
         },

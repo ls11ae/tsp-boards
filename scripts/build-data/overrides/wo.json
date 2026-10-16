@@ -5,6 +5,10 @@
       "nameEn": "Abu Dhabi",
       "_why": "GeoNames' English name is 'Abu Dhabi Island and Internal Islands City'"
     },
+    "359796": {
+      "name": "Suez",
+      "_why": "GeoNames gives the German name as Sues; Suez is the common German spelling"
+    },
     "1816670": {
       "name": "Peking",
       "_why": "GeoNames prefers 'Beijing' in German; the common German name is Peking"

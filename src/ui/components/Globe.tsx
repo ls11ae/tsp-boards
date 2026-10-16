@@ -27,6 +27,8 @@ const DRAG_PX = 6;
 const LABEL_PX = 13;
 const MAX_ZOOM = 12;
 const NO_POINTS: readonly Point[] = [];
+/** Below this length of the mean unit vector the places surround the globe: no centroid. */
+const CENTROID_MIN = 0.3;
 /** Height of the band for the buttons above the globe. */
 const CONTROLS_PX = 48;
 /** Flight speed in km per second, and the shortest leg time in seconds. */
@@ -152,19 +154,23 @@ export function Globe({
   const lonLat = board.sphere?.lonLat ?? NO_POINTS;
   const layers = useMemo(() => (country ? mapLayers(country) : null), [country]);
 
-  // Start over the places' mean longitude, a little north (recomputed for other places only).
+  // Start over the places' spherical centroid (from above the pole when they ring it, as in
+  // "Einmal um die Welt"); places all around the globe: their mean longitude, a little north.
   const placesKey = places.map((p) => p.city).join(',');
   const centre = useMemo((): Rotation => {
     const ids = placesKey ? placesKey.split(',').map(Number) : [];
     if (ids.length === 0) return [-10, -30, 0];
-    let x = 0;
-    let y = 0;
+    let [x, y, z] = [0, 0, 0];
     for (const c of ids) {
-      const [lon] = lonLat[c]!;
-      x += Math.cos((lon * Math.PI) / 180);
-      y += Math.sin((lon * Math.PI) / 180);
+      const v = cartesian(lonLat[c]!);
+      x += v[0] / ids.length;
+      y += v[1] / ids.length;
+      z += v[2] / ids.length;
     }
-    return [-(Math.atan2(y, x) * 180) / Math.PI, -30, 0];
+    const lon = (Math.atan2(y, x) * 180) / Math.PI;
+    if (Math.hypot(x, y, z) < CENTROID_MIN) return [-lon, -30, 0];
+    const lat = (Math.atan2(z, Math.hypot(x, y)) * 180) / Math.PI;
+    return [-lon, -lat, 0];
   }, [placesKey, lonLat]);
   const [rot, setRot] = useState<Rotation>(centre);
   const [zoom, setZoom] = useState(1);

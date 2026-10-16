@@ -3,7 +3,7 @@
 # Yokohama, San Francisco, New York and Liverpool, back to London. Places are the towns of the
 # world data (public/data/countries/wo.json); an easy world puzzle.
 London
-Sues
+Suez
 Mumbai
 Kolkata
 Hongkong
