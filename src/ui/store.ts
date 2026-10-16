@@ -11,6 +11,8 @@ import type { Logo } from '../core/board/logo';
 import type { HoleMode } from '../core/board/drawing';
 import type { Flight } from './components/Globe';
 import type { Paper } from '../core/board/print';
+import type { DinPaper, Orientation } from '../core/board/paper';
+import type { MembersMode } from '../core/board/poster-tour';
 import type { CountryFile, Manifest } from '../core/data';
 import { EMPTY_PLAY, type PlayAttempt, type PlayState } from '../core/play';
 import type { IncrementalPuzzle, SequenceCheck } from '../core/incremental/generate';
@@ -78,6 +80,10 @@ export interface ExportOptions {
   readonly strokeMm: number;
   /** Show the planned board (scale, title, final labels) instead of the map view. */
   readonly preview: boolean;
+  /** Poster (roadmap 9.7): paper, orientation, composite places as one stop or members. */
+  readonly posterPaper: DinPaper;
+  readonly posterOrientation: Orientation;
+  readonly posterMembers: MembersMode;
 }
 
 export type Mode = 'design' | 'play';
@@ -362,7 +368,16 @@ export const useStore = create<AppState>()((set) => ({
   linkWarnings: [],
   boardPlans: {},
   logos: [],
-  exportOptions: { paper: 'A4', holes: 'cut', edge: true, strokeMm: 0.1, preview: true },
+  exportOptions: {
+    paper: 'A4',
+    holes: 'cut',
+    edge: true,
+    strokeMm: 0.1,
+    preview: true,
+    posterPaper: 'A1',
+    posterOrientation: 'portrait',
+    posterMembers: 'centroid',
+  },
   setExportOptions: (update) => set((s) => ({ exportOptions: { ...s.exportOptions, ...update } })),
   setLang: (lang) => {
     try {

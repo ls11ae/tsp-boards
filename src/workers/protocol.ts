@@ -11,6 +11,7 @@ import type {
 } from '../core/search/search';
 import type { BoardPlan, PlanData } from '../core/board/plan';
 import type { RatedChange } from '../core/fixed';
+import type { PosterStop, PosterTour } from '../core/board/poster-tour';
 import type { RobustnessRow, ScalePosition } from '../core/robustness';
 import type {
   IncrementalParams,
@@ -84,6 +85,14 @@ export interface ChangesJob {
   readonly keep: readonly number[];
 }
 
+/** The poster's round trip (roadmap 9.7): great-circle optimum, checked on the map. */
+export interface PosterJob {
+  readonly jobId: number;
+  readonly stops: readonly PosterStop[];
+  /** Map points of the stops (the puzzle's board), for the check. */
+  readonly points: readonly Point[];
+}
+
 export interface RoundsJob {
   readonly jobId: number;
   /** Board points (mm) in slot order. */
@@ -107,7 +116,8 @@ export type ExactWorkerRequest =
   | ({ readonly type: 'rounds' } & RoundsJob)
   | ({ readonly type: 'verify' } & VerifyJob)
   | ({ readonly type: 'plan' } & PlanJob)
-  | ({ readonly type: 'changes' } & ChangesJob);
+  | ({ readonly type: 'changes' } & ChangesJob)
+  | ({ readonly type: 'poster' } & PosterJob);
 
 export type ExactWorkerResponse =
   | {
@@ -139,6 +149,7 @@ export type ExactWorkerResponse =
       readonly jobId: number;
       readonly suggestions: readonly RatedChange[];
     }
+  | { readonly type: 'poster'; readonly jobId: number; readonly tour: PosterTour }
   | { readonly type: 'robustness-row'; readonly jobId: number; readonly row: RobustnessRow }
   | { readonly type: 'robustness-done'; readonly jobId: number }
   | {

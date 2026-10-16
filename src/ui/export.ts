@@ -1,7 +1,11 @@
-// Board downloads (roadmap 7.6: loaded on demand): laser SVG, print template, solution sheet
-// and classroom worksheet, drawn on the main thread from the shared core pipeline.
+// Board downloads (roadmap 7.6: loaded on demand): laser SVG, print template, solution sheet,
+// classroom worksheet and poster, drawn on the main thread from the shared core pipeline.
 
 import type { BoardPlan } from '../core/board/plan';
+import type { Logo } from '../core/board/logo';
+import { drawPoster, posterPdf } from '../core/board/poster';
+import { posterStops, stopPoints, type PosterTour } from '../core/board/poster-tour';
+import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
 import { mapTemplateText, solutionPdf, templatePdf } from '../core/board/print';
 import { drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import { boardSvg } from '../core/board/svg';
@@ -72,6 +76,68 @@ export function downloadWorksheet(board: BoardModel, puzzle: PuzzleView): void {
     formatNumber: boardNumberFormat(setup),
   });
   save(pdf, 'application/pdf', `tsp-worksheet-${fileId(setup)}-${exportOptions.paper}.pdf`);
+}
+
+/** The poster's round trip from a worker of its own (HiGHS loads there). */
+function posterTourInWorker(request: Omit<ExactWorkerRequest & { type: 'poster' }, 'jobId'>) {
+  const w = new Worker(new URL('../workers/exact.worker.ts', import.meta.url), { type: 'module' });
+  return new Promise<PosterTour>((resolve, reject) => {
+    w.onmessage = (event: MessageEvent<ExactWorkerResponse>) => {
+      const m = event.data;
+      if (m.type === 'poster') resolve(m.tour);
+      else if (m.type === 'error') reject(new Error(m.message));
+      else return;
+      w.terminate();
+    };
+    w.onerror = (event) => {
+      reject(new Error(event.message));
+      w.terminate();
+    };
+    w.postMessage({ ...request, jobId: 1 } satisfies ExactWorkerRequest);
+  });
+}
+
+/**
+ * Poster of the shown puzzle (roadmap 9.7): the great-circle optimum through its places, its
+ * length and facts, on the chosen DIN paper. Returns the round trip for the panel's note.
+ */
+export async function downloadPoster(board: BoardModel, puzzle: PuzzleView): Promise<PosterTour> {
+  const setup = puzzleSetup(board, puzzle);
+  const { exportOptions, doc, logos, country } = useStore.getState();
+  if (!setup || !country) throw new Error('no puzzle');
+  const stops = posterStops(setup.cities, exportOptions.posterMembers);
+  const tour = await posterTourInWorker({
+    type: 'poster',
+    stops,
+    points: stopPoints(stops, setup.projection),
+  });
+  // Logos by place (slot) of the puzzle; they stay in this browser session.
+  const placeLogos = new Map<number, Logo>();
+  for (const l of logos) {
+    const slot = setup.cities.findIndex((c) => c.id === l.city);
+    if (slot >= 0) placeLogos.set(slot, l.logo);
+  }
+  const drawing = drawPoster({
+    file: country,
+    region: setup.params.region,
+    stops,
+    tour,
+    title: doc.title || regionName(setup),
+    subtitle: doc.description,
+    paper: exportOptions.posterPaper,
+    orientation: exportOptions.posterOrientation,
+    language: setup.params.labelLanguage,
+    legend: doc.board?.legend ?? [],
+    logos: placeLogos,
+    legendLogo: logos.find((l) => l.city === null)?.logo ?? null,
+    blankMap: setup.params.blankBoard,
+  });
+  save(
+    posterPdf(drawing),
+    'application/pdf',
+    `tsp-poster-${fileId(setup)}-${exportOptions.posterPaper}.pdf`,
+  );
+  return tour;
 }
 
 export type ExportKind = 'svg' | 'template' | 'solution';

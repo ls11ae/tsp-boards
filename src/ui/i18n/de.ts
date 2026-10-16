@@ -128,6 +128,20 @@ export const de: Messages = {
     'Eine Seite mit der Karte, passend verkleinert, zum Einzeichnen der Rundreise mit Bleistift, und eine eigene Lösungsseite (Längen in km zwischen den Orten).',
   downloadWorksheet: 'Arbeitsblatt (PDF)',
   worksheetPaper: 'Papier',
+  poster: 'Plakat',
+  posterHint:
+    'Ein Plakat (PDF, DIN A4 bis A0) mit der kürzesten Rundreise nach Luftlinie, ihrer Länge und ein paar Zahlen. Es zeigt die Lösung.',
+  posterPaper: 'Format',
+  posterOrientation: 'Ausrichtung',
+  portrait: 'Hochformat',
+  landscape: 'Querformat',
+  posterMembers: 'Verbünde',
+  membersCentroid: 'ein Halt in der Mitte ihrer Städte',
+  membersSeparate: 'jede Stadt ein eigener Halt',
+  downloadPoster: 'Plakat (PDF)',
+  posterRunning: 'Die kürzeste Rundreise wird berechnet …',
+  posterDone: (km: string, same: boolean) =>
+    `Kürzeste Rundreise: ${km} km Luftlinie${same ? '; auf der flachen Karte dieselbe.' : '. Auf der flachen Karte wäre eine andere am kürzesten; das Plakat zeigt die nach Luftlinie.'}`,
   robustness: 'Robustheit',
   robustnessHint:
     'Bleibt das Optimum das kürzeste, wenn Nägel oder Faden etwas dünner oder dicker sind? Exakte Prüfung mit r_eff (Nagelradius + halbe Fadendicke) 0,5 mm kleiner und größer.',
@@ -236,9 +250,9 @@ export const de: Messages = {
     count === '1' ? '1 Beschriftung passt nicht.' : `${count} Beschriftungen passen nicht.`,
   warnTitle: 'Für den Titel ist kein Platz.',
   warnGap: (value) => `Die Lücke an der Skala (${value} mm) liegt unter dem Ziel.`,
-  logos: 'Logos für das Brett',
+  logos: 'Logos für Brett und Plakat',
   logosHint:
-    'SVG-Dateien (z. B. aus potrace), als Fläche graviert. Sie bleiben nur in dieser Sitzung und werden nicht gespeichert.',
+    'SVG-Dateien (z. B. aus potrace), als Fläche graviert bzw. gedruckt. Sie bleiben nur in dieser Sitzung und werden nicht gespeichert.',
   logoPlace: 'Logo statt Beschriftung von',
   logoFile: 'SVG-Datei',
   logoLegend: 'Logo in der Legende',

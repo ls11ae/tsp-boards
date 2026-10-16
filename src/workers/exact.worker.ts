@@ -3,6 +3,7 @@
 // by terminating and recreating this worker, and runs plans in a second instance.
 
 import { planBoard } from '../core/board/plan';
+import { posterTour } from '../core/board/poster-tour';
 import { changeSuggestions } from '../core/fixed';
 import { Instance } from '../core/instance';
 import { runLpSelfTest } from '../core/lp/selftest';
@@ -52,6 +53,14 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
     case 'rounds': {
       const rounds = subtourRounds(highs, new Instance(request.points, 0, request.sphere ?? null));
       reply({ type: 'rounds', jobId: request.jobId, rounds });
+      break;
+    }
+    case 'poster': {
+      reply({
+        type: 'poster',
+        jobId: request.jobId,
+        tour: posterTour(highs, request.stops, request.points),
+      });
       break;
     }
     case 'changes': {

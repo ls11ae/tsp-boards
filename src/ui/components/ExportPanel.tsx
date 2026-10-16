@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import type { BoardPlan, PlanWarning } from '../../core/board/plan';
+import { DIN_PAPERS } from '../../core/board/paper';
 import type { BoardModel } from '../board';
 import type { ExportKind } from '../export';
 import { planKey, prepareBoard } from '../plans';
@@ -173,6 +175,103 @@ function Worksheet({
   );
 }
 
+/** Poster in a DIN format (roadmap 9.7): the solution, its length and facts. */
+function Poster({
+  board,
+  puzzle,
+  logos,
+}: {
+  readonly board: BoardModel;
+  readonly puzzle: PuzzleView;
+  /** Show the logo fields (the board downloads have them already). */
+  readonly logos: boolean;
+}) {
+  const t = useT();
+  const fmt = useFormat();
+  const options = useStore((s) => s.exportOptions);
+  const setOptions = useStore((s) => s.setExportOptions);
+  const [state, setState] = useState<
+    | { status: 'idle' }
+    | { status: 'running' }
+    | { status: 'done'; km: number; same: boolean }
+    | { status: 'error'; message: string }
+  >({ status: 'idle' });
+  const composite = puzzle.members.some((c) => (board.pool[c]!.members?.length ?? 0) >= 2);
+  const download = () => {
+    setState({ status: 'running' });
+    import('../export')
+      .then((m) => m.downloadPoster(board, puzzle))
+      .then((tour) => setState({ status: 'done', km: tour.lengthKm, same: tour.mapAgrees }))
+      .catch((e: unknown) =>
+        setState({ status: 'error', message: e instanceof Error ? e.message : String(e) }),
+      );
+  };
+  return (
+    <div className="poster">
+      <h3>{t.poster}</h3>
+      <p className="hint">{t.posterHint}</p>
+      <label className="field">
+        <span>{t.posterPaper}</span>
+        <select
+          value={options.posterPaper}
+          onChange={(e) => {
+            const paper = DIN_PAPERS.find((p) => p === e.target.value);
+            if (paper) setOptions({ posterPaper: paper });
+          }}
+        >
+          {DIN_PAPERS.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="field">
+        <span>{t.posterOrientation}</span>
+        <select
+          value={options.posterOrientation}
+          onChange={(e) =>
+            setOptions({
+              posterOrientation: e.target.value === 'landscape' ? 'landscape' : 'portrait',
+            })
+          }
+        >
+          <option value="portrait">{t.portrait}</option>
+          <option value="landscape">{t.landscape}</option>
+        </select>
+      </label>
+      {composite && (
+        <label className="field">
+          <span>{t.posterMembers}</span>
+          <select
+            value={options.posterMembers}
+            onChange={(e) =>
+              setOptions({
+                posterMembers: e.target.value === 'separate' ? 'separate' : 'centroid',
+              })
+            }
+          >
+            <option value="centroid">{t.membersCentroid}</option>
+            <option value="separate">{t.membersSeparate}</option>
+          </select>
+        </label>
+      )}
+      {logos && <LogoFields board={board} puzzle={puzzle} />}
+      <div className="actions">
+        <button type="button" disabled={state.status === 'running'} onClick={download}>
+          {state.status === 'running' ? t.posterRunning : t.downloadPoster}
+        </button>
+      </div>
+      {state.status === 'done' && (
+        <p className={state.same ? 'hint' : 'error'}>
+          {t.posterDone(fmt.number(Math.round(state.km), 0), state.same)}
+        </p>
+      )}
+      {state.status === 'error' && <p className="error">{state.message}</p>}
+    </div>
+  );
+}
+
 export function ExportPanel({
   board,
   puzzle,
@@ -203,6 +302,7 @@ export function ExportPanel({
         <>
           <p className="hint">{t.exportDigital}</p>
           {verified && <Worksheet board={board} puzzle={puzzle} paperField />}
+          <Poster board={board} puzzle={puzzle} logos />
         </>
       ) : !verified ? (
         <p className="hint">{t.exportNeedsCheck}</p>
@@ -301,6 +401,7 @@ export function ExportPanel({
             </>
           )}
           <Worksheet board={board} puzzle={puzzle} paperField={!plan} />
+          <Poster board={board} puzzle={puzzle} logos={false} />
         </>
       )}
     </section>

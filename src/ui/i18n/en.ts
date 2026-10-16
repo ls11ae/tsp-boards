@@ -133,6 +133,20 @@ export const en = {
     'One page with the map scaled to fit, to draw the round trip with a pencil, and a separate solution page (lengths in km between the places).',
   downloadWorksheet: 'Worksheet (PDF)',
   worksheetPaper: 'Paper',
+  poster: 'Poster',
+  posterHint:
+    'A poster (PDF, DIN A4 to A0) with the shortest round trip as the crow flies, its length and a few figures. It shows the solution.',
+  posterPaper: 'Size',
+  posterOrientation: 'Orientation',
+  portrait: 'Portrait',
+  landscape: 'Landscape',
+  posterMembers: 'Alliances',
+  membersCentroid: 'one stop at the centre of their cities',
+  membersSeparate: 'every city a stop of its own',
+  downloadPoster: 'Poster (PDF)',
+  posterRunning: 'Computing the shortest round trip …',
+  posterDone: (km: string, same: boolean) =>
+    `Shortest round trip: ${km} km as the crow flies${same ? '; the same on the flat map.' : '. On the flat map another one would be shortest; the poster shows the one as the crow flies.'}`,
   robustness: 'Robustness',
   robustnessHint:
     'Does the optimum stay the shortest if nails or string are a little thinner or thicker? Exact check with r_eff (nail radius + half the string) 0.5 mm smaller and larger.',
@@ -243,9 +257,9 @@ export const en = {
     count === '1' ? '1 label does not fit.' : `${count} labels do not fit.`,
   warnTitle: 'There is no room for the title.',
   warnGap: (value: string) => `The gap at the scale (${value} mm) is below the target.`,
-  logos: 'Logos for the board',
+  logos: 'Logos for board and poster',
   logosHint:
-    'SVG files (e.g. from potrace), engraved as filled areas. They stay in this session only and are never saved.',
+    'SVG files (e.g. from potrace), engraved or printed as filled areas. They stay in this session only and are never saved.',
   logoPlace: 'Logo instead of the label of',
   logoFile: 'SVG file',
   logoLegend: 'Logo in the legend',
