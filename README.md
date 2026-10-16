@@ -135,6 +135,15 @@ npx tsx cli/export-board.ts --link '<permalink>' --out boards --paper A3
 Exports a puzzle from a permalink (it must contain the selected cities) as laser SVG, print
 template and solution sheet.
 
+```bash
+npx tsx cli/export-poster.ts --puzzle public/puzzles/exzellenzstrategie-2027.tsp.json --paper A1 --png 30
+```
+
+Exports a puzzle as a poster in a DIN format (A4 to A0) with the shortest round trip by
+great-circle distance, its length and facts (PDF, optional PNG preview; PNGs need the dev
+dependency `@resvg/resvg-js`). `--variants` builds several posters and a contact sheet, e.g.
+`docs/posters/exzellenzstrategie-2027/`.
+
 ### Board font
 
 Board text uses Fira Sans Condensed Medium (SIL Open Font License 1.1). Its outlines are

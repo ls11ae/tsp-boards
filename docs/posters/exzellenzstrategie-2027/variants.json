@@ -1,0 +1,99 @@
+{
+  "_comment": "Excellence Strategy poster variants for Kevin's choice (roadmap 9.7). Build: npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json; logo versions with --out local/posters and --logo/--legend-logo (never into the repository).",
+  "paper": "A1",
+  "orientation": "portrait",
+  "png": 30,
+  "contactSheet": "exzellenzstrategie-2027-varianten.png",
+  "variants": [
+    {
+      "name": "exzellenzstrategie-2027-poster-14",
+      "puzzle": "public/puzzles/exzellenzuniversitaeten-2027.tsp.json",
+      "members": "centroid",
+      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
+      "subtitle": "Alle Exzellenzuniversitäten und -verbünde 2027–2033",
+      "legend": [
+        {
+          "symbol": "none",
+          "text": "Förderung der Exzellenzuniversitäten und -verbünde: 2027–2033"
+        }
+      ]
+    },
+    {
+      "name": "exzellenzstrategie-2027-poster-17",
+      "puzzle": "public/puzzles/exzellenzuniversitaeten-2027.tsp.json",
+      "members": "separate",
+      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
+      "subtitle": "Alle Exzellenzuniversitäten und -verbünde 2027–2033, jede Stadt eines Verbunds als eigener Halt",
+      "legend": [
+        {
+          "symbol": "none",
+          "text": "Förderung der Exzellenzuniversitäten und -verbünde: 2027–2033"
+        }
+      ]
+    },
+    {
+      "name": "exzellenzstrategie-2027-poster-22",
+      "puzzle": "public/puzzles/exzellenzstrategie-2027-brett.tsp.json",
+      "without": ["Düsseldorf", "Münster", "Siegen"],
+      "members": "centroid",
+      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
+      "subtitle": "Die Exzellenzuniversitäten und -verbünde und alle Standorte mit mindestens zwei Exzellenzclustern",
+      "legend": [
+        { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
+        { "symbol": "nail", "text": "weiterer Standort mit mindestens zwei Exzellenzclustern" },
+        {
+          "symbol": "none",
+          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+        }
+      ]
+    },
+    {
+      "name": "exzellenzstrategie-2027-poster-25",
+      "puzzle": "public/puzzles/exzellenzstrategie-2027-brett.tsp.json",
+      "members": "centroid",
+      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
+      "subtitle": "Die Exzellenzuniversitäten und -verbünde, die Standorte mit mindestens zwei Exzellenzclustern und alle Clusterstandorte in NRW",
+      "legend": [
+        { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
+        {
+          "symbol": "nail",
+          "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle"
+        },
+        {
+          "symbol": "none",
+          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+        }
+      ]
+    },
+    {
+      "name": "exzellenzstrategie-2027-poster-34",
+      "puzzle": "public/puzzles/exzellenzstrategie-2027.tsp.json",
+      "members": "centroid",
+      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
+      "subtitle": "Alle 34 Standorte der Exzellenzstrategie 2026–2033",
+      "legend": [
+        { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
+        { "symbol": "nail", "text": "weiterer Standort von Exzellenzclustern" },
+        {
+          "symbol": "none",
+          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+        }
+      ]
+    },
+    {
+      "name": "exzellenzstrategie-2027-poster-37",
+      "puzzle": "public/puzzles/exzellenzstrategie-2027.tsp.json",
+      "members": "separate",
+      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
+      "subtitle": "Alle Standorte der Exzellenzstrategie 2026–2033, jede Stadt eines Verbunds als eigener Halt",
+      "legend": [
+        { "symbol": "ring", "text": "Exzellenzuniversität ab 2027" },
+        { "symbol": "nail", "text": "weiterer Standort von Exzellenzclustern" },
+        {
+          "symbol": "none",
+          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+        }
+      ]
+    }
+  ]
+}

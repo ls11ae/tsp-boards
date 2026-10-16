@@ -455,7 +455,7 @@ Do these first; the board items are the critical path (lasering and a test board
   cities, Europe, world, step by step) instead of alphabetically. (Order done in 9.1; lazy
   thumbnails open.) (done: thumbnails load near the screen)
 
-### 9.7 Poster export (DIN formats)
+### 9.7 Poster export (DIN formats) — done 2026-10-16
 
 Kevin's wish 2026-10-16: print a puzzle as a poster in a DIN format, with the shortest round
 trip drawn and its length, above all for the Excellence Strategy and the Ruhr Innovation Lab.
@@ -524,6 +524,10 @@ do not matter here.
 
 - Tests: the page sizes of all DIN formats; the tour on the poster equals the exact optimum;
   the km figures; no logo file in the repository.
+
+(Done: `cli/export-poster.ts`, the app's "Plakat (PDF)", the six variants with README,
+report and contact sheet in `docs/posters/exzellenzstrategie-2027/`, logo versions in
+`local/posters/`. The QR code waits for Phase 10.)
 
 ### 9.8 Small items from the review of 9.5–9.6
 

@@ -893,3 +893,31 @@ Short entries: decision; alternatives considered; reason. Newest last.
   once as before), so opening the gallery no longer fetches `eu.json` and `wo.json` (about
   1 MB) for cards further down; `de.json` is loaded by the app anyway. The kiosk's cards use
   the same component.
+- **2026-10-16 Posters in DIN formats (roadmap 9.7).** A poster shows the solution: the
+  exact shortest round trip by great-circle distance ("Luftlinie", HiGHS on distances in
+  metres) with the runner-up, checked against the optimum on the flat map of the puzzle's board
+  (the app's measure; the same in all six Excellence variants, the map lengths 1.0–1.5 km
+  longer). `core/board/poster-tour.ts` makes the stops (a composite place as one stop at the
+  mean of its members' map points, as on boards, or its members as separate stops, grouped by
+  a red rounded hull with the alliance's name) and the tour; `core/board/poster.ts` lays out
+  one page: title and subtitle, the map projected straight into paper millimetres (land
+  filled, borders as on boards, member dots of centred alliances, the tour, dots, rings,
+  labels on white halos, scale bar), the facts (length, places, possible round trips as
+  "3,1 · 10²³" with a raised exponent, as the font has no superscript digits, the extra km of
+  the second-best, the proof sentence), legend and footer. Sizes scale with the short side
+  of the page (A1 = 1: title cap height 17 mm, length 22 mm, margin 18 mm, at least 10 mm on
+  A4); the facts go below the map or beside it, whichever gives the larger map scale (ties
+  within 3 % to the band below). Output as PDF (vector, text as outlines) and SVG; PNG
+  previews and the contact sheet in the CLI only, rendered by `@resvg/resvg-js` (a dev
+  dependency: native binaries, no effect on the app bundle). Logos as on boards, from local
+  files only (`--logo`, `--legend-logo`, `--suffix -logo` into `local/posters/`); a test
+  checks that no file under `local/` or named like a logo is tracked. The app's export panel
+  has "Plakat (PDF)" with format, orientation and (for composite places) the members mode;
+  the tour is computed in an exact worker, the paper constants live apart (`paper.ts`) so
+  the panel does not load the export code. The list-file reader moved from
+  `cli/collection.ts` to `cli/lib/place-list.ts` (same places for all curated lists). Not
+  done: the optional QR code to the play link (off until the app is online, Phase 10) and
+  posters of world puzzles (Equal Earth with the antimeridian; boards and posters are
+  planar). Alternatives: scaling the board drawing onto the page as the worksheet does (the
+  labels would scale with it and the map would not use the page's aspect), a raster
+  renderer of our own for the previews (more code than a dev dependency).
