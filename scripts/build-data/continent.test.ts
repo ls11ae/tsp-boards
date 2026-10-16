@@ -53,6 +53,16 @@ describe('continent towns', () => {
     ]);
   });
 
+  it('keep a big administrative seat beside a larger city, but not right next to it', () => {
+    const tokyo = row(1, 35.69, 139.69, 9_700_000, { country: 'JP', featureCode: 'PPLC' });
+    const yokohama = row(2, 35.44, 139.64, 3_700_000, { country: 'JP', featureCode: 'PPLA' });
+    const ward = row(3, 35.6, 139.7, 900_000, { country: 'JP' });
+    const giza = row(4, 30.01, 31.21, 4_000_000, { country: 'EG', featureCode: 'PPLA' });
+    const cairo = row(5, 30.06, 31.25, 9_600_000, { country: 'EG', featureCode: 'PPLC' });
+    const ids = mergeDistricts([tokyo, yokohama, ward, giza, cairo], 10).map((r) => r.id);
+    expect(ids).toEqual([1, 5, 2]);
+  });
+
   it('prefer the town known under more names in a cluster', () => {
     const guadalajara = row(1, 20.67, -103.39, 1_400_000, { alternates: ['a', 'b', 'c', 'd'] });
     const zapopan = row(2, 20.72, -103.39, 1_500_000);

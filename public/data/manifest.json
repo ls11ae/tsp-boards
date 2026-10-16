@@ -88,8 +88,8 @@
         "de": "Welt"
       },
       "file": "countries/wo.json",
-      "dataVersion": 1,
-      "cityCount": 1964,
+      "dataVersion": 2,
+      "cityCount": 1966,
       "bbox": [
         -180,
         -55.9185,

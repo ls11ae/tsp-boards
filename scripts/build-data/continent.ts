@@ -84,6 +84,9 @@ export function continentRows(rows: readonly CityRow[], config: ContinentConfig)
   );
 }
 
+/** Big administrative seats farther apart than this stay separate places, km. */
+const SEPARATE_KM = 15;
+
 /** Radius within which a city absorbs smaller towns (its districts), km. */
 export function cityRadiusKm(population: number, minKm: number): number {
   return Math.max(minKm, 3 * Math.sqrt(population / 100_000));
@@ -102,17 +105,21 @@ function prominence(r: CityRow): number {
  * Merges the districts of a city that GeoNames codes as towns (the districts of Istanbul,
  * Moscow or Shanghai, the boroughs of New York, Yokohama with Tokyo): a town within the larger
  * of the two radii (cityRadiusKm) of a more prominent town of the same country joins that
- * town, which keeps the cluster's largest population (New Delhi stands for Delhi).
+ * town, which keeps the cluster's largest population (New Delhi stands for Delhi). A seat of
+ * a first-order division with a million inhabitants more than 15 km away stays separate.
  */
 export function mergeDistricts(rows: readonly CityRow[], minKm: number): CityRow[] {
   const kept: CityRow[] = [];
   for (const r of [...rows].sort((a, b) => prominence(b) - prominence(a) || a.id - b.id)) {
-    const at = kept.findIndex(
-      (k) =>
-        k.country === r.country &&
-        geodesicKm([k.lon, k.lat], [r.lon, r.lat]) <
-          Math.max(cityRadiusKm(k.population, minKm), cityRadiusKm(r.population, minKm)),
-    );
+    const at = kept.findIndex((k) => {
+      if (k.country !== r.country) return false;
+      const km = geodesicKm([k.lon, k.lat], [r.lon, r.lat]);
+      // The less prominent town is a city of its own if it is the seat of a first-order
+      // division with a million inhabitants and not right next to the other (Yokohama and
+      // Saitama stay beside Tokyo; the districts of Shanghai or Istanbul still merge).
+      if (km > SEPARATE_KM && r.featureCode === 'PPLA' && r.population >= 1e6) return false;
+      return km < Math.max(cityRadiusKm(k.population, minKm), cityRadiusKm(r.population, minKm));
+    });
     if (at < 0) kept.push(r);
     else if (r.population > kept[at]!.population)
       kept[at] = { ...kept[at]!, population: r.population };
