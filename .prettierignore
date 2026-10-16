@@ -9,5 +9,6 @@ src/core/board/font-data.ts
 public/puzzles/*.tsp.json
 # generated board reports (cli/export-board.ts)
 docs/boards/**/*-report.md
+docs/boards/**/*.json
 # generated poster reports (cli/export-poster.ts)
 docs/posters/**/report*.md

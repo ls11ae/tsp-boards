@@ -1,0 +1,272 @@
+{
+  "params": {
+    "n": 12,
+    "widthMm": 300,
+    "heightMm": 300,
+    "marginMm": 35,
+    "minDistanceMm": 25,
+    "targetGapMm": 5,
+    "spacingMm": 10,
+    "rEffMm": 1.3,
+    "clearanceMm": 4,
+    "trackInsetMm": 15,
+    "rasterMm": 5,
+    "seed": 2,
+    "triesPerStep": 4,
+    "maxChecks": 400
+  },
+  "found": true,
+  "reached": 12,
+  "checks": 10,
+  "ms": 1812,
+  "points": [
+    [
+      40,
+      220
+    ],
+    [
+      155,
+      165
+    ],
+    [
+      140,
+      45
+    ],
+    [
+      265,
+      70
+    ],
+    [
+      215,
+      255
+    ],
+    [
+      195,
+      105
+    ],
+    [
+      205,
+      155
+    ],
+    [
+      260,
+      180
+    ],
+    [
+      200,
+      195
+    ],
+    [
+      165,
+      205
+    ],
+    [
+      140,
+      260
+    ],
+    [
+      50,
+      35
+    ]
+  ],
+  "steps": [
+    {
+      "k": 3,
+      "tour": [
+        1,
+        2,
+        3
+      ],
+      "stringMm": 458.13,
+      "stringGapMm": null,
+      "measuredGapMm": null
+    },
+    {
+      "k": 4,
+      "tour": [
+        1,
+        2,
+        4,
+        3
+      ],
+      "stringMm": 610.02,
+      "stringGapMm": 47.33,
+      "measuredGapMm": 46.54
+    },
+    {
+      "k": 5,
+      "tour": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "stringMm": 757.4,
+      "stringGapMm": 10.79,
+      "measuredGapMm": 9.12
+    },
+    {
+      "k": 6,
+      "tour": [
+        1,
+        3,
+        4,
+        6,
+        2,
+        5
+      ],
+      "stringMm": 778.61,
+      "stringGapMm": 12.97,
+      "measuredGapMm": 11.34
+    },
+    {
+      "k": 7,
+      "tour": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        5
+      ],
+      "stringMm": 798.91,
+      "stringGapMm": 7.43,
+      "measuredGapMm": 6.6
+    },
+    {
+      "k": 8,
+      "tour": [
+        1,
+        2,
+        7,
+        6,
+        3,
+        4,
+        8,
+        5
+      ],
+      "stringMm": 828.04,
+      "stringGapMm": 20.72,
+      "measuredGapMm": 19.88
+    },
+    {
+      "k": 9,
+      "tour": [
+        1,
+        2,
+        7,
+        9,
+        5,
+        8,
+        4,
+        6,
+        3
+      ],
+      "stringMm": 856.51,
+      "stringGapMm": 11.69,
+      "measuredGapMm": 10.9
+    },
+    {
+      "k": 10,
+      "tour": [
+        1,
+        2,
+        7,
+        6,
+        3,
+        4,
+        8,
+        5,
+        9,
+        10
+      ],
+      "stringMm": 877.88,
+      "stringGapMm": 10.96,
+      "measuredGapMm": 10.54
+    },
+    {
+      "k": 11,
+      "tour": [
+        1,
+        2,
+        10,
+        9,
+        7,
+        6,
+        3,
+        4,
+        8,
+        5,
+        11
+      ],
+      "stringMm": 903.35,
+      "stringGapMm": 13.47,
+      "measuredGapMm": 12.39
+    },
+    {
+      "k": 12,
+      "tour": [
+        1,
+        11,
+        5,
+        9,
+        10,
+        2,
+        7,
+        8,
+        4,
+        6,
+        3,
+        12
+      ],
+      "stringMm": 1000.88,
+      "stringGapMm": 12.42,
+      "measuredGapMm": 10.76
+    }
+  ],
+  "marks": [
+    {
+      "k": 3,
+      "s": 639.27
+    },
+    {
+      "k": 4,
+      "s": 487.39
+    },
+    {
+      "k": 5,
+      "s": 338.33
+    },
+    {
+      "k": 6,
+      "s": 316.33
+    },
+    {
+      "k": 7,
+      "s": 296.83
+    },
+    {
+      "k": 8,
+      "s": 267.7
+    },
+    {
+      "k": 9,
+      "s": 240.9
+    },
+    {
+      "k": 10,
+      "s": 218.67
+    },
+    {
+      "k": 11,
+      "s": 191.91
+    },
+    {
+      "k": 12,
+      "s": 94.64
+    }
+  ],
+  "trackEnd": 1124.64
+}
