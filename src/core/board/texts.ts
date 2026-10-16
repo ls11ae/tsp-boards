@@ -113,19 +113,21 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
   },
 };
 
-/** Texts of a poster (roadmap 9.7), in the poster's language. */
+/** Texts of a poster (roadmap 9.7, 9.9), in the poster's language. */
 export interface PosterTexts {
-  /** Caption under the length: what the length is. */
-  readonly lengthCaption: (n: string) => string;
-  readonly places: string;
-  readonly tours: string;
-  readonly second: string;
-  /** How the round trip was found and proven shortest. */
+  /** The problem around the number of round trips: "Finde … unter" n "Möglichkeiten." */
+  readonly problemBefore: string;
+  readonly problemAfter: string;
+  /** Multiplication sign of "3,1 · 10²³" (German) or "3.1 × 10²³" (English). */
+  readonly times: string;
+  /** One short line under the length: as the crow flies, proven shortest. */
   readonly proof: string;
-  /** Composite places as one stop at the centre of their members. */
-  readonly centroid: string;
+  /** Mark of the emphasized place where the round trip starts and ends. */
+  readonly startFinish: string;
   /** Legend line of a group: the members of an alliance as separate stops. */
   readonly groupLegend: string;
+  /** Legend line of a composite place drawn as one stop at the centre of its cities. */
+  readonly centroidLegend: string;
   /** Legend line for marked places if the puzzle brings none. */
   readonly markedLegend: string;
   readonly chair: string;
@@ -134,31 +136,27 @@ export interface PosterTexts {
 
 export const POSTER_TEXTS: Record<LabelLanguage, PosterTexts> = {
   de: {
-    lengthCaption: (n) => `ist die kürzeste Rundreise durch alle ${n} Orte (Luftlinie).`,
-    places: 'Orte',
-    tours: 'mögliche Rundreisen',
-    second: 'länger ist die zweitkürzeste Rundreise',
-    proof:
-      'Die Rundreise wurde mit ganzzahliger linearer Optimierung (Löser HiGHS) berechnet und als kürzeste bewiesen: Keine andere Rundreise durch diese Orte ist kürzer.',
-    centroid:
-      'Ein Verbund mit Universitäten in mehreren Städten ist ein Halt in der Mitte seiner Standorte; bis dorthin wird gemessen.',
-    groupLegend: 'Verbund: jeder Standort ist ein eigener Halt',
+    problemBefore: 'Finde die kürzeste Rundreise unter ',
+    problemAfter: ' Möglichkeiten.',
+    times: '·',
+    proof: 'Luftlinie, mit ganzzahliger linearer Optimierung (HiGHS) als kürzeste bewiesen.',
+    startFinish: 'Start und Ziel',
+    groupLegend: 'Verbund: jede Stadt ein eigener Halt',
+    centroidLegend: 'Verbund mit Universitäten in mehreren Städten: ein Halt in ihrer Mitte',
     markedLegend: 'markierter Ort',
     chair: 'Lehrstuhl 11 Algorithm Engineering, TU Dortmund',
     attribution: 'Städte: GeoNames (CC BY 4.0) · Grenzen: Natural Earth · TSP Boards',
   },
   en: {
-    lengthCaption: (n) => `is the shortest round trip through all ${n} places (as the crow flies).`,
-    places: 'places',
-    tours: 'possible round trips',
-    second: 'longer is the second-shortest round trip',
-    proof:
-      'The round trip was computed with integer linear optimisation (solver HiGHS) and proven shortest: no other round trip through these places is shorter.',
-    centroid:
-      'An alliance with universities in several cities is one stop at the centre of its sites; lengths are measured to there.',
-    groupLegend: 'alliance: every site is a stop of its own',
+    problemBefore: 'Find the shortest round trip out of ',
+    problemAfter: ' options.',
+    times: '×',
+    proof: 'As the crow flies; proven shortest with integer linear optimisation (HiGHS).',
+    startFinish: 'Start and finish',
+    groupLegend: 'alliance: every city a stop of its own',
+    centroidLegend: 'alliance with universities in several cities: one stop at their centre',
     markedLegend: 'marked place',
-    chair: 'Chair 11 Algorithm Engineering, TU Dortmund',
+    chair: 'Chair 11 Algorithm Engineering, TU Dortmund University',
     attribution: 'Cities: GeoNames (CC BY 4.0) · Borders: Natural Earth · TSP Boards',
   },
 };

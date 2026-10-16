@@ -1,12 +1,18 @@
-// Poster export (roadmap 9.7): one page in a DIN format (A4 to A0, portrait or landscape) with
-// the map scaled to fit, the shortest round trip drawn as a strong line on top, the places as
-// dots with labels, and the length and a few facts in large type. A poster is not a puzzle:
-// the solution is shown, lengths are great-circle kilometres ("Luftlinie", poster-tour.ts).
+// Poster export (roadmap 9.7, 9.9): one page in a DIN format (A4 to A0, portrait or landscape)
+// with the map scaled to fit, the shortest round trip drawn as a strong line on top, the places
+// as dots with labels, the problem in one line and the length as the answer in large type. A
+// poster is not a puzzle: the solution is shown, lengths are great-circle kilometres
+// ("Luftlinie", poster-tour.ts).
+//
+// One place can be emphasized (the Ruhr Innovation Lab on the chair's poster): the round trip
+// starts and ends there, its name is large, bold and red (or its logo stands large in free space
+// near it), and a composite place shows its cities as named dots in a red outline. Labels keep
+// off the legs of the tour, other outlines and the logo, and each sits clearly next to its own
+// dot.
 //
 // Everything is vector, text as outlines (as on the boards), with a white margin and no bleed.
-// Typography scales with the paper: A1 is the reference, and title and length are readable
-// from about 3 m there (cap heights of 17 and 21 mm). The facts go below the map or beside it,
-// whichever leaves the larger map.
+// Typography and lines scale with the paper: A1 is the reference (A0 is A1 enlarged by √2), and
+// title and length are readable from about 3 m there.
 
 import type { CountryFile, LabelLanguage } from '../data';
 import type { Point } from '../geometry';
@@ -16,8 +22,11 @@ import { projectionKind, regionFrame, regionOutline, type RegionId } from '../re
 import {
   DEFAULT_LABELS,
   EXPORT_NODE_LIMIT,
+  POSITIONS,
+  hitsObstacle,
   labelCandidates,
   placeLabels,
+  type Box,
   type LabelCandidate,
   type LabelOptions,
   type Obstacle,
@@ -26,7 +35,13 @@ import { fitLogo, logoHeight, placeLogo, type Logo } from './logo';
 import { boardMapLines } from './map-lines';
 import { pageSize, type DinPaper, type Orientation } from './paper';
 import { PdfDocument, type Rgb } from './pdf';
-import { possibleTours, stopPoints, type PosterStop, type PosterTour } from './poster-tour';
+import {
+  possibleTours,
+  startAtPlace,
+  stopPoints,
+  type PosterStop,
+  type PosterTour,
+} from './poster-tour';
 import { logoMetrics } from './setup';
 import {
   circlePath,
@@ -70,6 +85,17 @@ export interface PosterDrawing {
   readonly mmPerKm: number;
   /** Labels placed at their preferred position although they overlap (0 if all fit). */
   readonly unplacedLabels: number;
+  /** For checks: the labels' ink boxes, the legs of the tour, the emphasized place's logo. */
+  readonly labelBoxes: readonly Box[];
+  readonly legs: readonly (readonly [Point, Point])[];
+  readonly logoBox: Box | null;
+}
+
+/** The emphasized place (roadmap 9.9) and its logo (from a local file, never stored). */
+export interface PosterEmphasis {
+  /** Index of the place in the puzzle's place list. */
+  readonly place: number;
+  readonly logo: Logo | null;
 }
 
 export interface PosterInput {
@@ -84,15 +110,21 @@ export interface PosterInput {
   readonly language: LabelLanguage;
   /** Legend lines (ring: marked places, nail: plain places, none: a note). */
   readonly legend: readonly LegendEntry[];
-  /** Logos instead of a place's label, by place index (local files, never stored). */
+  readonly emphasis?: PosterEmphasis | null;
+  /** Logos instead of other places' labels, by place index (local files, never stored). */
   readonly logos?: ReadonlyMap<number, Logo>;
   readonly legendLogo?: Logo | null;
+  /** A logo at the bottom right, e.g. the university's (local files only). */
+  readonly cornerLogo?: Logo | null;
   /** No map lines (points placed by hand on a blank board). */
   readonly blankMap?: boolean;
 }
 
-/** Sizes in mm for a page whose short side is `short` mm (A1: 594). */
-function sizes(short: number) {
+/**
+ * Sizes in mm for a page whose short side is `short` mm (A1: 594). Everything scales with the
+ * short side, so A0 is A1 enlarged by √2 (only the minimum margin and footer size are fixed).
+ */
+export function posterSizes(short: number) {
   const f = short / 594;
   return {
     f,
@@ -100,13 +132,21 @@ function sizes(short: number) {
     gap: 9 * f,
     title: 24 * f,
     subtitle: 11 * f,
-    length: 32 * f,
-    value: 18 * f,
+    /** The problem line, and the length as the answer. */
+    problem: 12 * f,
+    length: 36 * f,
     caption: 7 * f,
-    text: 7.5 * f,
     legend: 7.5 * f,
     label: 9 * f,
+    /** The emphasized place's name and its "start and finish" line. */
+    emphasis: 13.5 * f,
+    startCaption: 7.5 * f,
+    /** Width of the emphasized place's logo. */
+    logo: 100 * f,
+    /** The chair line of the footer (cap height about 5 mm on A1) and the credits under it. */
+    chair: 7.2 * f,
     footer: Math.max(2.4, 4.2 * f),
+    cornerLogo: 70 * f,
     dot: 2.4 * f,
     ringOuter: 4.6 * f,
     ringInner: 3.8 * f,
@@ -116,7 +156,7 @@ function sizes(short: number) {
     halo: 1.1 * f,
   };
 }
-type Sizes = ReturnType<typeof sizes>;
+type Sizes = ReturnType<typeof posterSizes>;
 
 // --- text --------------------------------------------------------------------------------------
 
@@ -193,14 +233,27 @@ function formatter(language: LabelLanguage) {
     });
 }
 
-/** "3,1 · 10²³" as runs (the font has no superscript digits: a raised smaller exponent). */
-function toursRuns(n: number, size: number, fmt: ReturnType<typeof formatter>): Run[] {
-  const t = possibleTours(n);
-  if (t.exact !== null) return [{ text: fmt(t.exact, 0), size }];
-  return [
-    { text: `${fmt(t.mantissa, 1)} · 10`, size },
-    { text: String(t.exponent), size: size * 0.62, rise: size * 0.42 },
-  ];
+/**
+ * The problem line with the number of round trips, (n − 1)!/2: "Finde die kürzeste Rundreise
+ * unter 3,1 · 10²³ Möglichkeiten." (the font has no superscript digits: a raised exponent).
+ */
+export function problemRuns(n: number, size: number, language: LabelLanguage): Run[] {
+  const t = POSTER_TEXTS[language];
+  const fmt = formatter(language);
+  const count = possibleTours(n);
+  const number: Run[] =
+    count.exact !== null
+      ? [{ text: fmt(count.exact, 0), size }]
+      : [
+          { text: `${fmt(count.mantissa, 1)} ${t.times} 10`, size },
+          { text: String(count.exponent), size: size * 0.62, rise: size * 0.42 },
+        ];
+  return [{ text: t.problemBefore, size }, ...number, { text: t.problemAfter, size }];
+}
+
+/** The text of runs, the exponent written as ^ (for reports and tests). */
+export function runsText(runs: readonly Run[]): string {
+  return runs.map((r) => (r.rise ? `^${r.text}` : r.text)).join('');
 }
 
 // --- blocks: facts and legend ------------------------------------------------------------------
@@ -208,25 +261,6 @@ function toursRuns(n: number, size: number, fmt: ReturnType<typeof formatter>): 
 interface Block {
   readonly height: number;
   draw(c: Canvas, x: number, y: number): void;
-}
-
-interface Fact {
-  readonly value: Run[];
-  readonly caption: string;
-}
-
-/** A value in large type with its caption below, at most `width` wide. */
-function factCell(fact: Fact, width: number, s: Sizes): Block {
-  const valueSize = fact.value[0]?.size ?? s.value;
-  const captionTop = valueSize * FONT_METRICS.capHeight + 0.35 * valueSize;
-  const height = paragraph(null, fact.caption, 0, captionTop, width, s.caption);
-  return {
-    height,
-    draw(c, x, y) {
-      c.fill(runsPath(fact.value, x, y + valueSize * FONT_METRICS.capHeight), INK);
-      paragraph(c, fact.caption, x, y + captionTop, width, s.caption, GREY);
-    },
-  };
 }
 
 function stack(blocks: readonly Block[], gap: number): Block {
@@ -243,69 +277,34 @@ function stack(blocks: readonly Block[], gap: number): Block {
   };
 }
 
-/** Blocks side by side in columns of the given widths (top aligned). */
-function row(blocks: readonly Block[], widths: readonly number[], gap: number): Block {
+/**
+ * The problem in one line, the length below it in large type (the answer), and one short
+ * line in small type. The problem line shrinks if it does not fit the width.
+ */
+function factsBlock(problem: Run[], length: string, proof: string, width: number, s: Sizes): Block {
+  const scale = Math.min(1, width / runsWidth(problem));
+  const runs = problem.map((r) => ({
+    ...r,
+    size: r.size * scale,
+    ...(r.rise ? { rise: r.rise * scale } : {}),
+  }));
+  const problemSize = s.problem * scale;
+  const lengthTop = 1.3 * problemSize;
+  const proofTop = lengthTop + FONT_METRICS.capHeight * s.length + 0.45 * s.length;
+  const height = paragraph(null, proof, 0, proofTop, width, s.caption);
   return {
-    height: Math.max(0, ...blocks.map((b) => b.height)),
+    height,
     draw(c, x, y) {
-      let left = x;
-      blocks.forEach((b, i) => {
-        b.draw(c, left, y);
-        left += widths[i]! + gap;
-      });
+      c.fill(runsPath(runs, x, y + FONT_METRICS.capHeight * problemSize), INK);
+      c.text(length, x, y + lengthTop + FONT_METRICS.capHeight * s.length, s.length, TOUR);
+      paragraph(c, proof, x, y + proofTop, width, s.caption, GREY);
     },
   };
 }
 
-interface FactsInput {
-  readonly length: Fact;
-  readonly others: readonly Fact[];
-  readonly notes: readonly string[];
-}
+type Symbol = 'ring' | 'nail' | 'group' | 'centroid' | null;
 
-/** The facts: the length, the other figures, the notes; laid out for `width` mm. */
-function factsBlock(facts: FactsInput, width: number, s: Sizes, wide: boolean): Block {
-  const notes: Block = {
-    height: facts.notes.reduce(
-      (h, n, i) => paragraph(null, n, 0, h + (i > 0 ? 0.4 * s.text : 0), width, s.text),
-      0,
-    ),
-    draw(c, x, y) {
-      let top = y;
-      facts.notes.forEach((n, i) => {
-        top = paragraph(c, n, x, top + (i > 0 ? 0.4 * s.text : 0), width, s.text);
-      });
-    },
-  };
-  const others = facts.others;
-  if (wide) {
-    // Length on the left, the other figures in columns on the right, the notes below.
-    const leftW = width * 0.4;
-    const rightW = width - leftW - s.gap;
-    const cellW = (rightW - (others.length - 1) * s.gap) / others.length;
-    const fits = others.every((f) => runsWidth(f.value) <= cellW);
-    const right = fits
-      ? row(
-          others.map((f) => factCell(f, cellW, s)),
-          others.map(() => cellW),
-          s.gap,
-        )
-      : stack(
-          others.map((f) => factCell(f, rightW, s)),
-          0.6 * s.gap,
-        );
-    const top = row([factCell(facts.length, leftW, s), right], [leftW, rightW], s.gap);
-    return stack([top, notes], s.gap);
-  }
-  return stack(
-    [factCell(facts.length, width, s), ...others.map((f) => factCell(f, width, s)), notes],
-    0.8 * s.gap,
-  );
-}
-
-type Symbol = 'ring' | 'nail' | 'group' | null;
-
-/** The legend lines with symbols, and an optional logo on the left. */
+/** The legend lines with symbols (symbol lines first), and an optional logo on the left. */
 function legendBlock(
   entries: readonly { readonly symbol: Symbol; readonly text: string }[],
   logo: Logo | null,
@@ -348,8 +347,8 @@ function legendBlock(
         if (!l.symbol) continue;
         const cx = x + textX + 2.2 * s.ringOuter;
         const cy = base - (FONT_METRICS.capHeight * size) / 2;
+        const d = s.ringOuter * 0.9;
         if (l.symbol === 'group') {
-          const d = s.ringOuter * 0.9;
           const shape = roundedHull(
             [
               [cx - d, cy],
@@ -363,6 +362,27 @@ function legendBlock(
             [...circlePath(cx - d, cy, s.dot * 0.8), ...circlePath(cx + d, cy, s.dot * 0.8)],
             INK,
           );
+          continue;
+        }
+        if (l.symbol === 'centroid') {
+          // Two cities (small grey dots) and the stop in their middle.
+          c.stroke(
+            polylinePath([
+              [cx - d, cy + 0.5 * d],
+              [cx + d, cy - 0.5 * d],
+            ]),
+            GREY,
+            s.thin * 1.4,
+            [1.5 * s.f, 1.2 * s.f],
+          );
+          c.fill(
+            [
+              ...circlePath(cx - d, cy + 0.5 * d, s.dot * 0.55),
+              ...circlePath(cx + d, cy - 0.5 * d, s.dot * 0.55),
+            ],
+            GREY,
+          );
+          c.fill(circlePath(cx, cy, s.dot), INK);
           continue;
         }
         c.fill(circlePath(cx, cy, s.dot), INK);
@@ -393,10 +413,9 @@ function convexHull(points: readonly Point[]): Point[] {
   return [...lower.slice(0, -1), ...upper.slice(0, -1)];
 }
 
-/** The outline of the points' convex hull widened by r (rounded corners): an alliance's group. */
-export function roundedHull(points: readonly Point[], r: number): PathCommand[] {
+/** The points' convex hull widened by r (rounded corners), as a convex polygon. */
+export function roundedHullPoints(points: readonly Point[], r: number): Point[] {
   const hull = convexHull(points);
-  if (hull.length === 1) return circlePath(hull[0]![0], hull[0]![1], r);
   const out: Point[] = [];
   const arc = (c: Point, from: number, sweep: number) => {
     const steps = Math.max(2, Math.ceil(Math.abs(sweep) / (Math.PI / 18)));
@@ -405,6 +424,10 @@ export function roundedHull(points: readonly Point[], r: number): PathCommand[] 
       out.push([c[0] + r * Math.cos(a), c[1] + r * Math.sin(a)]);
     }
   };
+  if (hull.length === 1) {
+    arc(hull[0]!, 0, 2 * Math.PI);
+    return out.slice(0, -1);
+  }
   const m = hull.length;
   for (let i = 0; i < m; i++) {
     const prev = hull[(i - 1 + m) % m]!;
@@ -421,7 +444,114 @@ export function roundedHull(points: readonly Point[], r: number): PathCommand[] 
     while (sweep > 2 * Math.PI) sweep -= 2 * Math.PI;
     arc(cur, nIn, sweep);
   }
-  return polygonPath(out);
+  return out;
+}
+
+/** The outline of the points' convex hull widened by r (rounded corners): an alliance's group. */
+export function roundedHull(points: readonly Point[], r: number): PathCommand[] {
+  return polygonPath(roundedHullPoints(points, r));
+}
+
+// --- geometry helpers --------------------------------------------------------------------------
+
+/** Distance from a point to an axis-parallel box (0 inside). */
+function boxDistance(box: Box, p: Point): number {
+  const dx = Math.max(box[0] - p[0], 0, p[0] - box[2]);
+  const dy = Math.max(box[1] - p[1], 0, p[1] - box[3]);
+  return Math.hypot(dx, dy);
+}
+
+/** Whether the segment ab meets the box (Liang–Barsky clipping). */
+export function segmentMeetsBox(a: Point, b: Point, box: Box): boolean {
+  let t0 = 0;
+  let t1 = 1;
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  const edges: [number, number][] = [
+    [-dx, a[0] - box[0]],
+    [dx, box[2] - a[0]],
+    [-dy, a[1] - box[1]],
+    [dy, box[3] - a[1]],
+  ];
+  for (const [p, q] of edges) {
+    if (p === 0) {
+      if (q < 0) return false;
+      continue;
+    }
+    const r = q / p;
+    if (p < 0) t0 = Math.max(t0, r);
+    else t1 = Math.min(t1, r);
+    if (t0 > t1) return false;
+  }
+  return true;
+}
+
+/** A leg of the tour as a thin rectangle (an obstacle for labels and the logo). */
+function legPolygon(a: Point, b: Point, half: number): Point[] {
+  const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+  const ux = ((b[0] - a[0]) / len) * half;
+  const uy = ((b[1] - a[1]) / len) * half;
+  return [
+    [a[0] - ux - uy, a[1] - uy + ux],
+    [b[0] + ux - uy, b[1] + uy + ux],
+    [b[0] + ux + uy, b[1] + uy - ux],
+    [a[0] - ux + uy, a[1] - uy - ux],
+  ];
+}
+
+function boxPolygon(box: Box): Point[] {
+  return [
+    [box[0], box[1]],
+    [box[2], box[1]],
+    [box[2], box[3]],
+    [box[0], box[3]],
+  ];
+}
+
+/** Point in any of the rings (even-odd). */
+function insideRings(p: Point, rings: readonly (readonly Point[])[]): boolean {
+  let inside = false;
+  for (const ring of rings) {
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [xi, yi] = ring[i]!;
+      const [xj, yj] = ring[j]!;
+      if (yi > p[1] !== yj > p[1] && p[0] < ((xj - xi) * (p[1] - yi)) / (yj - yi) + xi)
+        inside = !inside;
+    }
+  }
+  return inside;
+}
+
+/**
+ * The eight label positions around a box (an outline), in the order of preference of
+ * `labelCandidates`: beside it at mid-height, at the corners, above and below.
+ */
+function candidatesAroundBox(around: Box, m: TextMetrics, gap: number): LabelCandidate[] {
+  const [x0, y0, x1, y1] = around;
+  const w = m.inkRight - m.inkLeft;
+  const h = m.inkBottom - m.inkTop;
+  const cx = (x0 + x1) / 2;
+  const cy = (y0 + y1) / 2;
+  const d = gap / Math.SQRT2;
+  const corners: Record<(typeof POSITIONS)[number], Point> = {
+    E: [x1 + gap, cy - h / 2],
+    W: [x0 - gap - w, cy - h / 2],
+    NE: [x1 - 0.25 * (x1 - x0) + d, y0 - d - h],
+    SE: [x1 - 0.25 * (x1 - x0) + d, y1 + d],
+    NW: [x0 + 0.25 * (x1 - x0) - d - w, y0 - d - h],
+    SW: [x0 + 0.25 * (x1 - x0) - d - w, y1 + d],
+    N: [cx - w / 2, y0 - gap - h],
+    S: [cx - w / 2, y1 + gap],
+  };
+  return POSITIONS.map((position, rank) => {
+    const [bx, by] = corners[position];
+    return {
+      position,
+      rank,
+      box: [bx, by, bx + w, by + h],
+      baseline: [bx - m.inkLeft, by - m.inkTop],
+    };
+  });
 }
 
 // --- the map -----------------------------------------------------------------------------------
@@ -441,21 +571,84 @@ function mapProjection(input: PosterInput, box: MapBox, s: Sizes): BoardProjecti
   );
 }
 
-interface LabelItem {
-  readonly text: string | null;
-  readonly logo: Logo | null;
-  readonly metrics: TextMetrics;
+/** An alliance drawn as one outline: its members as separate stops, or the emphasized place. */
+interface Group {
+  readonly name: string;
+  readonly place: number;
+  readonly emphasized: boolean;
+  /** Dots inside the outline (map coordinates). */
+  readonly points: readonly Point[];
+  readonly hull: readonly Point[];
+  readonly centre: Point;
+  /** Largest distance from the centre to the outline. */
+  readonly reach: number;
 }
 
-/** Draws the map with the tour, dots, groups and labels into `c` (page coordinates). */
-function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): number {
+/** A line of a label: text, size, colour, bold (the emphasized place). */
+interface LabelLine {
+  readonly text: string;
+  readonly size: number;
+  readonly color: Rgb;
+  readonly bold: boolean;
+}
+
+interface LabelItem {
+  readonly anchor: Point;
+  /** Keep-out radius around the anchor (the outline's reach for groups). */
+  readonly reach: number;
+  readonly lines: readonly LabelLine[];
+  /** A logo instead of the text (other places with a logo). */
+  readonly logo: Logo | null;
+  readonly metrics: TextMetrics;
+  /** The group whose outline the label may touch (its own), and whose dots it may be near. */
+  readonly group: string | null;
+}
+
+/** Ink box of label lines relative to the first line's baseline start. */
+function linesMetrics(lines: readonly LabelLine[]): TextMetrics {
+  let bottom = 0;
+  let width = 0;
+  let y = 0;
+  lines.forEach((l, i) => {
+    if (i > 0) y += 0.3 * lines[i - 1]!.size + l.size;
+    const m = measureText(l.text, l.size);
+    width = Math.max(width, m.inkRight);
+    bottom = y + m.inkBottom;
+  });
+  const first = measureText(lines[0]!.text, lines[0]!.size);
+  return {
+    width,
+    inkLeft: Math.min(0, first.inkLeft),
+    inkRight: width,
+    inkTop: first.inkTop,
+    inkBottom: Math.max(bottom, first.inkBottom),
+  };
+}
+
+interface MapResult {
+  readonly unplaced: number;
+  /** Ink boxes of all labels, the legs of the tour and the logo, in page coordinates. */
+  readonly labelBoxes: readonly Box[];
+  readonly legs: readonly (readonly [Point, Point])[];
+  readonly logoBox: Box | null;
+}
+
+/** Draws the map with the tour, dots, groups, logo and labels into `c` (page coordinates). */
+function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResult {
   const projection = mapProjection(input, box, s);
   const { stops } = input;
+  const t = POSTER_TEXTS[input.language];
   const at = (p: Point): Point => [p[0] + box.x, p[1] + box.y];
   const move = (path: Path) => transformPath(path, translate(box.x, box.y));
   const points = stopPoints(stops, projection);
+  const emphasis = input.emphasis ?? null;
+  const emphasized = (place: number) => emphasis !== null && emphasis.place === place;
+  const tour = emphasis
+    ? startAtPlace(stops, input.tour.tour, emphasis.place)
+    : [...input.tour.tour];
 
   // Land and borders.
+  let land: Point[][] = [];
   if (!input.blankMap) {
     const outline = regionOutline(input.file, input.region).geometry;
     const rings =
@@ -464,12 +657,8 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): number {
         : outline.type === 'MultiPolygon'
           ? outline.coordinates.flat()
           : [];
-    c.fill(
-      rings.flatMap((ring) =>
-        polygonPath(ring.map(([lon, lat]) => at(projection.project(lon!, lat!)))),
-      ),
-      LAND,
-    );
+    land = rings.map((ring) => ring.map(([lon, lat]) => projection.project(lon!, lat!)));
+    c.fill(move(land.flatMap((ring) => polygonPath(ring))), LAND);
     // Clipped a line width inside the box, so strokes stay in the white margin's bounds.
     const e = s.strong;
     const lines = boardMapLines(input.file, input.region, projection, [e, e, box.w - e, box.h - e]);
@@ -477,40 +666,78 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): number {
     c.stroke(move(lines.strong.flatMap((l) => polylinePath(l))), GREY, s.strong);
   }
 
-  // Alliances with their members as separate stops: one shape around the members.
-  const groups = new Map<string, number[]>();
-  stops.forEach((st, i) => {
-    if (st.group) groups.set(st.group, [...(groups.get(st.group) ?? []), i]);
-  });
+  // Groups: alliances with separate stops, and the emphasized place with its member cities.
   const groupReach = 2.4 * s.ringOuter;
-  for (const members of groups.values()) {
-    const hull = move(
-      roundedHull(
+  const groups: Group[] = [];
+  const makeGroup = (name: string, place: number, pts: Point[]): Group => {
+    const hull = roundedHullPoints(pts, groupReach);
+    const centre: Point = [
+      pts.reduce((sum, p) => sum + p[0], 0) / pts.length,
+      pts.reduce((sum, p) => sum + p[1], 0) / pts.length,
+    ];
+    const reach = Math.max(...hull.map((p) => Math.hypot(p[0] - centre[0], p[1] - centre[1])));
+    return { name, place, emphasized: emphasized(place), points: pts, hull, centre, reach };
+  };
+  const byGroup = new Map<string, number[]>();
+  stops.forEach((st, i) => {
+    if (st.group) byGroup.set(st.group, [...(byGroup.get(st.group) ?? []), i]);
+  });
+  for (const [name, members] of byGroup)
+    groups.push(
+      makeGroup(
+        name,
+        stops[members[0]!]!.place,
         members.map((i) => points[i]!),
-        groupReach,
       ),
     );
+  // The emphasized place as one stop at its centre: its cities are named dots in the outline.
+  const emphasizedCentre = stops.findIndex((st) => st.members && emphasized(st.place));
+  const centreMembers =
+    emphasizedCentre >= 0
+      ? stops[emphasizedCentre]!.members!.map((m) => ({
+          name: m.name,
+          point: projection.project(m.lon, m.lat),
+        }))
+      : [];
+  if (emphasizedCentre >= 0) {
+    const st = stops[emphasizedCentre]!;
+    groups.push({
+      ...makeGroup(
+        st.name,
+        st.place,
+        centreMembers.map((m) => m.point),
+      ),
+      centre: points[emphasizedCentre]!,
+    });
+  }
+  for (const g of groups) {
+    const hull = move(polygonPath(g.hull));
     c.fill(hull, GROUP);
-    c.stroke(hull, TOUR, s.strong);
+    c.stroke(hull, TOUR, g.emphasized ? 2 * s.strong : s.strong);
   }
 
   // Composite stops at their centroid: the members as small dots, connected to the stop.
   const memberDots: Point[] = [];
   stops.forEach((st, i) => {
     if (!st.members) return;
+    const named = i === emphasizedCentre;
     for (const m of st.members) {
       const p = projection.project(m.lon, m.lat);
-      memberDots.push(p);
+      if (!named) memberDots.push(p);
       c.stroke(move(polylinePath([p, points[i]!])), GREY, s.thin * 1.4, [1.5 * s.f, 1.2 * s.f]);
     }
   });
   c.fill(move(memberDots.flatMap(([x, y]) => circlePath(x, y, s.dot * 0.55))), GREY);
 
   // The round trip.
+  const legs = tour.map((v, i): [Point, Point] => [
+    points[v]!,
+    points[tour[(i + 1) % tour.length]!]!,
+  ]);
   c.stroke(
     move(
       polylinePath(
-        input.tour.tour.map((i) => points[i]!),
+        tour.map((i) => points[i]!),
         true,
       ),
     ),
@@ -518,17 +745,26 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): number {
     s.tour,
   );
 
-  // Dots and rings.
-  c.fill(move(points.flatMap(([x, y]) => circlePath(x, y, s.dot + 0.5 * s.f))), WHITE);
-  c.fill(move(points.flatMap(([x, y]) => circlePath(x, y, s.dot))), INK);
+  // Dots and rings; the named cities of the emphasized place; the start and finish.
+  const named = centreMembers.map((m) => m.point);
+  const dots = [...points, ...named];
+  c.fill(move(dots.flatMap(([x, y]) => circlePath(x, y, s.dot + 0.5 * s.f))), WHITE);
+  c.fill(move(dots.flatMap(([x, y]) => circlePath(x, y, s.dot))), INK);
   c.fill(
     move(
-      points.flatMap(([x, y], i) =>
-        stops[i]!.highlight && !stops[i]!.group ? ringPath(x, y, s.ringOuter, s.ringInner) : [],
-      ),
+      points.flatMap(([x, y], i) => {
+        const st = stops[i]!;
+        return st.highlight && !st.group && !emphasized(st.place)
+          ? ringPath(x, y, s.ringOuter, s.ringInner)
+          : [];
+      }),
     ),
     INK,
   );
+  if (emphasis && tour.length > 0) {
+    const [x, y] = points[tour[0]!]!;
+    c.fill(move(ringPath(x, y, 1.3 * s.ringOuter, 1.3 * s.ringOuter - 1.2 * s.f)), TOUR);
+  }
 
   // Scale bar at the bottom left of the map.
   const km = scaleBarKm(projection.mmPerKm, 40 * s.f);
@@ -555,27 +791,138 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): number {
     INK,
     s.strong * 1.3,
   );
+  const unitW = measureText(unit, s.caption).width;
   c.text(
     '0',
     box.x + barX - measureText('0', s.caption).width / 2,
     box.y + barY - 1.6 * tick,
     s.caption,
   );
-  c.text(
-    unit,
-    box.x + barX + barLen - measureText(unit, s.caption).width / 2,
-    box.y + barY - 1.6 * tick,
-    s.caption,
-  );
-  const scaleBox: Point[] = [
-    [0, barY - 1.6 * tick - s.caption],
-    [barX + barLen + measureText(unit, s.caption).width, barY - 1.6 * tick - s.caption],
-    [barX + barLen + measureText(unit, s.caption).width, box.h],
-    [0, box.h],
+  c.text(unit, box.x + barX + barLen - unitW / 2, box.y + barY - 1.6 * tick, s.caption);
+  const scaleBox: Box = [0, barY - 1.6 * tick - s.caption, barX + barLen + unitW, box.h];
+
+  // Obstacles of labels and the logo: the legs, the scale bar, small member dots.
+  const legObstacles = legs.map(([a, b]): Obstacle => ({
+    kind: 'polygon',
+    points: legPolygon(a, b, s.tour / 2 + 0.4 * s.f),
+  }));
+  const obstacles: Obstacle[] = [
+    { kind: 'polygon', points: boxPolygon(scaleBox) },
+    ...legObstacles,
+    ...memberDots.map((p): Obstacle => ({ kind: 'circle', centre: p, radius: s.dot })),
   ];
 
-  // Labels: places, and the names of groups (or a logo instead of either).
+  // The emphasized place's logo: large, in free space near its outline, with a leader line.
+  const emphasisGroup = groups.find((g) => g.emphasized) ?? null;
+  const emphasisAnchor: Point | null = emphasisGroup
+    ? emphasisGroup.centre
+    : emphasis
+      ? (points[stops.findIndex((st) => st.place === emphasis.place)] ?? null)
+      : null;
+  let logoBox: Box | null = null;
+  if (emphasis?.logo && emphasisAnchor) {
+    const logo = emphasis.logo;
+    const w = s.logo;
+    const h = Math.min(logoHeight(logo, w), 0.75 * w);
+    const lw = h < logoHeight(logo, w) ? (w * h) / logoHeight(logo, w) : w;
+    const keepOut: Obstacle[] = [
+      ...dots.map((p): Obstacle => ({ kind: 'circle', centre: p, radius: 2.2 * s.label })),
+      ...legs.map(([a, b]): Obstacle => ({
+        kind: 'polygon',
+        points: legPolygon(a, b, s.tour / 2 + 2 * s.f),
+      })),
+      ...groups.map((g): Obstacle => ({ kind: 'polygon', points: g.hull })),
+      { kind: 'polygon', points: boxPolygon(scaleBox) },
+    ];
+    const nearest = (b: Box) =>
+      emphasisGroup
+        ? Math.min(...emphasisGroup.hull.map((p) => boxDistance(b, p)))
+        : boxDistance(b, emphasisAnchor);
+    // Over land of the region costs: the map stays readable (sea or neighbours are free). A
+    // raster of the land (cells of 5 mm on A1) answers it quickly for every candidate.
+    const cell = 5 * s.f;
+    const cols = Math.ceil(box.w / cell);
+    const rows = Math.ceil(box.h / cell);
+    const mask = new Uint8Array(cols * rows);
+    for (let j = 0; j < rows; j++)
+      for (let i = 0; i < cols; i++)
+        mask[j * cols + i] = insideRings([(i + 0.5) * cell, (j + 0.5) * cell], land) ? 1 : 0;
+    const onLand = (b: Box) => {
+      const i0 = Math.max(0, Math.floor(b[0] / cell));
+      const i1 = Math.min(cols - 1, Math.floor(b[2] / cell));
+      const j0 = Math.max(0, Math.floor(b[1] / cell));
+      const j1 = Math.min(rows - 1, Math.floor(b[3] / cell));
+      let count = 0;
+      for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) count += mask[j * cols + i]!;
+      return count / Math.max(1, (i1 - i0 + 1) * (j1 - j0 + 1));
+    };
+    const step = 3 * s.f;
+    const edge = 2 * s.f;
+    let best: { box: Box; score: number } | null = null;
+    for (let x = edge; x + lw <= box.w - edge; x += step) {
+      for (let y = edge; y + h <= box.h - edge; y += step) {
+        const b: Box = [x, y, x + lw, y + h];
+        const gap = nearest(b);
+        if (gap < 3 * s.f) continue;
+        const score = gap + 400 * s.f * onLand(b);
+        if (best && score >= best.score) continue;
+        if (keepOut.some((o) => hitsObstacle(b, o))) continue;
+        best = { box: b, score };
+      }
+    }
+    if (best) {
+      logoBox = best.box;
+      // Leader line from the nearest point of the outline to the logo's box.
+      const from = emphasisGroup
+        ? emphasisGroup.hull.reduce((p, q) =>
+            boxDistance(best.box, q) < boxDistance(best.box, p) ? q : p,
+          )
+        : emphasisAnchor;
+      const to: Point = [
+        Math.min(Math.max(from[0], best.box[0]), best.box[2]),
+        Math.min(Math.max(from[1], best.box[1]), best.box[3]),
+      ];
+      c.stroke(move(polylinePath([from, to])), TOUR, 0.8 * s.f);
+      c.fill(move(fitLogo(logo, best.box)), INK);
+      obstacles.push({ kind: 'polygon', points: boxPolygon(best.box) });
+    }
+  }
+
+  // Labels: places, the named cities of the emphasized place, the groups' names.
   const clearance = (stops.some((st) => st.highlight) ? s.ringOuter : s.dot) + 0.6 * s.f;
+  const plain = (text: string, color = INK): LabelLine[] => [
+    { text, size: s.label, color, bold: false },
+  ];
+  const items: LabelItem[] = [];
+  const item = (
+    anchor: Point,
+    reach: number,
+    lines: LabelLine[],
+    group: string | null,
+    logo: Logo | null = null,
+  ) => items.push({ anchor, reach, lines, logo, metrics: linesMetrics(lines), group });
+  const emphasisLines = (name: string): LabelLine[] => [
+    ...(logoBox ? [] : [{ text: name, size: s.emphasis, color: TOUR, bold: true }]),
+    { text: t.startFinish, size: s.startCaption, color: TOUR, bold: false },
+  ];
+  stops.forEach((st, i) => {
+    if (st.group || i === emphasizedCentre) return;
+    if (emphasized(st.place)) item(points[i]!, clearance, emphasisLines(st.name), null);
+    else item(points[i]!, clearance, plain(st.name), null, input.logos?.get(st.place) ?? null);
+  });
+  stops.forEach((st, i) => {
+    if (st.group) item(points[i]!, clearance, plain(st.name), st.group);
+  });
+  for (const m of centreMembers)
+    item(m.point, clearance, plain(m.name), stops[emphasizedCentre]!.name);
+  for (const g of groups)
+    item(
+      g.centre,
+      g.reach + 0.2 * s.label,
+      g.emphasized ? emphasisLines(g.name) : plain(g.name, TOUR),
+      g.name,
+    );
+
   const options: LabelOptions = {
     ...DEFAULT_LABELS,
     sizeMm: s.label,
@@ -585,40 +932,53 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): number {
     // Halos stay inside the map box (and the white margin).
     edgeMm: 1.2 * s.halo,
   };
-  const logoFor = (place: number) => input.logos?.get(place) ?? null;
-  const items: LabelItem[] = [];
-  const anchors: Point[] = [];
-  const reach: number[] = [];
-  stops.forEach((st, i) => {
-    const logo = st.group ? null : logoFor(st.place);
-    items.push({ text: st.name, logo, metrics: measureText(st.name, s.label) });
-    anchors.push(points[i]!);
-    reach.push(clearance);
-  });
-  for (const [name, members] of groups) {
-    const pts = members.map((i) => points[i]!);
-    const centre: Point = [
-      pts.reduce((sum, p) => sum + p[0], 0) / pts.length,
-      pts.reduce((sum, p) => sum + p[1], 0) / pts.length,
-    ];
-    const spread = Math.max(...pts.map((p) => Math.hypot(p[0] - centre[0], p[1] - centre[1])));
-    const place = stops[members[0]!]!.place;
-    items.push({ text: name, logo: logoFor(place), metrics: measureText(name, s.label) });
-    anchors.push(centre);
-    reach.push(spread + groupReach);
-  }
-  const obstacles: Obstacle[] = [
-    { kind: 'polygon', points: scaleBox },
-    ...memberDots.map((p): Obstacle => ({ kind: 'circle', centre: p, radius: s.dot })),
-  ];
-  const place = (trial: readonly TextMetrics[]) => {
-    const candidates = anchors.map((p, i) =>
-      labelCandidates(p, trial[i]!, { ...options, nailClearanceMm: reach[i]! }),
+  const anchors = items.map((it) => it.anchor);
+  // A label sits clearly closer to its own dot than to any other (its group's dots aside),
+  // and stays off the outlines of other groups.
+  const accept = (i: number, b: Box): boolean => {
+    const it = items[i]!;
+    const own = groups.find((g) => g.name === it.group) ?? null;
+    if (groups.some((g) => g !== own && hitsObstacle(b, { kind: 'polygon', points: g.hull })))
+      return false;
+    const d0 = boxDistance(b, it.anchor);
+    return dots.every(
+      (q) =>
+        q === it.anchor ||
+        (own !== null && it.anchor === own.centre && own.points.includes(q)) ||
+        (q[0] === it.anchor[0] && q[1] === it.anchor[1]) ||
+        boxDistance(b, q) >= d0 + 0.35 * s.label,
     );
+  };
+  // Logos of other places replace their labels if the labels still fit with them.
+  let metrics = items.map((it) => it.metrics);
+  const logoAt: (Logo | null)[] = items.map(() => null);
+  const extra = items.map(() => 0);
+  // A group's name sits around its outline's box (the outline is wide and low, a circle of
+  // its longest radius would leave the name floating); other labels around their dots.
+  const groupBox = (it: LabelItem): Box | null => {
+    const g = groups.find((x) => x.name === it.group && x.centre === it.anchor);
+    if (!g) return null;
+    const xs = g.hull.map((p) => p[0]);
+    const ys = g.hull.map((p) => p[1]);
+    return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+  };
+  const place = (trial: readonly TextMetrics[]) => {
+    const candidates = anchors.map((p, i) => {
+      const gap = options.gapMm + extra[i]!;
+      const around = groupBox(items[i]!);
+      return around
+        ? candidatesAroundBox(around, trial[i]!, gap)
+        : labelCandidates(p, trial[i]!, {
+            ...options,
+            nailClearanceMm: items[i]!.reach,
+            gapMm: gap,
+          });
+    });
     const placement = placeLabels({
       points: anchors,
       candidates,
       obstacles,
+      accept,
       width: box.w,
       height: box.h,
       options,
@@ -626,9 +986,6 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): number {
     });
     return { candidates, placement };
   };
-  // A logo replaces a label if the labels still fit with it (largest width first).
-  let metrics = items.map((it) => it.metrics);
-  const logoAt: (Logo | null)[] = items.map(() => null);
   items.forEach((it, i) => {
     if (!it.logo) return;
     for (const w of [64, 54, 46, 38].map((v) => v * s.f)) {
@@ -640,32 +997,71 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): number {
       }
     }
   });
-  const { candidates, placement } = place(metrics);
+  // Labels without room move a little farther from their dots (twice at most).
+  let result = place(metrics);
+  for (let round = 1; round <= 2 && !result.placement.complete; round++) {
+    result.placement.choice.forEach((choice, i) => {
+      if (choice < 0) extra[i] = round * 0.6 * s.label;
+    });
+    const next = place(metrics);
+    if (next.placement.unplaced <= result.placement.unplaced) result = next;
+  }
+  const { candidates, placement } = result;
+  const labelBoxes: Box[] = [];
   placement.choice.forEach((choice, i) => {
     const cand: LabelCandidate = candidates[i]![Math.max(0, choice)]!;
+    const [x0, y0, x1, y1] = cand.box;
+    labelBoxes.push([x0 + box.x, y0 + box.y, x1 + box.x, y1 + box.y]);
     const logo = logoAt[i];
     if (logo) {
-      const [x0, y0, x1] = cand.box;
       c.fill(placeLogo(logo, box.x + x0, box.y + y0, x1 - x0), INK);
       return;
     }
-    const group = i >= stops.length;
-    const path = textPath(
-      items[i]!.text ?? '',
-      box.x + cand.baseline[0],
-      box.y + cand.baseline[1],
-      s.label,
-    );
-    c.haloText(path, s.halo * 2, group ? TOUR : INK);
+    let y = box.y + cand.baseline[1];
+    items[i]!.lines.forEach((l, k) => {
+      if (k > 0) y += 0.3 * items[i]!.lines[k - 1]!.size + l.size;
+      const path = textPath(l.text, box.x + cand.baseline[0], y, l.size);
+      c.haloText(path, s.halo * 2 + (l.bold ? 0.08 * l.size : 0), l.color);
+      // Bold: the outline stroked in the text colour (the font has one weight).
+      if (l.bold) c.stroke(path, l.color, 0.05 * l.size);
+    });
   });
-  return placement.unplaced;
+  return {
+    unplaced: placement.unplaced,
+    labelBoxes,
+    legs: legs.map(([a, b]) => [at(a), at(b)] as const),
+    logoBox: logoBox
+      ? [logoBox[0] + box.x, logoBox[1] + box.y, logoBox[2] + box.x, logoBox[3] + box.y]
+      : null,
+  };
 }
 
 // --- the page ----------------------------------------------------------------------------------
 
+/** Legend lines: the given ones and the automatic ones, symbol lines first, notes last. */
+export function legendEntries(input: PosterInput): { symbol: Symbol; text: string }[] {
+  const t = POSTER_TEXTS[input.language];
+  const given = input.legend.map((e) => ({
+    symbol: e.symbol === 'none' ? null : e.symbol,
+    text: e.text,
+  }));
+  const emphasized = (st: PosterStop) => input.emphasis?.place === st.place;
+  const auto: { symbol: Symbol; text: string }[] = [];
+  if (
+    input.stops.some((st) => st.highlight && !st.group && !emphasized(st)) &&
+    !given.some((e) => e.symbol === 'ring')
+  )
+    auto.push({ symbol: 'ring', text: t.markedLegend });
+  if (input.stops.some((st) => st.group)) auto.push({ symbol: 'group', text: t.groupLegend });
+  if (input.stops.some((st) => st.members && !emphasized(st)))
+    auto.push({ symbol: 'centroid', text: t.centroidLegend });
+  const all = [...given, ...auto];
+  return [...all.filter((e) => e.symbol), ...all.filter((e) => !e.symbol)];
+}
+
 export function drawPoster(input: PosterInput): PosterDrawing {
   const [W, H] = pageSize(input.paper, input.orientation);
-  const s = sizes(Math.min(W, H));
+  const s = posterSizes(Math.min(W, H));
   const t = POSTER_TEXTS[input.language];
   const fmt = formatter(input.language);
   const M = s.margin;
@@ -679,37 +1075,29 @@ export function drawPoster(input: PosterInput): PosterDrawing {
     titleLines.length * 1.12 * s.title + subtitleLines.length * 1.25 * s.subtitle + 0.4 * s.gap;
   const mapTop = M + headerH + s.gap;
 
-  // Facts, notes, legend, footer.
-  const second = input.tour.secondKm;
-  const facts: FactsInput = {
-    length: {
-      value: [{ text: `${fmt(Math.round(input.tour.lengthKm), 0)} km`, size: s.length }],
-      caption: t.lengthCaption(fmt(n, 0)),
-    },
-    others: [
-      { value: [{ text: fmt(n, 0), size: s.value }], caption: t.places },
-      { value: toursRuns(n, s.value, fmt), caption: t.tours },
-      ...(second !== null
-        ? [{ value: [{ text: `+${fmt(second, 1)} km`, size: s.value }], caption: t.second }]
-        : []),
-    ],
-    notes: [t.proof, ...(input.stops.some((st) => st.members) ? [t.centroid] : [])],
-  };
-  const legendEntries: { symbol: Symbol; text: string }[] = input.legend.map((e) => ({
-    symbol: e.symbol === 'none' ? null : e.symbol,
-    text: e.text,
-  }));
-  if (
-    input.stops.some((st) => st.highlight && !st.group) &&
-    !legendEntries.some((e) => e.symbol === 'ring')
-  )
-    legendEntries.unshift({ symbol: 'ring', text: t.markedLegend });
-  if (input.stops.some((st) => st.group))
-    legendEntries.push({ symbol: 'group', text: t.groupLegend });
-  const footerText = `${t.chair} · ${t.attribution}`;
-  const footerLines = wrapText(footerText, s.footer, contentW);
-  const footerH = footerLines.length * 1.25 * s.footer;
+  // Footer: the chair (large) and the credits, a logo at the bottom right.
+  const corner = input.cornerLogo ?? null;
+  const cornerW = corner ? s.cornerLogo : 0;
+  const cornerH = corner ? Math.min(logoHeight(corner, cornerW), 0.6 * cornerW) : 0;
+  const footerW = contentW - (corner ? cornerW + s.gap : 0);
+  const chairLines = wrapText(t.chair, s.chair, footerW);
+  const creditLines = wrapText(t.attribution, s.footer, footerW);
+  const footerTextH = chairLines.length * 1.25 * s.chair + creditLines.length * 1.3 * s.footer;
+  const footerH = Math.max(footerTextH, cornerH);
   const bottom = H - M - footerH - 0.6 * s.gap;
+
+  // The problem, the answer, the legend.
+  const problem = problemRuns(n, s.problem, input.language);
+  const length = `${fmt(Math.round(input.tour.lengthKm), 0)} km`;
+  const entries = legendEntries(input);
+  const side = (width: number) =>
+    stack(
+      [
+        factsBlock(problem, length, t.proof, width, s),
+        legendBlock(entries, input.legendLogo ?? null, width, s),
+      ].filter((b): b is Block => b !== null),
+      s.gap,
+    );
 
   // Facts below the map (band) or beside it (column): the larger map wins.
   type Option = {
@@ -722,19 +1110,13 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   };
   const options: Option[] = [];
   {
-    const side = stack(
-      [
-        factsBlock(facts, contentW, s, true),
-        legendBlock(legendEntries, input.legendLogo ?? null, contentW, s),
-      ].filter((b): b is Block => b !== null),
-      s.gap,
-    );
-    const box: MapBox = { x: M, y: mapTop, w: contentW, h: bottom - side.height - s.gap - mapTop };
+    const block = side(contentW);
+    const box: MapBox = { x: M, y: mapTop, w: contentW, h: bottom - block.height - s.gap - mapTop };
     if (box.h > 0.25 * H)
       options.push({
         layout: 'band',
         box,
-        side,
+        side: block,
         sideX: M,
         sideY: box.y + box.h + s.gap,
         scale: mapProjection(input, box, s).mmPerKm,
@@ -742,22 +1124,16 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   }
   {
     const colW = 0.34 * contentW;
-    const side = stack(
-      [
-        factsBlock(facts, colW, s, false),
-        legendBlock(legendEntries, input.legendLogo ?? null, colW, s),
-      ].filter((b): b is Block => b !== null),
-      s.gap,
-    );
+    const block = side(colW);
     const box: MapBox = { x: M, y: mapTop, w: contentW - colW - s.gap, h: bottom - mapTop };
-    if (side.height <= box.h)
+    if (block.height <= box.h)
       options.push({
         layout: 'column',
         box,
-        side,
+        side: block,
         sideX: M + box.w + s.gap,
         // The column sits at the bottom of the map's height.
-        sideY: bottom - side.height,
+        sideY: bottom - block.height,
         scale: mapProjection(input, box, s).mmPerKm,
       });
   }
@@ -775,12 +1151,21 @@ export function drawPoster(input: PosterInput): PosterDrawing {
     c.text(line, M, y + FONT_METRICS.ascender * s.subtitle, s.subtitle, GREY);
     y += 1.25 * s.subtitle;
   }
-  const unplaced = drawMap(c, input, best.box, s);
+  const map = drawMap(c, input, best.box, s);
   best.side.draw(c, best.sideX, best.sideY);
-  let fy = H - M - footerH;
-  for (const line of footerLines) {
+  let fy = H - M - footerH + (footerH - footerTextH);
+  for (const line of chairLines) {
+    c.text(line, M, fy + FONT_METRICS.ascender * s.chair, s.chair);
+    fy += 1.25 * s.chair;
+  }
+  for (const line of creditLines) {
     c.text(line, M, fy + FONT_METRICS.ascender * s.footer, s.footer, GREY);
-    fy += 1.25 * s.footer;
+    fy += 1.3 * s.footer;
+  }
+  if (corner) {
+    const x1 = W - M;
+    const y1 = H - M;
+    c.fill(fitLogo(corner, [x1 - cornerW, y1 - cornerH, x1, y1]), INK);
   }
   return {
     width: W,
@@ -789,7 +1174,10 @@ export function drawPoster(input: PosterInput): PosterDrawing {
     items: c.items,
     layout: best.layout,
     mmPerKm: best.scale,
-    unplacedLabels: unplaced,
+    unplacedLabels: map.unplaced,
+    labelBoxes: map.labelBoxes,
+    legs: map.legs,
+    logoBox: map.logoBox,
   };
 }
 

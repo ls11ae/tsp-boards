@@ -158,6 +158,11 @@ export interface PlacementProblem {
   readonly options: LabelOptions;
   /** Backtracking node limit. */
   readonly nodeLimit?: number;
+  /**
+   * A further test per label (index of its nail, candidate ink box), e.g. obstacles that some
+   * labels may touch and others not, or that a label is clearly closest to its own nail.
+   */
+  readonly accept?: (index: number, box: Box) => boolean;
 }
 
 export interface Placement {
@@ -190,6 +195,7 @@ export function placeLabels(problem: PlacementProblem): Placement {
       if (box[2] > problem.width - edge || box[3] > problem.height - edge) continue;
       if (points.some((p) => boxCircle(box, p, clearance))) continue;
       if (problem.obstacles?.some((o) => hitsObstacle(box, o))) continue;
+      if (problem.accept && !problem.accept(i, box)) continue;
       valid[i * k + a] = 1;
     }
   }

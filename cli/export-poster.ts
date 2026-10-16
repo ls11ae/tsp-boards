@@ -1,25 +1,31 @@
-// Exports a puzzle as a poster in a DIN format (roadmap 9.7): one PDF page with the shortest
-// round trip (great-circle optimum, checked against the optimum on the flat map), its length
-// and the facts; optionally a PNG preview and a short report.
+// Exports a puzzle as a poster in a DIN format (roadmap 9.7, 9.9): one PDF page with the
+// shortest round trip (great-circle optimum, checked against the optimum on the flat map), the
+// problem and the length; optionally a PNG preview, and a short report.
 // Usage:
 //   npx tsx cli/export-poster.ts --puzzle public/puzzles/<id>.tsp.json [options]
 //   npx tsx cli/export-poster.ts --list docs/data/curated/<name>.txt [--region DE] [options]
 //   npx tsx cli/export-poster.ts --variants docs/posters/<dir>/variants.json [options]
-// Options: [--paper A0|A1|A2|A3|A4] (default A1) [--orientation portrait|landscape]
+// Options: [--paper A1] (A0 to A4, or a list such as A1,A0) [--orientation portrait|landscape]
 //   [--members centroid|separate] (a composite place as one stop at its centroid, or each
 //   member as a stop of its own) [--without 'A,B'] (leave places out, by name)
-//   [--title …] [--subtitle …] [--lang de|en] [--legend file.json] (legend lines, e.g. a
-//   board's .board.json) [--logo 'Place name=local/logo.svg'] (repeatable)
-//   [--legend-logo local/logo.svg] [--out dir] [--name base] [--suffix -logo] (appended to all
-//   file names) [--png 30] (preview, dpi)
-// A variants file lists several posters ({ "paper", "orientation", "png", "contactSheet",
+//   [--title …] [--subtitle …] [--lang de|en] (or a list: de,en) [--legend file.json] (legend
+//   lines, e.g. a board's .board.json) [--emphasis 'Place name'] (start and finish there, large
+//   red name or its logo) [--logo 'Place name=local/logo.svg'] (repeatable; the emphasized
+//   place's logo stands large near it, other logos replace labels) [--legend-logo file.svg]
+//   [--corner-logo file.svg] (bottom right, e.g. the university's) [--out dir] [--name base]
+//   [--suffix -logo] (appended to all file names) [--also-plain] (with logos: also write the
+//   versions without them, without the suffix) [--png 30] (previews, dpi)
+// A variants file lists several posters: { "paper", "orientation", "png", "languages",
+// "emphasis", "contactSheet", "names": { "en": { "German name": "English name" } },
 // "variants": [{ "name", "puzzle" | "list", "members", "without", "title", "subtitle",
-// "legend" }] }); options on the command line (logos, --out, --png) apply to all of them, and
-// a contact sheet PNG shows all variants side by side.
+// "legend" }] }, where title, subtitle and legend may be given per language ({ "de": …,
+// "en": … }). Every poster is written to <out>/<language>/<name>-<paper>.pdf; options on the
+// command line (logos, --out, --png, --paper) apply to all of them; one contact sheet PNG per
+// language and paper shows all variants side by side.
 // Logos are read from local files and written only into the outputs: write logo versions to
 // the git-ignored local/ folder, never into the repository.
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
 import { parseSvgLogo, type Logo } from '../src/core/board/logo';
@@ -29,14 +35,17 @@ import {
   posterPdf,
   posterSvg,
   posterSvgBody,
+  problemRuns,
+  runsText,
+  segmentMeetsBox,
   type DinPaper,
   type Orientation,
   type PosterDrawing,
 } from '../src/core/board/poster';
 import {
-  possibleTours,
   posterStops,
   posterTour,
+  startAtPlace,
   stopPoints,
   type MembersMode,
   type PosterStop,
@@ -45,6 +54,7 @@ import {
 import { svgPathData } from '../src/core/board/shapes';
 import { measureText, textPath } from '../src/core/board/text';
 import {
+  boardLabel,
   citiesFromColumns,
   type City,
   type CountryFile,
@@ -65,6 +75,14 @@ const arg = (name: string, fallback: string) => {
   return i >= 0 ? args[i + 1]! : fallback;
 };
 const all = (name: string) => args.flatMap((a, i) => (a === `--${name}` ? [args[i + 1]!] : []));
+const list = (value: string) =>
+  value
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean);
+
+/** A text given once or per language. */
+type Localized<T> = T | Partial<Record<LabelLanguage, T>>;
 
 interface VariantSpec {
   readonly name?: string;
@@ -73,22 +91,29 @@ interface VariantSpec {
   readonly region?: string;
   readonly members?: MembersMode;
   readonly without?: readonly string[];
-  readonly title?: string;
-  readonly subtitle?: string;
-  readonly lang?: LabelLanguage;
-  readonly legend?: readonly LegendEntry[] | string;
-  readonly paper?: DinPaper;
-  readonly orientation?: Orientation;
+  readonly title?: Localized<string>;
+  readonly subtitle?: Localized<string>;
+  readonly legend?: Localized<readonly LegendEntry[] | string>;
 }
 
-interface Result {
-  readonly name: string;
-  readonly title: string;
-  readonly subtitle: string;
-  readonly stops: readonly PosterStop[];
-  readonly tour: PosterTour;
-  readonly drawing: PosterDrawing;
-  readonly mapKm: number;
+interface Config {
+  readonly paper?: string;
+  readonly orientation?: Orientation;
+  readonly png?: number;
+  readonly languages?: readonly LabelLanguage[];
+  readonly emphasis?: string;
+  readonly contactSheet?: string;
+  readonly names?: Partial<Record<LabelLanguage, Record<string, string>>>;
+  readonly variants: readonly VariantSpec[];
+}
+
+const isLanguageMap = (v: unknown): v is Partial<Record<LabelLanguage, unknown>> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v) && ('de' in v || 'en' in v);
+
+function localized<T>(value: Localized<T> | undefined, lang: LabelLanguage): T | undefined {
+  if (value === undefined) return undefined;
+  if (isLanguageMap(value)) return value[lang];
+  return value;
 }
 
 const paperOf = (v: string): DinPaper => {
@@ -97,14 +122,18 @@ const paperOf = (v: string): DinPaper => {
   return p;
 };
 
-function readLogo(file: string): Logo {
+function readLogo(file: string): Logo | null {
+  if (!existsSync(file)) {
+    console.error(`logo ${file} is missing: the posters are built without it`);
+    return null;
+  }
   const logo = parseSvgLogo(readFileSync(file, 'utf8'));
   console.error(`logo ${file}: ${logo.path.length} path commands`);
   return logo;
 }
 
 /** Legend lines: inline, or the legend of a board extras file (.board.json). */
-function legendOf(spec: VariantSpec['legend']): LegendEntry[] | null {
+function legendOf(spec: readonly LegendEntry[] | string | undefined): LegendEntry[] | null {
   if (spec === undefined) return null;
   if (typeof spec !== 'string') return [...spec];
   const json = JSON.parse(readFileSync(spec, 'utf8')) as { legend?: LegendEntry[] };
@@ -131,7 +160,7 @@ function source(spec: VariantSpec): Source {
       params: doc.map.params,
       places: doc.map.places,
       title: doc.title,
-      subtitle: doc.description,
+      subtitle: '',
       legend: doc.map.board?.legend ?? [],
       name: doc.id,
     };
@@ -150,26 +179,30 @@ function source(spec: VariantSpec): Source {
   };
 }
 
-function build(
-  spec: VariantSpec,
-  backend: MipBackend,
-  logosByName: ReadonlyMap<string, Logo>,
-  legendLogo: Logo | null,
-  defaults: { paper: DinPaper; orientation: Orientation },
-): Result {
+/** A variant's places and round trip (the same for all languages and papers). */
+interface Solved {
+  readonly name: string;
+  readonly spec: VariantSpec;
+  readonly src: Source;
+  readonly places: readonly Place[];
+  readonly cities: readonly City[];
+  readonly mode: MembersMode;
+  readonly stops: readonly PosterStop[];
+  readonly tour: PosterTour;
+  readonly mapKm: number;
+  readonly emphasis: number | null;
+}
+
+function solve(spec: VariantSpec, backend: MipBackend, emphasisName: string): Solved {
   const src = source(spec);
   const without = new Set(spec.without ?? []);
   for (const name of without)
     if (!src.places.some((p) => p.name === name)) throw new Error(`--without: no place ${name}`);
   const places = src.places.filter((p) => !without.has(p.name));
   const towns = new Map(citiesFromColumns(src.file.cities, src.file.states).map((c) => [c.id, c]));
-  const cities: City[] = listCities(places, towns);
-  // Members by their short town label (e.g. "Frankfurt" for Frankfurt am Main).
-  const byName = new Map([...towns.values()].map((t) => [t.name, t.label]));
+  const cities = listCities(places, towns);
   const mode = spec.members ?? 'centroid';
-  const stops = posterStops(cities, mode, (name, member) =>
-    member ? (byName.get(name) ?? name) : name,
-  );
+  const stops = posterStops(cities, mode);
   // The check against the flat map uses the puzzle's own board projection.
   const { params } = src;
   const projection = boardProjection(
@@ -177,76 +210,108 @@ function build(
     { widthMm: params.boardWidthMm, heightMm: params.boardHeightMm, marginMm: params.marginMm },
     projectionKind(src.file),
   );
-  const tour = posterTour(backend, stops, stopPoints(stops, projection));
-  const logos = new Map<number, Logo>();
-  for (const [name, logo] of logosByName) {
-    const i = places.findIndex((p) => p.name === name);
-    if (i >= 0) logos.set(i, logo);
-  }
-  const title = spec.title ?? src.title;
-  const subtitle = spec.subtitle ?? src.subtitle;
-  const drawing = drawPoster({
-    file: src.file,
-    region: params.region,
-    stops,
-    tour,
-    title,
-    subtitle,
-    paper: spec.paper ?? defaults.paper,
-    orientation: spec.orientation ?? defaults.orientation,
-    language: spec.lang ?? params.labelLanguage,
-    legend: legendOf(spec.legend) ?? src.legend,
-    logos,
-    legendLogo,
-    blankMap: params.blankBoard,
-  });
-  // Length of the flat-map optimum measured on the map, km.
   const mapPts = stopPoints(stops, projection);
+  const tour = posterTour(backend, stops, mapPts);
   let mapMm = 0;
   tour.mapTour.forEach((a, i) => {
     const p = mapPts[a]!;
     const q = mapPts[tour.mapTour[(i + 1) % tour.mapTour.length]!]!;
     mapMm += Math.hypot(p[0] - q[0], p[1] - q[1]);
   });
+  const emphasis = emphasisName ? places.findIndex((p) => p.name === emphasisName) : -1;
+  if (emphasisName && emphasis < 0)
+    console.error(`${spec.name ?? src.name}: no place ${emphasisName} to emphasize`);
   return {
     name: spec.name ?? src.name,
-    title,
-    subtitle,
+    spec,
+    src,
+    places,
+    cities,
+    mode,
     stops,
     tour,
-    drawing,
     mapKm: mapMm / projection.mmPerKm,
+    emphasis: emphasis >= 0 ? emphasis : null,
   };
+}
+
+/** The stops with labels in a language: English exonyms (Munich), names of alliances. */
+function localStops(
+  v: Solved,
+  lang: LabelLanguage,
+  names: Readonly<Record<string, string>>,
+): PosterStop[] {
+  const towns = new Map(
+    citiesFromColumns(v.src.file.cities, v.src.file.states).map((c) => [c.name, c]),
+  );
+  const town = (name: string) => {
+    const t = towns.get(name);
+    return t ? boardLabel(t, lang) : name;
+  };
+  const local = v.cities.map((c): City => {
+    const label = names[c.name] ?? (c.members ? c.label : boardLabel(c, lang));
+    return {
+      ...c,
+      name: names[c.name] ?? c.name,
+      label,
+      ...(c.members ? { members: c.members.map((m) => ({ ...m, name: town(m.name) })) } : {}),
+    };
+  });
+  return posterStops(local, v.mode);
+}
+
+interface Output {
+  readonly solved: Solved;
+  readonly lang: LabelLanguage;
+  readonly paper: DinPaper;
+  readonly drawing: PosterDrawing;
+  readonly stops: readonly PosterStop[];
+  readonly base: string;
+  /** Labels that meet a leg of the tour (should be 0). */
+  readonly onLegs: number;
+  /** File name suffix (the logo versions). */
+  readonly suffix: string;
 }
 
 const fmt = (v: number, d: number) =>
   v.toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
 
-function toursText(n: number): string {
-  const t = possibleTours(n);
-  return t.exact !== null ? fmt(t.exact, 0) : `${t.mantissa.toFixed(1)} · 10^${t.exponent}`;
-}
-
-function report(r: Result): string {
-  const { tour } = r;
+function report(outputs: readonly Output[]): string {
+  const first = new Map<string, Output>();
+  for (const o of outputs) if (!first.has(o.solved.name)) first.set(o.solved.name, o);
   const lines = [
-    `## ${r.name}`,
+    '# Poster report',
     '',
-    `- ${r.title}${r.subtitle ? ` — ${r.subtitle}` : ''}`,
-    `- ${r.stops.length} stops; shortest round trip ${fmt(tour.lengthKm, 1)} km (great circle); ` +
-      `second-best ${tour.secondKm === null ? '–' : `+${fmt(tour.secondKm, 1)} km`}; ` +
-      `${toursText(r.stops.length)} possible round trips.`,
-    tour.mapAgrees
-      ? `- The optimum on the flat map (the app's measure) is the same round trip: ${fmt(r.mapKm, 1)} km on the map, ${fmt(tour.mapTourKm, 1)} km on the sphere.`
-      : `- WARNING: the optimum on the flat map differs (${fmt(tour.mapTourKm, 1)} km on the sphere, ${fmt(tour.mapTourKm - tour.lengthKm, 1)} km longer); the poster shows the great-circle optimum.`,
-    `- Layout: facts ${r.drawing.layout === 'band' ? 'below' : 'beside'} the map, ${fmt(r.drawing.mmPerKm * 100, 1)} mm per 100 km` +
-      (r.drawing.unplacedLabels > 0
-        ? `, ${r.drawing.unplacedLabels} labels overlap`
-        : ', all labels placed') +
-      '.',
-    `- Order: ${tour.tour.map((i) => r.stops[i]!.name).join(' → ')}`,
+    `Generated ${new Date().toISOString().slice(0, 10)} by \`cli/export-poster.ts\`.`,
+    '',
+    '| poster | places | length | second-best | problem line | flat-map optimum |',
+    '| --- | --- | --- | --- | --- | --- |',
+    ...[...first.values()].map(({ solved: v }) => {
+      const t = v.tour;
+      return `| ${v.name} | ${v.stops.length} | ${fmt(t.lengthKm, 1)} km | ${t.secondKm === null ? '–' : `+${fmt(t.secondKm, 1)} km`} | ${runsText(problemRuns(v.stops.length, 1, 'en'))} | ${t.mapAgrees ? 'same' : 'differs'} |`;
+    }),
+    '',
+    '| file | language | paper | layout | labels overlapping | labels on legs | logo |',
+    '| --- | --- | --- | --- | --- | --- | --- |',
+    ...outputs.map(
+      (o) =>
+        `| ${path.basename(o.base)} | ${o.lang} | ${o.paper} | ${o.drawing.layout === 'band' ? 'facts below' : 'facts beside'} | ${o.drawing.unplacedLabels} | ${o.onLegs} | ${o.drawing.logoBox ? 'yes' : '–'} |`,
+    ),
     '',
   ];
+  for (const { solved: v, stops } of first.values()) {
+    const t = v.tour;
+    const order = v.emphasis === null ? t.tour : startAtPlace(v.stops, t.tour, v.emphasis);
+    lines.push(
+      `## ${v.name}`,
+      '',
+      t.mapAgrees
+        ? `- The optimum on the flat map (the app's measure) is the same round trip: ${fmt(v.mapKm, 1)} km on the map, ${fmt(t.mapTourKm, 1)} km on the sphere.`
+        : `- WARNING: the optimum on the flat map differs (${fmt(t.mapTourKm, 1)} km on the sphere, ${fmt(t.mapTourKm - t.lengthKm, 1)} km longer); the poster shows the great-circle optimum.`,
+      `- Order: ${order.map((i) => stops[i]!.name).join(' → ')}`,
+      '',
+    );
+  }
   return lines.join('\n');
 }
 
@@ -256,19 +321,21 @@ function png(svg: string, widthPx: number): Buffer {
 }
 
 /** All posters side by side with a caption each. */
-function contactSheet(results: readonly Result[]): string {
+function contactSheet(outputs: readonly Output[]): string {
   const gap = 40;
   const pad = 40;
-  const caption = 22;
-  const w = Math.max(...results.map((r) => r.drawing.width));
-  const h = Math.max(...results.map((r) => r.drawing.height));
-  const totalW = results.length * w + (results.length - 1) * gap + 2 * pad;
+  const w = Math.max(...outputs.map((o) => o.drawing.width));
+  const h = Math.max(...outputs.map((o) => o.drawing.height));
+  const caption = 0.037 * w;
+  const totalW = outputs.length * w + (outputs.length - 1) * gap + 2 * pad;
   const totalH = h + 2 * pad + 3.2 * caption;
-  const parts = results.map((r, i) => {
+  const locale = outputs[0]?.lang === 'de' ? 'de-DE' : 'en-GB';
+  const places = outputs[0]?.lang === 'de' ? 'Orte' : 'places';
+  const parts = outputs.map((o, i) => {
     const x = pad + i * (w + gap);
     const lines = [
-      `${r.stops.length} Orte · ${Math.round(r.tour.lengthKm).toLocaleString('de-DE')} km`,
-      r.name,
+      `${o.stops.length} ${places} · ${Math.round(o.solved.tour.lengthKm).toLocaleString(locale)} km`,
+      path.basename(o.base),
     ];
     const text = lines
       .map((line, k) => {
@@ -278,7 +345,7 @@ function contactSheet(results: readonly Result[]): string {
         return `<path d="${svgPathData(textPath(line, x + (w - tw) / 2, y, size), 2)}" fill="#222"/>`;
       })
       .join('\n');
-    return `<g transform="translate(${x} ${pad})">${posterSvgBody(r.drawing)}</g>\n${text}`;
+    return `<g transform="translate(${x} ${pad})">${posterSvgBody(o.drawing)}</g>\n${text}`;
   });
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}mm" height="${totalH}mm" viewBox="0 0 ${totalW} ${totalH}">`,
@@ -290,102 +357,144 @@ function contactSheet(results: readonly Result[]): string {
 
 async function main(): Promise<void> {
   const backend = await loadBackend();
-  const logosByName = new Map<string, Logo>();
-  for (const spec of all('logo')) {
-    const [name, file] = spec.split('=');
-    if (!name || !file) throw new Error(`--logo ${spec}: expected 'Place name=file.svg'`);
-    logosByName.set(name.trim(), readLogo(file.trim()));
-  }
-  const legendLogo = arg('legend-logo', '') ? readLogo(arg('legend-logo', '')) : null;
   const variantsFile = arg('variants', '');
-  const config = variantsFile
-    ? (JSON.parse(readFileSync(variantsFile, 'utf8')) as {
-        paper?: string;
-        orientation?: Orientation;
-        png?: number;
-        contactSheet?: string;
-        variants: VariantSpec[];
-      })
+  const config: Config | null = variantsFile
+    ? (JSON.parse(readFileSync(variantsFile, 'utf8')) as Config)
     : null;
   const outDir = arg('out', config ? path.dirname(variantsFile) : '.');
+  const papers = list(arg('paper', config?.paper ?? 'A1')).map(paperOf);
   const orientation: Orientation =
     arg('orientation', config?.orientation ?? 'portrait') === 'landscape'
       ? 'landscape'
       : 'portrait';
-  const defaults = { paper: paperOf(arg('paper', config?.paper ?? 'A1')), orientation };
   const dpi = Number(arg('png', String(config?.png ?? 0)));
   const suffix = arg('suffix', '');
+  const emphasisName = arg('emphasis', config?.emphasis ?? '');
+  const logosByName = new Map<string, Logo>();
+  for (const spec of all('logo')) {
+    const [name, file] = spec.split('=');
+    if (!name || !file) throw new Error(`--logo ${spec}: expected 'Place name=file.svg'`);
+    const logo = readLogo(file.trim());
+    if (logo) logosByName.set(name.trim(), logo);
+  }
+  const legendLogo = arg('legend-logo', '') ? readLogo(arg('legend-logo', '')) : null;
+  const cornerLogo = arg('corner-logo', '') ? readLogo(arg('corner-logo', '')) : null;
+  const langArg = arg('lang', '');
+  const languages: LabelLanguage[] = langArg
+    ? list(langArg).map((l) => (l === 'en' ? 'en' : 'de'))
+    : [...(config?.languages ?? ['de'])];
   const specs: VariantSpec[] = config
-    ? config.variants
+    ? [...config.variants]
     : [
         {
           ...(arg('puzzle', '') ? { puzzle: arg('puzzle', '') } : {}),
           ...(arg('list', '') ? { list: arg('list', ''), region: arg('region', 'DE') } : {}),
           members: arg('members', 'centroid') === 'separate' ? 'separate' : 'centroid',
-          ...(arg('without', '')
-            ? {
-                without: arg('without', '')
-                  .split(',')
-                  .map((s) => s.trim()),
-              }
-            : {}),
+          ...(arg('without', '') ? { without: list(arg('without', '')) } : {}),
           ...(arg('title', '') ? { title: arg('title', '') } : {}),
           ...(arg('subtitle', '') ? { subtitle: arg('subtitle', '') } : {}),
-          ...(arg('lang', '') ? { lang: arg('lang', '') === 'en' ? 'en' : 'de' } : {}),
           ...(arg('legend', '') ? { legend: arg('legend', '') } : {}),
           ...(arg('name', '') ? { name: arg('name', '') } : {}),
         },
       ];
-  mkdirSync(outDir, { recursive: true });
-  const results: Result[] = [];
+  const multiLanguage = config !== null || languages.length > 1;
+  // With logos, --also-plain also writes the versions without them (no suffix).
+  const hasLogos = logosByName.size > 0 || legendLogo !== null || cornerLogo !== null;
+  const flavours = [
+    { suffix, logos: true },
+    ...(hasLogos && args.includes('--also-plain') ? [{ suffix: '', logos: false }] : []),
+  ];
+  const outputs: Output[] = [];
   for (const spec of specs) {
     const t0 = performance.now();
-    const r = build(spec, backend, logosByName, legendLogo, defaults);
-    const base = path.join(outDir, r.name + suffix);
-    writeFileSync(`${base}.pdf`, posterPdf(r.drawing));
-    const written = [`${base}.pdf`];
-    if (dpi > 0) {
-      writeFileSync(`${base}.png`, png(posterSvg(r.drawing), (r.drawing.width / 25.4) * dpi));
-      written.push(`${base}.png`);
+    const v = solve(spec, backend, emphasisName);
+    for (const lang of languages) {
+      const stops = localStops(v, lang, config?.names?.[lang] ?? {});
+      const dir = multiLanguage ? path.join(outDir, lang) : outDir;
+      mkdirSync(dir, { recursive: true });
+      const logos = new Map<number, Logo>();
+      for (const [name, logo] of logosByName) {
+        const i = v.places.findIndex((p) => p.name === name);
+        if (i >= 0 && i !== v.emphasis) logos.set(i, logo);
+      }
+      const emphasisLogo =
+        v.emphasis !== null ? (logosByName.get(v.places[v.emphasis]!.name) ?? null) : null;
+      for (const flavour of flavours)
+        for (const paper of papers) {
+          const withLogos = flavour.logos;
+          const drawing = drawPoster({
+            file: v.src.file,
+            region: v.src.params.region,
+            stops,
+            tour: v.tour,
+            title: localized(spec.title, lang) ?? v.src.title,
+            subtitle: localized(spec.subtitle, lang) ?? v.src.subtitle,
+            paper,
+            orientation,
+            language: lang,
+            legend: legendOf(localized(spec.legend, lang)) ?? v.src.legend,
+            emphasis:
+              v.emphasis === null
+                ? null
+                : { place: v.emphasis, logo: withLogos ? emphasisLogo : null },
+            logos: withLogos ? logos : new Map(),
+            legendLogo: withLogos ? legendLogo : null,
+            cornerLogo: withLogos ? cornerLogo : null,
+            blankMap: v.src.params.blankBoard,
+          });
+          const base = path.join(dir, `${v.name}-${paper}${flavour.suffix}`);
+          writeFileSync(`${base}.pdf`, posterPdf(drawing));
+          if (dpi > 0)
+            writeFileSync(`${base}.png`, png(posterSvg(drawing), (drawing.width / 25.4) * dpi));
+          const onLegs = drawing.labelBoxes.filter((b) =>
+            drawing.legs.some(([a, c]) => segmentMeetsBox(a, c, b)),
+          ).length;
+          outputs.push({
+            solved: v,
+            lang,
+            paper,
+            drawing,
+            stops,
+            base,
+            onLegs,
+            suffix: flavour.suffix,
+          });
+          if (drawing.unplacedLabels > 0 || onLegs > 0)
+            console.error(
+              `${path.basename(base)}: ${drawing.unplacedLabels} labels overlap, ${onLegs} on legs`,
+            );
+          if (withLogos && emphasisLogo && !drawing.logoBox)
+            console.error(`${path.basename(base)}: no free space for the logo; its name is shown`);
+        }
     }
-    if (!r.tour.mapAgrees)
-      console.error(
-        `${r.name}: the optimum on the flat map differs; using the great-circle optimum`,
-      );
-    if (r.drawing.unplacedLabels > 0)
-      console.error(`${r.name}: ${r.drawing.unplacedLabels} labels overlap`);
+    if (!v.tour.mapAgrees)
+      console.error(`${v.name}: the optimum on the flat map differs; using the great-circle one`);
     console.error(
-      `${r.name}: ${r.stops.length} stops, ${fmt(r.tour.lengthKm, 1)} km, second +${r.tour.secondKm === null ? '–' : fmt(r.tour.secondKm, 1)} km, ` +
-        `${toursText(r.stops.length)} tours, map optimum ${r.tour.mapAgrees ? 'same' : 'DIFFERS'} ` +
-        `(${Math.round(performance.now() - t0)} ms): ${written.join(', ')}`,
+      `${v.name}: ${v.stops.length} stops, ${fmt(v.tour.lengthKm, 1)} km, ` +
+        `map optimum ${v.tour.mapAgrees ? 'same' : 'DIFFERS'} (${Math.round(performance.now() - t0)} ms)`,
     );
-    results.push(r);
   }
-  const reportFile = config
-    ? path.join(outDir, `report${suffix}.md`)
-    : path.join(outDir, `${results[0]!.name}${suffix}-report.md`);
-  writeFileSync(
-    reportFile,
-    [
-      '# Poster report',
-      '',
-      `Generated ${new Date().toISOString().slice(0, 10)} by \`cli/export-poster.ts\` (${defaults.paper} ${defaults.orientation}).`,
-      '',
-      '| poster | places | length | second-best | possible tours | flat-map optimum |',
-      '| --- | --- | --- | --- | --- | --- |',
-      ...results.map(
-        (r) =>
-          `| ${r.name} | ${r.stops.length} | ${fmt(r.tour.lengthKm, 1)} km | ${r.tour.secondKm === null ? '–' : `+${fmt(r.tour.secondKm, 1)} km`} | ${toursText(r.stops.length)} | ${r.tour.mapAgrees ? 'same' : 'differs'} |`,
-      ),
-      '',
-      ...results.map(report),
-    ].join('\n'),
-  );
-  console.error(`wrote ${reportFile}`);
-  if (config?.contactSheet && results.length > 1) {
-    const file = path.join(outDir, config.contactSheet.replace(/\.png$/, `${suffix}.png`));
-    writeFileSync(file, png(contactSheet(results), 600 * results.length));
-    console.error(`wrote ${file}`);
+  for (const flavour of flavours) {
+    const mine = outputs.filter((o) => o.suffix === flavour.suffix);
+    const reportFile = path.join(
+      outDir,
+      config ? `report${flavour.suffix}.md` : `${path.basename(mine[0]!.base)}-report.md`,
+    );
+    writeFileSync(reportFile, report(mine));
+    console.error(`wrote ${reportFile}`);
+    if (config?.contactSheet && specs.length > 1) {
+      for (const lang of languages)
+        for (const paper of papers) {
+          const group = mine.filter((o) => o.lang === lang && o.paper === paper);
+          const file = path.join(
+            outDir,
+            lang,
+            `${config.contactSheet}-${paper}${flavour.suffix}.png`,
+          );
+          writeFileSync(file, png(contactSheet(group), 600 * group.length));
+          console.error(`wrote ${file}`);
+        }
+    }
   }
 }
 

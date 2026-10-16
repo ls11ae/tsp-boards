@@ -14,7 +14,18 @@ import { Rng } from '../rng';
 import { allTours } from '../tsp/brute-force';
 import type { MipBackend } from '../tsp/exact';
 import { DIN_PAPERS, DIN_SIZES, pageSize } from './paper';
-import { drawPoster, posterPdf, posterSvg, roundedHull } from './poster';
+import {
+  drawPoster,
+  legendEntries,
+  posterPdf,
+  posterSizes,
+  posterSvg,
+  problemRuns,
+  roundedHull,
+  runsText,
+  segmentMeetsBox,
+  type PosterInput,
+} from './poster';
 import {
   possibleTours,
   posterStops,
@@ -221,6 +232,103 @@ describe('poster drawing', () => {
       ),
     )!;
     expect(two.map((v) => Math.round(v))).toEqual([-3, -3, 13, 3]);
+  });
+});
+
+describe('Ruhr Innovation Lab poster (roadmap 9.9)', () => {
+  const all = puzzleCities('exzellenzstrategie-2027');
+  const doc = parsePuzzleDoc(
+    JSON.parse(
+      readFileSync(path.join(ROOT, 'public/puzzles/exzellenzstrategie-2027.tsp.json'), 'utf8'),
+    ),
+  );
+  const ril = doc.map!.places.findIndex((p) => p.name === 'Ruhr Innovation Lab');
+  // A plain rectangle stands in for the logo (logos never enter the repository).
+  const logo = {
+    path: [['M', 0, 0], ['L', 200, 0], ['L', 200, 100], ['L', 0, 100], ['Z']] as const,
+    box: [0, 0, 200, 100] as const,
+  };
+  const variants = (['centroid', 'separate'] as const).map((mode) => {
+    const stops = posterStops(all.cities, mode);
+    return { mode, stops, tour: null as ReturnType<typeof posterTour> | null };
+  });
+  beforeAll(() => {
+    for (const v of variants)
+      v.tour = posterTour(backend, v.stops, stopPoints(v.stops, projection));
+  });
+  const input = (v: (typeof variants)[number], over: Partial<PosterInput> = {}): PosterInput => ({
+    file: de,
+    region: 'DE',
+    stops: v.stops,
+    tour: v.tour!,
+    title: 'Vom Ruhr Innovation Lab durch Deutschlands Exzellenz',
+    subtitle: 'Alle Standorte der Exzellenzstrategie 2026–2033',
+    paper: 'A1',
+    orientation: 'portrait',
+    language: 'de',
+    legend: [
+      { symbol: 'none', text: 'Förderung …' },
+      { symbol: 'ring', text: 'Exzellenzuniversität' },
+    ],
+    emphasis: { place: ril, logo: null },
+    ...over,
+  });
+
+  it('keeps every label off the legs, in both languages, on A1 and A0', () => {
+    for (const v of variants)
+      for (const language of ['de', 'en'] as const)
+        for (const paper of ['A1', 'A0'] as const) {
+          const d = drawPoster(input(v, { language, paper }));
+          expect(d.unplacedLabels).toBe(0);
+          for (const b of d.labelBoxes)
+            for (const [a, c] of d.legs) expect(segmentMeetsBox(a, c, b)).toBe(false);
+          // Places, the two named cities of the RIL (or its members as stops) and the names
+          // of the groups.
+          expect(d.labelBoxes).toHaveLength(v.mode === 'centroid' ? 34 - 1 + 2 + 1 : 37 + 2);
+        }
+  });
+
+  it('puts the logo in free space near the place', () => {
+    for (const v of variants) {
+      const d = drawPoster(input(v, { emphasis: { place: ril, logo } }));
+      const box = d.logoBox!;
+      expect(box).not.toBeNull();
+      expect(box[2] - box[0]).toBeCloseTo(100, 0);
+      for (const [a, c] of d.legs) expect(segmentMeetsBox(a, c, box)).toBe(false);
+      for (const b of d.labelBoxes)
+        expect(b[2] < box[0] || b[0] > box[2] || b[3] < box[1] || b[1] > box[3]).toBe(true);
+      expect(d.unplacedLabels).toBe(0);
+    }
+  });
+
+  it('scales A0 as A1 enlarged by √2', () => {
+    const a1 = posterSizes(DIN_SIZES.A1[0]);
+    const a0 = posterSizes(DIN_SIZES.A0[0]);
+    for (const key of Object.keys(a1) as (keyof typeof a1)[])
+      expect(a0[key] / a1[key]).toBeCloseTo(Math.SQRT2, 2);
+    const d1 = drawPoster(input(variants[0]!));
+    const d0 = drawPoster(input(variants[0]!, { paper: 'A0' }));
+    expect(d0.mmPerKm / d1.mmPerKm).toBeCloseTo(Math.SQRT2, 1);
+  });
+
+  it('states the problem with the number of round trips, in German and English', () => {
+    expect(runsText(problemRuns(25, 10, 'de'))).toBe(
+      'Finde die kürzeste Rundreise unter 3,1 · 10^23 Möglichkeiten.',
+    );
+    expect(runsText(problemRuns(37, 10, 'en'))).toBe(
+      'Find the shortest round trip out of 1.9 × 10^41 options.',
+    );
+    expect(runsText(problemRuns(5, 10, 'de'))).toBe(
+      'Finde die kürzeste Rundreise unter 12 Möglichkeiten.',
+    );
+  });
+
+  it('lists symbol entries before notes in the legend', () => {
+    const entries = legendEntries(input(variants[1]!));
+    const symbols = entries.map((e) => e.symbol);
+    expect(symbols).toEqual(['ring', 'group', null]);
+    const centroid = legendEntries(input(variants[0]!, { emphasis: null }));
+    expect(centroid.map((e) => e.symbol)).toEqual(['ring', 'centroid', null]);
   });
 });
 

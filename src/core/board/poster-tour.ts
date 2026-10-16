@@ -22,8 +22,9 @@ export interface PosterStop {
   readonly place: number;
   /** Name of the alliance if this stop is one member of a composite place. */
   readonly group: string | null;
-  /** Member positions of a composite place drawn as one stop at their centroid. */
-  readonly members: readonly { readonly lat: number; readonly lon: number }[] | null;
+  /** Members of a composite place drawn as one stop at their centroid (names as labels). */
+  readonly members:
+    readonly { readonly name: string; readonly lat: number; readonly lon: number }[] | null;
 }
 
 /**
@@ -57,7 +58,7 @@ export function posterStops(
           highlight,
           place,
           group: null,
-          members: c.members.map((m) => ({ lat: m.lat, lon: m.lon })),
+          members: c.members.map((m) => ({ name: label(m.name, true), lat: m.lat, lon: m.lon })),
         },
       ];
     }
@@ -98,6 +99,23 @@ export interface PosterTour {
   /** The optimum on the flat map, and its great-circle length in km. */
   readonly mapTour: readonly number[];
   readonly mapTourKm: number;
+}
+
+/**
+ * The tour rotated to start at a place (roadmap 9.9: "start and finish" at the emphasized
+ * place): at its stop, or with separate members at the member where the tour enters the group.
+ */
+export function startAtPlace(
+  stops: readonly PosterStop[],
+  tour: readonly number[],
+  place: number,
+): number[] {
+  const n = tour.length;
+  const at = (i: number) => stops[tour[(i + n) % n]!]!.place === place;
+  const first = tour.findIndex((_, i) => at(i) && !at(i - 1));
+  const start = first >= 0 ? first : tour.findIndex((_, i) => at(i));
+  if (start < 0) return [...tour];
+  return [...tour.slice(start), ...tour.slice(0, start)];
 }
 
 /** A tour as a canonical string (rotation and direction removed). */
