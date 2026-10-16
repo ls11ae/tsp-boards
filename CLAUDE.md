@@ -64,11 +64,12 @@ what we change and why, benchmark results, and open questions.
   licensing inventory and recommendation (`docs/licensing.md`), third-party notices in the
   build. **Next:** 9.9, the Ruhr Innovation Lab poster for the chair's corridor (German and
   English, A1 and A0); then the physical builds (Kevin), deployment and the play data
-  endpoint (need the chair server), the license decision (maintainers). See
+  endpoint (need the chair server). See
   `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
-- Code license not chosen yet (decide before going public; see `docs/licensing.md`).
+- License: MIT for code and docs (2026-10-17; `LICENSE`, `AUTHORS`, third-party terms in
+  `docs/licensing.md`). Making the repository public is the maintainers' step.
 
 ## Agreed direction
 

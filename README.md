@@ -176,6 +176,9 @@ is `PlayRecord` in `src/core/play.ts`.
 
 ## Credits
 
+TSP Boards was developed at TU Dortmund University, Chair 11 Algorithm Engineering; the
+authors are listed in [`AUTHORS`](AUTHORS).
+
 This project builds on the MSc thesis of Nick Tchang, _Generating Challenging TSP Instances_,
 TU Dortmund, Chair 11 Algorithm Engineering, 2026.
 
@@ -194,6 +197,18 @@ Telefonica S.A., licensed under the [SIL Open Font License 1.1](https://openfont
 
 ## License
 
-The code license has not been chosen yet; `docs/licensing.md` lists the terms that already
-apply (data, font, dependencies) and a recommendation. The build writes the notices of the
-bundled packages and the font to `third-party-licenses.txt`, linked in the app's footer.
+The code and the documentation are licensed under the [MIT License](LICENSE)
+(Copyright (c) 2026 The TSP Boards authors). Third-party parts keep their own terms (details
+in [`docs/licensing.md`](docs/licensing.md)):
+
+- The board font: `src/core/board/font-data.ts` holds outlines of Fira Sans Condensed and stays
+  under the SIL Open Font License 1.1; text set with it on boards, posters and sheets is not
+  affected.
+- The city data from GeoNames (`public/data/`, the places in `public/puzzles/`, and the
+  boards and posters in `docs/`) is CC BY 4.0: keep the attribution.
+- Natural Earth (public domain) and Wikidata (CC0) need no attribution but are credited.
+- Logos of partners are never part of the repository; they are read from local files for
+  each export.
+
+The build writes the notices of the bundled packages and the font to
+`third-party-licenses.txt`, linked in the app's footer.

@@ -618,8 +618,9 @@ variants.
   (Done 2026-10-16: the test board files for Kevin's build, 300 × 300 mm, 12 nails, in
   `docs/boards/incremental-test/`, with a robustness check over r_eff; the licensing
   inventory, a recommendation and a checklist in `docs/licensing.md`, and the third-party
-  notices in the build. Open: building and testing the board, deployment and the endpoint
-  (server access), the license decision (maintainers).)
+  notices in the build. License decided 2026-10-17: MIT for code and docs (`LICENSE`,
+  `AUTHORS`). Open: building and testing the board, deployment and the endpoint (server
+  access); making the repository public (maintainers).)
 - Later: a physical globe (wood or 3D print) with nails and string. A taut string follows the
   great circle by itself; on a 40 cm globe 1 mm is about 32 km, so a 5 mm gap needs about
   160 km (a quick search found 241 km for 20 world cities, but 30 cities typically give only

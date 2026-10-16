@@ -3,6 +3,7 @@
   "version": "0.9.0",
   "private": true,
   "description": "Generator for TSP puzzle boards (map puzzle and incremental puzzle)",
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=22.12"

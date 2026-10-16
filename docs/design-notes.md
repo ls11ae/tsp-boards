@@ -954,3 +954,10 @@ Short entries: decision; alternatives considered; reason. Newest last.
   development), recommends MIT, and has a checklist for going public. Independent of the
   choice, the build now writes `third-party-licenses.txt` with the notices of the bundled
   packages and the font (MIT and ISC ask for them with every copy), linked in the footer.
+- **2026-10-17 License: MIT (maintainers' decision).** The code and the documentation are
+  under the MIT License, "Copyright (c) 2026 The TSP Boards authors"; `AUTHORS` lists the
+  authors, the README says that TSP Boards was developed at TU Dortmund University, Chair 11
+  Algorithm Engineering. Third-party terms stay as in `docs/licensing.md`: the board font's
+  outlines (`font-data.ts`) under the OFL, GeoNames data CC BY 4.0 (also on boards and
+  posters), logos never in the repository. Making the repository public stays the
+  maintainers' step.
