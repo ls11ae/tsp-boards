@@ -1,81 +1,97 @@
-# Excellence Strategy posters (Exzellenzstrategie 2026–2033)
+# Ruhr Innovation Lab posters (Exzellenzstrategie 2026–2033)
 
-Six poster variants for choosing the number of places (roadmap 9.7), each DIN A1 portrait
-(594 × 841 mm) as a vector PDF with a PNG preview. A poster shows the solution: the shortest
-round trip through the places, drawn in red, with its length and a few facts in large type.
-Lengths are great-circle kilometres ("Luftlinie"), computed and proven optimal with HiGHS.
+Posters for the corridor of Chair 11 that celebrate the Ruhr Innovation Lab (RIL) (roadmap 9.7,
+9.9): the shortest round trip through the sites of the Excellence Strategy, starting and ending
+at the RIL. Six variants for choosing the number of places, each in German (`de/`) and
+English (`en/`), DIN A1 portrait as vector PDF with a PNG preview. A0 and the versions with the
+RIL logo are built locally (below), never committed.
 
-![The six variants side by side](exzellenzstrategie-2027-varianten.png)
+![The six German variants side by side](de/exzellenzstrategie-2027-varianten-A1.png)
 
-## Comparison
+## The variants
 
-| Variant                                                  | file        | Places | Length   | Second-best | Possible round trips |
-| -------------------------------------------------------- | ----------- | ------ | -------- | ----------- | -------------------- |
-| Universities of Excellence and alliances                 | `poster-14` | 14     | 2,039 km | +3.4 km     | 3.1 · 10⁹            |
-| the same, the cities of the alliances as separate stops  | `poster-17` | 17     | 2,078 km | +0.6 km     | 1.0 · 10¹³           |
-| universities plus all sites with at least two clusters   | `poster-22` | 22     | 2,521 km | +1.4 km     | 2.6 · 10¹⁹           |
-| the board selection (plus all cluster sites in NRW)      | `poster-25` | 25     | 2,534 km | +8.0 km     | 3.1 · 10²³           |
-| all sites of the Excellence Strategy                     | `poster-34` | 34     | 2,838 km | +1.8 km     | 4.3 · 10³⁶           |
-| all sites, the cities of the alliances as separate stops | `poster-37` | 37     | 2,879 km | +2.4 km     | 1.9 · 10⁴¹           |
+| Variant                                                                | file        | Places | Length   | Second-best | Possible round trips |
+| ---------------------------------------------------------------------- | ----------- | ------ | -------- | ----------- | -------------------- |
+| Universities of Excellence and alliances                               | `poster-14` | 14     | 2,039 km | +3.4 km     | 3.1 · 10⁹            |
+| the same, every city of an alliance a stop of its own                  | `poster-17` | 17     | 2,078 km | +0.6 km     | 1.0 · 10¹³           |
+| universities plus all sites with at least two Clusters of Excellence   | `poster-22` | 22     | 2,521 km | +1.4 km     | 2.6 · 10¹⁹           |
+| the board selection (plus all cluster sites in North Rhine-Westphalia) | `poster-25` | 25     | 2,534 km | +8.0 km     | 3.1 · 10²³           |
+| all sites of the Excellence Strategy                                   | `poster-34` | 34     | 2,838 km | +1.8 km     | 4.3 · 10³⁶           |
+| all sites, every city of an alliance a stop of its own                 | `poster-37` | 37     | 2,879 km | +2.4 km     | 1.9 · 10⁴¹           |
 
-Files: `exzellenzstrategie-2027-poster-<n>.pdf` (print) and `.png` (preview at 30 dpi);
-`report.md` has the round trip of each variant and the checks. The lengths and round-trip
-counts match Kevin's check of 2026-10-16; the second-best differs by 0.1 km in two variants
-(+3.4 instead of +3.5 km, +1.8 instead of +1.7 km), within the rounding of the members'
-centre and of the legs.
+Files: `de/` and `en/` hold `exzellenzstrategie-2027-poster-<n>-A1.pdf` (print) and `.png`
+(preview at 30 dpi) and one contact sheet each (`exzellenzstrategie-2027-varianten-A1.png`);
+`report.md` has the order of each round trip and the checks; `variants.json` holds the titles,
+subtitles and legends of both languages.
+
+## What the posters show
+
+- **The Ruhr Innovation Lab is prominent:** the round trip starts and ends there ("Start und
+  Ziel" / "Start and finish", a red ring at the first stop); its name is large, bold and red
+  at its outline; Bochum and Dortmund are named dots inside a red outline, also where the RIL
+  is one stop at their centre (14, 22, 25, 34). With the logo (local versions) the RIL logo
+  stands about 100 mm wide (A1) in free space near the outline, over the Netherlands, with a
+  thin line to the outline, and replaces the red name.
+- **Little text:** one line states the problem with the number of possible round trips,
+  (n − 1)!/2, e.g. "Finde die kürzeste Rundreise unter 4,3 · 10³⁶ Möglichkeiten." / "Find the
+  shortest round trip out of 4.3 × 10³⁶ options."; below it, large, the answer (the length in
+  km); one small line says that it is the great-circle length, proven shortest with integer
+  linear optimisation (HiGHS). The legend explains rings, dots and alliances; notes come after
+  the symbol lines.
+- **Labels keep off the round trip:** no label covers a leg, an outline of another alliance or
+  the logo, and each name sits clearly next to its own dot (checked for all files; see
+  `report.md`).
+- **German and English:** English uses the official terms (Excellence Strategy, Universities of
+  Excellence, Clusters of Excellence, excellence alliance, Rhine-Main Universities), English
+  place names where they are common (Munich, Cologne, Hanover) and the English number format
+  (2,534 km; 3.1 × 10²³).
+- **Footer:** the chair line in large type (cap height about 5 mm on A1), the data credits
+  below. The bottom right is free for a TU Dortmund logo (`--corner-logo`, only from `local/`)
+  and later the QR code to the play link.
 
 Checks: in all six variants the shortest round trip on the flat map (the measure the app
-judges against) is the same round trip as by great-circle distance; on the map it is 1.0 to
-1.5 km longer. All labels are placed without overlaps.
+judges against) is the same round trip as by great-circle distance (1.0–1.5 km longer on the
+map). The lengths and round-trip counts match Kevin's check of 2026-10-16; the second-best
+differs by 0.1 km in two variants, from rounding.
 
-- **14 and 34**: an alliance with universities in several cities (Ruhr Innovation Lab:
-  Bochum and Dortmund; Rhein-Main-Universitäten: Darmstadt, Frankfurt, Mainz) is one stop at
-  the centre of its cities, as on the board; small grey dots show the cities, and a note says
-  that the tour is measured to the centre.
-- **17 and 37**: each city of such an alliance is a stop of its own; a red outline with the
-  alliance's name groups them.
-- **22**: the board list without Düsseldorf, Münster and Siegen (no list file of its own).
-- **25**: the places of the wooden board.
+## Titles
 
-## Wording (German, as on the posters)
+The posters use the first title; the others are proposals (change them in `variants.json`):
 
-- Title: "Die kürzeste Rundreise durch Deutschlands Exzellenz".
-- Subtitles: "Alle Exzellenzuniversitäten und -verbünde 2027–2033" (14), "… jede Stadt eines
-  Verbunds als eigener Halt" (17, 37), "Die Exzellenzuniversitäten und -verbünde und alle
-  Standorte mit mindestens zwei Exzellenzclustern" (22), "… und alle Clusterstandorte in NRW"
-  (25), "Alle 34 Standorte der Exzellenzstrategie 2026–2033" (34).
-- Facts: "2.534 km – ist die kürzeste Rundreise durch alle 25 Orte (Luftlinie).", "25 Orte",
-  "3,1 · 10²³ mögliche Rundreisen", "+8,0 km länger ist die zweitkürzeste Rundreise", and "Die
-  Rundreise wurde mit ganzzahliger linearer Optimierung (Löser HiGHS) berechnet und als
-  kürzeste bewiesen: Keine andere Rundreise durch diese Orte ist kürzer."
-- Footer: "Lehrstuhl 11 Algorithm Engineering, TU Dortmund · Städte: GeoNames (CC BY 4.0) ·
-  Grenzen: Natural Earth · TSP Boards".
-
-Titles, subtitles and legends are in `variants.json`; change them there and rebuild.
+1. "Vom Ruhr Innovation Lab durch Deutschlands Exzellenz" / "From the Ruhr Innovation Lab
+   through Germany's excellence".
+2. "Die kürzeste Rundreise durch Deutschlands Exzellenz" / "The shortest round trip through
+   Germany's excellence".
+3. "Exzellent unterwegs: einmal rund ab dem Ruhr Innovation Lab" / "An excellent journey: once
+   around from the Ruhr Innovation Lab".
 
 ## Printing
 
-Vector PDF, text as outlines, white margin of 18 mm on A1 (no bleed needed). Type scales with
-the paper: on A1 the title has a cap height of about 17 mm and the length about 22 mm, both
-readable from 3 m or more. Other sizes (A4 to A0) and landscape: `--paper` and
-`--orientation`; the facts then go below or beside the map, whichever leaves the larger map.
+Vector PDF, text as outlines, white margin of 18 mm on A1 (no bleed needed). Type and lines
+scale with the paper, so A0 is A1 enlarged by √2: on A1 the title has a cap height of about
+17 mm and the length about 25 mm, readable from 3 m or more.
 
-## Rebuilding (and the logo versions)
+## Rebuilding
 
-Without logo (committed):
+The committed A1 versions in German and English, without logo:
 
 ```bash
 npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json
 ```
 
-With the Ruhr Innovation Lab logo next to its place and in the legend, into the git-ignored
-`local/posters/` (never into the repository):
+A0, and the versions with the RIL logo (A1 and A0), with one command into the git-ignored
+`local/posters/` (the logo files are in `local/`, see `local/LIESMICH-logo.txt`; never commit
+them or files containing them):
 
 ```bash
-npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json --out local/posters --suffix -logo --logo "Ruhr Innovation Lab=local/ruhr-innovation-lab.svg" --legend-logo local/ruhr-innovation-lab.svg
+npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json --out local/posters --paper A1,A0 --also-plain --suffix -logo --logo "Ruhr Innovation Lab=local/ruhr-innovation-lab-textur.svg" --corner-logo local/tu-dortmund.svg
 ```
 
-A single poster, e.g. A0 landscape: `npx tsx cli/export-poster.ts --puzzle
-public/puzzles/exzellenzstrategie-2027.tsp.json --paper A0 --orientation landscape --out
-local/posters`. The app's export panel has the same poster ("Plakat (PDF)") for any map
-puzzle; a logo can be loaded there from a local SVG file and stays in the browser.
+This writes `local/posters/<de|en>/exzellenzstrategie-2027-poster-<n>-<A1|A0>-logo.pdf` (and
+`.png`), the same without `-logo` (A0 is the new one), contact sheets per language and paper,
+and reports. A missing logo file is reported, and the posters are built without it (the TU
+Dortmund logo is not in `local/` yet: put it there as `tu-dortmund.svg`).
+
+The app's export panel makes the same poster ("Plakat (PDF)") for any map puzzle, in the app's
+language, with title, subtitle and legend editable before the export and any place to
+emphasize; its logo can be loaded from a local SVG file and stays in the browser.

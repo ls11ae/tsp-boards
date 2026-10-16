@@ -1,99 +1,199 @@
 {
-  "_comment": "Excellence Strategy poster variants for Kevin's choice (roadmap 9.7). Build: npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json; logo versions with --out local/posters and --logo/--legend-logo (never into the repository).",
+  "_comment": "Excellence Strategy posters with the Ruhr Innovation Lab emphasized (roadmap 9.9), six variants for Kevin's choice, German and English. Build: npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json; A0 and the logo versions into the git-ignored local/posters/ (see README).",
   "paper": "A1",
   "orientation": "portrait",
   "png": 30,
-  "contactSheet": "exzellenzstrategie-2027-varianten.png",
+  "languages": ["de", "en"],
+  "emphasis": "Ruhr Innovation Lab",
+  "contactSheet": "exzellenzstrategie-2027-varianten",
+  "names": {
+    "en": { "Rhein-Main-Universitäten": "Rhine-Main Universities" }
+  },
   "variants": [
     {
       "name": "exzellenzstrategie-2027-poster-14",
       "puzzle": "public/puzzles/exzellenzuniversitaeten-2027.tsp.json",
       "members": "centroid",
-      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
-      "subtitle": "Alle Exzellenzuniversitäten und -verbünde 2027–2033",
-      "legend": [
-        {
-          "symbol": "none",
-          "text": "Förderung der Exzellenzuniversitäten und -verbünde: 2027–2033"
-        }
-      ]
+      "title": {
+        "de": "Vom Ruhr Innovation Lab durch Deutschlands Exzellenz",
+        "en": "From the Ruhr Innovation Lab through Germany's excellence"
+      },
+      "subtitle": {
+        "de": "Alle Exzellenzuniversitäten und -verbünde 2027–2033",
+        "en": "All Universities of Excellence and excellence alliances 2027–2033"
+      },
+      "legend": {
+        "de": [
+          {
+            "symbol": "none",
+            "text": "Förderung der Exzellenzuniversitäten und -verbünde: 2027–2033"
+          }
+        ],
+        "en": [
+          {
+            "symbol": "none",
+            "text": "Funding of the Universities of Excellence and excellence alliances: 2027–2033"
+          }
+        ]
+      }
     },
     {
       "name": "exzellenzstrategie-2027-poster-17",
       "puzzle": "public/puzzles/exzellenzuniversitaeten-2027.tsp.json",
       "members": "separate",
-      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
-      "subtitle": "Alle Exzellenzuniversitäten und -verbünde 2027–2033, jede Stadt eines Verbunds als eigener Halt",
-      "legend": [
-        {
-          "symbol": "none",
-          "text": "Förderung der Exzellenzuniversitäten und -verbünde: 2027–2033"
-        }
-      ]
+      "title": {
+        "de": "Vom Ruhr Innovation Lab durch Deutschlands Exzellenz",
+        "en": "From the Ruhr Innovation Lab through Germany's excellence"
+      },
+      "subtitle": {
+        "de": "Alle Exzellenzuniversitäten und -verbünde 2027–2033, jede Stadt eines Verbunds als eigener Halt",
+        "en": "All Universities of Excellence and excellence alliances 2027–2033, every city of an alliance a stop of its own"
+      },
+      "legend": {
+        "de": [
+          {
+            "symbol": "none",
+            "text": "Förderung der Exzellenzuniversitäten und -verbünde: 2027–2033"
+          }
+        ],
+        "en": [
+          {
+            "symbol": "none",
+            "text": "Funding of the Universities of Excellence and excellence alliances: 2027–2033"
+          }
+        ]
+      }
     },
     {
       "name": "exzellenzstrategie-2027-poster-22",
       "puzzle": "public/puzzles/exzellenzstrategie-2027-brett.tsp.json",
       "without": ["Düsseldorf", "Münster", "Siegen"],
       "members": "centroid",
-      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
-      "subtitle": "Die Exzellenzuniversitäten und -verbünde und alle Standorte mit mindestens zwei Exzellenzclustern",
-      "legend": [
-        { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
-        { "symbol": "nail", "text": "weiterer Standort mit mindestens zwei Exzellenzclustern" },
-        {
-          "symbol": "none",
-          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
-        }
-      ]
+      "title": {
+        "de": "Vom Ruhr Innovation Lab durch Deutschlands Exzellenz",
+        "en": "From the Ruhr Innovation Lab through Germany's excellence"
+      },
+      "subtitle": {
+        "de": "Die Exzellenzuniversitäten und -verbünde und alle Standorte mit mindestens zwei Exzellenzclustern",
+        "en": "The Universities of Excellence and excellence alliances and all sites with at least two Clusters of Excellence"
+      },
+      "legend": {
+        "de": [
+          { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
+          { "symbol": "nail", "text": "weiterer Standort mit mindestens zwei Exzellenzclustern" },
+          {
+            "symbol": "none",
+            "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+          }
+        ],
+        "en": [
+          { "symbol": "ring", "text": "University of Excellence or excellence alliance from 2027" },
+          { "symbol": "nail", "text": "further site with at least two Clusters of Excellence" },
+          {
+            "symbol": "none",
+            "text": "Funding: Clusters of Excellence 2026–2032, Universities of Excellence and excellence alliances 2027–2033"
+          }
+        ]
+      }
     },
     {
       "name": "exzellenzstrategie-2027-poster-25",
       "puzzle": "public/puzzles/exzellenzstrategie-2027-brett.tsp.json",
       "members": "centroid",
-      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
-      "subtitle": "Die Exzellenzuniversitäten und -verbünde, die Standorte mit mindestens zwei Exzellenzclustern und alle Clusterstandorte in NRW",
-      "legend": [
-        { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
-        {
-          "symbol": "nail",
-          "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle"
-        },
-        {
-          "symbol": "none",
-          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
-        }
-      ]
+      "title": {
+        "de": "Vom Ruhr Innovation Lab durch Deutschlands Exzellenz",
+        "en": "From the Ruhr Innovation Lab through Germany's excellence"
+      },
+      "subtitle": {
+        "de": "Die Exzellenzuniversitäten und -verbünde, die Standorte mit mindestens zwei Exzellenzclustern und alle Clusterstandorte in NRW",
+        "en": "The Universities of Excellence and excellence alliances, the sites with at least two Clusters of Excellence and all cluster sites in North Rhine-Westphalia"
+      },
+      "legend": {
+        "de": [
+          { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
+          {
+            "symbol": "nail",
+            "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle"
+          },
+          {
+            "symbol": "none",
+            "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+          }
+        ],
+        "en": [
+          { "symbol": "ring", "text": "University of Excellence or excellence alliance from 2027" },
+          {
+            "symbol": "nail",
+            "text": "further site of Clusters of Excellence: all with at least two clusters, all in North Rhine-Westphalia"
+          },
+          {
+            "symbol": "none",
+            "text": "Funding: Clusters of Excellence 2026–2032, Universities of Excellence and excellence alliances 2027–2033"
+          }
+        ]
+      }
     },
     {
       "name": "exzellenzstrategie-2027-poster-34",
       "puzzle": "public/puzzles/exzellenzstrategie-2027.tsp.json",
       "members": "centroid",
-      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
-      "subtitle": "Alle 34 Standorte der Exzellenzstrategie 2026–2033",
-      "legend": [
-        { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
-        { "symbol": "nail", "text": "weiterer Standort von Exzellenzclustern" },
-        {
-          "symbol": "none",
-          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
-        }
-      ]
+      "title": {
+        "de": "Vom Ruhr Innovation Lab durch Deutschlands Exzellenz",
+        "en": "From the Ruhr Innovation Lab through Germany's excellence"
+      },
+      "subtitle": {
+        "de": "Alle 34 Standorte der Exzellenzstrategie 2026–2033",
+        "en": "All 34 sites of the Excellence Strategy 2026–2033"
+      },
+      "legend": {
+        "de": [
+          { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
+          { "symbol": "nail", "text": "weiterer Standort von Exzellenzclustern" },
+          {
+            "symbol": "none",
+            "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+          }
+        ],
+        "en": [
+          { "symbol": "ring", "text": "University of Excellence or excellence alliance from 2027" },
+          { "symbol": "nail", "text": "further site of Clusters of Excellence" },
+          {
+            "symbol": "none",
+            "text": "Funding: Clusters of Excellence 2026–2032, Universities of Excellence and excellence alliances 2027–2033"
+          }
+        ]
+      }
     },
     {
       "name": "exzellenzstrategie-2027-poster-37",
       "puzzle": "public/puzzles/exzellenzstrategie-2027.tsp.json",
       "members": "separate",
-      "title": "Die kürzeste Rundreise durch Deutschlands Exzellenz",
-      "subtitle": "Alle Standorte der Exzellenzstrategie 2026–2033, jede Stadt eines Verbunds als eigener Halt",
-      "legend": [
-        { "symbol": "ring", "text": "Exzellenzuniversität ab 2027" },
-        { "symbol": "nail", "text": "weiterer Standort von Exzellenzclustern" },
-        {
-          "symbol": "none",
-          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
-        }
-      ]
+      "title": {
+        "de": "Vom Ruhr Innovation Lab durch Deutschlands Exzellenz",
+        "en": "From the Ruhr Innovation Lab through Germany's excellence"
+      },
+      "subtitle": {
+        "de": "Alle Standorte der Exzellenzstrategie 2026–2033, jede Stadt eines Verbunds als eigener Halt",
+        "en": "All sites of the Excellence Strategy 2026–2033, every city of an alliance a stop of its own"
+      },
+      "legend": {
+        "de": [
+          { "symbol": "ring", "text": "Exzellenzuniversität ab 2027" },
+          { "symbol": "nail", "text": "weiterer Standort von Exzellenzclustern" },
+          {
+            "symbol": "none",
+            "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+          }
+        ],
+        "en": [
+          { "symbol": "ring", "text": "University of Excellence from 2027" },
+          { "symbol": "nail", "text": "further site of Clusters of Excellence" },
+          {
+            "symbol": "none",
+            "text": "Funding: Clusters of Excellence 2026–2032, Universities of Excellence and excellence alliances 2027–2033"
+          }
+        ]
+      }
     }
   ]
 }

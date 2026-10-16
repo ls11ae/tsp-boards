@@ -4,8 +4,10 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-16, after Kevin's review of 9.7–9.8: 9.1–9.8 are done. Next is 9.9, the Ruhr
-Innovation Lab poster for the corridor of Chair 11 (German and English, A1 and A0); then
+Status 2026-10-17: 9.1–9.9 are done (9.9: the Ruhr Innovation Lab poster in German and
+English, A1 and A0); the code is under the MIT License. Next are the open items of Phase 10.
+Earlier status 2026-10-16, after Kevin's review of 9.7–9.8: 9.1–9.8 are done. Next is 9.9, the
+Ruhr Innovation Lab poster for the corridor of Chair 11 (German and English, A1 and A0); then
 the open items of Phase 10.
 Earlier status 2026-10-16 (night): Phase 9 is done (9.7 posters, 9.8 city-scale puzzles).
 From Phase 10, the incremental test board files and the licensing preparation are done;
@@ -543,7 +545,7 @@ report and contact sheet in `docs/posters/exzellenzstrategie-2027/`, logo versio
   of the surrounding towns. (done: surrounding towns; municipal borders are not in the data)
 - The thumbnail of the Ruhr puzzle in the gallery is tiny: crop it to the places. (done)
 
-### 9.9 Ruhr Innovation Lab poster (Kevin's review of 9.7, 2026-10-16)
+### 9.9 Ruhr Innovation Lab poster (Kevin's review of 9.7, 2026-10-16) — done 2026-10-17
 
 The poster is not for the open day: Kevin hangs it in the corridor of Chair 11, to celebrate
 the Ruhr Innovation Lab (RIL). He chooses the variant after this round, so keep all six
@@ -610,6 +612,11 @@ variants.
     for the board. `ruhr-innovation-lab-textur.svg` is the block logo with the stamp texture,
     for the poster. Horizontal versions of both are there too.
   - If these files are missing on the machine, build without the logo and say so.
+
+(Done 2026-10-17: emphasis, labels off the legs, the reduced text, German and English, A1 and
+A0, the app's editable poster; the files in `docs/posters/exzellenzstrategie-2027/de` and
+`/en`, A0 and the logo versions in `local/posters/` by one command, see the README there. The
+TU Dortmund logo is not in `local/` yet; the QR code waits for Phase 10.)
 
 ## Phase 10: physical and public
 

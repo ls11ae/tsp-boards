@@ -961,3 +961,31 @@ Short entries: decision; alternatives considered; reason. Newest last.
   outlines (`font-data.ts`) under the OFL, GeoNames data CC BY 4.0 (also on boards and
   posters), logos never in the repository. Making the repository public stays the
   maintainers' step.
+- **2026-10-17 Ruhr Innovation Lab poster (roadmap 9.9).** For the corridor of Chair 11 the
+  posters emphasize one place (`PosterInput.emphasis`, `--emphasis`, any place in the app): the
+  round trip is rotated to start there (a red ring at the first stop, "Start und Ziel" / "Start
+  and finish"), its name is 1.5 times larger, red and bold (the font has one weight: the outline
+  is stroked in the text colour), and a composite place keeps its cities as named dots in a red
+  outline also when it is one stop at their centre. Its logo (local files only) stands about
+  100 mm wide (A1) in the free spot nearest to the outline: a grid search over the map box that
+  keeps 2.2 label sizes from every dot and clear of legs, outlines and the scale bar, and costs
+  land of the region (a raster of 5 mm cells), so it lands over the Netherlands; a thin line
+  leads to the outline. Labels treat the legs of the tour, the logo and the scale bar as
+  obstacles, other groups' outlines through a per-label test (`placeLabels` gained `accept`),
+  and must be clearly closer to their own dot than to any other (by 0.35 label sizes); a group's
+  name is placed around its outline's box, and labels without room move up to two steps farther
+  out. All 48 files (6 variants, German and English, A1 and A0, with and without logo) place every
+  label, none on a leg. Less text: one problem line with (n − 1)!/2, the length below it in large
+  red type, one small line (great circle, proven with HiGHS); the place count, the separate round
+  trip count and the second-best were dropped; the centroid note became a legend entry with its
+  own symbol; legend notes come after the symbol lines. German and English texts throughout
+  (official English terms, English exonyms from the data, English number format, the
+  alliance's English name from the variants file); the app's poster follows the app's language
+  and has editable title, subtitle and legend (the puzzle's screen description is no longer
+  used). The chair line is larger (cap height 5 mm on A1), and a corner logo (e.g. TU Dortmund,
+  local only) fits at the bottom right. Every size scales with the short side of the page, so A0
+  is A1 enlarged by √2 (tested). The committed A1 files are in `de/` and `en/`; A0 and the logo
+  versions come from one command (`--paper A1,A0 --also-plain --suffix -logo`) into
+  `local/posters/`. Alternatives: a fixed logo position (over the North Sea; would not suit other
+  places), keeping the label boxes of the 9.7 layout and only moving labels that touch a leg
+  (would not separate Bochum's and Dortmund's names).

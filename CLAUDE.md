@@ -62,10 +62,10 @@ what we change and why, benchmark results, and open questions.
 - Phase 10 started 2026-10-16: incremental test board files for Kevin's build
   (`docs/boards/incremental-test/`, re-export with measured nails and string before lasering),
   licensing inventory and recommendation (`docs/licensing.md`), third-party notices in the
-  build. **Next:** 9.9, the Ruhr Innovation Lab poster for the chair's corridor (German and
-  English, A1 and A0); then the physical builds (Kevin), deployment and the play data
-  endpoint (need the chair server). See
-  `docs/roadmap.md`.
+  build. 9.9 done 2026-10-17: the Ruhr Innovation Lab poster (emphasized place, labels off
+  the legs, German and English, A1 and A0; `docs/posters/exzellenzstrategie-2027/de` and `/en`,
+  logo versions only in `local/posters/`). **Next:** the physical builds (Kevin), deployment
+  and the play data endpoint (need the chair server). See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - License: MIT for code and docs (2026-10-17; `LICENSE`, `AUTHORS`, third-party terms in
@@ -162,12 +162,11 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–8 and 9.1–9.8 are done (the open day boards are being built). Open work, in order,
-is in `docs/roadmap.md`:
+Phases 1–9 are done (the open day boards are being built). Open work, in order, is in
+`docs/roadmap.md`:
 
 9. **Open day (2026-11-07):** Excellence Strategy board (first wooden board), fixes from the
    review, rotatable globe with an animated round trip, event mode, further review items,
-   posters in DIN formats (done); open: 9.9, the Ruhr Innovation Lab poster (German and
-   English, A1 and A0).
+   posters in DIN formats and the Ruhr Innovation Lab poster (done).
 10. **Physical and public:** incremental test board, deployment to the chair server, play data
     endpoint, code license; later a physical globe.
