@@ -863,3 +863,11 @@ Short entries: decision; alternatives considered; reason. Newest last.
   snapshot of the world build is now 2026-10-16). Alternatives: Wikipedia page views (vary
   with news, need many requests), a rank-based score for all files (would change the searches
   of the country files, where population works).
+- **2026-10-16 One comparison at a time, games tied to their places (roadmap 9.6).** With the
+  solution shown and a comparison chosen (e.g. the flat-map optimum), the player's own tour is
+  no longer drawn, on the map and on the globe: three tours on top of each other are hard to
+  read. After solving without the solution shown, the own tour is the optimum and stays. Found
+  on the way: a stored game was resumed by puzzle id alone, so after a curated puzzle changed
+  (the new "Welt: 30 Metropolen") its old path was laid onto the new places. Games now keep a
+  hash of their places (incremental: of their points, in order) and are resumed only when it
+  matches; games stored before are resumed as before. Highscores stay per puzzle id.

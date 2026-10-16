@@ -91,12 +91,16 @@ function validGame(game: unknown): game is PlayUi {
   );
 }
 
-/** Starts or resumes the game of puzzle `id`. */
-export function startPlaying(id: string): void {
+/**
+ * Starts or resumes the game of puzzle `id` with places `places` (a hash, see PlayUi.places;
+ * games stored before it was kept are resumed).
+ */
+export function startPlaying(id: string, places: string): void {
   const stored = loadGames()[id];
+  const resume = validGame(stored) && (stored.places === undefined || stored.places === places);
   useStore.setState({
     playId: id,
-    play: validGame(stored) ? { ...NEW_GAME, ...stored } : NEW_GAME,
+    play: { ...NEW_GAME, ...(resume ? stored : {}), places },
   });
 }
 
@@ -119,13 +123,20 @@ export function currentMeasure(): Measure {
   return useStore.getState().doc.purpose === 'digital' ? 'euclidean' : 'string';
 }
 
-/** Play id of a map puzzle: the document id, or a hash of its places. */
-export function mapPlayId(puzzle: PuzzleView): string | null {
-  const { country, params, doc } = useStore.getState();
-  if (doc.id) return doc.id;
+/** Hash of a map puzzle's places (GeoNames ids). */
+export function mapPlaces(puzzle: PuzzleView): string | null {
+  const { country, params } = useStore.getState();
   if (!country) return null;
   const board = getBoard(country, params);
-  return `p-${puzzleHash(puzzle.members.map((c) => board.pool[c]!.id))}-${params.region}`;
+  return puzzleHash(puzzle.members.map((c) => board.pool[c]!.id));
+}
+
+/** Play id of a map puzzle: the document id, or a hash of its places. */
+export function mapPlayId(puzzle: PuzzleView): string | null {
+  const { params, doc } = useStore.getState();
+  if (doc.id) return doc.id;
+  const places = mapPlaces(puzzle);
+  return places === null ? null : `p-${places}-${params.region}`;
 }
 
 // --- highscores ----------------------------------------------------------------------------
@@ -246,7 +257,7 @@ export function playRestart(): void {
 
 /** Starts the game of this puzzle from scratch (time and attempts too). */
 export function playNewGame(): void {
-  updateGame(() => NEW_GAME);
+  updateGame((p) => ({ ...NEW_GAME, ...(p.places === undefined ? {} : { places: p.places }) }));
 }
 
 export function playReveal(puzzle: PuzzleView): void {

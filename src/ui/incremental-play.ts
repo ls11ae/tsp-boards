@@ -11,6 +11,17 @@ import { recordGameScore, startPlaying, updateGame } from './play';
 
 export const FIRST_STAGE = 3;
 
+/** Hash of the open incremental puzzle's points (0.1 mm). */
+function incrementalPoints(): string | null {
+  const { inc } = useStore.getState();
+  if (!inc.puzzle) return null;
+  // Order matters here (point 1 first), unlike for a set of places.
+  const coords = inc.puzzle.points.map(
+    ([x, y], i) => (Math.round(x * 10) * 100_000 + Math.round(y * 10)) * 100 + i,
+  );
+  return puzzleHash(coords);
+}
+
 /** Play id of the open incremental puzzle: the document id, or a hash of its points. */
 export function incrementalPlayId(): string | null {
   const { inc, doc } = useStore.getState();
@@ -24,8 +35,9 @@ export function incrementalPlayId(): string | null {
 
 export function startIncrementalPlay(): void {
   const id = incrementalPlayId();
-  if (!id) return;
-  startPlaying(id);
+  const points = incrementalPoints();
+  if (!id || points === null) return;
+  startPlaying(id, points);
   const { play } = useStore.getState();
   if (play.stage === null) useStore.setState({ play: { ...play, stage: FIRST_STAGE } });
 }

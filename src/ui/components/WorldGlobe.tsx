@@ -64,12 +64,13 @@ export function PlayGlobe({
   });
   const revealed = play.revealed;
   const routes: GlobeRoute[] = [];
-  if (revealed && puzzle?.tour)
-    routes.push({ cities: puzzle.tour, closed: true, className: 'solution-tour' });
-  if (overlay && (revealed || play.solvedMs !== null))
-    routes.push({ cities: overlay.tour, closed: true, className: 'overlay-tour' });
-  // During a flight only the solution and the flown legs are drawn.
-  if (play.state.path.length > 1 && !flight)
+  const solution = revealed && puzzle?.tour;
+  if (solution) routes.push({ cities: puzzle.tour, closed: true, className: 'solution-tour' });
+  const comparing = overlay && (revealed || play.solvedMs !== null);
+  if (comparing) routes.push({ cities: overlay.tour, closed: true, className: 'overlay-tour' });
+  // During a flight only the solution and the flown legs are drawn; next to the solution and a
+  // comparison the own tour would be a third one.
+  if (play.state.path.length > 1 && !flight && !(comparing && solution))
     routes.push({
       cities: play.state.path.map((s) => members[s]!),
       closed: play.state.closed,

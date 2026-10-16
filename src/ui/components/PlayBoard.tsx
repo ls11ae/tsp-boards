@@ -236,13 +236,16 @@ export function PlayBoard({
   const revealed = play.revealed;
   const showOverlay = overlay && (revealed || play.solvedMs !== null);
   const solution = revealed && puzzle?.tour ? routePath(board, puzzle.tour, true) : null;
-  const path = puzzle
-    ? routePath(
-        board,
-        play.state.path.map((s) => puzzle.members[s]!),
-        play.state.closed,
-      )
-    : '';
+  // While a comparison is drawn next to the solution, the own tour would be a third one
+  // (roadmap 9.6); after solving without the solution shown it is the optimum and stays.
+  const path =
+    puzzle && !(showOverlay && solution)
+      ? routePath(
+          board,
+          play.state.path.map((s) => puzzle.members[s]!),
+          play.state.closed,
+        )
+      : '';
   const visited = new Set(play.state.path);
   const r = mm(MARKER_PX);
   const zoomBy = (factor: number) =>

@@ -178,6 +178,11 @@ export interface PlayUi {
   readonly scored: boolean;
   /** Incremental puzzle: the instance being played (k); null for map puzzles. */
   readonly stage: number | null;
+  /**
+   * Hash of the puzzle's places (or points) when the game was stored: a curated puzzle can
+   * change under the same id, and its old game must not be resumed on the new places.
+   */
+  readonly places?: string;
 }
 
 export const NEW_GAME: PlayUi = {

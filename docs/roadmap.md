@@ -438,6 +438,7 @@ Do these first; the board items are the critical path (lasering and a test board
 - Flat-map comparison: draw the comparison tour as straight lines on the map (that is how it
   is measured) and hide the player's tour while comparing (three tours on top of each other
   are hard to read). (Straight lines done in 9.3; hiding the player's tour is open.)
+  (done: hidden while a comparison is drawn next to the solution)
 - Incremental play still uses the old millimetre drawing (small nails, measuring track, no
   zoom): use the screen-size approach of `PlayBoard`.
 - Board variant suggestions are purely geometric (e.g. "Aachen + Köln zusammengefasst"):

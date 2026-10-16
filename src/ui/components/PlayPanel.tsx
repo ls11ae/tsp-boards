@@ -7,6 +7,7 @@ import { PlaceLegend } from './PlaceLegend';
 import { useFormat, useT } from '../i18n';
 import {
   judgePending,
+  mapPlaces,
   mapPlayId,
   openInDesigner,
   playClick,
@@ -105,14 +106,15 @@ export function PlayPanel({
   const optimum = v?.status === 'done' ? v.verification.string : null;
   const pathKey = play.state.path.join(',');
   const id = puzzle ? mapPlayId(puzzle) : null;
+  const placesHash = puzzle ? mapPlaces(puzzle) : null;
 
   // Resume this puzzle's game (switching puzzles keeps each game).
   // In the event mode every visitor starts afresh (the last one's result is recorded).
   useEffect(() => {
-    if (!id || id === playId) return;
-    startPlaying(id);
+    if (!id || placesHash === null || id === playId) return;
+    startPlaying(id, placesHash);
     if (kiosk) playNewGame();
-  }, [id, playId, kiosk]);
+  }, [id, placesHash, playId, kiosk]);
 
   useEffect(() => {
     if (puzzle && id === playId) judgePending(puzzle);
