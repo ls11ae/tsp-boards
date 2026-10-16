@@ -4,7 +4,11 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-16, after Kevin's review of 9.5–9.6: 9.1–9.6 are done. Next is 9.7, a poster
+Status 2026-10-16 (night): Phase 9 is done (9.7 posters, 9.8 city-scale puzzles). From Phase 10,
+the incremental test board files and the licensing preparation are done; open are the
+physical builds, deployment and the play data endpoint (need the chair server) and the
+choice of the code license (maintainers, see `docs/licensing.md`).
+Earlier status 2026-10-16, after Kevin's review of 9.5–9.6: 9.1–9.6 are done. Next is 9.7, a poster
 export in DIN formats with the shortest round trip and its length (Excellence Strategy
 variants for Kevin to choose from), then the small items in 9.8. In parallel, Kevin lasers and
 builds the test board. Then Phase 10.
@@ -230,7 +234,7 @@ world puzzles always digital without board or worksheet; curated "Olympische Som
 "Welt: 30 Metropolen". The rotatable globe was not built: the Equal Earth map already shows the
 arcs, the poles and the wrap at the map's edge.)
 
-## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07)
+## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07) — done 2026-10-16
 
 Decided by Kevin 2026-10-16, from his review of the app after Phases 7 and 8 (run in a browser
 at 1440 × 900 and 390 × 844). Work through the items in order. 9.1 comes first because the
@@ -540,6 +544,11 @@ report and contact sheet in `docs/posters/exzellenzstrategie-2027/`, logo versio
 
 - Test board of the incremental puzzle with the prototype dimensions; deployment to the
   chair server; play data endpoint; code license (before the repository becomes public).
+  (Done 2026-10-16: the test board files for Kevin's build, 300 × 300 mm, 12 nails, in
+  `docs/boards/incremental-test/`, with a robustness check over r_eff; the licensing
+  inventory, a recommendation and a checklist in `docs/licensing.md`, and the third-party
+  notices in the build. Open: building and testing the board, deployment and the endpoint
+  (server access), the license decision (maintainers).)
 - Later: a physical globe (wood or 3D print) with nails and string. A taut string follows the
   great circle by itself; on a 40 cm globe 1 mm is about 32 km, so a 5 mm gap needs about
   160 km (a quick search found 241 km for 20 world cities, but 30 cities typically give only

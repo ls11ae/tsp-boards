@@ -55,14 +55,18 @@ what we change and why, benchmark results, and open questions.
   until measured; every visitor on the kiosk leaderboard, a Ruhr puzzle; world cities ranked
   by Wikipedia editions (`fame` column, world data version 4); incremental play with zoom;
   pinned places kept in board variants; lazy gallery thumbnails.
-- **Next:** 9.7, a poster export in DIN formats (A4–A0) with the shortest round trip and its
-  length, with Excellence Strategy variants for Kevin to choose from; then the small items in
-  9.8, then Phase 10. In parallel Kevin lasers and builds the test board (re-export with the
-  measured nails and string, see `docs/boards/exzellenzstrategie-2027/README.md`). See
-  `docs/roadmap.md`.
+- 9.7 and 9.8 done 2026-10-16: posters in DIN formats (`cli/export-poster.ts`, the app's
+  "Plakat (PDF)"; great-circle optimum checked against the flat-map optimum; six Excellence
+  variants in `docs/posters/exzellenzstrategie-2027/`, logo versions only in `local/posters/`);
+  surrounding towns in city-scale play views and cropped thumbnails.
+- Phase 10 started 2026-10-16: incremental test board files for Kevin's build
+  (`docs/boards/incremental-test/`, re-export with measured nails and string before lasering),
+  licensing inventory and recommendation (`docs/licensing.md`), third-party notices in the
+  build. **Next:** the physical builds (Kevin), deployment and the play data endpoint (need the
+  chair server), the license decision (maintainers). See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
-- Code license not chosen yet (decide before going public).
+- Code license not chosen yet (decide before going public; see `docs/licensing.md`).
 
 ## Agreed direction
 
@@ -155,11 +159,11 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–8 and 9.1–9.6 are done (the open day board is being built). Open work, in order, is
-in `docs/roadmap.md`:
+Phases 1–9 are done (the open day boards are being built). Open work, in order, is in
+`docs/roadmap.md`:
 
 9. **Open day (2026-11-07):** Excellence Strategy board (first wooden board), fixes from the
-   review, rotatable globe with an animated round trip, event mode, further review items;
-   open: a poster export in DIN formats with the shortest round trip (9.7), small items.
+   review, rotatable globe with an animated round trip, event mode, further review items,
+   posters in DIN formats (done).
 10. **Physical and public:** incremental test board, deployment to the chair server, play data
     endpoint, code license; later a physical globe.

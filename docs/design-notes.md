@@ -933,3 +933,24 @@ Short entries: decision; alternatives considered; reason. Newest last.
   closer. Gallery thumbnails crop to the places when they span less than 45 % of the board
   (only the Ruhr puzzle today). Alternative: municipal borders from the BKG (VG250, dl-de/by-2-0)
   or OpenStreetMap (ODbL) in the data build, for one puzzle.
+- **2026-10-16 Incremental test board (roadmap Phase 10).** The prototype dimensions of the
+  thesis' boards are still unknown, so the test board follows Kevin's build of the Excellence
+  board: half of a 12 mm birch plywood piece (300 × 300 mm), engraved drill pits, no outline
+  cut, 1.6 mm nails and 1 mm string (r_eff 1.3 mm). `cli/incremental.ts` gained `--nail`,
+  `--string`, `--margin`, `--holes`, `--no-edge`, `--name` and a report with a robustness check
+  over r_eff (`checkSequence` for each value). 12 nails fit (margin 35 mm, minimum distance
+  25 mm): seeds 1–4 all work; seed 2 has the largest gaps (string ≥ 7.4 mm, at the track
+  ≥ 6.6 mm). For r_eff 1.0–2.0 mm the optima and gaps hold (≥ 6.2 mm at the track), but the
+  marks are placed for r_eff 1.3 mm: after calibrating on the full round trip, the other
+  string ends move by up to 0.6 mm per 0.05 mm of r_eff error (3.5 mm at 1.0 mm). Unlike the
+  map board, which reads one gap at one scale, the incremental board reads ten marks, so the
+  build note asks for measured nails and string before lasering. Files in
+  `docs/boards/incremental-test/`.
+- **2026-10-16 Licensing prepared, not chosen (roadmap Phase 10).** The code license is for
+  the maintainers (the chair, possibly a university policy) to decide; `docs/licensing.md`
+  lists what the repository holds and which terms already apply (GeoNames CC BY 4.0 in the
+  data and on boards and posters, Natural Earth public domain, Wikidata CC0, the board font
+  under the OFL in `font-data.ts`, runtime dependencies MIT/ISC, MPL-2.0 tools only in
+  development), recommends MIT, and has a checklist for going public. Independent of the
+  choice, the build now writes `third-party-licenses.txt` with the notices of the bundled
+  packages and the font (MIT and ISC ask for them with every copy), linked in the footer.
