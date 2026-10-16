@@ -121,8 +121,13 @@ export function boardInstance(
  * SVG path data of legs between pool cities. On the sphere (world files) each leg is the
  * great-circle arc, cut where it leaves one side of the world map and continues on the other.
  */
-export function legsPath(board: BoardModel, legs: readonly (readonly [number, number])[]): string {
-  if (board.sphere) {
+export function legsPath(
+  board: BoardModel,
+  legs: readonly (readonly [number, number])[],
+  /** Straight lines on the map also for world files (the flat-map comparison). */
+  straight = false,
+): string {
+  if (board.sphere && !straight) {
     const lonLat = board.sphere.lonLat;
     return board.projection.path({
       type: 'MultiLineString',
@@ -141,9 +146,14 @@ export function legMm(board: BoardModel, a: number, b: number): number {
 }
 
 /** SVG path data of a route through pool cities; a closed route returns to its start. */
-export function routePath(board: BoardModel, cities: readonly number[], closed: boolean): string {
+export function routePath(
+  board: BoardModel,
+  cities: readonly number[],
+  closed: boolean,
+  straight = false,
+): string {
   if (cities.length < 2) return '';
-  if (board.sphere) {
+  if (board.sphere && !straight) {
     const legs = cities.slice(closed ? 0 : 1).map((c, i): [number, number] => {
       const from = closed ? cities.at(i - 1)! : cities[i]!;
       return [from, c];

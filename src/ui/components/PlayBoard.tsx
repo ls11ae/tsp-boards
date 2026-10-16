@@ -15,6 +15,7 @@ import { measureText, textPath } from '../../core/board/text';
 import { boardLabel, listName } from '../../core/data';
 import type { Point } from '../../core/geometry';
 import { routePath, type BoardModel } from '../board';
+import { ViewSwitch } from './WorldGlobe';
 import { useT } from '../i18n';
 import { useOverlay } from '../overlay';
 import { playClick } from '../play';
@@ -291,6 +292,11 @@ export function PlayBoard({
       </svg>
       {showLabels && labels.length < members.length && (
         <p className="zoom-hint">{t.zoomForNames(members.length - labels.length)}</p>
+      )}
+      {board.sphere && (
+        <div className="view-switch">
+          <ViewSwitch />
+        </div>
       )}
       <div className="zoom-controls">
         <button type="button" onClick={() => zoomBy(0.7)} aria-label={t.zoomIn}>

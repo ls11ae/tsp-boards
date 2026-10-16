@@ -8,6 +8,7 @@ import type { TeachingState } from './teaching';
 import type { RobustnessState } from './robustness';
 import type { GroupConstraint, LegendEntry, Place, Purpose } from '../core/puzzle-file';
 import type { Logo } from '../core/board/logo';
+import type { Flight } from './components/Globe';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
 import { EMPTY_PLAY, type PlayAttempt, type PlayState } from '../core/play';
@@ -224,6 +225,10 @@ export interface AppState {
   readonly showTour: boolean;
   /** Tour drawn for comparison with the optimum (roadmap 5.5). */
   readonly overlay: OverlayChoice;
+  /** World puzzles: on the rotatable globe or the Equal Earth map (roadmap 9.3). */
+  readonly worldView: 'globe' | 'map';
+  /** A flight along a round trip on the globe (null: none). */
+  readonly flight: Flight | null;
   /** Clicks on the board place and remove points (free-form instance). */
   readonly placing: boolean;
   /** Pool indices chosen to be combined into one place (roadmap 7.1), or null. */
@@ -334,6 +339,8 @@ export const useStore = create<AppState>()((set) => ({
   verifications: {},
   showTour: true,
   overlay: 'none',
+  worldView: 'globe',
+  flight: null,
   placing: false,
   combining: null,
   teaching: null,

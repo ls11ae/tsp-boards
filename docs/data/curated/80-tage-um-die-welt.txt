@@ -1,0 +1,13 @@
+# Around the World in Eighty Days (roadmap 9.3): the stations of Phileas Fogg's journey in Jules
+# Verne's novel (1872): London, Suez, Bombay (Mumbai), Calcutta (Kolkata), Hong Kong,
+# Yokohama, San Francisco, New York and Liverpool, back to London. Places are the towns of the
+# world data (public/data/countries/wo.json); an easy world puzzle.
+London
+Sues
+Mumbai
+Kolkata
+Hongkong
+Yokohama
+San Francisco
+New York City
+Liverpool

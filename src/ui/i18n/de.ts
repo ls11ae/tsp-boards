@@ -19,6 +19,12 @@ export const de: Messages = {
   perCountry: 'Orte pro Land',
   regionWorld: 'Ganze Welt',
   worldMap: 'Karte',
+  globeLabel: 'Globus mit den Orten des Puzzles',
+  viewGlobe: 'Globus',
+  viewMap: 'Karte',
+  flyTour: 'Rundreise abfliegen',
+  flyOwn: 'Meine Rundreise abfliegen',
+  flyStop: 'Flug anhalten',
   regionContinents: 'Kontinente',
   perContinent: 'Orte pro Kontinent',
   regionProvinces: 'Provinzen',
@@ -137,6 +143,8 @@ export const de: Messages = {
   teaching: 'Strategien ansehen',
   teachingHintSphere:
     'Wie bauen einfache Strategien eine Rundreise, und wie beweist der exakte Löser das Optimum? Schritt für Schritt an diesem Puzzle (Entfernungen auf der Kugel).',
+  playHintGlobe:
+    'Die Verbindungen folgen Großkreisen, den kürzesten Wegen auf der Kugel. Ziehe am Globus, um ihn zu drehen; Mausrad, zwei Finger oder die Knöpfe zoomen.',
   playHintWorld:
     'Die Verbindungen folgen Großkreisen, den kürzesten Wegen auf der Kugel: Auf der Karte sind sie gebogen, führen oft nah an einen Pol, und wer den Pazifik überquert, verlässt die Karte am Rand und kommt auf der anderen Seite wieder herein.',
   teachingHintDigital:

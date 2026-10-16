@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useBoard } from './board';
 import { BoardMap } from './components/BoardMap';
 import { PlayBoard } from './components/PlayBoard';
+import { DesignGlobe, PlayGlobe, ViewSwitch } from './components/WorldGlobe';
 import { Gallery } from './components/Gallery';
 import { IncrementalPlayBoard, IncrementalPlayPanel } from './components/IncrementalPlay';
 import { IncrementalBoard, IncrementalParams, IncrementalSide } from './components/IncrementalView';
@@ -115,6 +116,7 @@ export function App() {
   const mode = useStore((s) => s.mode);
   const page = useStore((s) => s.page);
   const puzzleType = useStore((s) => s.puzzleType);
+  const worldView = useStore((s) => s.worldView);
 
   useEffect(() => {
     void loadData();
@@ -179,9 +181,22 @@ export function App() {
           </p>
         ) : board ? (
           mode === 'play' ? (
-            <PlayBoard board={board} puzzle={puzzle} />
+            board.sphere && worldView === 'globe' ? (
+              <PlayGlobe board={board} puzzle={puzzle} />
+            ) : (
+              <PlayBoard board={board} puzzle={puzzle} />
+            )
+          ) : board.sphere && worldView === 'globe' ? (
+            <DesignGlobe board={board} puzzle={puzzle} />
           ) : (
-            <BoardMap board={board} puzzle={puzzle} />
+            <>
+              {board.sphere && (
+                <div className="view-switch-bar">
+                  <ViewSwitch />
+                </div>
+              )}
+              <BoardMap board={board} puzzle={puzzle} />
+            </>
           )
         ) : (
           <p className="hint">{t.loading}</p>

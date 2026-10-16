@@ -326,7 +326,7 @@ must fit the bed in one piece: **300 × 600 mm, portrait**.
   favicon is missing (404 in the console); lint warning about the `useMemo` dependency in
   `src/ui/overlay.ts`.
 
-### 9.3 Rotatable globe for world puzzles
+### 9.3 Rotatable globe for world puzzles — done 2026-10-16
 
 Kevin's wish: the world in the app as a globe, so that a round trip can travel around the
 world.

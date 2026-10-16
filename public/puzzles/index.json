@@ -172,6 +172,26 @@
       "n": 40
     },
     {
+      "file": "einmal-um-die-welt.tsp.json",
+      "id": "einmal-um-die-welt",
+      "kind": "map",
+      "title": "Einmal um die Welt",
+      "description": "Zwanzig Städte rund um die Nordhalbkugel: Die kürzeste Rundreise führt einmal um den Globus – auf der flachen Karte verlässt sie den Rand über dem Pazifik.",
+      "purpose": "digital",
+      "region": "WO",
+      "n": 20
+    },
+    {
+      "file": "80-tage-um-die-welt.tsp.json",
+      "id": "80-tage-um-die-welt",
+      "kind": "map",
+      "title": "In 80 Tagen um die Welt",
+      "description": "Die Stationen von Phileas Fogg in Jules Vernes Roman: London, Suez, Bombay, Kalkutta, Hongkong, Yokohama, San Francisco, New York und Liverpool. Ist seine Reiseroute die kürzeste Rundreise?",
+      "purpose": "digital",
+      "region": "WO",
+      "n": 9
+    },
+    {
       "file": "olympia-sommerspiele.tsp.json",
       "id": "olympia-sommerspiele",
       "kind": "map",

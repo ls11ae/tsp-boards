@@ -1,0 +1,149 @@
+// The globe in play mode and in the designer for world puzzles (roadmap 9.3), and the switch
+// between globe and Equal Earth map.
+
+import { listName } from '../../core/data';
+import { boardLabel } from '../../core/data';
+import type { BoardModel } from '../board';
+import { cycleCity } from '../controller';
+import { useT } from '../i18n';
+import { useOverlay } from '../overlay';
+import { playClick } from '../play';
+import type { PuzzleView } from '../puzzle';
+import { useStore } from '../store';
+import { Globe, type GlobePlace, type GlobeRoute } from './Globe';
+
+export function ViewSwitch() {
+  const t = useT();
+  const view = useStore((s) => s.worldView);
+  const set = (worldView: 'globe' | 'map') => useStore.setState({ worldView, flight: null });
+  return (
+    <div className="segmented" role="group" aria-label={t.viewGlobe}>
+      <button
+        type="button"
+        className={view === 'globe' ? 'selected' : undefined}
+        aria-pressed={view === 'globe'}
+        onClick={() => set('globe')}
+      >
+        {t.viewGlobe}
+      </button>
+      <button
+        type="button"
+        className={view === 'map' ? 'selected' : undefined}
+        aria-pressed={view === 'map'}
+        onClick={() => set('map')}
+      >
+        {t.viewMap}
+      </button>
+    </div>
+  );
+}
+
+export function PlayGlobe({
+  board,
+  puzzle,
+}: {
+  readonly board: BoardModel;
+  readonly puzzle: PuzzleView | null;
+}) {
+  const play = useStore((s) => s.play);
+  const lang = useStore((s) => s.params.labelLanguage);
+  const flight = useStore((s) => s.flight);
+  const overlay = useOverlay(board, puzzle);
+  const members = puzzle?.members ?? [];
+  const visited = new Set(play.state.path);
+  const places: GlobePlace[] = members.map((c, slot) => {
+    const city = board.pool[c]!;
+    const state = play.state.path[0] === slot ? 'start' : visited.has(slot) ? 'visited' : '';
+    return {
+      city: c,
+      label: boardLabel(city, lang),
+      title: listName(city, lang),
+      className: state,
+      ring: city.highlight === true,
+    };
+  });
+  const revealed = play.revealed;
+  const routes: GlobeRoute[] = [];
+  if (revealed && puzzle?.tour)
+    routes.push({ cities: puzzle.tour, closed: true, className: 'solution-tour' });
+  if (overlay && (revealed || play.solvedMs !== null))
+    routes.push({ cities: overlay.tour, closed: true, className: 'overlay-tour' });
+  if (play.state.path.length > 1)
+    routes.push({
+      cities: play.state.path.map((s) => members[s]!),
+      closed: play.state.closed,
+      className: revealed ? 'play-path dashed' : 'play-path',
+    });
+  return (
+    <Globe
+      className="play-board globe"
+      board={board}
+      places={places}
+      routes={routes}
+      onPick={(c) => {
+        const slot = members.indexOf(c);
+        if (puzzle && slot >= 0) playClick(puzzle, slot);
+      }}
+      flight={flight}
+      onFlightEnd={() => useStore.setState({ flight: null })}
+      controls={<ViewSwitch />}
+    />
+  );
+}
+
+export function DesignGlobe({
+  board,
+  puzzle,
+}: {
+  readonly board: BoardModel;
+  readonly puzzle: PuzzleView | null;
+}) {
+  const lang = useStore((s) => s.params.labelLanguage);
+  const showTour = useStore((s) => s.showTour);
+  const pinned = useStore((s) => s.pinned);
+  const excluded = useStore((s) => s.excluded);
+  const overlay = useOverlay(board, puzzle);
+  const members = puzzle?.members ?? [];
+  const inPuzzle = new Set(members);
+  const marked = (c: number) => {
+    const id = board.pool[c]!.id;
+    return pinned.includes(id) ? 'pinned' : excluded.includes(id) ? 'excluded' : '';
+  };
+  const places: GlobePlace[] = members.map((c) => {
+    const city = board.pool[c]!;
+    return {
+      city: c,
+      label: boardLabel(city, lang),
+      title: listName(city, lang),
+      className: marked(c),
+      ring: city.highlight === true,
+    };
+  });
+  // Pinned or excluded towns outside the puzzle stay visible as places.
+  for (const c of board.pool.keys()) {
+    if (!inPuzzle.has(c) && marked(c)) {
+      const city = board.pool[c]!;
+      places.push({
+        city: c,
+        label: boardLabel(city, lang),
+        title: listName(city, lang),
+        className: marked(c),
+      });
+    }
+  }
+  const routes: GlobeRoute[] = [];
+  if (showTour && puzzle?.tour)
+    routes.push({ cities: puzzle.tour, closed: true, className: 'tour' });
+  if (overlay) routes.push({ cities: overlay.tour, closed: true, className: 'overlay-tour' });
+  return (
+    <Globe
+      className="board-globe globe"
+      board={board}
+      places={places}
+      routes={routes}
+      dots={[...board.pool.keys()].filter((c) => !inPuzzle.has(c))}
+      onPick={(c) => cycleCity(board.pool[c]!.id)}
+      controls={<ViewSwitch />}
+    />
+  );
+}

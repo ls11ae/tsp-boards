@@ -1,0 +1,177 @@
+{
+  "schema": 1,
+  "id": "80-tage-um-die-welt",
+  "kind": "map",
+  "title": "In 80 Tagen um die Welt",
+  "description": "Die Stationen von Phileas Fogg in Jules Vernes Roman: London, Suez, Bombay, Kalkutta, Hongkong, Yokohama, San Francisco, New York und Liverpool. Ist seine Reiseroute die kürzeste Rundreise?",
+  "purpose": "digital",
+  "language": "de",
+  "app": "0.9.0",
+  "updated": "2026-10-16",
+  "data": {
+    "country": "WO",
+    "version": 2
+  },
+  "map": {
+    "params": {
+      "region": "WO",
+      "n": 9,
+      "boardWidthMm": 1000,
+      "boardHeightMm": 520,
+      "marginMm": 10,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 20,
+      "targetGapMm": 5,
+      "minPopulation": 1000000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "id": 2643743,
+        "name": "London",
+        "lat": 51.5085,
+        "lon": -0.1257
+      },
+      {
+        "id": 359796,
+        "name": "Sues",
+        "lat": 29.9737,
+        "lon": 32.5263
+      },
+      {
+        "id": 1275339,
+        "name": "Mumbai",
+        "lat": 19.0728,
+        "lon": 72.8826
+      },
+      {
+        "id": 1275004,
+        "name": "Kolkata",
+        "lat": 22.5626,
+        "lon": 88.363
+      },
+      {
+        "id": 1819729,
+        "name": "Hongkong",
+        "lat": 22.2783,
+        "lon": 114.1747
+      },
+      {
+        "id": 1848354,
+        "name": "Yokohama",
+        "lat": 35.4333,
+        "lon": 139.65
+      },
+      {
+        "id": 5391959,
+        "name": "San Francisco",
+        "lat": 37.7749,
+        "lon": -122.4194
+      },
+      {
+        "id": 5128581,
+        "name": "New York City",
+        "lat": 40.7143,
+        "lon": -74.006
+      },
+      {
+        "id": 2644210,
+        "name": "Liverpool",
+        "lat": 53.4106,
+        "lon": -2.9779
+      }
+    ],
+    "list": {
+      "mode": "fixed",
+      "places": [
+        {
+          "id": 2643743,
+          "name": "London",
+          "lat": 51.5085,
+          "lon": -0.1257
+        },
+        {
+          "id": 359796,
+          "name": "Sues",
+          "lat": 29.9737,
+          "lon": 32.5263
+        },
+        {
+          "id": 1275339,
+          "name": "Mumbai",
+          "lat": 19.0728,
+          "lon": 72.8826
+        },
+        {
+          "id": 1275004,
+          "name": "Kolkata",
+          "lat": 22.5626,
+          "lon": 88.363
+        },
+        {
+          "id": 1819729,
+          "name": "Hongkong",
+          "lat": 22.2783,
+          "lon": 114.1747
+        },
+        {
+          "id": 1848354,
+          "name": "Yokohama",
+          "lat": 35.4333,
+          "lon": 139.65
+        },
+        {
+          "id": 5391959,
+          "name": "San Francisco",
+          "lat": 37.7749,
+          "lon": -122.4194
+        },
+        {
+          "id": 5128581,
+          "name": "New York City",
+          "lat": 40.7143,
+          "lon": -74.006
+        },
+        {
+          "id": 2644210,
+          "name": "Liverpool",
+          "lat": 53.4106,
+          "lon": -2.9779
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "lengthMm": 1089.434,
+      "gapMm": 17.036,
+      "model": "string",
+      "scaleGapMm": null,
+      "startPlace": null
+    }
+  }
+}

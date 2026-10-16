@@ -21,6 +21,12 @@ export const en = {
   perCountry: 'Places per country',
   regionWorld: 'Whole world',
   worldMap: 'Map',
+  globeLabel: 'Globe with the places of the puzzle',
+  viewGlobe: 'Globe',
+  viewMap: 'Map',
+  flyTour: 'Fly the round trip',
+  flyOwn: 'Fly my round trip',
+  flyStop: 'Stop the flight',
   regionContinents: 'Continents',
   perContinent: 'Places per continent',
   regionProvinces: 'Provinces',
@@ -142,6 +148,8 @@ export const en = {
   teaching: 'Watch a strategy',
   teachingHintSphere:
     'How do simple strategies build a round trip, and how does the exact solver prove the optimum? Step by step on this puzzle (distances on the sphere).',
+  playHintGlobe:
+    'Connections follow great circles, the shortest paths on the sphere. Drag the globe to turn it; zoom with the wheel, two fingers or the buttons.',
   playHintWorld:
     'Connections follow great circles, the shortest paths on the sphere: on the map they are curved, often pass close to a pole, and a leg across the Pacific leaves the map at one edge and comes back in at the other.',
   teachingHintDigital:

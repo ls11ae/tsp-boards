@@ -765,3 +765,22 @@ Short entries: decision; alternatives considered; reason. Newest last.
   the teaching hint names straight-line distances for digital puzzles; scores always carry their
   unit ("0 mm", "+0,12 %"); the header tagline drops nails and string while a digital puzzle is
   played. The overlay select has an explicit id and label; a favicon (nails and a string).
+- **2026-10-16 Rotatable globe (roadmap 9.3).** World puzzles open on an orthographic globe
+  (d3-geo, clipped at the horizon), in play mode and in the designer, with a switch to the
+  Equal Earth map. Dragging turns the globe with versors (the grabbed point stays under the
+  pointer; no gimbal lock at the poles); buttons, the wheel and two fingers zoom (1–12×); only
+  places on the visible side are hit (angular distance < 90° from the view centre); labels are
+  placed greedily at screen size for every view (right, left, above, below; bigger places
+  first; inside the view). The globe is drawn in screen pixels, not board millimetres: it has
+  no board, and land, routes and labels stay sharp at any zoom. "Rundreise abfliegen" (after
+  solving or showing the solution) and "Meine Rundreise abfliegen" (a closed own round trip)
+  move a marker along each leg's great circle (`geoInterpolate`, 4000 km/s, at least 0.5 s per
+  leg) and keep it in the centre of the globe. The flat-map comparison is drawn with straight
+  lines on the Equal Earth map, as it is measured there (on the globe its legs stay great
+  circles). District merging: the less prominent town stays separate if it is the seat of a
+  first-order division with a million inhabitants more than 15 km away, so Yokohama, Saitama,
+  Incheon and Biên Hòa are back (world data version 2; Europe unchanged). Curated: "In 80 Tagen
+  um die Welt" (Fogg's stations; his route is the optimum, 517 km ahead of the runner-up) and
+  "Einmal um die Welt" (20 northern cities; the optimum winds once around the globe).
+  Alternatives: a canvas renderer (faster, but SVG keeps clicks, titles and styling simple at
+  these sizes), d3-zoom/d3-drag (a dependency for a few lines of pointer handling).

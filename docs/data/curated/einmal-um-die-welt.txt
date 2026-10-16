@@ -1,0 +1,23 @@
+# Once around the world (roadmap 9.3): 20 cities in the northern mid-latitudes, spread over all
+# longitudes, so that the shortest round trip goes once around the globe (and leaves the flat
+# map at its edge over the Pacific). Places are the towns of the world data.
+Lissabon
+Paris
+Berlin
+Moskau
+Istanbul
+Teheran
+Taschkent
+Neu-Delhi
+Kathmandu
+Peking
+Seoul
+Tokio
+Wladiwostok
+Anchorage
+Vancouver
+San Francisco
+Denver
+Chicago
+New York City
+Montreal

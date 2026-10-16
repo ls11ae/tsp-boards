@@ -95,6 +95,7 @@ export function PlayPanel({
   const params = useStore((s) => s.params);
   const purpose = useStore((s) => s.doc.purpose);
   const list = useStore((s) => s.list);
+  const worldView = useStore((s) => s.worldView);
   const [confirmReveal, setConfirmReveal] = useState(false);
   const v = puzzle?.verification;
   const optimum = v?.status === 'done' ? v.verification.string : null;
@@ -140,7 +141,9 @@ export function PlayPanel({
         <h2>{t.playTitle(fmt.integer(n), places)}</h2>
         <p className="hint">{digital ? t.playHintDigital : t.playHint}</p>
         <PlaceLegend board={board} members={puzzle.members} />
-        {board.sphere && <p className="hint">{t.playHintWorld}</p>}
+        {board.sphere && (
+          <p className="hint">{worldView === 'globe' ? t.playHintGlobe : t.playHintWorld}</p>
+        )}
         <dl className="metrics">
           <dt>{digital ? t.playVisitedPlaces : t.playVisited}</dt>
           <dd>
@@ -221,6 +224,7 @@ export function PlayPanel({
         {(play.revealed || play.solvedMs !== null) && (
           <OverlayPicker board={board} puzzle={puzzle} />
         )}
+        {board.sphere && <FlightButtons puzzle={puzzle} />}
       </section>
       <Highscores />
       <ShareConsent />
@@ -233,5 +237,39 @@ export function PlayPanel({
         </button>
       </section>
     </aside>
+  );
+}
+
+/** Flights on the globe (roadmap 9.3): the solution, or the player's own closed round trip. */
+function FlightButtons({ puzzle }: { readonly puzzle: PuzzleView }) {
+  const t = useT();
+  const play = useStore((s) => s.play);
+  const flying = useStore((s) => s.flight !== null);
+  const fly = (cities: readonly number[]) =>
+    useStore.setState({ worldView: 'globe', flight: { cities, key: Date.now() } });
+  const done = play.revealed || play.solvedMs !== null;
+  const own = play.state.closed ? play.state.path.map((s) => puzzle.members[s]!) : null;
+  if (!done && !own) return null;
+  return (
+    <div className="actions">
+      {flying ? (
+        <button type="button" onClick={() => useStore.setState({ flight: null })}>
+          {t.flyStop}
+        </button>
+      ) : (
+        <>
+          {done && puzzle.tour && (
+            <button type="button" className="primary" onClick={() => fly(puzzle.tour!)}>
+              {t.flyTour}
+            </button>
+          )}
+          {own && (
+            <button type="button" onClick={() => fly(own)}>
+              {t.flyOwn}
+            </button>
+          )}
+        </>
+      )}
+    </div>
   );
 }

@@ -111,11 +111,16 @@ export function Overlay({
   readonly overlay: OverlayView;
   readonly showRemoved: boolean;
 }) {
+  // The flat-map tour is measured with straight lines on the map: drawn so too.
+  const straight = overlay.kind === 'flat-map';
   return (
     <g>
-      {showRemoved && <path className="overlay-removed" d={legsPath(board, overlay.removed)} />}
-      <path className="overlay-tour" d={routePath(board, overlay.tour, true)} />
-      <path className="overlay-added" d={legsPath(board, overlay.added)} />
+      {showRemoved && (
+        // Left-out edges belong to the optimum: great circles.
+        <path className="overlay-removed" d={legsPath(board, overlay.removed)} />
+      )}
+      <path className="overlay-tour" d={routePath(board, overlay.tour, true, straight)} />
+      <path className="overlay-added" d={legsPath(board, overlay.added, straight)} />
     </g>
   );
 }

@@ -104,5 +104,8 @@ decision log). World puzzles are digital; lengths are great-circle kilometres.
 | `olympia-sommerspiele.txt` | Olympische Sommerspiele | 23 host cities 1896–2024 (fixed) | digital (gap 88 km = 0.15 %; Rio de Janeiro → Melbourne runs past Antarctica) |
 | search `--region WO --n 30 --seed 1 --weights 0.3,1,3 --min-pop 2000000` | Welt: 30 Metropolen | 30 cities on all continents | digital (gap 123 km = 0.18 %; the optimum on the flat map is 638 km longer on the sphere) |
 
+| `80-tage-um-die-welt.txt` | In 80 Tagen um die Welt | 9 stations of Jules Verne's novel (fixed) | digital (gap 517 km = 1.56 %; Fogg's route is the optimum, once around the world) |
+| `einmal-um-die-welt.txt` | Einmal um die Welt | 20 cities of the northern mid-latitudes (fixed) | digital (gap 172 km = 0.47 %; the optimum goes once around the world) |
+
 Source of the Olympic list: International Olympic Committee, list of the Olympic Games,
 <https://www.olympics.com/en/olympic-games> (retrieved 2026-10-13); one place per city.
