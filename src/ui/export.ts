@@ -6,15 +6,16 @@ import type { Logo } from '../core/board/logo';
 import { drawPoster, posterPdf } from '../core/board/poster';
 import { posterStops, stopPoints, type PosterTour } from '../core/board/poster-tour';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
+import type { LegendEntry } from '../core/puzzle-file';
 import { mapTemplateText, solutionPdf, templatePdf } from '../core/board/print';
 import { drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import { boardSvg } from '../core/board/svg';
 import { worksheetPdf } from '../core/board/worksheet';
-import { listName } from '../core/data';
+import { boardLabel, listName } from '../core/data';
 import { calibrationTour, measuredLength } from '../core/board/measure';
 import { encodePermalink } from '../core/permalink';
 import { euclideanLength, stringLength } from '../core/tsp/tour';
-import type { BoardModel } from './board';
+import { townsById, type BoardModel } from './board';
 import { puzzleSetup } from './plans';
 import type { PuzzleView } from './puzzle';
 import { useStore } from './store';
@@ -97,37 +98,70 @@ function posterTourInWorker(request: Omit<ExactWorkerRequest & { type: 'poster' 
   });
 }
 
+/** Texts and emphasis of a poster, edited in the export panel (roadmap 9.9). */
+export interface PosterTexts {
+  readonly title: string;
+  readonly subtitle: string;
+  readonly legend: readonly LegendEntry[];
+  /** City id of the emphasized place (start and finish, large name or its logo), or null. */
+  readonly emphasis: number | null;
+}
+
 /**
- * Poster of the shown puzzle (roadmap 9.7): the great-circle optimum through its places, its
- * length and facts, on the chosen DIN paper. Returns the round trip for the panel's note.
+ * Poster of the shown puzzle (roadmap 9.7, 9.9): the great-circle optimum through its places,
+ * the problem and the length, on the chosen DIN paper, in the app's language. Returns the
+ * round trip for the panel's note.
  */
-export async function downloadPoster(board: BoardModel, puzzle: PuzzleView): Promise<PosterTour> {
+export async function downloadPoster(
+  board: BoardModel,
+  puzzle: PuzzleView,
+  texts: PosterTexts,
+): Promise<PosterTour> {
   const setup = puzzleSetup(board, puzzle);
-  const { exportOptions, doc, logos, country } = useStore.getState();
+  const { exportOptions, logos, country, lang } = useStore.getState();
   if (!setup || !country) throw new Error('no puzzle');
-  const stops = posterStops(setup.cities, exportOptions.posterMembers);
+  // Labels in the app's language (English exonyms such as Munich where the data has them).
+  const towns = townsById(country);
+  const byName = new Map([...towns.values()].map((t) => [t.name, t]));
+  const local = setup.cities.map((c) => ({
+    ...c,
+    label: c.members ? c.label : boardLabel(c, lang),
+  }));
+  const stops = posterStops(local, exportOptions.posterMembers, (name, member) => {
+    const town = member ? byName.get(name) : undefined;
+    return town ? boardLabel(town, lang) : name;
+  });
   const tour = await posterTourInWorker({
     type: 'poster',
     stops,
     points: stopPoints(stops, setup.projection),
   });
-  // Logos by place (slot) of the puzzle; they stay in this browser session.
+  // Logos by place (slot) of the puzzle; they stay in this browser session. The emphasized
+  // place's logo stands large near it, the others replace labels.
+  const emphasis = setup.cities.findIndex((c) => c.id === texts.emphasis);
   const placeLogos = new Map<number, Logo>();
   for (const l of logos) {
     const slot = setup.cities.findIndex((c) => c.id === l.city);
-    if (slot >= 0) placeLogos.set(slot, l.logo);
+    if (slot >= 0 && slot !== emphasis) placeLogos.set(slot, l.logo);
   }
   const drawing = drawPoster({
     file: country,
     region: setup.params.region,
     stops,
     tour,
-    title: doc.title || regionName(setup),
-    subtitle: doc.description,
+    title: texts.title || regionName(setup),
+    subtitle: texts.subtitle,
     paper: exportOptions.posterPaper,
     orientation: exportOptions.posterOrientation,
-    language: setup.params.labelLanguage,
-    legend: doc.board?.legend ?? [],
+    language: lang,
+    legend: texts.legend,
+    emphasis:
+      emphasis >= 0
+        ? {
+            place: emphasis,
+            logo: logos.find((l) => l.city === texts.emphasis)?.logo ?? null,
+          }
+        : null,
     logos: placeLogos,
     legendLogo: logos.find((l) => l.city === null)?.logo ?? null,
     blankMap: setup.params.blankBoard,

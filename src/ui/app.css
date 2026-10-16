@@ -768,6 +768,25 @@ ul.cards {
   fill: var(--nail);
 }
 
+/* Poster legend lines (roadmap 9.9): symbol, text, remove. */
+.poster-legend {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin: 8px 0;
+}
+
+.poster-legend .legend-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.poster-legend .legend-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 /* Surrounding towns of city-scale puzzles (roadmap 9.8): background only. */
 .context-towns circle {
   fill: var(--map-line);

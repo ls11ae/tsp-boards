@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { BoardPlan, PlanWarning } from '../../core/board/plan';
 import { DIN_PAPERS } from '../../core/board/paper';
+import type { LegendEntry } from '../../core/puzzle-file';
 import type { BoardModel } from '../board';
 import type { ExportKind } from '../export';
 import { planKey, prepareBoard } from '../plans';
@@ -190,17 +191,40 @@ function Poster({
   const fmt = useFormat();
   const options = useStore((s) => s.exportOptions);
   const setOptions = useStore((s) => s.setExportOptions);
+  const doc = useStore((s) => s.doc);
+  const cities = puzzle.members.map((c) => board.pool[c]!);
+  // Texts of the poster, prefilled from the puzzle (not its description: that is written for
+  // the screen), editable before the export (roadmap 9.9).
+  const [title, setTitle] = useState(doc.title);
+  const [subtitle, setSubtitle] = useState('');
+  const [legend, setLegend] = useState<LegendEntry[]>(() =>
+    doc.board?.legend.length
+      ? [...doc.board.legend]
+      : cities.some((c) => c.highlight)
+        ? [{ symbol: 'ring', text: t.posterMarked }]
+        : [],
+  );
+  const [emphasis, setEmphasis] = useState<number | null>(null);
   const [state, setState] = useState<
     | { status: 'idle' }
     | { status: 'running' }
     | { status: 'done'; km: number; same: boolean }
     | { status: 'error'; message: string }
   >({ status: 'idle' });
-  const composite = puzzle.members.some((c) => (board.pool[c]!.members?.length ?? 0) >= 2);
+  const composite = cities.some((c) => (c.members?.length ?? 0) >= 2);
+  const setLine = (i: number, line: LegendEntry) =>
+    setLegend((l) => l.map((e, j) => (j === i ? line : e)));
   const download = () => {
     setState({ status: 'running' });
     import('../export')
-      .then((m) => m.downloadPoster(board, puzzle))
+      .then((m) =>
+        m.downloadPoster(board, puzzle, {
+          title,
+          subtitle,
+          legend: legend.filter((e) => e.text.trim()),
+          emphasis,
+        }),
+      )
       .then((tour) => setState({ status: 'done', km: tour.lengthKm, same: tour.mapAgrees }))
       .catch((e: unknown) =>
         setState({ status: 'error', message: e instanceof Error ? e.message : String(e) }),
@@ -256,7 +280,75 @@ function Poster({
           </select>
         </label>
       )}
+      <label className="field">
+        <span>{t.posterTitle}</span>
+        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+      </label>
+      <label className="field">
+        <span>{t.posterSubtitle}</span>
+        <input type="text" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
+      </label>
+      <label className="field">
+        <span>{t.posterEmphasis}</span>
+        <select
+          value={emphasis ?? ''}
+          onChange={(e) => setEmphasis(e.target.value === '' ? null : Number(e.target.value))}
+        >
+          <option value="">{t.emphasisNone}</option>
+          {cities.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <fieldset className="poster-legend">
+        <legend>{t.posterLegend}</legend>
+        {legend.map((e, i) => (
+          <div key={i} className="legend-row">
+            <select
+              aria-label={t.posterLegendSymbol}
+              value={e.symbol}
+              onChange={(ev) =>
+                setLine(i, {
+                  ...e,
+                  symbol:
+                    ev.target.value === 'ring'
+                      ? 'ring'
+                      : ev.target.value === 'nail'
+                        ? 'nail'
+                        : 'none',
+                })
+              }
+            >
+              <option value="ring">{t.legendRing}</option>
+              <option value="nail">{t.legendNail}</option>
+              <option value="none">{t.legendNote}</option>
+            </select>
+            <input
+              type="text"
+              aria-label={t.posterLegend}
+              value={e.text}
+              onChange={(ev) => setLine(i, { ...e, text: ev.target.value })}
+            />
+            <button
+              type="button"
+              aria-label={t.legendRemove}
+              onClick={() => setLegend((l) => l.filter((_, j) => j !== i))}
+            >
+              ×
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => setLegend((l) => [...l, { symbol: 'none', text: '' }])}
+        >
+          {t.legendAdd}
+        </button>
+      </fieldset>
       {logos && <LogoFields board={board} puzzle={puzzle} />}
+      <p className="hint">{t.posterLogoHint}</p>
       <div className="actions">
         <button type="button" disabled={state.status === 'running'} onClick={download}>
           {state.status === 'running' ? t.posterRunning : t.downloadPoster}
@@ -302,7 +394,7 @@ export function ExportPanel({
         <>
           <p className="hint">{t.exportDigital}</p>
           {verified && <Worksheet board={board} puzzle={puzzle} paperField />}
-          <Poster board={board} puzzle={puzzle} logos />
+          <Poster key={puzzle.key} board={board} puzzle={puzzle} logos />
         </>
       ) : !verified ? (
         <p className="hint">{t.exportNeedsCheck}</p>
@@ -401,7 +493,7 @@ export function ExportPanel({
             </>
           )}
           <Worksheet board={board} puzzle={puzzle} paperField={!plan} />
-          <Poster board={board} puzzle={puzzle} logos={false} />
+          <Poster key={puzzle.key} board={board} puzzle={puzzle} logos={false} />
         </>
       )}
     </section>
