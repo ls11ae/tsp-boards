@@ -99,7 +99,11 @@ export interface SearchPool {
    * distance and the labels stay on the map.
    */
   readonly sphere?: Sphere;
-  readonly population: readonly number[];
+  /**
+   * How well-known each city is (population, or Wikipedia editions in the world file; see
+   * `prominence` in core/data): proposal weights and recognisability.
+   */
+  readonly prominence: readonly number[];
   /** Pool indices that must be selected. */
   readonly pinned: readonly number[];
   /** Pool indices that must not be selected. */
@@ -150,9 +154,9 @@ export function greedySelection(
     for (const q of selection.members) if (graph.near[p]!.includes(q)) conflictingPins.push([q, p]);
     if (selection.eligible(p)) selection.add(p);
   }
-  const byPopulation = pool.population
+  const byProminence = pool.prominence
     .map((_, i) => i)
-    .sort((a, b) => pool.population[b]! - pool.population[a]! || a - b);
+    .sort((a, b) => pool.prominence[b]! - pool.prominence[a]! || a - b);
   const groups = pool.groups;
   const counts = groups ? groupCounts(groups, selection.members) : [];
   const pinsOverMax = groups ? counts.flatMap((k, g) => (k > groups.max[g]! ? [g] : [])) : [];
@@ -162,16 +166,16 @@ export function greedySelection(
     if (g >= 0) counts[g]!++;
   };
   if (groups) {
-    const size = groupCounts(groups, byPopulation);
+    const size = groupCounts(groups, byProminence);
     const order = groups.min.map((_, g) => g).sort((a, b) => size[a]! - size[b]! || a - b);
     for (const g of order) {
-      for (const c of byPopulation) {
+      for (const c of byProminence) {
         if (counts[g]! >= groups.min[g]! || selection.members.length >= n) break;
         if (groups.of[c] === g && !excluded.has(c) && selection.eligible(c)) take(c);
       }
     }
   }
-  for (const c of byPopulation) {
+  for (const c of byProminence) {
     if (selection.members.length >= n) break;
     const g = groups?.of[c] ?? -1;
     if (groups && g >= 0 && counts[g]! >= groups.max[g]!) continue;
@@ -288,8 +292,8 @@ export class Search {
   private readonly cache = new Map<string, Evaluation>();
   private readonly moveRng: Rng;
   private readonly acceptRng: Rng;
-  private readonly popMin: number;
-  private readonly popMax: number;
+  private readonly prominenceMin: number;
+  private readonly prominenceMax: number;
   private readonly targetUm: number;
   private readonly saturationUm: number;
   /** Gaps are only resolved up to this value (µm); larger gaps are reported as the cap. */
@@ -310,15 +314,15 @@ export class Search {
     this.graph = new ConflictGraph(pool.points, params.minDistanceMm);
     // Excluded cities get weight 0, so they are never proposed.
     const excluded = new Set(pool.excluded ?? []);
-    this.weights = Float64Array.from(pool.population, (p, i) =>
+    this.weights = Float64Array.from(pool.prominence, (p, i) =>
       excluded.has(i) ? 0 : Math.pow(Math.max(p, 1), params.beta),
     );
     this.pinned = new Set(pool.pinned);
     this.labelCandidates = pool.labels
       ? new Array<LabelCandidate[] | undefined>(pool.points.length)
       : null;
-    this.popMin = Math.min(...pool.population);
-    this.popMax = Math.max(...pool.population);
+    this.prominenceMin = Math.min(...pool.prominence);
+    this.prominenceMax = Math.max(...pool.prominence);
     const rng = new Rng(params.seed);
     this.moveRng = rng.fork('moves');
     this.acceptRng = rng.fork('accept');
@@ -643,9 +647,9 @@ export class Search {
     const unplacedLabels = previous ? previous.unplacedLabels : this.unplacedLabels(members);
     const d = difficulty(inst, scan.length);
     const r = recognizability(
-      members.map((c) => this.pool.population[c]!),
-      this.popMin,
-      this.popMax,
+      members.map((c) => this.pool.prominence[c]!),
+      this.prominenceMin,
+      this.prominenceMax,
     );
     const { weights } = this.params;
     const gapTerm = Math.min(1, gap / this.saturationUm);

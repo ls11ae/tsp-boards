@@ -14,7 +14,8 @@ import {
   type DownloadsManifest,
   type RawSource,
 } from './sources';
-import { WORLD, worldNameSources } from './world';
+import { WIKIDATA_SITELINKS, downloadSitelinks } from './fame';
+import { WORLD, worldNameSources, worldTownLinks } from './world';
 
 async function readManifest(): Promise<DownloadsManifest> {
   if (!existsSync(DOWNLOADS_MANIFEST)) return {};
@@ -61,8 +62,17 @@ async function main(): Promise<void> {
     }
   };
   await fetchAll(sourcesForCountry(country));
-  // The world's name files follow from its town list (downloaded above).
-  if (country.toUpperCase() === WORLD.code) await fetchAll(await worldNameSources());
+  if (country.toUpperCase() !== WORLD.code) return;
+  // The world's name files and sitelinks follow from its town list (downloaded above).
+  await fetchAll(await worldNameSources());
+  const sitelinks = path.join(RAW_DIR, WIKIDATA_SITELINKS.file);
+  if (!force && existsSync(sitelinks) && manifest[WIKIDATA_SITELINKS.key]) {
+    console.log(`skip ${WIKIDATA_SITELINKS.file} (already downloaded; --force to refresh)`);
+    return;
+  }
+  console.log(`query ${WIKIDATA_SITELINKS.url} (sitelinks by GeoNames id)`);
+  manifest[WIKIDATA_SITELINKS.key] = await downloadSitelinks(await worldTownLinks());
+  await writeFile(DOWNLOADS_MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
 }
 
 main().catch((error: unknown) => {

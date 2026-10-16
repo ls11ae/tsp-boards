@@ -5,6 +5,7 @@ import {
   citiesFromColumns,
   citiesToColumns,
   parseCountryFile,
+  prominence,
   type City,
   type Manifest,
   type StateInfo,
@@ -49,6 +50,30 @@ describe('city columns', () => {
     expect(columns.nameEn).toEqual({ '0': 'Munich' });
     expect(columns.state).toEqual([0, 1]);
     expect(citiesFromColumns(columns, states)).toEqual(cities);
+    expect(columns.fame).toBeUndefined();
+  });
+
+  it('stores the fame column of the world and ranks by it (roadmap 9.6)', () => {
+    const states: StateInfo[] = [{ id: 'WO-EU', name: 'Europa', nameEn: 'Europe' }];
+    const town = (id: number, name: string, pop: number, fame: number): City => ({
+      id,
+      name,
+      label: name,
+      nameEn: name,
+      lat: 0,
+      lon: 0,
+      pop,
+      state: 'WO-EU',
+      wikidata: null,
+      flags: 0,
+      fame,
+    });
+    const cities = [town(1, 'Paris', 2_100_000, 366), town(2, 'Kleinstadt', 3_000_000, 1)];
+    const back = citiesFromColumns(citiesToColumns(cities, states), states);
+    expect(back).toEqual(cities);
+    expect(prominence(back[0]!)).toBeGreaterThan(prominence(back[1]!));
+    // Without fame: the population.
+    expect(prominence({ ...back[1]!, fame: undefined })).toBe(3_000_000);
   });
 });
 
@@ -71,6 +96,8 @@ describe('committed data files', () => {
       }
       expect(Object.keys(file.regions.objects).sort()).toEqual(['country', 'neighbors', 'states']);
       expect(file.attribution.en).toContain('GeoNames');
+      // The world ranks its towns by Wikipedia editions (fame), the others by population.
+      expect(file.cities.fame !== undefined).toBe(file.country === 'WO');
     },
   );
 });

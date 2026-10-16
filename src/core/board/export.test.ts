@@ -46,7 +46,7 @@ beforeAll(async () => {
   });
   const points = boardPoints(pool, projection);
   const { selection } = greedySelection(
-    { points, population: pool.map((c) => c.pop), pinned: [] },
+    { points, prominence: pool.map((c) => c.pop), pinned: [] },
     params.n,
     params.minDistanceMm,
   );

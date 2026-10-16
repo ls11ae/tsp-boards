@@ -434,6 +434,7 @@ Do these first; the board items are the critical path (lasering and a test board
   cities in the Americas and without Paris, Los Angeles, São Paulo or Buenos Aires. For the
   world, measure recognisability by prominence (alternate names or Wikipedia), not
   population, and consider a minimum per continent (the group constraints exist).
+  (done: fame from Wikipedia editions; the minimum per continent was not needed)
 - Flat-map comparison: draw the comparison tour as straight lines on the map (that is how it
   is measured) and hide the player's tour while comparing (three tours on top of each other
   are hard to read). (Straight lines done in 9.3; hiding the player's tour is open.)

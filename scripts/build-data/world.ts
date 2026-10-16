@@ -8,16 +8,18 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { geoContains } from 'd3-geo';
 import type { Feature, Geometry } from 'geojson';
-import type { CountryFile, LocalizedText, StateInfo } from '../../src/core/data';
+import type { City, CountryFile, LocalizedText, StateInfo } from '../../src/core/data';
 import {
   mergeDistricts,
   namedCities,
   readAdmin1,
+  readAlternates,
   readCityTable,
   writeAreaFile,
   type CityRow,
 } from './continent';
 import { KEPT_CODES } from './continent-sources';
+import { WIKIDATA_SITELINKS, articleUrl, readSitelinks, type TownLinks } from './fame';
 import { buildWorldRegions, type NeProperties } from './natural-earth';
 import { GEONAMES_COUNTRY_INFO, RAW_DIR, geonamesSources, type RawSource } from './sources';
 
@@ -78,6 +80,21 @@ export function worldRows(rows: readonly CityRow[]): CityRow[] {
   return rows.filter((r) => KEPT_CODES.has(r.featureCode) && r.population >= WORLD.minPopulation);
 }
 
+/** The world's towns before merging with their Wikidata items and Wikipedia articles. */
+export async function worldTownLinks(): Promise<TownLinks[]> {
+  const rows = worldRows(await readCityTable());
+  const { cities } = await namedCities(WORLD.code, rows, () => '');
+  const alts = await readAlternates(rows);
+  return cities.map((c) => ({
+    id: c.id,
+    wikidata: c.wikidata,
+    articles: (alts.get(c.id) ?? [])
+      .filter((a) => a.lang === 'link')
+      .map((a) => articleUrl(a.name))
+      .filter((a): a is string => a !== null),
+  }));
+}
+
 /** Alternate-name files needed: the countries with towns in the world file. */
 export async function worldNameSources(): Promise<RawSource[]> {
   const countries = new Set(worldRows(await readCityTable()).map((r) => r.country));
@@ -123,11 +140,14 @@ export async function buildWorld(
   const rows = mergeDistricts(worldRows(await readCityTable()), WORLD.mergeKm).filter(
     (r) => CONTINENT_NAMES[continentOfRow(r) ?? ''] !== undefined,
   );
-  const { cities, unnamed } = await namedCities(
-    prefix,
-    rows,
-    (r) => `${prefix}-${continentOfRow(r)!}`,
-  );
+  const named = await namedCities(prefix, rows, (r) => `${prefix}-${continentOfRow(r)!}`);
+  const { unnamed } = named;
+  // Fame: Wikipedia editions by GeoNames id (and the QID where GeoNames has none).
+  const sitelinks = await readSitelinks();
+  const cities = named.cities.map((c): City => {
+    const s = sitelinks.get(c.id);
+    return { ...c, wikidata: c.wikidata ?? s?.[0] ?? null, fame: Math.max(1, s?.[1] ?? 1) };
+  });
 
   console.log('build regions');
   const regions = await buildWorldRegions(admin1, {
@@ -153,6 +173,7 @@ export async function buildWorld(
       bbox: regions.bbox,
       countries: [...new Set(rows.map((r) => r.country))],
       extraGeoNames: [GEONAMES_COUNTRY_INFO.key],
+      wikidata: [WIKIDATA_SITELINKS.key],
       metric: 'sphere',
     },
     dataDir,
@@ -162,6 +183,6 @@ export async function buildWorld(
     .map((s) => `${s.nameEn} ${placed.filter((c) => c.state === s.id).length}`)
     .join(', ');
   console.log(
-    `${placed.length} towns (${perContinent}; ${unnamed} without a German name), ${Math.round(bytes / 1024)} KB`,
+    `${placed.length} towns (${perContinent}; ${unnamed} without a German name, ${placed.filter((c) => !sitelinks.has(c.id)).length} without Wikipedia editions), ${Math.round(bytes / 1024)} KB`,
   );
 }

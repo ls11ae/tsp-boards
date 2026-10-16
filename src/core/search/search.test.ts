@@ -24,7 +24,7 @@ function pool(size: number, seed: number, pinned: number[] = []): SearchPool {
   const points = randomPoints(size, seed);
   return {
     points,
-    population: points.map((_, i) => 1000 + ((i * 7919) % 100_000)),
+    prominence: points.map((_, i) => 1000 + ((i * 7919) % 100_000)),
     pinned,
   };
 }
@@ -185,7 +185,7 @@ describe('group bounds', () => {
         [100, 0],
         [200, 0],
       ],
-      population: [10, 20, 30, 40],
+      prominence: [10, 20, 30, 40],
       pinned: [2, 3],
       groups: { of: [0, 0, 1, 1], min: [2, 0], max: [2, 1] },
     };
@@ -207,7 +207,7 @@ describe('greedySelection', () => {
         [100, 0],
         [200, 0],
       ],
-      population: [10, 20, 30, 40],
+      prominence: [10, 20, 30, 40],
       pinned: [0, 1],
     };
     const result = greedySelection(p, 3, 50);

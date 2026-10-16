@@ -1,7 +1,13 @@
 // Glue between the store and the workers: data loading, search runs (throttled UI updates)
 // and the queue of exact verifications.
 
-import { parseCountryFile, type City, type CountryFile, type Manifest } from '../core/data';
+import {
+  parseCountryFile,
+  prominence,
+  type City,
+  type CountryFile,
+  type Manifest,
+} from '../core/data';
 import { compositePlace, type LinkMember, type LinkPlace } from '../core/places';
 import type { Member, Place } from '../core/puzzle-file';
 import {
@@ -318,7 +324,7 @@ function searchPool(): SearchPool | null {
   return {
     points: board.points,
     ...(board.sphere ? { sphere: board.sphere } : {}),
-    population: board.pool.map((c) => c.pop),
+    prominence: board.pool.map(prominence),
     pinned: indices(pinned),
     excluded: indices(excluded),
     labels: labels ? poolLabels(board, labels) : undefined,

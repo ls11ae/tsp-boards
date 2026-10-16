@@ -1,6 +1,6 @@
 // Shared runner for the CLI search and the gap survey.
 
-import type { City } from '../../src/core/data';
+import { prominence, type City } from '../../src/core/data';
 import { Instance } from '../../src/core/instance';
 import {
   Search,
@@ -37,7 +37,7 @@ export function runSearch(options: RunOptions): { search: Search; elapsedMs: num
     {
       points: pool.points,
       ...(pool.sphere ? { sphere: pool.sphere } : {}),
-      population: pool.cities.map((c) => c.pop),
+      prominence: pool.cities.map(prominence),
       pinned,
       labels: options.labels,
       ...(options.groups ? { groups: options.groups } : {}),

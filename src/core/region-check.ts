@@ -2,7 +2,7 @@
 // (roadmap 5.6). City-states alone fail this (one or two towns) and appear only with their
 // surrounding state.
 
-import type { CountryFile } from './data';
+import { prominence, type CountryFile } from './data';
 import { DEFAULT_PARAMS, type PuzzleParams } from './params';
 import { boardProjection } from './projection';
 import {
@@ -33,7 +33,7 @@ export function regionCapacity(
   const pool = cityPool(file, id, { minPopulation: params.minPopulation });
   const points = boardPoints(pool, projection);
   return greedySelection(
-    { points, population: pool.map((c) => c.pop), pinned: [] },
+    { points, prominence: pool.map(prominence), pinned: [] },
     places,
     params.minDistanceMm,
   ).selection.length;

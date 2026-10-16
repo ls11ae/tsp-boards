@@ -183,7 +183,8 @@ export async function readAlternates(
 }
 
 interface NameOverrides {
-  readonly names: Readonly<Record<string, { name?: string; nameEn?: string }>>;
+  /** Name, English name and Wikidata item (where GeoNames links none) per town. */
+  readonly names: Readonly<Record<string, { name?: string; nameEn?: string; wikidata?: string }>>;
   /** Towns left out (e.g. a population error in GeoNames). */
   readonly exclude?: readonly number[];
 }
@@ -221,7 +222,7 @@ export async function namedCities(
       lon: round4(r.lon),
       pop: r.population,
       state: stateOf(r),
-      wikidata: alts.get(r.id)?.find((a) => a.lang === 'wkdt')?.name ?? null,
+      wikidata: o?.wikidata ?? alts.get(r.id)?.find((a) => a.lang === 'wkdt')?.name ?? null,
       flags: 0,
     };
   });
@@ -241,6 +242,8 @@ export interface AreaContent {
   readonly countries: readonly string[];
   /** Further GeoNames downloads used (e.g. the country table). */
   readonly extraGeoNames?: readonly string[];
+  /** Wikidata downloads used (the world's sitelinks). */
+  readonly wikidata?: readonly string[];
   readonly metric?: 'sphere';
 }
 
@@ -287,6 +290,17 @@ export async function writeAreaFile(
       licenseUrl: 'https://www.naturalearthdata.com/about/terms-of-use/',
       files: [record(NATURAL_EARTH_ADMIN1.key)],
     },
+    ...(area.wikidata?.length
+      ? [
+          {
+            name: 'Wikidata',
+            url: 'https://www.wikidata.org/',
+            license: 'CC0 1.0',
+            licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+            files: area.wikidata.map(record),
+          },
+        ]
+      : []),
   ];
   const prefix = area.code;
   const content = {
@@ -319,8 +333,8 @@ export async function writeAreaFile(
       generated: new Date().toISOString().slice(0, 10),
       sources,
       attribution: {
-        en: `City data: GeoNames (geonames.org), CC BY 4.0, as of ${geoDate}. Boundaries: Natural Earth, public domain.`,
-        de: `Städtedaten: GeoNames (geonames.org), CC BY 4.0, Stand ${d}.${m}.${y}. Grenzen: Natural Earth, gemeinfrei.`,
+        en: `City data: GeoNames (geonames.org), CC BY 4.0, as of ${geoDate}. Boundaries: Natural Earth, public domain.${area.wikidata?.length ? ' Fame: Wikidata, CC0.' : ''}`,
+        de: `Städtedaten: GeoNames (geonames.org), CC BY 4.0, Stand ${d}.${m}.${y}. Grenzen: Natural Earth, gemeinfrei.${area.wikidata?.length ? ' Bekanntheit: Wikidata, CC0.' : ''}`,
       },
       minPopulation: area.minPopulation,
       states: content.states,

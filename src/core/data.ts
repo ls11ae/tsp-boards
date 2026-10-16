@@ -67,6 +67,11 @@ export interface CityColumns {
   /** Wikidata QID, if GeoNames links one. */
   readonly wikidata: readonly (string | null)[];
   readonly flags: readonly number[];
+  /**
+   * How well-known the town is worldwide: the number of Wikipedia language editions with an
+   * article (Wikidata sitelinks, at least 1). Only in the world file (roadmap 9.6).
+   */
+  readonly fame?: readonly number[];
 }
 
 export interface CountryFile {
@@ -121,6 +126,8 @@ export interface City {
   readonly state: string;
   readonly wikidata: string | null;
   readonly flags: number;
+  /** Wikipedia language editions (world file only, see CityColumns.fame). */
+  readonly fame?: number;
   /** Members of a composite place; the board point is the mean of their projections. */
   readonly members?: readonly {
     readonly name: string;
@@ -132,6 +139,19 @@ export interface City {
 }
 
 export type LabelLanguage = 'de' | 'en';
+
+/**
+ * How well-known a town is, for the search's proposals and "Bekannte Städte": its population,
+ * or where the data has them (the world: Chongqing has ten times the inhabitants of Paris) its
+ * Wikipedia editions f as e^(f/50). Recognisability is a log scale between the pool's least
+ * and most prominent towns, so it grows linearly with f (Bamako, 177 editions, about half of
+ * Paris with 366; on a log scale of f itself it would score 0.88).
+ */
+export function prominence(city: City): number {
+  return city.fame === undefined ? city.pop : Math.exp(city.fame / FAME_SCALE);
+}
+
+const FAME_SCALE = 50;
 
 /** Name for lists and sheets; a composite place names its members: "RIL (Bochum, Dortmund)". */
 export function listName(city: City, language: LabelLanguage): string {
@@ -158,6 +178,7 @@ export function citiesFromColumns(columns: CityColumns, states: readonly StateIn
       state: states[columns.state[i]!]!.id,
       wikidata: columns.wikidata[i] ?? null,
       flags: columns.flags[i]!,
+      ...(columns.fame ? { fame: columns.fame[i]! } : {}),
     };
   });
 }
@@ -186,6 +207,9 @@ export function citiesToColumns(
     }),
     wikidata: cities.map((c) => c.wikidata),
     flags: cities.map((c) => c.flags),
+    ...(cities.some((c) => c.fame !== undefined)
+      ? { fame: cities.map((c) => Math.max(1, c.fame ?? 1)) }
+      : {}),
   };
 }
 
@@ -202,6 +226,9 @@ export function parseCountryFile(json: unknown): CountryFile {
   const dense = ['name', 'lat', 'lon', 'pop', 'state', 'wikidata', 'flags'] as const;
   for (const key of dense) {
     if (cities[key].length !== n) throw new Error(`country file: column ${key} has wrong length`);
+  }
+  if (cities.fame && cities.fame.length !== n) {
+    throw new Error('country file: column fame has wrong length');
   }
   if (!file.regions || file.regions.type !== 'Topology') {
     throw new Error('country file: missing regions');

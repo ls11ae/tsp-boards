@@ -58,17 +58,18 @@ export function tourMetrics(inst: Instance, tour: Tour): TourMetrics {
 }
 
 /**
- * Recognisability of a selection: mean over cities of log(pop / min) / log(max / min), where
- * min and max are taken over the region's city pool. 1 = all as large as the largest city.
+ * Recognisability of a selection: mean over cities of log(p / min) / log(max / min) of their
+ * prominence p (population, or Wikipedia editions in the world file), where min and max are
+ * taken over the region's city pool. 1 = all as prominent as the most prominent city.
  */
 export function recognizability(
-  populations: readonly number[],
+  prominences: readonly number[],
   poolMin: number,
   poolMax: number,
 ): number {
-  if (populations.length === 0 || poolMax <= poolMin) return 0;
+  if (prominences.length === 0 || poolMax <= poolMin) return 0;
   const scale = Math.log(poolMax / poolMin);
   let sum = 0;
-  for (const p of populations) sum += Math.max(0, Math.min(1, Math.log(p / poolMin) / scale));
-  return sum / populations.length;
+  for (const p of prominences) sum += Math.max(0, Math.min(1, Math.log(p / poolMin) / scale));
+  return sum / prominences.length;
 }

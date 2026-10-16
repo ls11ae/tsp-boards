@@ -36,7 +36,7 @@ describe('board and digital purposes', () => {
       kicks: 4,
     };
     const search = new Search(
-      { points, population: points.map((_, i) => 1000 + i), pinned: [] },
+      { points, prominence: points.map((_, i) => 1000 + i), pinned: [] },
       params,
     );
     search.step(40);

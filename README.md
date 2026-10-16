@@ -112,7 +112,9 @@ cleaning of official names are set per country in `scripts/build-data/geonames.t
 `eu` (Europe: GeoNames' global town list and the 47 countries' alternate names, about 70 MB
 of downloads besides Natural Earth; see `scripts/build-data/continent-sources.ts`) and `wo`
 (the world: towns of at least 250,000 inhabitants, continents as regions, the alternate names
-of about 150 countries, about 200 MB of downloads; see `scripts/build-data/world.ts`).
+of about 150 countries, about 200 MB of downloads, and the number of Wikipedia editions per town
+from the Wikidata query service as its fame; see `scripts/build-data/world.ts` and `fame.ts`;
+delete `data/raw/wikidata/wo-sitelinks.json` to query it again without downloading the rest).
 
 ### Experiments (Node)
 
@@ -179,6 +181,7 @@ Telefonica S.A., licensed under the [SIL Open Font License 1.1](https://openfont
 - City data: [GeoNames](https://www.geonames.org/), licensed under
   [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 - Boundaries: [Natural Earth](https://www.naturalearthdata.com/) (public domain).
+- Fame of the world's towns and themed lists: [Wikidata](https://www.wikidata.org/) (CC0).
 
 ## License
 

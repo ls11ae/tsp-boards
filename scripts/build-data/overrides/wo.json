@@ -1,5 +1,5 @@
 {
-  "_comment": "Manual corrections for the world data build (scripts/build-data/world.ts), keyed by GeoNames id of the town: 'names' sets name and/or nameEn, 'exclude' drops towns.",
+  "_comment": "Manual corrections for the world data build (scripts/build-data/world.ts), keyed by GeoNames id of the town: 'names' sets name, nameEn and/or the Wikidata item (for the fame), 'exclude' drops towns.",
   "names": {
     "292968": {
       "nameEn": "Abu Dhabi",
@@ -8,6 +8,10 @@
     "359796": {
       "name": "Suez",
       "_why": "GeoNames gives the German name as Sues; Suez is the common German spelling"
+    },
+    "1819729": {
+      "wikidata": "Q8646",
+      "_why": "GeoNames links no Wikidata item for Hong Kong"
     },
     "1816670": {
       "name": "Peking",

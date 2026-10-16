@@ -843,3 +843,23 @@ Short entries: decision; alternatives considered; reason. Newest last.
   their fill still ends at the box, in the corner of the Europe board, where it reads as the
   edge of the map. Alternative: cut Europe along the Ural in the data build (a new boundary
   to source and maintain for one edge that nobody needs to see).
+- **2026-10-16 Fame of world cities (roadmap 9.6).** For the world, population says little
+  about how well-known a city is (Chongqing 22 million inhabitants, Paris 2 million), so "Welt:
+  30 Metropolen" was Asia-heavy. The world file has a new optional column `fame`: the number of
+  Wikipedia language editions with an article about the town (Wikidata sitelinks, Paris 366,
+  Chongqing 153). The download queries the Wikidata service three ways and keeps the item with
+  the most sitelinks: the item GeoNames links (or an override, Hong Kong), the item of a
+  Wikipedia article GeoNames links (München, Recife), and items naming the GeoNames id (P1566,
+  which often sits on a district: Madrid's id is on an item without any article); 45 of 1966
+  towns stay without (fame 1). The search uses `prominence` (population, or e^(fame/50)) for
+  proposals and recognisability, which is a log scale between the pool's extremes, so it grows
+  linearly with the number of editions (a log scale of fame itself gave Bamako 0.88 next to
+  Paris). GeoNames' alternate-name count was tried first and is too noisy (Mogadishu above
+  Paris, Cairo far down). Rebuilt "Welt: 30 Metropolen" with the same search settings: Paris,
+  London's place taken by Paris (8 mm apart on the map), Tokyo, Los Angeles, Rome, Madrid, Rio,
+  Sydney and Singapore are in; Asia 11, Europe 7, North America 4, Africa 4, South America 2,
+  Oceania 2, so no minimum per continent is needed; gap 248 km (0.34 %), the flat-map optimum
+  3,164 km longer on the sphere. World data version 4 (the towns are unchanged; the GeoNames
+  snapshot of the world build is now 2026-10-16). Alternatives: Wikipedia page views (vary
+  with news, need many requests), a rank-based score for all files (would change the searches
+  of the country files, where population works).
