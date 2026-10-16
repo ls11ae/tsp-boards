@@ -1,0 +1,37 @@
+# Excellence Strategy board (roadmap 9.1): 25 of the 34 places of exzellenzstrategie-2027.txt,
+# chosen by a rule that the board's legend can state: all Universities of Excellence and
+# alliances 2027-2033 (14 places, composites as there), all further sites with at least two
+# Clusters of Excellence 2026-2032 (Hannover, Gießen, Oldenburg, Bremen, Kiel, Marburg,
+# Stuttgart, Würzburg) and all further cluster sites in North Rhine-Westphalia (Düsseldorf,
+# Münster, Siegen). Left out (one cluster each, outside NRW): Bayreuth, Braunschweig, Erlangen,
+# Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm.
+# Checked 2026-10-16 (exact): board 300 x 600 mm (margin 15, labels 5 mm, minimum distance
+# 10 mm, 2 mm nails, 1 mm string): string gap 5.71 mm, also at the scale (start nail Hannover);
+# 600 x 800 mm: 10.69 mm. Runner-up +0.32 % (8 km) in Euclidean length, difficulty score 0.71.
+# Universities of Excellence and alliances:
+Aachen
+Berlin
+Bonn
+Dresden
+Hamburg
+Heidelberg
+Karlsruhe
+München
+Tübingen
+Freiburg im Breisgau
+Jena
+Köln
+Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
+Ruhr Innovation Lab = Bochum + Dortmund
+# Further sites of Clusters of Excellence:
+Hannover
+Gießen
+Oldenburg
+Bremen
+Kiel
+Marburg
+Stuttgart
+Würzburg
+Düsseldorf
+Münster
+Siegen

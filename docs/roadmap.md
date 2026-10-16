@@ -260,11 +260,21 @@ must fit the bed in one piece: **300 × 600 mm, portrait**.
   - Command used (the review copy's CLI had extra options `--margin`, `--label`, `--nail`,
     `--string` for `list`; add them):
     `npx tsx cli/collection.ts list --file docs/data/curated/exzellenzstrategie-2027.txt --pool --n 26 --pin '<the 22 places>' --merge 0 --board 300x600 --margin 15 --label 5 --min-dist 10`.
-- Build the board puzzle for 300 × 600 mm from this search (n = 24–26; choose by string gap,
-  difficulty and label placement). The title and description must say that it is a
-  selection, and the description names the sites that are left out. Check robustness over
-  r_eff (1.0–2.0 mm) before export: the gap is close to the 5 mm target, so if the optimum or
-  the reading at the scale is not robust, say so and propose the best alternative.
+  - **Used for the board: a rule-based selection** (proposed 2026-10-16), so that the legend
+    can say exactly which cluster sites are on the board: the 22 places above plus all further
+    cluster sites in North Rhine-Westphalia (Düsseldorf, Münster, Siegen), 25 places, list
+    `docs/data/curated/exzellenzstrategie-2027-brett.txt` (left out: Bayreuth, Braunschweig,
+    Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm; one cluster each). Same
+    gaps as the search result: 5.71 mm on 300 × 600 mm, 10.69 mm on 600 × 800 mm; score 0.71,
+    runner-up +0.32 % (8 km). The gap hardly depends on nails and string (300 × 600 mm,
+    nail/string in mm: 1.4/1.0 → 5.56, 1.6/1.0 → 5.61, 2.0/1.0 → 5.71, 2.0/2.0 → 5.95,
+    3.0/1.5 → 6.07), so Kevin buys what is available and measures it.
+- Build the board puzzle for 300 × 600 mm as a fixed list from
+  `docs/data/curated/exzellenzstrategie-2027-brett.txt`, with the nail diameter and string
+  thickness Kevin measures (until then 2 mm and 1 mm). The description names the sites that are
+  left out. Check robustness over r_eff (1.0–2.0 mm) before export: the gap is close to the
+  5 mm target, so if the optimum or the reading at the scale is not robust, say so and propose
+  the best alternative.
 - Highlight the Universities of Excellence and alliances (Kevin's wish): an engraved ring
   around their nails (or another clear marker) on the board, the same distinction in the app
   (play view and designer, e.g. a ring or bold label), and a legend.
@@ -273,9 +283,10 @@ must fit the bed in one piece: **300 × 600 mm, portrait**.
   about 20 mm wide, else keep the text label), and a large logo with the legend in a box at
   the bottom of the board (about 110 mm below the map are free on 300 × 600 mm; keep map
   lines out of the box, as for the title). Suggested legend text: ring = "Exzellenzuniversität
-  oder -verbund ab 2027", plain nail = "weiterer Standort von Exzellenzclustern", "Ruhr
-  Innovation Lab: Ruhr-Universität Bochum und TU Dortmund – exzellent ab 2027", and what the
-  selection is. Mock-up of this layout: `local/exzellenz-brett-mockup.png`.
+  oder -verbund ab 2027", plain nail = "weiterer Standort von Exzellenzclustern: alle mit mind.
+  zwei Clustern, in NRW alle", "Ruhr Innovation Lab: Ruhr-Universität Bochum und TU Dortmund –
+  exzellent ab 2027", and the funding periods. Mock-up of this layout:
+  `local/exzellenz-brett-mockup.png`.
   - The logo file is **not** committed (logo usage rights; the repository becomes public
     later): Kevin keeps it in the git-ignored folder `local/` (`local/ruhr-innovation-lab.png`
     as received, `local/ruhr-innovation-lab.svg` vectorised with potrace). The export takes an
