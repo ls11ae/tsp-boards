@@ -190,6 +190,25 @@ export function recordGameScore(measure: Measure): void {
   updateGame((p) => ({ ...p, scored: true }));
 }
 
+/**
+ * Records the best closed round trip of a game that ends without the optimum and without the
+ * solution shown (the booth's next person, roadmap 9.5), so every visitor appears in the list.
+ */
+export function recordUnfinishedScore(): void {
+  const { play, playId, playerName } = useStore.getState();
+  if (!playId || play.scored || !play.best) return;
+  addScore(playId, {
+    name: playerName.trim() || '–',
+    excess: play.best.excess,
+    measure: currentMeasure(),
+    ms: play.attempts.at(-1)?.ms ?? 0,
+    revealed: false,
+    date: new Date().toISOString().slice(0, 10),
+    order: play.best.path,
+  });
+  updateGame((p) => ({ ...p, scored: true }));
+}
+
 // --- the map puzzle ---------------------------------------------------------------------------
 
 let instanceCache: { key: string; rEff: number; inst: Instance } | null = null;

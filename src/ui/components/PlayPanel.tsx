@@ -107,9 +107,12 @@ export function PlayPanel({
   const id = puzzle ? mapPlayId(puzzle) : null;
 
   // Resume this puzzle's game (switching puzzles keeps each game).
+  // In the event mode every visitor starts afresh (the last one's result is recorded).
   useEffect(() => {
-    if (id && id !== playId) startPlaying(id);
-  }, [id, playId]);
+    if (!id || id === playId) return;
+    startPlaying(id);
+    if (kiosk) playNewGame();
+  }, [id, playId, kiosk]);
 
   useEffect(() => {
     if (puzzle && id === playId) judgePending(puzzle);
@@ -144,6 +147,7 @@ export function PlayPanel({
       <section>
         <h2>{t.playTitle(fmt.integer(n), places)}</h2>
         {kiosk && <PlayerName />}
+        {kiosk && !digital && <p className="hint kiosk-note">{t.kioskString}</p>}
         <p className="hint">{digital ? t.playHintDigital : t.playHint}</p>
         <PlaceLegend board={board} members={puzzle.members} />
         {board.sphere && (

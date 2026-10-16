@@ -1,0 +1,15 @@
+# The Ruhr area (roadmap 9.5, a local puzzle for the booth): the eleven independent cities
+# (kreisfreie Städte) of the Regionalverband Ruhr; its four districts (Ennepe-Ruhr-Kreis,
+# Recklinghausen, Unna, Wesel) are left out. Source: Regionalverband Ruhr, member cities and
+# districts, https://www.rvr.ruhr/ (retrieved 2026-10-16).
+Bochum
+Bottrop
+Dortmund
+Duisburg
+Essen
+Gelsenkirchen
+Hagen
+Hamm
+Herne
+Mülheim an der Ruhr
+Oberhausen

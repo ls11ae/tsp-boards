@@ -122,6 +122,16 @@
       "n": 25
     },
     {
+      "file": "ruhrgebiet-11.tsp.json",
+      "id": "ruhrgebiet-11",
+      "kind": "map",
+      "title": "Ruhrgebiet: 11 Städte",
+      "description": "Die elf kreisfreien Städte des Ruhrgebiets, von Duisburg bis Hamm: eine kurze Rundreise durch das Revier.",
+      "purpose": "digital",
+      "region": "DE-NW",
+      "n": 11
+    },
+    {
       "file": "universitaetsstaedte-30.tsp.json",
       "id": "universitaetsstaedte-30",
       "kind": "map",

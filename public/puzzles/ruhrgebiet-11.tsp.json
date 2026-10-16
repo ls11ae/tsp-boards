@@ -1,0 +1,203 @@
+{
+  "schema": 1,
+  "id": "ruhrgebiet-11",
+  "kind": "map",
+  "title": "Ruhrgebiet: 11 Städte",
+  "description": "Die elf kreisfreien Städte des Ruhrgebiets, von Duisburg bis Hamm: eine kurze Rundreise durch das Revier.",
+  "purpose": "digital",
+  "language": "de",
+  "app": "0.9.0",
+  "updated": "2026-10-16",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE-NW",
+      "n": 11,
+      "boardWidthMm": 600,
+      "boardHeightMm": 800,
+      "marginMm": 30,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 25,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 8,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "id": 2947416,
+        "name": "Bochum",
+        "lat": 51.4817,
+        "lon": 7.2165
+      },
+      {
+        "id": 2945756,
+        "name": "Bottrop",
+        "lat": 51.5239,
+        "lon": 6.9285
+      },
+      {
+        "id": 2935517,
+        "name": "Dortmund",
+        "lat": 51.5149,
+        "lon": 7.466
+      },
+      {
+        "id": 2934691,
+        "name": "Duisburg",
+        "lat": 51.4325,
+        "lon": 6.7652
+      },
+      {
+        "id": 2928810,
+        "name": "Essen",
+        "lat": 51.4566,
+        "lon": 7.0123
+      },
+      {
+        "id": 2921466,
+        "name": "Gelsenkirchen",
+        "lat": 51.5051,
+        "lon": 7.0965
+      },
+      {
+        "id": 2912621,
+        "name": "Hagen",
+        "lat": 51.3608,
+        "lon": 7.4717
+      },
+      {
+        "id": 2911240,
+        "name": "Hamm",
+        "lat": 51.6803,
+        "lon": 7.8209
+      },
+      {
+        "id": 2905891,
+        "name": "Herne",
+        "lat": 51.5388,
+        "lon": 7.2257
+      },
+      {
+        "id": 2867838,
+        "name": "Mülheim an der Ruhr",
+        "lat": 51.4322,
+        "lon": 6.8797
+      },
+      {
+        "id": 2860410,
+        "name": "Oberhausen",
+        "lat": 51.4781,
+        "lon": 6.8625
+      }
+    ],
+    "list": {
+      "mode": "fixed",
+      "places": [
+        {
+          "id": 2947416,
+          "name": "Bochum",
+          "lat": 51.4817,
+          "lon": 7.2165
+        },
+        {
+          "id": 2945756,
+          "name": "Bottrop",
+          "lat": 51.5239,
+          "lon": 6.9285
+        },
+        {
+          "id": 2935517,
+          "name": "Dortmund",
+          "lat": 51.5149,
+          "lon": 7.466
+        },
+        {
+          "id": 2934691,
+          "name": "Duisburg",
+          "lat": 51.4325,
+          "lon": 6.7652
+        },
+        {
+          "id": 2928810,
+          "name": "Essen",
+          "lat": 51.4566,
+          "lon": 7.0123
+        },
+        {
+          "id": 2921466,
+          "name": "Gelsenkirchen",
+          "lat": 51.5051,
+          "lon": 7.0965
+        },
+        {
+          "id": 2912621,
+          "name": "Hagen",
+          "lat": 51.3608,
+          "lon": 7.4717
+        },
+        {
+          "id": 2911240,
+          "name": "Hamm",
+          "lat": 51.6803,
+          "lon": 7.8209
+        },
+        {
+          "id": 2905891,
+          "name": "Herne",
+          "lat": 51.5388,
+          "lon": 7.2257
+        },
+        {
+          "id": 2867838,
+          "name": "Mülheim an der Ruhr",
+          "lat": 51.4322,
+          "lon": 6.8797
+        },
+        {
+          "id": 2860410,
+          "name": "Oberhausen",
+          "lat": 51.4781,
+          "lon": 6.8625
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "results": {
+      "tour": [
+        0,
+        4,
+        9,
+        3,
+        10,
+        1,
+        5,
+        8,
+        2,
+        7,
+        6
+      ],
+      "lengthMm": 408.59,
+      "gapMm": 2.57,
+      "model": "string",
+      "scaleGapMm": 2.313,
+      "startPlace": 7
+    }
+  }
+}

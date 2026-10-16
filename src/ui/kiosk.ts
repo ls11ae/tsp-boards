@@ -10,11 +10,7 @@ export const KIOSK_LEVELS: readonly {
 }[] = [
   {
     key: 'easy',
-    ids: [
-      'exzellenzuniversitaeten-2027-brett',
-      '80-tage-um-die-welt',
-      'exzellenzuniversitaeten-2027',
-    ],
+    ids: ['exzellenzuniversitaeten-2027-brett', 'ruhrgebiet-11', '80-tage-um-die-welt'],
   },
   {
     key: 'medium',

@@ -7,9 +7,10 @@ import type { CollectionEntry } from '../../core/puzzle-file';
 import { useBoard } from '../board';
 import { loadCollection, loadCollectionPuzzle, openDocument } from '../documents';
 import { useFormat, useT } from '../i18n';
-import { playNewGame, reloadScores } from '../play';
+import { playNewGame, recordUnfinishedScore, reloadScores } from '../play';
 import { usePuzzle } from '../puzzle';
 import { useStore, writePlayerName } from '../store';
+import { EntryThumbnail } from './Gallery';
 import { PlayBoard } from './PlayBoard';
 import { PlayPanel } from './PlayPanel';
 import { DailyScores } from './PlayParts';
@@ -55,6 +56,7 @@ function StartScreen({ entries }: { readonly entries: readonly CollectionEntry[]
               return e
                 ? [
                     <button key={id} type="button" className="kiosk-card" onClick={() => open(e)}>
+                      <EntryThumbnail entry={e} />
                       <strong>{e.title}</strong>
                       <span>{t.placesCount(fmt.integer(e.n))}</span>
                     </button>,
@@ -124,13 +126,20 @@ function PlayScreen() {
           <button
             type="button"
             onClick={() => {
+              recordUnfinishedScore();
               playNewGame();
               writePlayerName('');
             }}
           >
             {t.kioskNext}
           </button>
-          <button type="button" onClick={() => useStore.setState({ kiosk: 'start', flight: null })}>
+          <button
+            type="button"
+            onClick={() => {
+              recordUnfinishedScore();
+              useStore.setState({ kiosk: 'start', flight: null });
+            }}
+          >
             {t.kioskBack}
           </button>
         </div>
@@ -165,6 +174,7 @@ export function KioskApp() {
     for (const e of events) window.addEventListener(e, touch, { passive: true });
     const timer = setInterval(() => {
       if (Date.now() - last < INACTIVITY_MS) return;
+      recordUnfinishedScore();
       playNewGame();
       writePlayerName('');
       useStore.setState({ kiosk: 'start', flight: null });

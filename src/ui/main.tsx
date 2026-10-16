@@ -5,8 +5,12 @@ import './app.css';
 import { kioskScreen } from './kiosk';
 import { useStore } from './store';
 
-// Event mode (#kiosk): decided once at the start.
+// Event mode (#kiosk, #kiosk/scores): at the start and whenever the address changes.
 useStore.setState({ kiosk: kioskScreen(window.location.hash) });
+window.addEventListener('hashchange', () => {
+  const screen = kioskScreen(window.location.hash);
+  if (screen || useStore.getState().kiosk) useStore.setState({ kiosk: screen });
+});
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Missing #root element');

@@ -11,7 +11,8 @@ One place per line (town names of the country data); lines starting with `#` are
 | `exzellenzcluster-2026.txt`        | Clusters of Excellence, 2026–2032 (70 clusters) | 37 cities | digital (string gap 2.1 mm) |
 | `exzellenzcluster-2026-verbuende.txt` | Clusters of Excellence, neighbouring sites combined | 32 places (4 composite) | digital (string gap 1.14 mm; no nails closer than 25 mm) |
 | `exzellenzstrategie-2027.txt` | Exzellenzstrategie: alle 34 Standorte (roadmap 9.1) | 34 places: universities and alliances (14, marked) and the 20 further cluster sites | digital (string gap 1.14 mm; runner-up +0.06 %) |
-| `exzellenzstrategie-2027-brett.txt` + `.board.json` | Exzellenzstrategie 2026–2033, the 300 × 600 mm board (roadmap 9.1, files in `docs/boards/exzellenzstrategie-2027/`) | 25 places: universities (14, marked), cluster sites with at least two clusters, all cluster sites in NRW | board (string gap 5.71 mm, also at the scale; start nail Hannover) |
+| `exzellenzstrategie-2027-brett.txt` + `.board.json` | Exzellenzstrategie 2026–2033, the 300 × 600 mm board (roadmap 9.1, files in `docs/boards/exzellenzstrategie-2027/`) | 25 places: universities (14, marked), cluster sites with at least two clusters, all cluster sites in NRW | board (string gap 5.61 mm with 1.6 mm nails and 1 mm string, also at the scale; start nail Hannover) |
+| `ruhrgebiet.txt` | Ruhrgebiet: 11 Städte, a local puzzle for the booth (roadmap 9.5, easy level of the event mode) | the 11 independent cities of the Regionalverband Ruhr (fixed; its four districts left out) | digital (string gap 2.57 mm on the NRW map) |
 
 Lines starting with `*` are marked places (a ring on the board and in the app); the
 `.board.json` file holds the board's legend and its preferred start nail
@@ -20,6 +21,8 @@ Lines starting with `*` are marked places (a ring on the board and in the app); 
 Sources (retrieved 2026-10-12; details, universities, cluster names and coordinates in
 `excellence-strategy-2026-10-12.json`):
 
+- Ruhr area: Regionalverband Ruhr, member cities and districts, <https://www.rvr.ruhr/>
+  (retrieved 2026-10-16).
 - Clusters of Excellence, full list (German / English), DFG and Wissenschaftsrat, 22 May 2025:
   <https://www.dfg.de/resource/blob/357306/250522-exstra-liste-karte-exc.pdf>,
   <https://www.dfg.de/resource/blob/357410/250522-exstra-list-map-exc.pdf>
@@ -103,7 +106,6 @@ decision log). World puzzles are digital; lengths are great-circle kilometres.
 | --- | --- | --- | --- |
 | `olympia-sommerspiele.txt` | Olympische Sommerspiele | 23 host cities 1896–2024 (fixed) | digital (gap 88 km = 0.15 %; Rio de Janeiro → Melbourne runs past Antarctica) |
 | search `--region WO --n 30 --seed 1 --weights 0.3,1,3 --min-pop 2000000` | Welt: 30 Metropolen | 30 cities on all continents | digital (gap 123 km = 0.18 %; the optimum on the flat map is 638 km longer on the sphere) |
-
 | `80-tage-um-die-welt.txt` | In 80 Tagen um die Welt | 9 stations of Jules Verne's novel (fixed) | digital (gap 517 km = 1.56 %; Fogg's route is the optimum, once around the world) |
 | `einmal-um-die-welt.txt` | Einmal um die Welt | 20 cities of the northern mid-latitudes (fixed) | digital (gap 172 km = 0.47 %; the optimum goes once around the world) |
 

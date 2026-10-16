@@ -4,8 +4,9 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-16 (later): 9.1–9.4 are done. Next is 9.5 (follow-ups from Kevin's review:
-the board as 12 mm plywood with drilled holes, kiosk and globe details), then 9.6.
+Status 2026-10-16 (evening): 9.1–9.5 are done (the board as 12 mm plywood with drilled
+holes, re-exported for 1.6 mm nails and 1 mm string). Next is 9.6.
+Earlier status 2026-10-16 (later): 9.1–9.4 are done.
 Earlier status 2026-10-16: Phases 1–8 are done. Next is Phase 9 for the open day on
 2026-11-07 (the Excellence Strategy board first, then fixes, a rotatable globe and an event
 mode); the remaining physical items, deployment and the license are Phase 10.
@@ -362,7 +363,7 @@ world.
 - Works offline from a laptop (`npm run build` + `vite preview`, or the `dist` folder);
   document how to run it in `docs/deployment.md`.
 
-### 9.5 Follow-ups from Kevin's review of 9.1–9.4 (2026-10-16)
+### 9.5 Follow-ups from Kevin's review of 9.1–9.4 (2026-10-16) — done 2026-10-16
 
 Do these first; the board items are the critical path (lasering and a test board before
 2026-11-07).

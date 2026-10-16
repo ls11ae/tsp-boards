@@ -1,7 +1,7 @@
 // Start page: the curated collection and the player's own puzzles, with their status and the
 // personal best; one click opens a puzzle to play or in the designer.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { CollectionEntry, PuzzleDoc } from '../../core/puzzle-file';
 import { regionInfo } from '../../core/region';
 import { thumbnail, type Thumbnail } from '../thumbnail';
@@ -30,6 +30,12 @@ function solved(id: string): boolean {
 }
 
 /** The board without a tour: region outline and places. */
+/** A collection entry's thumbnail (also on the kiosk's cards). */
+export function EntryThumbnail({ entry }: { readonly entry: CollectionEntry }) {
+  const card = useMemo(() => fromEntry(entry), [entry]);
+  return <CardThumbnail card={card} />;
+}
+
 function CardThumbnail({ card }: { readonly card: Card }) {
   const [thumb, setThumb] = useState<Thumbnail | null>(null);
   useEffect(() => {

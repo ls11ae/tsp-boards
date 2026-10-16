@@ -811,3 +811,25 @@ Short entries: decision; alternatives considered; reason. Newest last.
   stays 300 × 600 mm and is centred on the 1–2 mm narrower pieces with the P2S camera; the
   build note describes tape, lasering, drilling 9 mm deep, nails 11 mm high with a gauge,
   oiling, a test piece first, and the 6 mm laser-cut variant as alternative.
+- **2026-10-16 Event mode follow-ups (roadmap 9.5).** Every visitor appears on today's
+  leaderboard: "Nächste Person", "Zur Auswahl" and the inactivity reset record the best closed
+  round trip of an unfinished game (not revealed, at most once per game); an optimum shows as
+  "optimal" instead of "0 mm" / "0 %", and the column reads "über Optimum". Board puzzles stay
+  judged in millimetres of string in the kiosk, with a note under the name field ("Wie am
+  Holzbrett: Gemessen wird der Faden, der sich um die Nägel legt."): the booth stands next to
+  the wooden board, and the same measure on screen and on the board is the point of the
+  exhibit; a switch to percent of length would hide that. Each kiosk game starts afresh (the
+  stored game of the previous visitor is not resumed). `#kiosk` and `#kiosk/scores` also react
+  to `hashchange`. Easy level: "Exzellenzuniversitäten ab 2027" without "(Brett)" was nearly
+  the same puzzle and gave way to "Ruhrgebiet: 11 Städte" (the eleven independent cities of the
+  Regionalverband Ruhr, digital, string gap 2.57 mm on the NRW map), a local puzzle for
+  visitors from the region. The kiosk cards show the gallery's map thumbnails. Alternatives
+  for the Ruhr puzzle: Dortmund districts (not in the data: GeoNames drops city districts),
+  "Landeshauptstädte (Brett)" (no local touch).
+- **2026-10-16 Globe follow-ups (roadmap 9.5).** The globe opens centred on the places: the
+  spherical centroid of the place vectors, or, when their mean vector is short (places around
+  the globe, e.g. "Einmal um die Welt"), the pole on their side tilted by 30° at their mean
+  longitude, so the whole loop is visible. During a flight the player's own tour is hidden (only
+  the solution and the flown legs are drawn). World data version 3: German "Sues" → "Suez" by
+  override (also in "In 80 Tagen um die Welt"). On narrow screens the globe's zoom buttons sit
+  at the bottom so they do not cover the northern places.
