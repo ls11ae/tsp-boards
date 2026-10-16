@@ -4,10 +4,13 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-16 (night): Phase 9 is done (9.7 posters, 9.8 city-scale puzzles). From Phase 10,
-the incremental test board files and the licensing preparation are done; open are the
-physical builds, deployment and the play data endpoint (need the chair server) and the
-choice of the code license (maintainers, see `docs/licensing.md`).
+Status 2026-10-16, after Kevin's review of 9.7–9.8: 9.1–9.8 are done. Next is 9.9, the Ruhr
+Innovation Lab poster for the corridor of Chair 11 (German and English, A1 and A0); then
+the open items of Phase 10.
+Earlier status 2026-10-16 (night): Phase 9 is done (9.7 posters, 9.8 city-scale puzzles).
+From Phase 10, the incremental test board files and the licensing preparation are done;
+open are the physical builds, deployment and the play data endpoint (need the chair
+server) and the choice of the code license (maintainers, see `docs/licensing.md`).
 Earlier status 2026-10-16, after Kevin's review of 9.5–9.6: 9.1–9.6 are done. Next is 9.7, a poster
 export in DIN formats with the shortest round trip and its length (Excellence Strategy
 variants for Kevin to choose from), then the small items in 9.8. In parallel, Kevin lasers and
@@ -234,7 +237,7 @@ world puzzles always digital without board or worksheet; curated "Olympische Som
 "Welt: 30 Metropolen". The rotatable globe was not built: the Equal Earth map already shows the
 arcs, the poles and the wrap at the map's edge.)
 
-## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07) — done 2026-10-16
+## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07)
 
 Decided by Kevin 2026-10-16, from his review of the app after Phases 7 and 8 (run in a browser
 at 1440 × 900 and 390 × 844). Work through the items in order. 9.1 comes first because the
@@ -539,6 +542,74 @@ report and contact sheet in `docs/posters/exzellenzstrategie-2027/`, logo versio
   district borders for city-scale puzzles if they are cheap to add, else a light background
   of the surrounding towns. (done: surrounding towns; municipal borders are not in the data)
 - The thumbnail of the Ruhr puzzle in the gallery is tiny: crop it to the places. (done)
+
+### 9.9 Ruhr Innovation Lab poster (Kevin's review of 9.7, 2026-10-16)
+
+The poster is not for the open day: Kevin hangs it in the corridor of Chair 11, to celebrate
+the Ruhr Innovation Lab (RIL). He chooses the variant after this round, so keep all six
+variants.
+
+- **The Ruhr Innovation Lab is prominent in every variant.**
+  - The round trip starts and ends at the RIL; mark it ("Start und Ziel" / "Start and
+    finish").
+  - Its label is larger, bold and red (where no logo replaces it, see below).
+  - Bochum and Dortmund are always visible as named dots inside the red alliance outline,
+    also in the centroid variants (14, 22, 25, 34), where the stop is the centre inside the
+    outline. Each name sits clearly next to its own dot. In a test with the logo, the label
+    "Dortmund" stood above Bochum's dot.
+  - With `--logo` the RIL logo stands large (about 80–120 mm wide on A1) in free space near
+    the outline, e.g. over the North Sea or the Netherlands, with a thin leader line to the
+    outline. No text box: the logo contains the name, so it replaces the red map label.
+    Without a logo (the committed versions) the red name stays at the outline.
+  - The Rhein-Main-Universitäten stay as they are.
+  - Propose two or three titles in the README, at least one of them naming the RIL.
+- **Labels avoid the round trip.** The tour is known when the poster is laid out. Treat its
+  legs, the alliance outlines and the logo as obstacles in the label placement, so that
+  no label covers a leg (now Würzburg, Aachen, Bonn, Jena, Freiburg, Ulm, Leipzig and
+  Braunschweig do). Test: no label box intersects a leg.
+- **A visual poster with little text** (Kevin): the map and the round trip carry the poster.
+  - One line describes the problem and contains the number of possible round trips,
+    (n − 1)!/2. Examples: "Finde die kürzeste Rundreise unter 1,9 · 10⁴¹ Möglichkeiten." and
+    "Find the shortest round trip out of 1.9 × 10⁴¹ options." Below it, large, comes the
+    answer: the length in km.
+  - Drop the other fact boxes: the number of places, the separate count of round trips and
+    the second-best. No comparison with trying all round trips.
+  - At most one short line in small type says that the round trip is proven optimal
+    (HiGHS). In the centroid variants, the note on alliances becomes a small legend entry.
+- **German and English.** Every text exists in both languages: title, subtitle, facts,
+  legend and footer.
+  - Use the official English terms: Excellence Strategy, Universities of Excellence,
+    Clusters of Excellence, excellence alliance, Rhine-Main Universities, Ruhr University
+    Bochum, TU Dortmund University.
+  - Use English place names where they are common (Munich, Cologne, …; check the list).
+  - Use the English number format (2,534 km; 3.1 × 10²³).
+  - In the app, the poster follows the app's language.
+- **A1 and A0**, both portrait. Type and line widths scale with the paper, so A0 is A1
+  enlarged by √2; check that.
+- **Small items:**
+  - The line "Förderung …" comes after the symbol entries of the legend (in 37 it sits
+    between them).
+  - Make the footer larger: on A1 the chair line ("Lehrstuhl 11 Algorithm Engineering, TU
+    Dortmund") needs a cap height of about 5 mm.
+  - Use the free space at the bottom right for a TU Dortmund logo (also only from
+    `local/`) and later the QR code.
+- **App poster:**
+  - Title, subtitle and legend are editable in the poster section before the export,
+    prefilled from the puzzle. Puzzle descriptions such as "… ein Puzzle für den Bildschirm"
+    do not belong on a poster, and the legend now says only "markierter Ort".
+  - The RIL emphasis (start and finish, logo at the place) is available for any place.
+- **Outputs:**
+  - In `docs/posters/exzellenzstrategie-2027/`: the A1 PDFs and PNG previews of all six
+    variants in German and English (e.g. subfolders `de/` and `en/`), one contact sheet per
+    language, and the README updated.
+  - A0 and the logo versions are built by one command into the git-ignored
+    `local/posters/`; do not commit them.
+  - The logo stays out of the repository, because the repository becomes public.
+  - The official logo files (from Kevin, 2026-10-16) are in `local/`; see
+    `local/LIESMICH-logo.txt`. `ruhr-innovation-lab.svg` is the block logo without texture,
+    for the board. `ruhr-innovation-lab-textur.svg` is the block logo with the stamp texture,
+    for the poster. Horizontal versions of both are there too.
+  - If these files are missing on the machine, build without the logo and say so.
 
 ## Phase 10: physical and public
 
