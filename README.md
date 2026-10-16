@@ -194,4 +194,6 @@ Telefonica S.A., licensed under the [SIL Open Font License 1.1](https://openfont
 
 ## License
 
-The code license has not been chosen yet.
+The code license has not been chosen yet; `docs/licensing.md` lists the terms that already
+apply (data, font, dependencies) and a recommendation. The build writes the notices of the
+bundled packages and the font to `third-party-licenses.txt`, linked in the app's footer.

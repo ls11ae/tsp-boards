@@ -102,7 +102,11 @@ function Footer() {
     <footer className="footer">
       {country && <p>{country.attribution[lang]}</p>}
       <p>
-        {t.credits} {t.version(__APP_VERSION__, String(country?.dataVersion ?? '–'))}
+        {t.credits} {t.version(__APP_VERSION__, String(country?.dataVersion ?? '–'))}{' '}
+        {/* Written by the build (vite.config.ts): the bundled packages' and the font's notices. */}
+        <a href="third-party-licenses.txt" target="_blank" rel="noreferrer">
+          {t.licenses}
+        </a>
       </p>
     </footer>
   );
