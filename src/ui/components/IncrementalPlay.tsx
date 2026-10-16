@@ -1,12 +1,14 @@
 // Play mode of the incremental puzzle: the board with numbered nails (the nails of the current
-// instance active), the player's round trip, and the panel with progress and highscores.
+// instance active), the player's round trip, and the panel with progress and highscores. The
+// board is drawn like the map's play board (roadmap 9.6): nails and numbers at screen size,
+// zoom and pan, a finger-sized click radius; the measuring track is left to the wooden board.
 
-import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import type { Point } from '../../core/geometry';
 import { pathLength } from '../../core/play';
 import { Instance } from '../../core/instance';
 import { stringLength } from '../../core/tsp/tour';
 import { useFormat, useT } from '../i18n';
-import { incrementalPreview } from '../incremental';
 import {
   currentStage,
   incrementalClick,
@@ -20,14 +22,14 @@ import {
   startIncrementalPlay,
 } from '../incremental-play';
 import { useStore } from '../store';
-import { boardFit } from './fit';
+import { labelSizeMm, MARKER_PX, screenLabels, useZoomView } from '../zoom';
 import { Highscores, ShareConsent, Timer } from './PlayParts';
+import { ZoomControls } from './ZoomControls';
 
-const CLICK_RADIUS_MM = 12;
+const NO_POINTS: readonly Point[] = [];
 
 export function IncrementalPlayBoard() {
   const t = useT();
-  const svgRef = useRef<SVGSVGElement>(null);
   const inc = useStore((s) => s.inc);
   const play = useStore((s) => s.play);
   const playId = useStore((s) => s.playId);
@@ -35,72 +37,109 @@ export function IncrementalPlayBoard() {
   useEffect(() => {
     if (id && id !== playId) startIncrementalPlay();
   }, [id, playId]);
-  const { puzzle, params } = inc;
-  if (!puzzle) return <p className="hint">{inc.status === 'running' ? t.generating : t.loading}</p>;
+  const { puzzle } = inc;
+  const points = puzzle?.points ?? NO_POINTS;
+  const W = puzzle?.params.widthMm ?? 300;
+  const H = puzzle?.params.heightMm ?? 300;
   const k = currentStage(play);
-  const preview = incrementalPreview(puzzle, params, 'mark');
-  const { widthMm: w, heightMm: h } = puzzle.params;
-  const path = play.state.path.map((i) => puzzle.points[i]!.map((c) => c.toFixed(2)).join(','));
-  const step = puzzle.steps.find((s) => s.k === k);
-  const solution =
-    stageRevealed(play) && step
-      ? step.tour.map((i) => puzzle.points[i]!.map((c) => c.toFixed(2)).join(',')).join(' ')
-      : null;
 
-  const onClick = (event: MouseEvent<SVGSVGElement>) => {
-    const matrix = svgRef.current?.getScreenCTM();
-    if (!matrix) return;
-    const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
-    let best = -1;
-    let nearest = CLICK_RADIUS_MM;
-    puzzle.points.forEach(([x, y], i) => {
-      const d = Math.hypot(x - p.x, y - p.y);
-      if (i < k && d < nearest) {
-        nearest = d;
-        best = i;
-      }
-    });
-    if (best >= 0) incrementalClick(best);
-  };
+  // The view starts with the whole board and a margin (the zoom buttons sit over it); it
+  // resets with the puzzle.
+  const fitted = useMemo(() => {
+    const pad = 0.06 * Math.max(W, H);
+    return { x: -pad, y: -pad, w: W + 2 * pad, h: H + 2 * pad };
+  }, [W, H, puzzle]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { wrapRef, svgRef, view, viewArea, mm, zoomBy, fit, handlers } = useZoomView(
+    fitted,
+    Math.max(W, H) * 1.5,
+    ([px, py], hitMm) => {
+      let best = -1;
+      let nearest = hitMm;
+      points.forEach(([x, y], i) => {
+        const d = Math.hypot(x - px, y - py);
+        if (i < k && d < nearest) {
+          nearest = d;
+          best = i;
+        }
+      });
+      if (best >= 0) incrementalClick(best);
+    },
+  );
+
+  // The nails' numbers at screen size (all of them, as engraved on the board).
+  const labelMm = labelSizeMm(mm);
+  const labels = useMemo(
+    () =>
+      screenLabels(
+        points,
+        points.map((_, i) => String(i + 1)),
+        labelMm,
+        viewArea,
+      ),
+    [points, labelMm, viewArea],
+  );
+
+  if (!puzzle) return <p className="hint">{inc.status === 'running' ? t.generating : t.loading}</p>;
+  const coords = (i: number) => puzzle.points[i]!.map((c) => c.toFixed(2)).join(',');
+  const path = play.state.path.map(coords);
+  const step = puzzle.steps.find((s) => s.k === k);
+  const solution = stageRevealed(play) && step ? step.tour.map(coords).join(' ') : null;
+  const visited = new Set(play.state.path);
+  const r = mm(MARKER_PX);
+  const hidden = labels.filter((d) => d === null).length;
+  const placeClass = (i: number) =>
+    play.state.path[0] === i
+      ? 'play-place start'
+      : visited.has(i)
+        ? 'play-place visited'
+        : 'play-place';
 
   return (
-    <svg
-      ref={svgRef}
-      className="board"
-      style={boardFit(w, h)}
-      viewBox={`0 0 ${w} ${h}`}
-      role="img"
-      aria-label={t.incrementalPuzzle}
-      onClick={onClick}
+    <div
+      className="play-board"
+      ref={wrapRef}
+      style={{ '--view-aspect': fitted.w / fitted.h } as CSSProperties}
     >
-      <g className="preview">
-        <rect className="board-bg" width={w} height={h} />
-        <path className="lay-score" d={preview.score} />
-        <path className="lay-engrave" d={preview.engrave} />
-      </g>
-      {solution && <polygon className="tour" points={solution} />}
-      {path.length > 1 &&
-        (play.state.closed ? (
-          <polygon className="play-path" points={path.join(' ')} />
-        ) : (
-          <polyline className="play-path" points={path.join(' ')} />
-        ))}
-      {puzzle.points.map(([x, y], i) => (
-        <circle
-          key={i}
-          className={
-            i >= k
-              ? 'inc-nail inactive'
-              : play.state.path.includes(i)
-                ? 'inc-nail visited'
-                : 'inc-nail live'
-          }
-          cx={x}
-          cy={y}
-          r={i < k ? 4 : 2.5}
-        />
-      ))}
-    </svg>
+      <svg
+        ref={svgRef}
+        className="board"
+        viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`}
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label={t.incrementalPuzzle}
+        onPointerDown={handlers.onPointerDown}
+        onPointerMove={handlers.onPointerMove}
+        onPointerUp={handlers.onPointerUp}
+        onPointerCancel={handlers.onPointerCancel}
+      >
+        <rect className="board-bg" width={W} height={H} />
+        {solution && <polygon className="solution-tour" points={solution} />}
+        {path.length > 1 &&
+          (play.state.closed ? (
+            <polygon className="play-path" points={path.join(' ')} />
+          ) : (
+            <polyline className="play-path" points={path.join(' ')} />
+          ))}
+        <g className="play-labels">
+          {labels.map((d, i) =>
+            d === null ? null : (
+              <path key={i} className={i < k ? 'play-label' : 'play-label inactive'} d={d} />
+            ),
+          )}
+        </g>
+        {puzzle.points.map(([x, y], i) =>
+          i < k ? (
+            <g key={i} className={placeClass(i)}>
+              <circle cx={x} cy={y} r={r} />
+            </g>
+          ) : (
+            <circle key={i} className="inc-nail inactive" cx={x} cy={y} r={r * 0.55} />
+          ),
+        )}
+      </svg>
+      {hidden > 0 && <p className="zoom-hint">{t.zoomForNumbers(hidden)}</p>}
+      <ZoomControls zoomBy={zoomBy} fit={fit} />
+    </div>
   );
 }
 

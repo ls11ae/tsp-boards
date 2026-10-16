@@ -942,6 +942,17 @@ table.scores tr.revealed td {
   opacity: 0.6;
 }
 
+/* Incremental play (roadmap 9.6): nails of later stages and their numbers stay in the
+   background. */
+.play-board .inc-nail.inactive {
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
+}
+
+.play-label.inactive {
+  opacity: 0.45;
+}
+
 .inc-nail.live {
   fill: var(--board);
   stroke: var(--tour);

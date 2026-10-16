@@ -110,6 +110,8 @@ export const de: Messages = {
   zoomOut: 'Verkleinern',
   zoomFit: 'Alle Orte zeigen',
   zoomForNames: (n) => `${n} ${n === 1 ? 'Name' : 'Namen'} ausgeblendet: zum Lesen vergrößern`,
+  zoomForNumbers: (n) =>
+    `${n} ${n === 1 ? 'Nummer' : 'Nummern'} ausgeblendet: zum Lesen vergrößern`,
   combineStart: 'Orte zusammenfassen',
   combineHint:
     'Klicke die Orte an, die ein Knoten werden sollen (z. B. die Städte eines Verbunds); er liegt zwischen ihnen.',

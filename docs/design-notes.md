@@ -871,3 +871,13 @@ Short entries: decision; alternatives considered; reason. Newest last.
   (the new "Welt: 30 Metropolen") its old path was laid onto the new places. Games now keep a
   hash of their places (incremental: of their points, in order) and are resumed only when it
   matches; games stored before are resumed as before. Highscores stay per puzzle id.
+- **2026-10-16 Incremental play on the screen-size board (roadmap 9.6).** The incremental
+  puzzle's play view drew the board in millimetres (4 mm nails, the measuring track, a 12 mm
+  click radius, no zoom). It now uses the map's play board approach: the view, zoom (buttons,
+  wheel, pinch), panning and taps live in a shared hook (`ui/zoom.ts`, `ZoomControls`), and
+  the screen-size label placement is shared too. Nails of the current stage are markers like
+  the map's places (start and visited marked), later nails small and faded, all numbers at
+  screen size (hidden ones counted, "zoom in"), the solution and the own tour as on the map.
+  The view starts with the whole board and a margin of 6 % (the zoom buttons sit over the
+  margin, not over a nail in a corner). The measuring track is left to the wooden board and
+  the export; the panel shows the string length.

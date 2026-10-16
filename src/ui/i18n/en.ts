@@ -115,6 +115,8 @@ export const en = {
   zoomOut: 'Zoom out',
   zoomFit: 'Show all places',
   zoomForNames: (n: number) => `${n} ${n === 1 ? 'name' : 'names'} hidden: zoom in to see them`,
+  zoomForNumbers: (n: number) =>
+    `${n} ${n === 1 ? 'number' : 'numbers'} hidden: zoom in to see them`,
   combineStart: 'Combine places',
   combineHint:
     'Click the places that become one node (e.g. the towns of an alliance); it lies between them.',

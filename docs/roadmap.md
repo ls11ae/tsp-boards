@@ -440,7 +440,7 @@ Do these first; the board items are the critical path (lasering and a test board
   are hard to read). (Straight lines done in 9.3; hiding the player's tour is open.)
   (done: hidden while a comparison is drawn next to the solution)
 - Incremental play still uses the old millimetre drawing (small nails, measuring track, no
-  zoom): use the screen-size approach of `PlayBoard`.
+  zoom): use the screen-size approach of `PlayBoard`. (done)
 - Board variant suggestions are purely geometric (e.g. "Aachen + Köln zusammengefasst"):
   allow marking places that must not be removed or combined.
 - Gallery: thumbnails load `de.json`, `eu.json` and `wo.json` (about 1.6 MB, 550 KB gzip):
