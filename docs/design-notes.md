@@ -888,3 +888,8 @@ Short entries: decision; alternatives considered; reason. Newest last.
   or how to keep one. Pinning has no other effect on a fixed list, and pins are already saved
   with the puzzle and in links. Alternative: a new list prefix or a column in the place table
   (more format and UI for the same meaning as a pin).
+- **2026-10-16 Lazy gallery thumbnails (roadmap 9.6).** A card's puzzle file and data file
+  load when the card comes within 400 px of the screen (IntersectionObserver; without it, at
+  once as before), so opening the gallery no longer fetches `eu.json` and `wo.json` (about
+  1 MB) for cards further down; `de.json` is loaded by the app anyway. The kiosk's cards use
+  the same component.

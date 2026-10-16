@@ -1,7 +1,7 @@
 // Start page: the curated collection and the player's own puzzles, with their status and the
 // personal best; one click opens a puzzle to play or in the designer.
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CollectionEntry, PuzzleDoc } from '../../core/puzzle-file';
 import { regionInfo } from '../../core/region';
 import { thumbnail, type Thumbnail } from '../thumbnail';
@@ -35,10 +35,28 @@ export function EntryThumbnail({ entry }: { readonly entry: CollectionEntry }) {
   return <CardThumbnail card={card} />;
 }
 
-/** The board without a tour: region outline and places. */
+/**
+ * The board without a tour: region outline and places. The puzzle and its data file (de.json,
+ * eu.json and wo.json are 1.6 MB together) load only when the card comes near the screen.
+ */
 function CardThumbnail({ card }: { readonly card: Card }) {
   const [thumb, setThumb] = useState<Thumbnail | null>(null);
+  const [near, setNear] = useState(() => typeof IntersectionObserver === 'undefined');
+  const placeholder = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    const el = placeholder.current;
+    if (near || !el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) setNear(true);
+      },
+      { rootMargin: '400px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [near]);
+  useEffect(() => {
+    if (!near) return;
     let alive = true;
     card
       .open()
@@ -50,8 +68,8 @@ function CardThumbnail({ card }: { readonly card: Card }) {
     return () => {
       alive = false;
     };
-  }, [card]);
-  if (!thumb) return <div className="card-thumb" aria-hidden="true" />;
+  }, [card, near]);
+  if (!thumb) return <div className="card-thumb" ref={placeholder} aria-hidden="true" />;
   // Dots of about 2 % of the board's smaller side stay visible at thumbnail size.
   const r = Math.min(thumb.width, thumb.height) * 0.012;
   return (

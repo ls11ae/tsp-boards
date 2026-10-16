@@ -50,9 +50,13 @@ what we change and why, benchmark results, and open questions.
   the Excellence Strategy board (files and build note in `docs/boards/exzellenzstrategie-2027/`,
   logo versions only in the git-ignored `local/`), fixes from Kevin's review, a rotatable globe
   for world puzzles with a flight along the tour, and an event mode (`#kiosk`).
-- **Next: 9.5** (follow-ups from Kevin's review of 9.1–9.4: board build variant with 12 mm
-  plywood and drilled holes, kiosk, globe), then 9.6 (further review items), then Phase 10. See
-  `docs/roadmap.md`.
+- 9.5 and 9.6 done 2026-10-16: the board as 12 mm birch plywood, engraved with drill pits
+  (layer `pit`) and without an outline cut (layer `edge`), nails 1.6 × 20 mm and 1 mm string
+  until measured; every visitor on the kiosk leaderboard, a Ruhr puzzle; world cities ranked
+  by Wikipedia editions (`fame` column, world data version 4); incremental play with zoom;
+  pinned places kept in board variants; lazy gallery thumbnails.
+- **Next:** the test board is lasered and built (re-export with measured nails and string,
+  see `docs/boards/exzellenzstrategie-2027/README.md`), then Phase 10. See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - Code license not chosen yet (decide before going public).
@@ -148,7 +152,8 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–8 are done. Open work, in order, is in `docs/roadmap.md`:
+Phases 1–9 are done (the open day board is being built). Open work, in order, is in
+`docs/roadmap.md`:
 
 9. **Open day (2026-11-07):** Excellence Strategy board (first wooden board), fixes from the
    review, rotatable globe with an animated round trip, event mode, further review items.

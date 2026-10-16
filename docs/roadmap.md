@@ -4,8 +4,11 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-16 (evening): 9.1–9.5 are done (the board as 12 mm plywood with drilled
-holes, re-exported for 1.6 mm nails and 1 mm string). Next is 9.6.
+Status 2026-10-16 (night): Phase 9 (9.1–9.6) is done. Open for the open day: lasering and
+building the test board, then re-exporting it with the measured nails and string (one command
+in `docs/boards/exzellenzstrategie-2027/README.md`). Next is Phase 10.
+Earlier status 2026-10-16 (evening): 9.1–9.5 are done (the board as 12 mm plywood with
+drilled holes, re-exported for 1.6 mm nails and 1 mm string).
 Earlier status 2026-10-16 (later): 9.1–9.4 are done.
 Earlier status 2026-10-16: Phases 1–8 are done. Next is Phase 9 for the open day on
 2026-11-07 (the Excellence Strategy board first, then fixes, a rotatable globe and an event
@@ -223,7 +226,7 @@ world puzzles always digital without board or worksheet; curated "Olympische Som
 "Welt: 30 Metropolen". The rotatable globe was not built: the Equal Earth map already shows the
 arcs, the poles and the wrap at the map's edge.)
 
-## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07)
+## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07) — done 2026-10-16
 
 Decided by Kevin 2026-10-16, from his review of the app after Phases 7 and 8 (run in a browser
 at 1440 × 900 and 390 × 844). Work through the items in order. 9.1 comes first because the
@@ -424,7 +427,7 @@ Do these first; the board items are the critical path (lasering and a test board
 
 - Highscore column "Mehr": a clearer header (e.g. "über Optimum").
 
-### 9.6 Further items from the review (after 9.1–9.5)
+### 9.6 Further items from the review (after 9.1–9.5) — done 2026-10-16
 
 - Europe: the cut at 45° E is drawn as a straight diagonal line through Russia (also in the
   thumbnails) and looks like a border. Cut along the Ural or do not draw the clip edge. (Done
@@ -446,7 +449,7 @@ Do these first; the board items are the critical path (lasering and a test board
 - Gallery: thumbnails load `de.json`, `eu.json` and `wo.json` (about 1.6 MB, 550 KB gzip):
   load them when a card becomes visible. Order by theme (Excellence first, then Germany,
   cities, Europe, world, step by step) instead of alphabetically. (Order done in 9.1; lazy
-  thumbnails open.)
+  thumbnails open.) (done: thumbnails load near the screen)
 
 ## Phase 10: physical and public
 
