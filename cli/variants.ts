@@ -1,6 +1,7 @@
 // Board variants of a fixed puzzle (roadmap 7.5): which removals or combinations of two places
 // raise the string gap above the board target, checked exactly for the best estimates.
 // Usage: npx tsx cli/variants.ts public/puzzles/<id>.tsp.json [--top 6] [--target 5]
+//   [--keep 'Aachen,Köln'] (places that are neither left out nor combined)
 
 import { readFileSync } from 'node:fs';
 import { boardSetup } from '../src/core/board/setup';
@@ -40,6 +41,14 @@ const suggestions = changeSuggestions(
   {
     minDistanceMm: map.params.minDistanceMm,
     top: Number(arg('top', '6')),
+    keep: arg('keep', '')
+      .split(',')
+      .filter(Boolean)
+      .map((n) => {
+        const i = setup.cities.findIndex((c) => c.name === n.trim());
+        if (i < 0) throw new Error(`--keep: ${n} is not in the puzzle`);
+        return i;
+      }),
   },
 );
 const name = (i: number) => setup.cities[i]!.name;

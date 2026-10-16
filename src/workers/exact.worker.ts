@@ -58,6 +58,7 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
       const suggestions = changeSuggestions(request.points, request.rEffMm, request.model, highs, {
         minDistanceMm: request.minDistanceMm,
         top: request.top,
+        keep: request.keep,
       });
       reply({ type: 'changes', jobId: request.jobId, suggestions });
       break;

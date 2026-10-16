@@ -325,6 +325,7 @@ export function FixedAnalysis({
   const list = useStore((s) => s.list);
   const params = useStore((s) => s.params);
   const purpose = useStore((s) => s.doc.purpose);
+  const pinned = useStore((s) => s.pinned);
   const [state, setState] = useState<
     | { status: 'idle' }
     | { status: 'running' }
@@ -334,6 +335,8 @@ export function FixedAnalysis({
   if (list?.mode !== 'fixed') return null;
   const points = puzzle.members.map((c) => board.points[c]!);
   const name = (i: number) => board.pool[puzzle.members[i]!]!.label;
+  // Pinned places stay in every variant (roadmap 9.6).
+  const kept = puzzle.members.flatMap((c, i) => (pinned.includes(board.pool[c]!.id) ? [i] : []));
   const close = closePairs(points, params.minDistanceMm);
   const { widthMm: w, heightMm: h } = board.projection.board;
   const outside = points
@@ -393,6 +396,11 @@ export function FixedAnalysis({
             {state.status === 'running' ? t.fixedSearching : t.fixedBoardVariant}
           </button>
         </div>
+      )}
+      {(small || (!board.sphere && (purpose === 'digital' || close.length > 0))) && (
+        <p className="hint">
+          {kept.length > 0 ? t.fixedKept(kept.map(name).join(', ')) : t.fixedKeepHint}
+        </p>
       )}
       {state.status === 'error' && <p className="error">{state.message}</p>}
       {state.status === 'done' && (

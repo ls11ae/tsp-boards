@@ -46,6 +46,11 @@ export interface ChangeOptions {
   readonly top?: number;
   /** Shortest pairs tried as combinations besides all pairs below the minimum distance. */
   readonly pairs?: number;
+  /**
+   * Points that are neither left out nor combined (roadmap 9.6: e.g. the places pinned in the
+   * designer, where the suggestions would otherwise be purely geometric).
+   */
+  readonly keep?: readonly number[];
 }
 
 /** The points after a change; a combined pair becomes its midpoint (a composite place). */
@@ -74,16 +79,20 @@ export function changeSuggestions(
   const r = model === 'euclidean' ? 0 : rEffMm;
   const top = options.top ?? 3;
   const close = closePairs(points, options.minDistanceMm);
+  const keep = new Set(options.keep ?? []);
+  const free = (p: { a: number; b: number }) => !keep.has(p.a) && !keep.has(p.b);
   const pairs: { a: number; b: number; d: number }[] = [];
   for (let a = 0; a < points.length; a++)
     for (let b = a + 1; b < points.length; b++)
       pairs.push({ a, b, d: distance(points[a]!, points[b]!) });
   pairs.sort((x, y) => x.d - y.d);
   const combine = new Map<string, ChangeSuggestion>();
-  for (const p of [...close, ...pairs.slice(0, options.pairs ?? 8)])
+  for (const p of [...close.filter(free), ...pairs.filter(free).slice(0, options.pairs ?? 8)])
     combine.set(`${p.a}-${p.b}`, { kind: 'combine', a: p.a, b: p.b });
   const changes: ChangeSuggestion[] = [
-    ...points.map((_, point): ChangeSuggestion => ({ kind: 'remove', point })),
+    ...points.flatMap((_, point): ChangeSuggestion[] =>
+      keep.has(point) ? [] : [{ kind: 'remove', point }],
+    ),
     ...combine.values(),
   ];
   const estimates = changes.map((change, k) => {

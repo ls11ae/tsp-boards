@@ -405,6 +405,9 @@ export const en = {
   fixedMakeDigital: 'Make it a digital puzzle',
   fixedChanges: 'What would raise the gap?',
   fixedBoardVariant: 'Find a board variant',
+  fixedKeepHint:
+    'Click places that must stay on the map (pinned): they are neither left out nor combined.',
+  fixedKept: (names: string) => `Kept in every variant (pinned): ${names}.`,
   fixedChangesHint: (target: string) =>
     `Leaving out or combining places (one node between them), checked with the string length; target ${target} mm, * = estimate.`,
   fixedCombined: (a: string, b: string, gap: string) => `${a} + ${b} combined: gap ${gap} mm`,

@@ -80,6 +80,8 @@ export interface ChangesJob {
   readonly model: 'string' | 'euclidean';
   readonly minDistanceMm: number;
   readonly top: number;
+  /** Points that are neither left out nor combined. */
+  readonly keep: readonly number[];
 }
 
 export interface RoundsJob {

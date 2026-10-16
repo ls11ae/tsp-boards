@@ -396,6 +396,9 @@ export const de: Messages = {
   fixedMakeDigital: 'Als digitales Puzzle verwenden',
   fixedChanges: 'Was würde die Lücke vergrößern?',
   fixedBoardVariant: 'Brettvariante suchen',
+  fixedKeepHint:
+    'Orte, die bleiben sollen, auf der Karte anklicken (angepinnt): Sie werden weder weggelassen noch zusammengefasst.',
+  fixedKept: (names) => `Bleiben in jeder Variante (angepinnt): ${names}.`,
   fixedChangesHint: (target) =>
     `Orte weglassen oder zusammenfassen (ein Knoten zwischen ihnen), geprüft mit der Fadenlänge; Ziel ${target} mm, * = Schätzung.`,
   fixedCombined: (a, b, gap) => `${a} + ${b} zusammengefasst: Lücke ${gap} mm`,

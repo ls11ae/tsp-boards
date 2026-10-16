@@ -881,3 +881,10 @@ Short entries: decision; alternatives considered; reason. Newest last.
   The view starts with the whole board and a margin of 6 % (the zoom buttons sit over the
   margin, not over a nail in a corner). The measuring track is left to the wooden board and
   the export; the panel shows the string length.
+- **2026-10-16 Places kept in board variants (roadmap 9.6).** The board variant suggestions
+  of a fixed list were purely geometric ("Aachen + Köln zusammengefasst"). Places pinned in
+  the designer (a click on the map, as for searches) are now neither left out nor combined
+  (`ChangeOptions.keep`; `cli/variants.ts --keep 'A,B'`); the panel says which places are kept
+  or how to keep one. Pinning has no other effect on a fixed list, and pins are already saved
+  with the puzzle and in links. Alternative: a new list prefix or a column in the place table
+  (more format and UI for the same meaning as a pin).

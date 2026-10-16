@@ -49,6 +49,23 @@ describe('fixed instance analysis', () => {
     }
   });
 
+  it('neither leaves out nor combines kept places (roadmap 9.6)', () => {
+    const points = randomPoints(9, 7, 300, 300);
+    const keep = [0, 3, 5];
+    const suggestions = changeSuggestions(points, 1.5, 'string', null, {
+      minDistanceMm: 60,
+      top: 50,
+      keep,
+    });
+    expect(suggestions.length).toBeGreaterThan(0);
+    for (const s of suggestions) {
+      const touched = s.kind === 'remove' ? [s.point] : [s.a, s.b];
+      for (const i of touched) expect(keep).not.toContain(i);
+    }
+    // 6 removals and the combinations of the free places.
+    expect(suggestions.filter((s) => s.kind === 'remove')).toHaveLength(6);
+  });
+
   it('combines a pair into its midpoint', () => {
     const points: [number, number][] = [
       [0, 0],

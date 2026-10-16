@@ -442,7 +442,7 @@ Do these first; the board items are the critical path (lasering and a test board
 - Incremental play still uses the old millimetre drawing (small nails, measuring track, no
   zoom): use the screen-size approach of `PlayBoard`. (done)
 - Board variant suggestions are purely geometric (e.g. "Aachen + Köln zusammengefasst"):
-  allow marking places that must not be removed or combined.
+  allow marking places that must not be removed or combined. (done: pinned places are kept)
 - Gallery: thumbnails load `de.json`, `eu.json` and `wo.json` (about 1.6 MB, 550 KB gzip):
   load them when a card becomes visible. Order by theme (Excellence first, then Germany,
   cities, Europe, world, step by step) instead of alphabetically. (Order done in 9.1; lazy

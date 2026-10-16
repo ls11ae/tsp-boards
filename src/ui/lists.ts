@@ -400,10 +400,10 @@ let job = 0;
 
 /**
  * Which removal or combination raises the string gap most, for a board variant (exact for the
- * best four).
+ * best four). Pinned places are neither left out nor combined.
  */
 export function suggestChanges(): Promise<readonly RatedChange[]> {
-  const { country, params, list } = useStore.getState();
+  const { country, params, list, pinned } = useStore.getState();
   if (!country || !list) return Promise.resolve([]);
   const board = getBoard(country, params, list.places);
   worker?.terminate();
@@ -427,6 +427,7 @@ export function suggestChanges(): Promise<readonly RatedChange[]> {
       model: 'string',
       minDistanceMm: params.minDistanceMm,
       top: 4,
+      keep: pinned.map((id) => board.index.get(id)).filter((i): i is number => i !== undefined),
     };
     w.postMessage(request);
   });
