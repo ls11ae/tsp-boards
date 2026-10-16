@@ -57,6 +57,42 @@ function dedupe(lines: MultiLineString, seen: Set<string>): MultiLineString {
   return { type: 'MultiLineString', coordinates: out };
 }
 
+/**
+ * Drops segments along the edges of the layer's bounding box in longitude and latitude: the
+ * data build clips neighbouring countries (and continents) to a box, and its edges are no
+ * borders (a straight line through Sweden or Russia on a tall board).
+ */
+export function withoutBoxEdges(lines: MultiLineString): MultiLineString {
+  let [w, s, e, n] = [Infinity, Infinity, -Infinity, -Infinity];
+  for (const line of lines.coordinates) {
+    for (const [x, y] of line) {
+      w = Math.min(w, x!);
+      e = Math.max(e, x!);
+      s = Math.min(s, y!);
+      n = Math.max(n, y!);
+    }
+  }
+  const eps = 1e-6;
+  const onEdge = (a: Position, b: Position) =>
+    (Math.abs(a[0]! - b[0]!) < eps && (Math.abs(a[0]! - w) < eps || Math.abs(a[0]! - e) < eps)) ||
+    (Math.abs(a[1]! - b[1]!) < eps && (Math.abs(a[1]! - s) < eps || Math.abs(a[1]! - n) < eps));
+  const out: Position[][] = [];
+  for (const line of lines.coordinates) {
+    let current: Position[] = [];
+    for (let i = 1; i < line.length; i++) {
+      if (onEdge(line[i - 1]!, line[i]!)) {
+        if (current.length >= 2) out.push(current);
+        current = [];
+        continue;
+      }
+      if (current.length === 0) current.push(line[i - 1]!);
+      current.push(line[i]!);
+    }
+    if (current.length >= 2) out.push(current);
+  }
+  return { type: 'MultiLineString', coordinates: out };
+}
+
 /** Border lines of the map layers for a region, in board mm, clipped to `clip`. */
 export function boardMapLines(
   file: CountryFile,
@@ -83,7 +119,7 @@ export function boardMapLines(
   const strong: Point[][] = [];
   const thin: Point[][] = [];
   for (const layer of layers) {
-    const lines = projection.lines(dedupe(layer.geometry, seen), clip);
+    const lines = projection.lines(withoutBoxEdges(dedupe(layer.geometry, seen)), clip);
     (layer.strong ? strong : thin).push(...lines);
   }
   return { strong, thin };
