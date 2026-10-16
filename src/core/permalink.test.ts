@@ -72,6 +72,7 @@ describe('permalinks', () => {
         { id: 2928810 },
       ],
       selected: [0, 2],
+      highlight: [],
     });
     const play = decodePermalink(
       encodePlayLink(DEFAULT_PARAMS, { country: 'DE', version: 1 }, [], '', '', {

@@ -221,6 +221,16 @@ export const de: Messages = {
   warnLabels: (count) => `${count} Beschriftungen passen nicht.`,
   warnTitle: 'Für den Titel ist kein Platz.',
   warnGap: (value) => `Die Lücke an der Skala (${value} mm) liegt unter dem Ziel.`,
+  logos: 'Logos für das Brett',
+  logosHint:
+    'SVG-Dateien (z. B. aus potrace), als Fläche graviert. Sie bleiben nur in dieser Sitzung und werden nicht gespeichert.',
+  logoPlace: 'Logo statt Beschriftung von',
+  logoFile: 'SVG-Datei',
+  logoLegend: 'Logo in der Legende',
+  logoRemove: 'Entfernen',
+  warnLegend: (n) => `${n} Nägel liegen im Kasten der Legende.`,
+  warnStart:
+    'Der gewünschte Startnagel hat keinen Platz für die Skala oder eine zu kleine Lücke; die Skala sitzt an einem anderen Nagel.',
   warnOptimum:
     'An der Skala gemessen wäre eine andere Rundreise am kürzesten. Bitte einen anderen Kandidaten wählen.',
   warnUnverified:
@@ -245,6 +255,8 @@ export const de: Messages = {
   playHintDigital:
     'Klicke die Orte in der Reihenfolge deiner Rundreise an und zum Schluss wieder den ersten Ort (oder wähle sie unten aus). Ein Klick auf einen besuchten Ort geht zu ihm zurück. Gemessen wird die Luftlinie zwischen den Orten.',
   legendOptimum: 'kürzeste Rundreise',
+  legendMarked: 'markierter Ort',
+  legendPlain: 'weiterer Ort',
   legendOwn: 'deine Rundreise',
   nextPlace: 'Nächster Ort',
   nextNail: 'Nächster Nagel',

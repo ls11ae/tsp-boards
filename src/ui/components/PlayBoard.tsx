@@ -283,7 +283,8 @@ export function PlayBoard({
             <g key={c} className={`play-place${state}`}>
               <title>{listName(city, labelLanguage)}</title>
               <circle cx={x} cy={y} r={r} />
-              {state === ' start' && <circle className="start-ring" cx={x} cy={y} r={r * 1.6} />}
+              {city.highlight && <circle className="mark-ring" cx={x} cy={y} r={r * 1.55} />}
+              {state === ' start' && <circle className="start-ring" cx={x} cy={y} r={r * 1.9} />}
             </g>
           );
         })}

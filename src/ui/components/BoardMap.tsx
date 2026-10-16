@@ -252,6 +252,15 @@ export function BoardMap({
               r={Math.max(MIN_VISUAL_RADIUS_MM, nailRadius)}
             />
             <circle className="nail" cx={x} cy={y} r={nailRadius} />
+            {/* The export preview shows the engraved ring already. */}
+            {city.highlight && !preview && (
+              <circle
+                className="nail-ring"
+                cx={x}
+                cy={y}
+                r={Math.max(MIN_VISUAL_RADIUS_MM, nailRadius) + 1.8}
+              />
+            )}
           </g>
         );
       })}

@@ -7,6 +7,8 @@
 
 import type { Point } from '../geometry';
 import type { LabelOptions } from './labels';
+import { drawLegend, type LegendLayout } from './legend';
+import { placeLogo, type Logo } from './logo';
 import type { MapLines } from './map-lines';
 import { subtractHoles } from './map-lines';
 import type { BoardPlan, ScalePlan } from './plan';
@@ -15,6 +17,9 @@ import {
   polygonPath,
   polylinePath,
   rectPath,
+  ringPath,
+  transformPath,
+  type Matrix,
   type Path,
   type PathCommand,
 } from './shapes';
@@ -94,6 +99,13 @@ export interface DrawingInput {
   readonly scaleCaption: string;
   /** Map lines, already clipped to the board inset. */
   readonly map: MapLines;
+  /** Marked places (slot order) get an engraved ring of these radii around the nail. */
+  readonly highlight?: readonly boolean[];
+  readonly ring?: { readonly outerMm: number; readonly innerMm: number };
+  /** A logo instead of the text label (slot order). */
+  readonly labelLogos?: readonly (Logo | null)[];
+  /** Legend, drawn in the plan's legend box. */
+  readonly legend?: LegendLayout | null;
 }
 
 const SCALE_TEXT_MM = 3.5;
@@ -180,13 +192,16 @@ export function drawBoard(
   const items: DrawItem[] = [];
   const halo = options.haloMm;
 
-  // Text and the scale interrupt the map lines.
+  // Text, the scale, rings and the legend interrupt the map lines.
+  const ring = input.ring ?? { outerMm: 3.5, innerMm: 2.7 };
+  const marked = (slot: number) => input.highlight?.[slot] === true;
   const holes: Point[][] = [
     plan.scale.band.map((p) => p),
-    ...points.map((p) => circlePolygon(p, 3)),
+    ...points.map((p, slot) => circlePolygon(p, marked(slot) ? ring.outerMm + 0.8 : 3)),
   ];
   if (plan.title) holes.push(boxPolygon(plan.title, halo));
   if (plan.footer) holes.push(boxPolygon(plan.footer, halo));
+  if (plan.legend) holes.push(boxPolygon(plan.legend, halo));
   for (const l of plan.labels) holes.push(boxPolygon(l.candidate.box, halo));
 
   const lines = (list: readonly Point[][]) =>
@@ -194,15 +209,37 @@ export function drawBoard(
   items.push({ layer: 'score', path: lines(input.map.thin), fill: false });
   items.push({ layer: 'outline', path: lines(input.map.strong), fill: false });
 
-  // Labels.
+  // Labels (a logo fills its label's box).
   if (input.labelTexts && input.labelOptions) {
     const size = input.labelOptions.sizeMm;
     const path: PathCommand[] = [];
     for (const l of plan.labels) {
+      const logo: Logo | null = input.labelLogos?.[l.slot] ?? null;
+      if (logo) {
+        const [x0, y0, x1] = l.candidate.box;
+        path.push(...placeLogo(logo, x0, y0, x1 - x0));
+        continue;
+      }
       const [x, y] = l.candidate.baseline;
       path.push(...textPath(input.labelTexts[l.slot]!, x, y, size));
     }
     items.push({ layer: 'engrave', path, fill: true });
+  }
+  // Rings around marked nails.
+  const rings: PathCommand[] = [];
+  points.forEach(([x, y], slot) => {
+    if (marked(slot)) rings.push(...ringPath(x, y, ring.outerMm, ring.innerMm));
+  });
+  items.push({ layer: 'engrave', path: rings, fill: true });
+  // Legend box.
+  if (plan.legend && input.legend) {
+    const nailRadius = options.holeDiameterMm / 2;
+    const paths = drawLegend(input.legend, plan.legend[0], plan.legend[1], {
+      ringOuterMm: ring.outerMm,
+      ringInnerMm: ring.innerMm,
+      nailRadiusMm: nailRadius,
+    });
+    items.push({ layer: 'engrave', path: paths.engrave, fill: true });
   }
   if (plan.title && input.title)
     items.push({
@@ -248,4 +285,17 @@ export function drawBoard(
     fill: false,
   });
   return { width, height, items: items.filter((i) => i.path.length > 0) };
+}
+
+/**
+ * The drawing turned by 90° clockwise (a portrait board on a landscape laser bed): the top
+ * edge becomes the right edge.
+ */
+export function rotateDrawing(drawing: BoardDrawing): BoardDrawing {
+  const m: Matrix = [0, 1, -1, 0, drawing.height, 0];
+  return {
+    width: drawing.height,
+    height: drawing.width,
+    items: drawing.items.map((item) => ({ ...item, path: transformPath(item.path, m) })),
+  };
 }

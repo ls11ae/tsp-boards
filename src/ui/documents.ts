@@ -19,7 +19,8 @@ import { openListPuzzle } from './lists';
 import { planKey } from './plans';
 import { applyIncrementalPuzzle } from './incremental';
 import type { PuzzleView } from './puzzle';
-import { NEW_DOC, NEW_GAME, useStore } from './store';
+import { customId } from '../core/places';
+import { NEW_DOC, NEW_GAME, useStore, type DocMeta } from './store';
 
 const random = () => Math.random();
 
@@ -37,6 +38,18 @@ export function mapDocument(puzzle: PuzzleView | null): PuzzleDoc | null {
     const city = board.pool[c]!;
     return { id: city.id, name: city.name, lat: city.lat, lon: city.lon };
   });
+  // Board extras: the start nail by its city id, as an index into the places.
+  const extras = doc.board
+    ? {
+        legend: doc.board.legend,
+        startPlace:
+          doc.board.startCity === null
+            ? null
+            : ((i) => (i >= 0 ? i : null))(
+                members.findIndex((c) => board.pool[c]?.id === doc.board!.startCity),
+              ),
+      }
+    : null;
   let results: MapResults | undefined;
   const v = puzzle?.verification;
   if (puzzle && v?.status === 'done' && v.verification.string) {
@@ -68,9 +81,28 @@ export function mapDocument(puzzle: PuzzleView | null): PuzzleDoc | null {
       places,
       ...(list ? { list: { mode: list.mode, places: list.places } } : {}),
       constraints: { pinned: s.pinned, excluded: s.excluded, groups: s.groups },
+      ...(extras ? { board: extras } : {}),
       ...(results ? { results } : {}),
     },
   };
+}
+
+/** Board extras of a document for the store: the start nail as a city id of the pool. */
+function boardMeta(doc: PuzzleDoc): DocMeta['board'] {
+  const extras = doc.map?.board;
+  if (!extras) return null;
+  const map = doc.map;
+  const start = extras.startPlace !== null ? map.places[extras.startPlace] : undefined;
+  let startCity: number | null = null;
+  if (start) {
+    // A town keeps its id; a list's custom or composite place is −1 − its list index.
+    const listIndex =
+      map.list?.places.findIndex(
+        (q) => q.name === start.name && q.lat === start.lat && q.lon === start.lon,
+      ) ?? -1;
+    startCity = start.id ?? (listIndex >= 0 ? customId(listIndex) : null);
+  }
+  return { legend: extras.legend, startCity };
 }
 
 /** The open incremental puzzle as a document; null without points. */
@@ -112,6 +144,7 @@ export function openDocument(doc: PuzzleDoc, mode: 'design' | 'play' = 'design')
     title: doc.title,
     description: doc.description,
     purpose: doc.purpose,
+    board: boardMeta(doc),
   };
   if (doc.kind === 'incremental' && doc.incremental) {
     useStore.setState({ puzzleType: 'incremental', mode, doc: meta, play: NEW_GAME, playId: null });

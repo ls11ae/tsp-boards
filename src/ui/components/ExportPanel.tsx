@@ -7,6 +7,7 @@ import type { Messages } from '../i18n/en';
 import type { PuzzleView } from '../puzzle';
 import { checkBoardRobustness } from '../robustness';
 import { useStore } from '../store';
+import { LogoFields } from './LogoFields';
 
 function warningText(t: Messages, w: PlanWarning, mm: (um: number) => string): string | null {
   switch (w.kind) {
@@ -20,6 +21,10 @@ function warningText(t: Messages, w: PlanWarning, mm: (um: number) => string): s
       return t.warnOptimum;
     case 'measurement-unverified':
       return t.warnUnverified;
+    case 'legend-overlap':
+      return t.warnLegend(String(w.nails));
+    case 'start-not-preferred':
+      return t.warnStart;
     case 'no-scale-space':
       return null;
   }
@@ -212,6 +217,7 @@ export function ExportPanel({
           {state?.status === 'done' && !state.plan && <p className="error">{t.noScaleSpace}</p>}
           {plan && <PlanSummary board={board} puzzle={puzzle} plan={plan} />}
           {plan && <Robustness board={board} puzzle={puzzle} plan={plan} />}
+          <LogoFields board={board} puzzle={puzzle} />
           {state?.status !== 'running' && !plan && (
             <div className="actions">
               <button type="button" className="primary" onClick={() => prepareBoard(board, puzzle)}>

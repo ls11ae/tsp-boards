@@ -21,7 +21,13 @@ import {
   type LabelOptions,
   type Obstacle,
 } from './labels';
-import { checkMeasurement, measuredGapBound, outwardBisector, type Direction } from './measure';
+import {
+  checkMeasurement,
+  endWrapAngle,
+  measuredGapBound,
+  outwardBisector,
+  type Direction,
+} from './measure';
 import type { TextMetrics } from './text';
 
 export interface ScaleSpec {
@@ -58,6 +64,10 @@ export interface PlanInput {
   readonly scale?: ScaleSpec;
   /** Distance of title, footer and scale from the board edge, mm. */
   readonly edgeMm?: number;
+  /** Area kept free of scale, title, footer and labels (e.g. the legend box). */
+  readonly reserved?: Box | null;
+  /** Start nail tried first (slot), e.g. a place the board celebrates. */
+  readonly preferredStart?: number | null;
 }
 
 /** PlanInput as plain data (for workers): the instance is rebuilt from points and r_eff. */
@@ -107,6 +117,8 @@ export interface BoardPlan {
   readonly measured: MeasuredGap;
   readonly title: Box | null;
   readonly footer: Box | null;
+  /** The reserved legend box (null: none). */
+  readonly legend?: Box | null;
   readonly labels: readonly PlacedLabel[];
   readonly labelsComplete: boolean;
   /** Problems the user should know about. */
@@ -121,7 +133,11 @@ export type PlanWarning =
   | { readonly kind: 'no-title-space' }
   | { readonly kind: 'gap-below-target'; readonly gapUm: number }
   | { readonly kind: 'optimum-differs' }
-  | { readonly kind: 'measurement-unverified' };
+  | { readonly kind: 'measurement-unverified' }
+  /** Nails inside the reserved legend box. */
+  | { readonly kind: 'legend-overlap'; readonly nails: number }
+  /** The preferred start nail was not used (no room for its scale or its gap is too small). */
+  | { readonly kind: 'start-not-preferred' };
 
 /** Coordinates of p in the scale frame: along the direction and across it. */
 function scaleFrame(origin: Point, u: Direction, p: Point): [number, number] {
@@ -136,6 +152,19 @@ function scaleBand(origin: Point, u: Direction, t0: number, t1: number, h: numbe
     origin[1] + t * u[1] + w * u[0],
   ];
   return [at(t0, -h), at(t1, -h), at(t1, h), at(t0, h)];
+}
+
+/** The box as an obstacle (convex polygon). */
+export function boxObstacle(box: Box): Obstacle {
+  return {
+    kind: 'polygon',
+    points: [
+      [box[0], box[1]],
+      [box[2], box[1]],
+      [box[2], box[3]],
+      [box[0], box[3]],
+    ],
+  };
 }
 
 function insideBoard(points: readonly Point[], width: number, height: number, edge: number) {
@@ -190,43 +219,71 @@ export function scaleCandidates(input: PlanInput): Candidate[] {
   const startMm = nailRadius + 3;
   const endMm = spec.targetMm + overshoot;
   const result: Candidate[] = [];
+  const preferred = input.preferredStart ?? -1;
   for (let slot = 0; slot < inst.n; slot++) {
-    const u = outwardBisector(points, tour, slot);
-    if (!u) continue;
+    const bisector = outwardBisector(points, tour, slot);
+    if (!bisector) continue;
     const origin = points[slot]!;
-    const band = scaleBand(origin, u, startMm - 1, endMm + 2, spec.halfWidthMm);
-    if (!insideBoard(band, input.width, input.height, edge)) continue;
-    const blocked = points.some((p, i) => {
-      if (i === slot) return false;
-      const [t, w] = scaleFrame(origin, u, p);
-      const dt = Math.max(startMm - 1 - t, 0, t - endMm - 2);
-      const dw = Math.max(Math.abs(w) - spec.halfWidthMm, 0);
-      return Math.hypot(dt, dw) < clearance;
-    });
-    if (blocked) continue;
-    result.push({
-      scale: {
-        slot,
-        origin,
-        direction: u,
-        startMm,
-        targetMm: spec.targetMm,
-        endMm,
-        halfWidthMm: spec.halfWidthMm,
-        band,
-      },
-      boundUm: measuredGapBound(inst, tour, slot, u, input.stringGapUm),
-      crossings: tour.filter((v, i) => {
-        const w = tour[(i + 1) % tour.length]!;
-        return v !== slot && w !== slot && segmentMeetsPolygon(points[v]!, points[w]!, band);
-      }).length,
-    });
+    // The scale runs along the outward bisector; for the preferred start nail also rotated
+    // (the bisector may be blocked), keeping 30° from both tour edges at the nail.
+    const [na, nb] = [
+      tour[(tour.indexOf(slot) + inst.n - 1) % inst.n]!,
+      tour[(tour.indexOf(slot) + 1) % inst.n]!,
+    ];
+    const directions: Direction[] = [bisector];
+    if (slot === preferred) {
+      for (const deg of [15, -15, 30, -30, 45, -45, 60, -60, 75, -75, 90, -90]) {
+        const a = (deg * Math.PI) / 180;
+        const u: Direction = [
+          bisector[0] * Math.cos(a) - bisector[1] * Math.sin(a),
+          bisector[0] * Math.sin(a) + bisector[1] * Math.cos(a),
+        ];
+        const limit = (150 * Math.PI) / 180;
+        if (
+          endWrapAngle(origin, points[na]!, u) <= limit &&
+          endWrapAngle(origin, points[nb]!, u) <= limit
+        )
+          directions.push(u);
+      }
+    }
+    for (const u of directions) {
+      const band = scaleBand(origin, u, startMm - 1, endMm + 2, spec.halfWidthMm);
+      if (!insideBoard(band, input.width, input.height, edge)) continue;
+      if (input.reserved && hitsObstacle(input.reserved, { kind: 'polygon', points: band }))
+        continue;
+      const blocked = points.some((p, i) => {
+        if (i === slot) return false;
+        const [t, w] = scaleFrame(origin, u, p);
+        const dt = Math.max(startMm - 1 - t, 0, t - endMm - 2);
+        const dw = Math.max(Math.abs(w) - spec.halfWidthMm, 0);
+        return Math.hypot(dt, dw) < clearance;
+      });
+      if (blocked) continue;
+      result.push({
+        scale: {
+          slot,
+          origin,
+          direction: u,
+          startMm,
+          targetMm: spec.targetMm,
+          endMm,
+          halfWidthMm: spec.halfWidthMm,
+          band,
+        },
+        boundUm: measuredGapBound(inst, tour, slot, u, input.stringGapUm),
+        crossings: tour.filter((v, i) => {
+          const w = tour[(i + 1) % tour.length]!;
+          return v !== slot && w !== slot && segmentMeetsPolygon(points[v]!, points[w]!, band);
+        }).length,
+      });
+    }
   }
-  // Start nails whose bound reaches the target first, among them those whose scale crosses no
-  // tour edge, then the largest bound.
+  // The preferred start nail first; then start nails whose bound reaches the target, among
+  // them those whose scale crosses no tour edge, then the largest bound.
   const target = input.targetGapUm;
   return result.sort(
     (a, b) =>
+      Number(b.scale.slot === preferred) - Number(a.scale.slot === preferred) ||
       Number(b.boundUm >= target) - Number(a.boundUm >= target) ||
       a.crossings - b.crossings ||
       b.boundUm - a.boundUm ||
@@ -257,15 +314,8 @@ function layout(input: PlanInput, scale: ScalePlan): Layout {
     box[3] <= height - edge &&
     !points.some((p) => hitsObstacle(box, { kind: 'circle', centre: p, radius: clearance })) &&
     !others.some((o) => hitsObstacle(box, o));
-  const asObstacle = (box: Box): Obstacle => ({
-    kind: 'polygon',
-    points: [
-      [box[0], box[1]],
-      [box[2], box[1]],
-      [box[2], box[3]],
-      [box[0], box[3]],
-    ],
-  });
+  const asObstacle = boxObstacle;
+  const reserved = input.reserved ? [boxObstacle(input.reserved)] : [];
 
   // Footer: bottom edge, centred, left or right.
   let footer: Box | null = null;
@@ -274,7 +324,7 @@ function layout(input: PlanInput, scale: ScalePlan): Layout {
     const y = height - edge - h;
     for (const x of [(width - w) / 2, edge + 5, width - edge - 5 - w]) {
       const box: Box = [x, y, x + w, y + h];
-      if (free(box, [scaleObstacle])) {
+      if (free(box, [scaleObstacle, ...reserved])) {
         footer = box;
         break;
       }
@@ -291,12 +341,13 @@ function layout(input: PlanInput, scale: ScalePlan): Layout {
       [m, height - m - h, m + w, height - m],
       [width - m - w, height - m - h, width - m, height - m],
     ];
-    const blockers = [scaleObstacle, ...(footer ? [asObstacle(footer)] : [])];
+    const blockers = [scaleObstacle, ...reserved, ...(footer ? [asObstacle(footer)] : [])];
     title = corners.find((box) => free(box, blockers)) ?? null;
   }
 
   const obstacles = [
     scaleObstacle,
+    ...reserved,
     ...(title ? [asObstacle(title)] : []),
     ...(footer ? [asObstacle(footer)] : []),
   ];
@@ -343,7 +394,18 @@ export function planBoard(
   const candidates = scaleCandidates(input);
   if (candidates.length === 0) return null;
   const maxLayouts = options.maxLayouts ?? 12;
-  const maxExact = options.maxExact ?? 3;
+  // A preferred start nail may need checks of several scale directions first.
+  const maxExact = options.maxExact ?? (input.preferredStart != null ? 6 : 3);
+  // Nails inside the legend box (the map would have to move).
+  const reservedBox = input.reserved ?? null;
+  const inLegend = reservedBox
+    ? input.inst
+        .pointsMm()
+        .filter(
+          ([x, y]) =>
+            x > reservedBox[0] && x < reservedBox[2] && y > reservedBox[1] && y < reservedBox[3],
+        ).length
+    : 0;
   let best: { plan: BoardPlan; score: number } | null = null;
   let exactRuns = 0;
   let examined = 0;
@@ -351,6 +413,7 @@ export function planBoard(
     examined++;
     const lay = layout(input, candidate.scale);
     const warnings: PlanWarning[] = [];
+    if (inLegend > 0) warnings.push({ kind: 'legend-overlap', nails: inLegend });
     if (!lay.complete) warnings.push({ kind: 'labels', unplaced: lay.unplaced });
     if (lay.titleMissing) warnings.push({ kind: 'no-title-space' });
     let measured: MeasuredGap = {
@@ -389,11 +452,15 @@ export function planBoard(
     if (measured.kind === 'bound') warnings.push({ kind: 'measurement-unverified' });
     if (measured.gapUm < input.targetGapUm)
       warnings.push({ kind: 'gap-below-target', gapUm: measured.gapUm });
+    const preferred = input.preferredStart ?? null;
+    if (preferred !== null && candidate.scale.slot !== preferred)
+      warnings.push({ kind: 'start-not-preferred' });
     const plan: BoardPlan = {
       scale: candidate.scale,
       measured,
       title: lay.title,
       footer: lay.footer,
+      legend: reservedBox,
       labels: lay.labels,
       labelsComplete: lay.complete,
       warnings,

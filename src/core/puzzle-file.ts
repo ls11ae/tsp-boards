@@ -35,6 +35,23 @@ export interface Place {
   readonly label?: string;
   /** Members of a composite place (e.g. an alliance of universities in two towns). */
   readonly members?: readonly Member[];
+  /** Marked place: a ring around its nail and in the app (e.g. Universities of Excellence). */
+  readonly highlight?: boolean;
+}
+
+/** A line of a board's legend; the symbol in front shows what the line explains. */
+export interface LegendEntry {
+  /** 'ring': a marked place, 'nail': a plain nail, 'none': text only. */
+  readonly symbol: 'ring' | 'nail' | 'none';
+  readonly text: string;
+}
+
+/** Extras of a board (roadmap 9.1). */
+export interface BoardExtras {
+  /** Legend in a box at the bottom of the board (empty: no legend box). */
+  readonly legend: readonly LegendEntry[];
+  /** Preferred start nail (index into places): used if its gap at the scale reaches the target. */
+  readonly startPlace: number | null;
 }
 
 /** Minimum and maximum number of places per group (e.g. per federal state). */
@@ -73,6 +90,7 @@ export interface MapPuzzle {
     readonly excluded: readonly number[];
     readonly groups: readonly GroupConstraint[];
   };
+  readonly board?: BoardExtras;
   readonly results?: MapResults;
 }
 
@@ -139,6 +157,7 @@ function parsePlace(v: unknown): Place | null {
   const base = parseMember(v);
   if (!base || !isObj(v)) return null;
   const label = typeof v.label === 'string' && v.label ? { label: str(v.label, 200) } : {};
+  const highlight = v.highlight === true ? { highlight: true } : {};
   const members = Array.isArray(v.members)
     ? v.members
         .slice(0, 20)
@@ -147,9 +166,29 @@ function parsePlace(v: unknown): Place | null {
     : [];
   // A composite place: at least two members; its position is their mean.
   if (members.length >= 2) {
-    return { name: base.name, ...compositeCentre(members), ...label, members };
+    return { name: base.name, ...compositeCentre(members), ...label, members, ...highlight };
   }
-  return { ...base, ...label };
+  return { ...base, ...label, ...highlight };
+}
+
+function parseBoardExtras(v: unknown, places: number): BoardExtras | undefined {
+  if (!isObj(v)) return undefined;
+  const legend = Array.isArray(v.legend)
+    ? v.legend
+        .filter((e): e is Record<string, unknown> => isObj(e) && typeof e.text === 'string')
+        .slice(0, 12)
+        .map((e): LegendEntry => ({
+          symbol: e.symbol === 'ring' || e.symbol === 'nail' ? e.symbol : 'none',
+          text: str(e.text, 300),
+        }))
+    : [];
+  const start =
+    Number.isInteger(v.startPlace) &&
+    (v.startPlace as number) >= 0 &&
+    (v.startPlace as number) < places
+      ? (v.startPlace as number)
+      : null;
+  return { legend, startPlace: start };
 }
 
 /** Mean latitude and longitude of the members (stored position of a composite place). */
@@ -230,6 +269,7 @@ export function parsePuzzleDoc(json: unknown): PuzzleDoc {
           }))
       : [];
     const places = parsePlaces(m.places, 500);
+    const board = parseBoardExtras(m.board, places.length);
     const r = m.results;
     const results =
       isObj(r) && Array.isArray(r.tour) && isNum(r.lengthMm)
@@ -249,6 +289,7 @@ export function parsePuzzleDoc(json: unknown): PuzzleDoc {
         places,
         ...(list ? { list } : {}),
         constraints: { pinned: ids(c.pinned), excluded: ids(c.excluded), groups },
+        ...(board ? { board } : {}),
         ...(results ? { results } : {}),
       },
     };

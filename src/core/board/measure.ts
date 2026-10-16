@@ -9,11 +9,15 @@
 // may go either way round, the board certifies the tour minimising min over directions of M,
 // and the measured gap is min_{T≠OPT, dir} M(T, dir) − max_dir M(OPT, dir).
 //
-// u is the outward bisector of the optimal tour at s, so both directions of the optimum end at
-// the same mark (φ = (π − θ_s)/2 for both neighbours). The measured gap differs from the
-// string gap by the start-nail terms; it is computed exactly with the turn-cost MIP on an
-// instance whose turn costs at s are r_eff·min(φ(i), φ(k)) (Instance.withTurnCosts), and
-// bounded cheaply over all neighbour pairs at s to rank start nails.
+// u is usually the outward bisector of the optimal tour at s, so both directions of the
+// optimum end at the same mark (φ = (π − θ_s)/2 for both neighbours). A rotated scale (when
+// the bisector is blocked, roadmap 9.1) lets the two directions of the optimum end at marks
+// r_eff·|φ(a) − φ(b)| apart (the spread); the board is calibrated with the longer direction,
+// so the other one ends beyond the target mark, and the spread is subtracted from the gap.
+// The measured gap differs from the string gap by the start-nail terms; it is computed exactly
+// with the turn-cost MIP on an instance whose turn costs at s are r_eff·min(φ(i), φ(k))
+// (Instance.withTurnCosts), and bounded cheaply over all neighbour pairs at s to rank start
+// nails.
 //
 // The builder calibrates the string by winding the optimal tour (solution sheet) and marking
 // the end at the target mark, so model errors common to all tours cancel; only differences
@@ -74,6 +78,32 @@ export function outwardBisector(
   return len < 1e-6 ? null : [x / len, y / len];
 }
 
+/**
+ * Difference between the measured lengths of the two directions of the tour from s (µm, 0 for
+ * the outward bisector): r_eff·|φ(a) − φ(b)| for its neighbours a and b at s.
+ */
+export function directionSpread(inst: Instance, tour: Tour, slot: number, u: Direction): number {
+  const points = inst.pointsMm();
+  const s = points[slot]!;
+  const [a, b] = neighbours(tour, slot);
+  const wrap = (p: number) => Math.round(inst.rEffUm * endWrapAngle(s, points[p]!, u));
+  return Math.abs(wrap(a) - wrap(b));
+}
+
+/**
+ * The tour from the start nail in the direction that needs more string (the calibration
+ * direction): the other direction then ends at or beyond the target mark.
+ */
+export function calibrationTour(inst: Instance, tour: Tour, slot: number, u: Direction): number[] {
+  const n = tour.length;
+  const start = tour.indexOf(slot);
+  const forward = Array.from({ length: n }, (_, i) => tour[(start + i) % n]!);
+  const backward = [forward[0]!, ...forward.slice(1).reverse()];
+  return measuredLength(inst, backward, slot, u) > measuredLength(inst, forward, slot, u)
+    ? backward
+    : forward;
+}
+
 /** Instance whose tour costs are the measured lengths M (minimum over both directions). */
 export function measurementInstance(inst: Instance, slot: number, u: Direction): Instance {
   const points = inst.pointsMm();
@@ -132,16 +162,22 @@ export function measuredGapBound(
       if (k !== slot) worst = Math.min(worst, delta(i, k) - own);
     }
   }
-  return stringGapUm + worst;
+  return stringGapUm + worst - directionSpread(inst, opt, slot, u);
 }
 
 export interface MeasuredCheck {
   readonly status: ExactStatus;
   /** The measured optimum is the given optimal tour (as a cycle). */
   readonly sameOptimum: boolean;
-  /** Measured length of the optimum (loop to the arrival at s plus the end wrap), µm. */
+  /**
+   * Measured length of the optimum (loop to the arrival at s plus the end wrap) in its longer
+   * direction (the calibration), µm.
+   */
   readonly lengthUm: number;
-  /** Exact measured gap in µm (Infinity if there is no other tour). */
+  /**
+   * Exact measured gap in µm: shortest measured length of any other tour minus the optimum's
+   * longer direction (Infinity if there is no other tour).
+   */
   readonly gapUm: number;
   /** Measured optimum and runner-up (null unless solved). */
   readonly optimal: number[] | null;
@@ -178,11 +214,12 @@ export function checkMeasurement(
   if (result.optimal.status !== 'optimal' || !optimal) return fail(result.optimal.status);
   if (!result.second || result.second.status === 'time-limit') return fail('time-limit');
   const second = result.second.tour;
+  const spread = directionSpread(inst, opt, slot, u);
   return {
     status: 'optimal',
     sameOptimum: sameTour(optimal, opt, inst.n),
-    lengthUm: result.optimal.cost,
-    gapUm: second ? result.second.cost - result.optimal.cost : Infinity,
+    lengthUm: result.optimal.cost + spread,
+    gapUm: second ? result.second.cost - result.optimal.cost - spread : Infinity,
     optimal,
     second,
   };

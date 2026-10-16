@@ -4,6 +4,7 @@
 // Identical or very close places merge into one node whose label can name all of them.
 // A composite place (roadmap 7.1) is one node for several towns or points:
 // "Ruhr Innovation Lab = Bochum + Dortmund", members as town names or "name (lat, lon)".
+// A leading '*' marks a place (roadmap 9.1: a ring on the board), e.g. "* Aachen".
 
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import type { City } from './data';
@@ -29,6 +30,8 @@ export interface ParsedLine {
   readonly label?: string;
   /** Members of a composite place ("name = A + B"). */
   readonly members?: readonly ParsedMember[];
+  /** Marked place: the line starts with '*'. */
+  readonly highlight?: boolean;
 }
 
 const COMPOSITE = /^([^=]+?)\s*=\s*(.+)$/;
@@ -80,11 +83,14 @@ export function compositePlace(name: string, members: readonly Member[], label?:
 export function parsePlaceLines(text: string): ParsedLine[] {
   const out: ParsedLine[] = [];
   text.split(/\r?\n/).forEach((raw, i) => {
-    const line = raw.replace(/#.*$/, '').trim();
+    let line = raw.replace(/#.*$/, '').trim();
+    const star = /^\*\s*/.exec(line);
+    if (star) line = line.slice(star[0].length);
     if (!line) return;
+    const mark = star ? { highlight: true } : {};
     const composite = parseComposite(line);
     if (composite) {
-      out.push({ line: i + 1, text: raw, ...composite });
+      out.push({ line: i + 1, text: raw, ...composite, ...mark });
       return;
     }
     const semicolon = /[;\t]/.test(line);
@@ -102,9 +108,9 @@ export function parsePlaceLines(text: string): ParsedLine[] {
       Math.abs(lon) <= 180
     ) {
       const label = rest.join(', ').trim();
-      out.push({ line: i + 1, text: raw, name, lat, lon, ...(label ? { label } : {}) });
+      out.push({ line: i + 1, text: raw, name, lat, lon, ...(label ? { label } : {}), ...mark });
     } else {
-      out.push({ line: i + 1, text: raw, name: line });
+      out.push({ line: i + 1, text: raw, name: line, ...mark });
     }
   });
   return out;
@@ -253,6 +259,7 @@ export function mergePlaces(places: readonly ListPlace[], radiusKm: number): Lis
     return {
       ...first,
       ...(label ? { label } : {}),
+      ...(g.some((p) => p.highlight) ? { highlight: true } : {}),
       lines: g.flatMap((p) => p.lines),
       names,
     };
@@ -264,26 +271,16 @@ export const customId = (index: number) => -1 - index;
 
 /** The list as City records for the board pool (custom places: population 1, no state). */
 export function listCities(places: readonly Place[], towns: ReadonlyMap<number, City>): City[] {
-  return places.map((p, i) => {
-    if (p.members && p.members.length >= 2) {
-      // Population and state from the member towns (custom points count 1).
-      const memberTowns = p.members.map((m) => (m.id !== undefined ? towns.get(m.id) : undefined));
-      return {
-        id: customId(i),
-        name: p.name,
-        label: p.label ?? p.name,
-        nameEn: p.name,
-        lat: p.lat,
-        lon: p.lon,
-        pop: memberTowns.reduce((s, t) => s + (t?.pop ?? 1), 0),
-        state: memberTowns.find((t) => t !== undefined)?.state ?? '',
-        wikidata: null,
-        flags: 0,
-        members: p.members.map((m) => ({ name: m.name, lat: m.lat, lon: m.lon })),
-      };
-    }
-    const town = p.id !== undefined ? towns.get(p.id) : undefined;
-    if (town) return p.label ? { ...town, label: p.label } : town;
+  return places.map((p, i): City => {
+    const city = listCity(p, i, towns);
+    return p.highlight ? { ...city, highlight: true } : city;
+  });
+}
+
+function listCity(p: Place, i: number, towns: ReadonlyMap<number, City>): City {
+  if (p.members && p.members.length >= 2) {
+    // Population and state from the member towns (custom points count 1).
+    const memberTowns = p.members.map((m) => (m.id !== undefined ? towns.get(m.id) : undefined));
     return {
       id: customId(i),
       name: p.name,
@@ -291,12 +288,27 @@ export function listCities(places: readonly Place[], towns: ReadonlyMap<number, 
       nameEn: p.name,
       lat: p.lat,
       lon: p.lon,
-      pop: 1,
-      state: '',
+      pop: memberTowns.reduce((s, t) => s + (t?.pop ?? 1), 0),
+      state: memberTowns.find((t) => t !== undefined)?.state ?? '',
       wikidata: null,
       flags: 0,
+      members: p.members.map((m) => ({ name: m.name, lat: m.lat, lon: m.lon })),
     };
-  });
+  }
+  const town = p.id !== undefined ? towns.get(p.id) : undefined;
+  if (town) return p.label ? { ...town, label: p.label } : town;
+  return {
+    id: customId(i),
+    name: p.name,
+    label: p.label ?? p.name,
+    nameEn: p.name,
+    lat: p.lat,
+    lon: p.lon,
+    pop: 1,
+    state: '',
+    wikidata: null,
+    flags: 0,
+  };
 }
 
 // --- links ---------------------------------------------------------------------------------
@@ -367,7 +379,9 @@ export function encodePlaceList(mode: 'fixed' | 'pool', places: readonly Place[]
           : p.id
         : [p.name, round(p.lat), round(p.lon), ...(p.label ? [p.label] : [])],
   );
-  const json = JSON.stringify([mode === 'fixed' ? 0 : 1, rows]);
+  // Marked places as a third element (older links have two).
+  const marked = places.flatMap((p, i) => (p.highlight ? [i] : []));
+  const json = JSON.stringify([mode === 'fixed' ? 0 : 1, rows, ...(marked.length ? [marked] : [])]);
   return base64url(deflateSync(strToU8(json), { level: 9 }));
 }
 
@@ -409,18 +423,25 @@ function decodeRow(row: unknown): LinkPlace | null {
 }
 
 /** Inverse of encodePlaceList; null if the text is not a place list. */
-export function decodePlaceList(
-  text: string,
-): { readonly mode: 'fixed' | 'pool'; readonly places: readonly LinkPlace[] } | null {
+export function decodePlaceList(text: string): {
+  readonly mode: 'fixed' | 'pool';
+  readonly places: readonly LinkPlace[];
+  /** Indices of marked places. */
+  readonly highlight: readonly number[];
+} | null {
   try {
     const json = JSON.parse(strFromU8(inflateSync(fromBase64url(text)))) as unknown;
-    if (!Array.isArray(json) || json.length !== 2 || !Array.isArray(json[1])) return null;
+    if (!Array.isArray(json) || json.length < 2 || !Array.isArray(json[1])) return null;
     const rows = json[1] as unknown[];
-    const places = rows
-      .slice(0, 2000)
-      .map(decodeRow)
-      .filter((p): p is LinkPlace => p !== null);
-    return { mode: json[0] === 0 ? 'fixed' : 'pool', places };
+    const decoded = rows.slice(0, 2000).map(decodeRow);
+    // Marked indices refer to the rows; rows that fail to decode are dropped below.
+    const kept = decoded.flatMap((p, i) => (p !== null ? [i] : []));
+    const places = decoded.filter((p): p is LinkPlace => p !== null);
+    const marked = new Set(
+      Array.isArray(json[2]) ? (json[2] as unknown[]).filter((i) => Number.isInteger(i)) : [],
+    );
+    const highlight = kept.flatMap((row, i) => (marked.has(row) ? [i] : []));
+    return { mode: json[0] === 0 ? 'fixed' : 'pool', places, highlight };
   } catch {
     return null;
   }

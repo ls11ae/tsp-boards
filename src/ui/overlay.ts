@@ -59,5 +59,5 @@ export function useOverlay(
       excessUm: stringLength(inst, other) - optimumUm,
       optimumUm,
     };
-  }, [kind, board, members, tour, exact, rEff]);
+  }, [kind, board, members, tour, exact, flat, rEff]);
 }

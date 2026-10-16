@@ -27,11 +27,21 @@ import {
   type DrawingOptions,
   type TextLine,
 } from './drawing';
-import { labelOptions, type LabelOptions } from './labels';
+import {
+  EXPORT_NODE_LIMIT,
+  labelCandidates,
+  labelOptions,
+  placeLabels,
+  type Box,
+  type LabelOptions,
+} from './labels';
+import { layoutLegend, type LegendLayout } from './legend';
+import { logoHeight, type Logo } from './logo';
 import { boardMapLines } from './map-lines';
 import type { BoardPlan, PlanInput } from './plan';
-import { measureText, type TextMetrics } from './text';
+import { FONT_METRICS, measureText, type TextMetrics } from './text';
 import { BOARD_TEXTS, type BoardTexts } from './texts';
+import type { BoardExtras } from '../puzzle-file';
 
 export interface BoardSetup {
   readonly file: CountryFile;
@@ -52,11 +62,42 @@ export interface BoardSetup {
   readonly footer: TextLine;
   /** GeoNames ids of the cities that are not in the pool (data version mismatch). */
   readonly missing: readonly number[];
+  /** Marked places (slot order): an engraved ring around the nail. */
+  readonly highlight: readonly boolean[];
+  /** Ring radii around marked nails, mm. */
+  readonly ring: { readonly outerMm: number; readonly innerMm: number };
+  /** A logo instead of the text label (slot order; null: the text label). */
+  readonly labelLogos: readonly (Logo | null)[];
+  /** Legend box at the bottom of the board (null: none; the footer is its last line). */
+  readonly legend: LegendLayout | null;
+  /** Preferred start nail (slot; null: the planner's choice). */
+  readonly preferredStart: number | null;
 }
 
 export const TITLE_SIZE_MM = 16;
 export const SUBTITLE_SIZE_MM = 6;
 export const FOOTER_SIZE_MM = 3.5;
+/** Distance of title, footer, legend and scale from the board edge (plan default), mm. */
+export const BOARD_EDGE_MM = 5;
+/** Widths tried for a logo instead of a label, largest first, mm (larger would dominate the map). */
+export const LOGO_WIDTHS_MM = [30, 26, 22, 20] as const;
+
+/** Board extras beyond the puzzle (roadmap 9.1). */
+export interface SetupExtras {
+  /** Legend and preferred start nail (start nail as pool index). */
+  readonly board?: BoardExtras | null;
+  /** Logos instead of the text label, by pool index (from a local file, never stored). */
+  readonly logos?: ReadonlyMap<number, Logo>;
+  /** Large logo in the legend box. */
+  readonly legendLogo?: Logo | null;
+}
+
+/** Ink box of a logo used as a label, vertically centred on the nail at side positions. */
+export function logoMetrics(logo: Logo, width: number, sizeMm: number): TextMetrics {
+  const h = logoHeight(logo, width);
+  const top = -(h / 2 + (FONT_METRICS.capHeight * sizeMm) / 2);
+  return { width, inkLeft: 0, inkRight: width, inkTop: top, inkBottom: top + h };
+}
 
 /** Board setup for the cities with the given GeoNames ids. */
 export function boardSetup(
@@ -67,6 +108,7 @@ export function boardSetup(
   title = '',
   /** Pool to take the cities from (default: the region's towns); e.g. a place list. */
   poolCities: readonly City[] | null = null,
+  extras: SetupExtras = {},
 ): BoardSetup {
   const projection = boardProjection(
     regionFrame(file, params.region),
@@ -85,15 +127,73 @@ export function boardSetup(
   const texts = BOARD_TEXTS[lang];
   const region = regionInfo(file, params.region);
   const regionName = lang === 'de' ? region.name : region.nameEn;
+  const { boardWidthMm: width, boardHeightMm: height } = params;
+  const footer: TextLine = { text: texts.attribution, sizeMm: FOOTER_SIZE_MM };
+  const legendEntries = extras.board?.legend ?? [];
+  const legend =
+    legendEntries.length > 0 || extras.legendLogo
+      ? layoutLegend(
+          legendEntries,
+          extras.legendLogo ?? null,
+          footer.text,
+          width - 2 * BOARD_EDGE_MM,
+        )
+      : null;
+  const legendBox: Box | null = legend
+    ? [
+        BOARD_EDGE_MM,
+        height - BOARD_EDGE_MM - legend.height,
+        width - BOARD_EDGE_MM,
+        height - BOARD_EDGE_MM,
+      ]
+    : null;
   let labels: BoardSetup['labels'] = null;
+  const labelLogos: (Logo | null)[] = cities.map(() => null);
   if (params.labelSizeMm > 0) {
     const labelTexts = cities.map((c) => boardLabel(c, lang));
-    labels = {
-      texts: labelTexts,
-      metrics: labelTexts.map((t) => measureText(t, params.labelSizeMm)),
-      options: labelOptions(params.labelSizeMm, params.nailDiameterMm),
-    };
+    const options = labelOptions(params.labelSizeMm, params.nailDiameterMm);
+    const metrics = labelTexts.map((t) => measureText(t, params.labelSizeMm));
+    // A logo replaces a label if it fits at one of the widths (largest first).
+    members.forEach((poolIndex, slot) => {
+      const logo = extras.logos?.get(poolIndex);
+      if (!logo) return;
+      for (const w of LOGO_WIDTHS_MM) {
+        const trial = metrics.map((m, i) =>
+          i === slot ? logoMetrics(logo, w, params.labelSizeMm) : m,
+        );
+        const placement = placeLabels({
+          points,
+          candidates: points.map((p, i) => labelCandidates(p, trial[i]!, options)),
+          obstacles: legendBox
+            ? [
+                {
+                  kind: 'polygon',
+                  points: [
+                    [legendBox[0], legendBox[1]],
+                    [legendBox[2], legendBox[1]],
+                    [legendBox[2], legendBox[3]],
+                    [legendBox[0], legendBox[3]],
+                  ],
+                },
+              ]
+            : [],
+          width,
+          height,
+          options,
+          nodeLimit: EXPORT_NODE_LIMIT,
+        });
+        if (placement.complete) {
+          metrics[slot] = trial[slot]!;
+          labelLogos[slot] = logo;
+          return;
+        }
+      }
+    });
+    labels = { texts: labelTexts, metrics, options };
   }
+  const clearance = labels?.options.nailClearanceMm ?? params.nailDiameterMm / 2 + 2.5;
+  const startPool = extras.board?.startPlace ?? null;
+  const preferred = startPool === null ? -1 : members.indexOf(startPool);
   return {
     file,
     params,
@@ -105,11 +205,25 @@ export function boardSetup(
     texts,
     title: [
       { text: title || regionName, sizeMm: TITLE_SIZE_MM },
-      { text: texts.subtitle(cities.length), sizeMm: SUBTITLE_SIZE_MM },
+      // A place list may hold alliances and points, not only towns: "Orte".
+      { text: texts.subtitle(cities.length, poolCities !== null), sizeMm: SUBTITLE_SIZE_MM },
     ],
-    footer: { text: texts.attribution, sizeMm: FOOTER_SIZE_MM },
+    footer,
     missing: cityIds.filter((id) => !index.has(id)),
+    highlight: cities.map((c) => c.highlight === true),
+    ring: { outerMm: clearance, innerMm: clearance - 0.8 },
+    labelLogos,
+    legend,
+    preferredStart: preferred >= 0 ? preferred : null,
   };
+}
+
+/** The legend's box on the board (bottom, full width inside the edge). */
+export function legendBox(setup: BoardSetup): Box | null {
+  const { legend } = setup;
+  if (!legend) return null;
+  const { boardWidthMm: w, boardHeightMm: h } = setup.params;
+  return [BOARD_EDGE_MM, h - BOARD_EDGE_MM - legend.height, w - BOARD_EDGE_MM, h - BOARD_EDGE_MM];
 }
 
 export interface StringOptimum {
@@ -132,7 +246,11 @@ export function boardPlanInput(setup: BoardSetup, optimum: StringOptimum): PlanI
     nailDiameterMm: params.nailDiameterMm,
     labels: setup.labels ? { metrics: setup.labels.metrics, options: setup.labels.options } : null,
     titleSize: textBlockSize(setup.title),
-    footerSize: textBlockSize([setup.footer]),
+    // With a legend, the footer is the legend's last line.
+    footerSize: setup.legend ? null : textBlockSize([setup.footer]),
+    reserved: legendBox(setup),
+    preferredStart: setup.preferredStart,
+    edgeMm: BOARD_EDGE_MM,
   };
 }
 
@@ -161,9 +279,13 @@ export function drawPuzzleBoard(
       labelTexts: setup.labels?.texts ?? null,
       labelOptions: setup.labels?.options ?? null,
       title: setup.title,
-      footer: setup.footer,
+      footer: setup.legend ? null : setup.footer,
       scaleCaption: setup.texts.scaleCaption,
       map,
+      highlight: setup.highlight,
+      ring: setup.ring,
+      labelLogos: setup.labelLogos,
+      legend: setup.legend,
     },
     drawing,
   );

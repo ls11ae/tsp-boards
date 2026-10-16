@@ -141,10 +141,31 @@ describe('place lists in links', () => {
         { id: 2928810, label: 'Essen (Ruhr)' },
         { name: 'Exzellenzcluster „Ökologie“', lat: 51.12346, lon: 7.98765, label: 'Öko' },
       ],
+      highlight: [],
     });
-    expect(decodePlaceList(encodePlaceList('pool', []))).toEqual({ mode: 'pool', places: [] });
+    expect(decodePlaceList(encodePlaceList('pool', []))).toEqual({
+      mode: 'pool',
+      places: [],
+      highlight: [],
+    });
     expect(decodePlaceList('not!base64')).toBeNull();
     expect(decodePlaceList('AAAA')).toBeNull();
+  });
+
+  it('carry marked places ("* name": a ring on the board)', () => {
+    const [aachen, ril, plain] = parsePlaceLines(
+      ['* Aachen', '*Ruhr Innovation Lab = Bochum + Dortmund', 'Siegen'].join('\n'),
+    );
+    expect(aachen).toMatchObject({ name: 'Aachen', highlight: true });
+    expect(ril).toMatchObject({ name: 'Ruhr Innovation Lab', highlight: true });
+    expect(plain!.highlight).toBeUndefined();
+    const places = [
+      { id: 2935517, name: 'Dortmund', lat: 51.5, lon: 7.46, highlight: true },
+      { id: 2928810, name: 'Essen', lat: 51.45, lon: 7.01 },
+    ];
+    expect(decodePlaceList(encodePlaceList('fixed', places))!.highlight).toEqual([0]);
+    const towns = new Map(cities.map((c) => [c.id, c]));
+    expect(listCities(places.slice(0, 1), towns)[0]!.highlight).toBe(true);
   });
 });
 

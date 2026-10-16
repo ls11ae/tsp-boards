@@ -729,3 +729,31 @@ Short entries: decision; alternatives considered; reason. Newest last.
   Alternatives: a rotatable orthographic globe (needs hit-testing and labels on a rotating
   view; the map already shows arcs, poles and the wrap at the edge), distances in integer
   metres (would need a second unit in the UI), one global alternate-names file (205 MB).
+- **2026-10-16 Excellence Strategy board (roadmap 9.1).** The first wooden board: the 25-place
+  list on 300 × 600 mm (margin 15, labels 5 mm, minimum distance 10 mm, 2 mm nails, 1 mm
+  string until Kevin measures his): string gap 5.71 mm, also at the scale; robust for r_eff
+  1.0–2.0 mm (same optimum, 5.47–5.95 mm, also at the scale). Marked places: a leading `*` in
+  place lists (`Place.highlight`, links carry the marked indices as a third element), drawn as an
+  engraved ring at the label clearance radius (outer 3.5, inner 2.7 mm for 2 mm nails) and as a
+  ring in the app; alternatives were a bold label (one font only) or a second nail. Board
+  extras in puzzle files (`map.board`: legend lines with a symbol, preferred start nail; CLI
+  `--board-extras file.json`): the legend sits in a box at the bottom, reserved in the plan like
+  the title (no scale, labels or map lines inside; the footer becomes its last line, centred),
+  without a frame, as in Kevin's mock-up. The preferred start nail is tried first, and only for
+  it the scale may turn away from the outward bisector (±15° steps up to ±90°, keeping 30° from
+  both tour edges at the nail); the two directions of the optimum then end at marks r_eff·|φ(a) −
+  φ(b)| apart, so the certificate subtracts that spread and the solution sheet calibrates with
+  the longer direction (the other one ends beyond 0). For the Ruhr Innovation Lab the bisector is
+  blocked by Siegen, Marburg and Gießen and the best turned scale reads 4.92 mm (< 5 mm), so the
+  rule falls back to the planner: Hannover, 5.71 mm. Logos come only from local SVG files
+  (`local/`, git-ignored; never in puzzle files, links or the library): filled paths with their
+  group transforms, arcs as Béziers, white shapes skipped (potrace output works directly); next
+  to a nail the logo replaces the label at the largest of 30/26/22/20 mm width that the label
+  placement allows (40 mm dominated the Ruhr area), in the legend up to 110 × 75 mm; the app's
+  export panel loads the same files for the session. Map lines along the bounding box of a layer
+  (clip edges of the data build, e.g. through Sweden on a tall board or Europe's 45° E cut) are
+  no longer drawn. Exports: from a puzzle file (`cli/export-board.ts --puzzle`, with composite
+  places and the extras), a copy turned by 90° for the P2S bed (600 × 305 mm), a strip of test
+  holes 0.6 mm below to the nail diameter and `--hole` for a press fit, and a report with
+  robustness, tour and runner-up. Lists say "Orte" in the subtitle. The collection index is
+  ordered by theme, Excellence first.

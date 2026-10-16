@@ -1,0 +1,19 @@
+{
+  "_comment": "Legend and preferred start nail of the Excellence Strategy board (roadmap 9.1), for cli/collection.ts --board-extras.",
+  "start": "Ruhr Innovation Lab",
+  "legend": [
+    { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
+    {
+      "symbol": "nail",
+      "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle"
+    },
+    {
+      "symbol": "none",
+      "text": "Ruhr Innovation Lab: Ruhr-Universität Bochum und TU Dortmund – exzellent ab 2027"
+    },
+    {
+      "symbol": "none",
+      "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+    }
+  ]
+}

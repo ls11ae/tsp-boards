@@ -127,6 +127,8 @@ export interface City {
     readonly lat: number;
     readonly lon: number;
   }[];
+  /** Marked place of a list (a ring on the board and in the app). */
+  readonly highlight?: boolean;
 }
 
 export type LabelLanguage = 'de' | 'en';

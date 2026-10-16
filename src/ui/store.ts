@@ -6,7 +6,8 @@ import type { BoardPlan } from '../core/board/plan';
 import type { HeuristicKind } from '../core/overlays';
 import type { TeachingState } from './teaching';
 import type { RobustnessState } from './robustness';
-import type { GroupConstraint, Place, Purpose } from '../core/puzzle-file';
+import type { GroupConstraint, LegendEntry, Place, Purpose } from '../core/puzzle-file';
+import type { Logo } from '../core/board/logo';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
 import { EMPTY_PLAY, type PlayAttempt, type PlayState } from '../core/play';
@@ -97,6 +98,8 @@ export interface ListEntry {
   readonly label?: string;
   /** Members of a composite place, each resolved like a line of its own. */
   readonly members?: readonly ListEntry[];
+  /** Marked place ("* name"): a ring on the board and in the app. */
+  readonly highlight?: boolean;
 }
 
 /** A place list replacing the region's towns (roadmap 5.2). */
@@ -117,6 +120,19 @@ export interface DocMeta {
   readonly title: string;
   readonly description: string;
   readonly purpose: Purpose;
+  /** Board legend and preferred start nail (as the city id in the board's pool), roadmap 9.1. */
+  readonly board?: {
+    readonly legend: readonly LegendEntry[];
+    readonly startCity: number | null;
+  } | null;
+}
+
+/** A logo for the board export (from a local SVG file, kept in memory only). */
+export interface BoardLogo {
+  /** City id in the board's pool whose label it replaces; null: the legend's logo. */
+  readonly city: number | null;
+  readonly fileName: string;
+  readonly logo: Logo;
 }
 
 export const NEW_DOC: DocMeta = { id: null, title: '', description: '', purpose: 'board' };
@@ -225,6 +241,8 @@ export interface AppState {
   readonly boardPlans: Readonly<Record<string, BoardPlanState>>;
   readonly exportOptions: ExportOptions;
   readonly setExportOptions: (update: Partial<ExportOptions>) => void;
+  /** Logos for the board export (never saved). */
+  readonly logos: readonly BoardLogo[];
   readonly setLang: (lang: Language) => void;
   readonly setParams: (update: Partial<UiParams>) => void;
   readonly setShown: (shown: Shown) => void;
@@ -322,6 +340,7 @@ export const useStore = create<AppState>()((set) => ({
   groups: [],
   linkWarnings: [],
   boardPlans: {},
+  logos: [],
   exportOptions: { paper: 'A4', holes: 'cut', strokeMm: 0.1, preview: true },
   setExportOptions: (update) => set((s) => ({ exportOptions: { ...s.exportOptions, ...update } })),
   setLang: (lang) => {

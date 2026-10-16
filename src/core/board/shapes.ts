@@ -77,6 +77,21 @@ export function circlePath(cx: number, cy: number, r: number): PathCommand[] {
   ];
 }
 
+/** Filled ring between two circles (the inner one runs the other way, a hole when filled). */
+export function ringPath(cx: number, cy: number, rOuter: number, rInner: number): PathCommand[] {
+  const r = rInner;
+  const k = 0.5522847498 * r;
+  return [
+    ...circlePath(cx, cy, rOuter),
+    ['M', cx + r, cy],
+    ['C', cx + r, cy - k, cx + k, cy - r, cx, cy - r],
+    ['C', cx - k, cy - r, cx - r, cy - k, cx - r, cy],
+    ['C', cx - r, cy + k, cx - k, cy + r, cx, cy + r],
+    ['C', cx + k, cy + r, cx + r, cy + k, cx + r, cy],
+    ['Z'],
+  ];
+}
+
 /** Axis-parallel rectangle, optionally with rounded corners. */
 export function rectPath(x: number, y: number, w: number, h: number, radius = 0): PathCommand[] {
   const r = Math.min(radius, w / 2, h / 2);

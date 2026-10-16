@@ -151,7 +151,7 @@ function applyPermalink(hash: string): void {
   });
   if (link.title !== null) useStore.getState().setDoc({ title: link.title });
   if (link.list) {
-    const places = linkPlaces(country, link.list.places, warnings);
+    const places = linkPlaces(country, link.list.places, warnings, link.list.highlight);
     useStore.setState({ linkWarnings: warnings });
     openListPuzzle(link.list.mode, places, link.list.selected);
   } else if (link.selected) {
@@ -160,7 +160,13 @@ function applyPermalink(hash: string): void {
 }
 
 /** Places of a link: towns come as ids and get their name and position from the data. */
-function linkPlaces(country: CountryFile, rows: readonly LinkPlace[], warnings: string[]): Place[] {
+function linkPlaces(
+  country: CountryFile,
+  rows: readonly LinkPlace[],
+  warnings: string[],
+  highlight: readonly number[] = [],
+): Place[] {
+  const marked = new Set(highlight);
   const towns = townsById(country);
   const missing: number[] = [];
   const member = (m: LinkMember): Member | null => {
@@ -172,7 +178,13 @@ function linkPlaces(country: CountryFile, rows: readonly LinkPlace[], warnings: 
     }
     return { id: town.id, name: town.name, lat: town.lat, lon: town.lon };
   };
-  const places = rows.flatMap((row): Place[] => {
+  const places = rows.flatMap((row, i): Place[] =>
+    linkPlace(row).map((p) => (marked.has(i) ? { ...p, highlight: true } : p)),
+  );
+  if (missing.length > 0) warnings.push(`missing:${missing.join(',')}`);
+  return places;
+
+  function linkPlace(row: LinkPlace): Place[] {
     if ('members' in row) {
       const members = (row.members ?? []).map(member).filter((m): m is Member => m !== null);
       return members.length >= 2 ? [compositePlace(row.name, members, row.label)] : [];
@@ -192,9 +204,7 @@ function linkPlaces(country: CountryFile, rows: readonly LinkPlace[], warnings: 
         ...(row.label ? { label: row.label } : {}),
       },
     ];
-  });
-  if (missing.length > 0) warnings.push(`missing:${missing.join(',')}`);
-  return places;
+  }
 }
 
 /**

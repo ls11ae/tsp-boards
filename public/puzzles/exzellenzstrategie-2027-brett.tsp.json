@@ -1,0 +1,498 @@
+{
+  "schema": 1,
+  "id": "exzellenzstrategie-2027-brett",
+  "kind": "map",
+  "title": "Exzellenzstrategie 2026–2033",
+  "description": "Das Brett zur Exzellenzstrategie: alle 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und weitere Standorte von Exzellenzclustern – alle mit mindestens zwei Clustern, in NRW alle. Nicht auf dem Brett (je ein Cluster): Bayreuth, Braunschweig, Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm.",
+  "purpose": "board",
+  "language": "de",
+  "app": "0.9.0",
+  "updated": "2026-10-16",
+  "data": {
+    "country": "DE",
+    "version": 1
+  },
+  "map": {
+    "params": {
+      "region": "DE",
+      "n": 25,
+      "boardWidthMm": 300,
+      "boardHeightMm": 600,
+      "marginMm": 15,
+      "nailDiameterMm": 2,
+      "stringThicknessMm": 1,
+      "minDistanceMm": 10,
+      "targetGapMm": 5,
+      "minPopulation": 5000,
+      "seed": 1,
+      "iterations": 1000,
+      "weightGap": 1,
+      "weightDifficulty": 0.5,
+      "weightRecognizability": 0.5,
+      "weightInterior": 0,
+      "weightNonNearest": 0,
+      "labelSizeMm": 5,
+      "labelLanguage": "de",
+      "blankBoard": false
+    },
+    "places": [
+      {
+        "id": 3247449,
+        "name": "Aachen",
+        "lat": 50.7766,
+        "lon": 6.0834,
+        "highlight": true
+      },
+      {
+        "id": 2950159,
+        "name": "Berlin",
+        "lat": 52.5244,
+        "lon": 13.4105,
+        "highlight": true
+      },
+      {
+        "id": 2946447,
+        "name": "Bonn",
+        "lat": 50.7344,
+        "lon": 7.0955,
+        "highlight": true
+      },
+      {
+        "id": 2935022,
+        "name": "Dresden",
+        "lat": 51.0509,
+        "lon": 13.7383,
+        "highlight": true
+      },
+      {
+        "id": 2911298,
+        "name": "Hamburg",
+        "lat": 53.5507,
+        "lon": 9.993,
+        "highlight": true
+      },
+      {
+        "id": 2907911,
+        "name": "Heidelberg",
+        "lat": 49.4077,
+        "lon": 8.6908,
+        "highlight": true
+      },
+      {
+        "id": 2892794,
+        "name": "Karlsruhe",
+        "lat": 49.0094,
+        "lon": 8.4044,
+        "highlight": true
+      },
+      {
+        "id": 2867714,
+        "name": "München",
+        "lat": 48.1374,
+        "lon": 11.5755,
+        "highlight": true
+      },
+      {
+        "id": 2820860,
+        "name": "Tübingen",
+        "lat": 48.5227,
+        "lon": 9.0522,
+        "highlight": true
+      },
+      {
+        "id": 2925177,
+        "name": "Freiburg im Breisgau",
+        "lat": 47.9959,
+        "lon": 7.8522,
+        "highlight": true
+      },
+      {
+        "id": 2895044,
+        "name": "Jena",
+        "lat": 50.9288,
+        "lon": 11.5899,
+        "highlight": true
+      },
+      {
+        "id": 2886242,
+        "name": "Köln",
+        "lat": 50.9333,
+        "lon": 6.95,
+        "highlight": true
+      },
+      {
+        "name": "Rhein-Main-Universitäten",
+        "lat": 49.9897,
+        "lon": 8.5382,
+        "members": [
+          {
+            "id": 2938913,
+            "name": "Darmstadt",
+            "lat": 49.8717,
+            "lon": 8.6503
+          },
+          {
+            "id": 2925533,
+            "name": "Frankfurt am Main",
+            "lat": 50.1155,
+            "lon": 8.6842
+          },
+          {
+            "id": 2874225,
+            "name": "Mainz",
+            "lat": 49.9819,
+            "lon": 8.2801
+          }
+        ],
+        "highlight": true
+      },
+      {
+        "name": "Ruhr Innovation Lab",
+        "lat": 51.4983,
+        "lon": 7.34125,
+        "members": [
+          {
+            "id": 2947416,
+            "name": "Bochum",
+            "lat": 51.4817,
+            "lon": 7.2165
+          },
+          {
+            "id": 2935517,
+            "name": "Dortmund",
+            "lat": 51.5149,
+            "lon": 7.466
+          }
+        ],
+        "highlight": true
+      },
+      {
+        "id": 2910831,
+        "name": "Hannover",
+        "lat": 52.3705,
+        "lon": 9.7332
+      },
+      {
+        "id": 2920512,
+        "name": "Gießen",
+        "lat": 50.5873,
+        "lon": 8.6755
+      },
+      {
+        "id": 2857458,
+        "name": "Oldenburg",
+        "lat": 53.1404,
+        "lon": 8.2148
+      },
+      {
+        "id": 2944388,
+        "name": "Bremen",
+        "lat": 53.0758,
+        "lon": 8.8072
+      },
+      {
+        "id": 2891122,
+        "name": "Kiel",
+        "lat": 54.3213,
+        "lon": 10.1349
+      },
+      {
+        "id": 2873759,
+        "name": "Marburg",
+        "lat": 50.809,
+        "lon": 8.7707
+      },
+      {
+        "id": 2825297,
+        "name": "Stuttgart",
+        "lat": 48.7823,
+        "lon": 9.177
+      },
+      {
+        "id": 2805615,
+        "name": "Würzburg",
+        "lat": 49.7939,
+        "lon": 9.9512
+      },
+      {
+        "id": 2934246,
+        "name": "Düsseldorf",
+        "lat": 51.2232,
+        "lon": 6.7793
+      },
+      {
+        "id": 2867543,
+        "name": "Münster",
+        "lat": 51.9624,
+        "lon": 7.6257
+      },
+      {
+        "id": 2832495,
+        "name": "Siegen",
+        "lat": 50.8748,
+        "lon": 8.0243
+      }
+    ],
+    "list": {
+      "mode": "fixed",
+      "places": [
+        {
+          "id": 3247449,
+          "name": "Aachen",
+          "lat": 50.7766,
+          "lon": 6.0834,
+          "highlight": true
+        },
+        {
+          "id": 2950159,
+          "name": "Berlin",
+          "lat": 52.5244,
+          "lon": 13.4105,
+          "highlight": true
+        },
+        {
+          "id": 2946447,
+          "name": "Bonn",
+          "lat": 50.7344,
+          "lon": 7.0955,
+          "highlight": true
+        },
+        {
+          "id": 2935022,
+          "name": "Dresden",
+          "lat": 51.0509,
+          "lon": 13.7383,
+          "highlight": true
+        },
+        {
+          "id": 2911298,
+          "name": "Hamburg",
+          "lat": 53.5507,
+          "lon": 9.993,
+          "highlight": true
+        },
+        {
+          "id": 2907911,
+          "name": "Heidelberg",
+          "lat": 49.4077,
+          "lon": 8.6908,
+          "highlight": true
+        },
+        {
+          "id": 2892794,
+          "name": "Karlsruhe",
+          "lat": 49.0094,
+          "lon": 8.4044,
+          "highlight": true
+        },
+        {
+          "id": 2867714,
+          "name": "München",
+          "lat": 48.1374,
+          "lon": 11.5755,
+          "highlight": true
+        },
+        {
+          "id": 2820860,
+          "name": "Tübingen",
+          "lat": 48.5227,
+          "lon": 9.0522,
+          "highlight": true
+        },
+        {
+          "id": 2925177,
+          "name": "Freiburg im Breisgau",
+          "lat": 47.9959,
+          "lon": 7.8522,
+          "highlight": true
+        },
+        {
+          "id": 2895044,
+          "name": "Jena",
+          "lat": 50.9288,
+          "lon": 11.5899,
+          "highlight": true
+        },
+        {
+          "id": 2886242,
+          "name": "Köln",
+          "lat": 50.9333,
+          "lon": 6.95,
+          "highlight": true
+        },
+        {
+          "name": "Rhein-Main-Universitäten",
+          "lat": 49.9897,
+          "lon": 8.5382,
+          "members": [
+            {
+              "id": 2938913,
+              "name": "Darmstadt",
+              "lat": 49.8717,
+              "lon": 8.6503
+            },
+            {
+              "id": 2925533,
+              "name": "Frankfurt am Main",
+              "lat": 50.1155,
+              "lon": 8.6842
+            },
+            {
+              "id": 2874225,
+              "name": "Mainz",
+              "lat": 49.9819,
+              "lon": 8.2801
+            }
+          ],
+          "highlight": true
+        },
+        {
+          "name": "Ruhr Innovation Lab",
+          "lat": 51.4983,
+          "lon": 7.34125,
+          "members": [
+            {
+              "id": 2947416,
+              "name": "Bochum",
+              "lat": 51.4817,
+              "lon": 7.2165
+            },
+            {
+              "id": 2935517,
+              "name": "Dortmund",
+              "lat": 51.5149,
+              "lon": 7.466
+            }
+          ],
+          "highlight": true
+        },
+        {
+          "id": 2910831,
+          "name": "Hannover",
+          "lat": 52.3705,
+          "lon": 9.7332
+        },
+        {
+          "id": 2920512,
+          "name": "Gießen",
+          "lat": 50.5873,
+          "lon": 8.6755
+        },
+        {
+          "id": 2857458,
+          "name": "Oldenburg",
+          "lat": 53.1404,
+          "lon": 8.2148
+        },
+        {
+          "id": 2944388,
+          "name": "Bremen",
+          "lat": 53.0758,
+          "lon": 8.8072
+        },
+        {
+          "id": 2891122,
+          "name": "Kiel",
+          "lat": 54.3213,
+          "lon": 10.1349
+        },
+        {
+          "id": 2873759,
+          "name": "Marburg",
+          "lat": 50.809,
+          "lon": 8.7707
+        },
+        {
+          "id": 2825297,
+          "name": "Stuttgart",
+          "lat": 48.7823,
+          "lon": 9.177
+        },
+        {
+          "id": 2805615,
+          "name": "Würzburg",
+          "lat": 49.7939,
+          "lon": 9.9512
+        },
+        {
+          "id": 2934246,
+          "name": "Düsseldorf",
+          "lat": 51.2232,
+          "lon": 6.7793
+        },
+        {
+          "id": 2867543,
+          "name": "Münster",
+          "lat": 51.9624,
+          "lon": 7.6257
+        },
+        {
+          "id": 2832495,
+          "name": "Siegen",
+          "lat": 50.8748,
+          "lon": 8.0243
+        }
+      ]
+    },
+    "constraints": {
+      "pinned": [],
+      "excluded": [],
+      "groups": []
+    },
+    "board": {
+      "legend": [
+        {
+          "symbol": "ring",
+          "text": "Exzellenzuniversität oder -verbund ab 2027"
+        },
+        {
+          "symbol": "nail",
+          "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle"
+        },
+        {
+          "symbol": "none",
+          "text": "Ruhr Innovation Lab: Ruhr-Universität Bochum und TU Dortmund – exzellent ab 2027"
+        },
+        {
+          "symbol": "none",
+          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+        }
+      ],
+      "startPlace": 13
+    },
+    "results": {
+      "tour": [
+        0,
+        11,
+        2,
+        24,
+        19,
+        15,
+        12,
+        5,
+        6,
+        9,
+        8,
+        20,
+        7,
+        21,
+        10,
+        3,
+        1,
+        18,
+        4,
+        14,
+        17,
+        16,
+        23,
+        13,
+        22
+      ],
+      "lengthMm": 1112.499,
+      "gapMm": 5.709,
+      "model": "string",
+      "scaleGapMm": 5.709,
+      "startPlace": 14
+    }
+  }
+}

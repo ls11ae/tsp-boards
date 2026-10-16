@@ -7,7 +7,7 @@ import { drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import { boardSvg } from '../core/board/svg';
 import { worksheetPdf } from '../core/board/worksheet';
 import { listName } from '../core/data';
-import { measuredLength } from '../core/board/measure';
+import { calibrationTour, measuredLength } from '../core/board/measure';
 import { encodePermalink } from '../core/permalink';
 import { euclideanLength, stringLength } from '../core/tsp/tour';
 import type { BoardModel } from './board';
@@ -108,9 +108,13 @@ export function downloadBoard(
   }
   const v = puzzle.verification;
   if (v?.status !== 'done' || !v.verification.string || !country) return;
-  const optimal = v.verification.string.optimal;
-  const start = optimal.indexOf(plan.scale.slot);
-  const tour = optimal.map((_, i) => optimal[(start + i) % optimal.length]!);
+  // From the start nail in the direction that needs more string (the calibration).
+  const tour = calibrationTour(
+    setup.inst,
+    v.verification.string.optimal,
+    plan.scale.slot,
+    plan.scale.direction,
+  );
   const hash = encodePermalink(
     params,
     { country: country.country, version: country.dataVersion },

@@ -10,6 +10,11 @@
 //   npx tsx cli/collection.ts list --file places.txt --pool --n 20 [--seed 1] [--iterations 1000]
 //       [--merge 2] (km within which list places merge; 0 for districts)
 //       [--pin 'A,B'] (a search over the list as pool: n of its places, the pinned ones included)
+//   Board options for list and search: [--board 300x600] [--margin 15] [--label 5] [--min-dist 10]
+//       [--nail 2] [--string 1] [--target 5]; for lists also [--board-extras file.json]
+//       ({ "start": "<place name>", "legend": [{ "symbol": "ring"|"nail"|"none", "text": … }] }:
+//       preferred start nail and a legend box at the bottom of the board, roadmap 9.1).
+//       A line "* name" in the list marks a place (a ring around its nail).
 //   npx tsx cli/collection.ts index        (rebuilds index.json from the files)
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -29,7 +34,10 @@ import {
   collectionEntry,
   parsePuzzleDoc,
   serializePuzzleDoc,
+  type BoardExtras,
+  type CollectionEntry,
   type CollectionIndex,
+  type LegendEntry,
   type Member,
   type Place,
   type PuzzleDoc,
@@ -93,17 +101,71 @@ function meta(kind: 'map' | 'incremental'): Omit<PuzzleDoc, 'data'> {
   };
 }
 
+/** Board options shared by list and search (overrides of the defaults). */
+function boardOptions(defaults: PuzzleParams): Partial<PuzzleParams> {
+  const num = (name: string, fallback: number) => Number(arg(name, String(fallback)));
+  const [bw, bh] = arg('board', '').split('x').map(Number);
+  return {
+    ...(bw && bh ? { boardWidthMm: bw, boardHeightMm: bh } : {}),
+    marginMm: num('margin', defaults.marginMm),
+    labelSizeMm: num('label', defaults.labelSizeMm),
+    minDistanceMm: num('min-dist', defaults.minDistanceMm),
+    nailDiameterMm: num('nail', defaults.nailDiameterMm),
+    stringThicknessMm: num('string', defaults.stringThicknessMm),
+    targetGapMm: num('target', defaults.targetGapMm),
+  };
+}
+
+/** Legend and preferred start nail of a board (--board-extras file.json). */
+interface ExtrasInput {
+  readonly start: string | null;
+  readonly legend: readonly LegendEntry[];
+}
+
+function readExtras(): ExtrasInput | null {
+  const file = arg('board-extras', '');
+  if (!file) return null;
+  const json = JSON.parse(readFileSync(file, 'utf8')) as {
+    start?: string;
+    legend?: { symbol?: string; text?: string }[];
+  };
+  return {
+    start: json.start ?? null,
+    legend: (json.legend ?? []).map((e) => ({
+      symbol: e.symbol === 'ring' || e.symbol === 'nail' ? e.symbol : 'none',
+      text: e.text ?? '',
+    })),
+  };
+}
+
 async function mapDoc(
   params: PuzzleParams,
   ids: readonly number[] | null,
   list: { readonly mode: 'fixed' | 'pool'; readonly places: readonly Place[] } | null = null,
+  extrasInput: ExtrasInput | null = null,
 ): Promise<PuzzleDoc> {
   const file = loadCountry(params.region.slice(0, 2));
   let m = meta('map');
   const towns = new Map(citiesFromColumns(file.cities, file.states).map((c) => [c.id, c]));
   const pool = list ? listCities(list.places, towns) : null;
   const selected = ids ?? pool!.map((c) => c.id);
-  const setup = boardSetup(file, { ...params, labelLanguage: m.language }, selected, m.title, pool);
+  // The preferred start nail by name, as a pool index for the setup.
+  const startPool = extrasInput?.start
+    ? (list?.places.findIndex((p) => p.name === extrasInput.start) ?? -1)
+    : -1;
+  if (extrasInput?.start && startPool < 0)
+    throw new Error(`--board-extras: start "${extrasInput.start}" is not in the list`);
+  const extras: BoardExtras | null = extrasInput
+    ? { legend: extrasInput.legend, startPlace: startPool >= 0 ? startPool : null }
+    : null;
+  const setup = boardSetup(
+    file,
+    { ...params, labelLanguage: m.language },
+    selected,
+    m.title,
+    pool,
+    { board: extras },
+  );
   if (setup.missing.length > 0)
     throw new Error(`cities not in the pool: ${setup.missing.join(',')}`);
   const backend = await loadBackend();
@@ -138,18 +200,33 @@ async function mapDoc(
     );
   console.error(
     `${m.title} (${m.purpose}): n = ${selected.length}, string gap ${(v.string.gap / 1000).toFixed(2)} mm (${v.mode}), ` +
-      `scale ${plan ? (plan.measured.gapUm / 1000).toFixed(2) : '–'} mm`,
+      `scale ${plan ? (plan.measured.gapUm / 1000).toFixed(2) : '–'} mm` +
+      (plan ? `, start ${setup.cities[plan.scale.slot]!.name}` : '') +
+      (plan && plan.warnings.length > 0
+        ? `, warnings: ${plan.warnings.map((w) => w.kind).join(', ')}`
+        : ''),
   );
+  const places = list
+    ? setup.cities.map((c) => list.places[pool!.indexOf(c)]!)
+    : setup.cities.map((c) => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon }));
   return {
     ...m,
     data: { country: file.country, version: file.dataVersion },
     map: {
       params: { ...params, n: selected.length, labelLanguage: m.language },
-      places: list
-        ? setup.cities.map((c) => list.places[pool!.indexOf(c)]!)
-        : setup.cities.map((c) => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon })),
+      places,
       ...(list ? { list } : {}),
       constraints: { pinned: [], excluded: [], groups: [] },
+      ...(extrasInput
+        ? {
+            board: {
+              legend: extrasInput.legend,
+              startPlace: extrasInput.start
+                ? places.findIndex((p) => p.name === extrasInput.start)
+                : null,
+            },
+          }
+        : {}),
       results: {
         tour: v.string.optimal,
         lengthMm: v.string.optimalLength / 1000,
@@ -169,13 +246,36 @@ function write(doc: PuzzleDoc): void {
   console.error(`wrote public/puzzles/${file}`);
 }
 
+/** The Excellence puzzles first (roadmap 9.1), in this order; then by theme. */
+const FIRST = [
+  'exzellenzstrategie-2027-brett',
+  'exzellenzstrategie-2027',
+  'exzellenzuniversitaeten-2027-brett',
+  'exzellenzuniversitaeten-2027',
+  'exzellenzcluster-2026-verbuende',
+  'exzellenzcluster-2026',
+];
+
+/** Gallery order (roadmap 9.5): Excellence, Germany, cities, Europe, world, step by step. */
+function theme(e: CollectionEntry): number {
+  const first = FIRST.indexOf(e.id);
+  if (first >= 0) return first;
+  if (e.kind === 'incremental') return 50;
+  if (e.region.startsWith('WO')) return 40;
+  if (e.region.startsWith('EU')) return 30;
+  if (/^DE-(BE|HH|HB)$/.test(e.region)) return 20;
+  return 10;
+}
+
 function rebuildIndex(): void {
   const files = readdirSync(DIR)
     .filter((f) => f.endsWith('.tsp.json'))
     .sort();
-  const puzzles = files.map((f) =>
-    collectionEntry(parsePuzzleDoc(JSON.parse(readFileSync(path.join(DIR, f), 'utf8'))), f),
-  );
+  const puzzles = files
+    .map((f) =>
+      collectionEntry(parsePuzzleDoc(JSON.parse(readFileSync(path.join(DIR, f), 'utf8'))), f),
+    )
+    .sort((a, b) => theme(a) - theme(b) || a.title.localeCompare(b.title, 'de'));
   const index: CollectionIndex = { schema: PUZZLE_SCHEMA, puzzles };
   writeFileSync(path.join(DIR, 'index.json'), `${JSON.stringify(index, null, 2)}\n`);
   console.error(`index: ${puzzles.length} puzzles`);
@@ -212,6 +312,7 @@ if (command === 'add') {
       return [
         {
           ...compositePlace(line.name, members, line.label),
+          ...(line.highlight ? { highlight: true } : {}),
           lines: [line.line],
           names: [line.label ?? line.name],
         },
@@ -224,6 +325,7 @@ if (command === 'add') {
           lat: line.lat,
           lon: line.lon,
           ...(line.label ? { label: line.label } : {}),
+          ...(line.highlight ? { highlight: true } : {}),
           lines: [line.line],
           names: [line.label ?? line.name],
         },
@@ -236,6 +338,7 @@ if (command === 'add') {
         name: town.name,
         lat: town.lat,
         lon: town.lon,
+        ...(line.highlight ? { highlight: true } : {}),
         lines: [line.line],
         names: [town.label],
       },
@@ -247,19 +350,14 @@ if (command === 'add') {
     lat: p.lat,
     lon: p.lon,
     ...(p.label ? { label: p.label } : {}),
-
     ...(p.members ? { members: p.members } : {}),
+    ...(p.highlight ? { highlight: true } : {}),
   }));
   const defaults = defaultsFor(arg('region', 'DE'));
   const params: PuzzleParams = {
     ...defaults,
     region: arg('region', 'DE'),
-    minDistanceMm: Number(arg('min-dist', String(defaults.minDistanceMm))),
-    targetGapMm: Number(arg('target', String(defaults.targetGapMm))),
-    ...(() => {
-      const [bw, bh] = arg('board', '').split('x').map(Number);
-      return bw && bh ? { boardWidthMm: bw, boardHeightMm: bh } : {};
-    })(),
+    ...boardOptions(defaults),
   };
   if (args.includes('--pool')) {
     const searchP: PuzzleParams = {
@@ -309,13 +407,14 @@ if (command === 'add') {
         { mode: 'pool', places },
       ),
     );
-  } else write(await mapDoc(params, null, { mode: 'fixed', places }));
+  } else write(await mapDoc(params, null, { mode: 'fixed', places }, readExtras()));
   rebuildIndex();
 } else if (command === 'search') {
   const defaults = defaultsFor(arg('region', 'DE'));
   const world = loadCountry(arg('region', 'DE').slice(0, 2)).metric === 'sphere';
   const params: PuzzleParams = {
     ...defaults,
+    ...boardOptions(defaults),
     region: arg('region', 'DE'),
     n: Number(arg('n', '40')),
     seed: Number(arg('seed', '1')),

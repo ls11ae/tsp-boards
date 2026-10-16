@@ -715,6 +715,55 @@ ul.cards {
   fill: none;
 }
 
+/* Marked places (roadmap 9.1): a ring, as on the board. */
+.play-place circle.mark-ring,
+.play-place.visited circle.mark-ring,
+.play-place.start circle.mark-ring {
+  fill: none;
+  stroke: var(--nail);
+}
+
+.nail-ring {
+  fill: none;
+  stroke: var(--nail);
+  stroke-width: 0.8;
+}
+
+.place-legend {
+  list-style: none;
+  margin: 6px 0;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.place-legend li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 3px 0;
+}
+
+.place-legend li.note {
+  color: var(--muted);
+}
+
+.legend-symbol {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+}
+
+.legend-symbol .ring {
+  fill: none;
+  stroke: var(--nail);
+  stroke-width: 1.6;
+}
+
+.legend-symbol .dot {
+  fill: var(--nail);
+}
+
 .play-label {
   fill: var(--label);
   stroke: var(--label-halo);

@@ -2,6 +2,7 @@ import { lazy, Suspense, useMemo } from 'react';
 import { tourMetrics } from '../../core/metrics';
 import type { Evaluation } from '../../core/search/search';
 import { boardInstance, legMm, type BoardModel } from '../board';
+import { PlaceLegend } from './PlaceLegend';
 import { clearMarks, showCandidate } from '../controller';
 import { useFormat, useT } from '../i18n';
 import type { PuzzleView } from '../puzzle';
@@ -200,6 +201,7 @@ function PuzzleMetrics({
           </>
         )}
       </dl>
+      <PlaceLegend board={board} members={puzzle.members} />
       {exact?.optimaDiffer && <p className="hint">{t.optimaDiffer}</p>}
       <label className="checkbox">
         <input

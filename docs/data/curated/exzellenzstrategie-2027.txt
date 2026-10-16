@@ -9,20 +9,20 @@
 # Würzburg 2; Bayreuth, Braunschweig, Düsseldorf, Erlangen, Halle (Saale), Konstanz, Leipzig,
 # Lübeck, Münster, Regensburg, Siegen, Ulm 1.
 # Universities of Excellence and alliances:
-Aachen
-Berlin
-Bonn
-Dresden
-Hamburg
-Heidelberg
-Karlsruhe
-München
-Tübingen
-Freiburg im Breisgau
-Jena
-Köln
-Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
-Ruhr Innovation Lab = Bochum + Dortmund
+* Aachen
+* Berlin
+* Bonn
+* Dresden
+* Hamburg
+* Heidelberg
+* Karlsruhe
+* München
+* Tübingen
+* Freiburg im Breisgau
+* Jena
+* Köln
+* Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
+* Ruhr Innovation Lab = Bochum + Dortmund
 # Further sites of Clusters of Excellence:
 Hannover
 Gießen

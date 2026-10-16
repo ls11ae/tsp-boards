@@ -226,6 +226,16 @@ export const en = {
   warnLabels: (count: string) => `${count} labels do not fit.`,
   warnTitle: 'There is no room for the title.',
   warnGap: (value: string) => `The gap at the scale (${value} mm) is below the target.`,
+  logos: 'Logos for the board',
+  logosHint:
+    'SVG files (e.g. from potrace), engraved as filled areas. They stay in this session only and are never saved.',
+  logoPlace: 'Logo instead of the label of',
+  logoFile: 'SVG file',
+  logoLegend: 'Logo in the legend',
+  logoRemove: 'Remove',
+  warnLegend: (n: string) => `${n} nails lie in the legend box.`,
+  warnStart:
+    'The preferred start nail has no room for the scale or too small a gap; the scale is at another nail.',
   warnOptimum:
     'Measured at the scale, another round trip would be shortest. Choose another candidate.',
   warnUnverified: 'The gap at the scale is only bounded: the exact check did not finish.',
@@ -250,6 +260,8 @@ export const en = {
   playHintDigital:
     'Click the places in the order of your round trip and finally the first place again (or choose them below). A click on a visited place goes back to it. Lengths are straight lines between the places.',
   legendOptimum: 'shortest round trip',
+  legendMarked: 'marked place',
+  legendPlain: 'further place',
   legendOwn: 'your round trip',
   nextPlace: 'Next place',
   nextNail: 'Next nail',

@@ -10,6 +10,12 @@ One place per line (town names of the country data); lines starting with `#` are
 | `exzellenzuniversitaeten-2027-brett.txt` | board variant: Bonn/Köln also combined | 13 places (3 composite) | board (string gap 10.15 mm) |
 | `exzellenzcluster-2026.txt`        | Clusters of Excellence, 2026–2032 (70 clusters) | 37 cities | digital (string gap 2.1 mm) |
 | `exzellenzcluster-2026-verbuende.txt` | Clusters of Excellence, neighbouring sites combined | 32 places (4 composite) | digital (string gap 1.14 mm; no nails closer than 25 mm) |
+| `exzellenzstrategie-2027.txt` | Exzellenzstrategie: alle 34 Standorte (roadmap 9.1) | 34 places: universities and alliances (14, marked) and the 20 further cluster sites | digital (string gap 1.14 mm; runner-up +0.06 %) |
+| `exzellenzstrategie-2027-brett.txt` + `.board.json` | Exzellenzstrategie 2026–2033, the 300 × 600 mm board (roadmap 9.1, files in `docs/boards/exzellenzstrategie-2027/`) | 25 places: universities (14, marked), cluster sites with at least two clusters, all cluster sites in NRW | board (string gap 5.71 mm, also at the scale; start nail Hannover) |
+
+Lines starting with `*` are marked places (a ring on the board and in the app); the
+`.board.json` file holds the board's legend and its preferred start nail
+(`cli/collection.ts list … --board-extras`).
 
 Sources (retrieved 2026-10-12; details, universities, cluster names and coordinates in
 `excellence-strategy-2026-10-12.json`):

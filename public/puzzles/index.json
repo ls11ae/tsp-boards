@@ -2,74 +2,24 @@
   "schema": 1,
   "puzzles": [
     {
-      "file": "bayern-30.tsp.json",
-      "id": "bayern-30",
+      "file": "exzellenzstrategie-2027-brett.tsp.json",
+      "id": "exzellenzstrategie-2027-brett",
       "kind": "map",
-      "title": "Bayern: 30 Städte",
-      "description": "Rundreise durch 30 bayerische Städte.",
-      "purpose": "board",
-      "region": "DE-BY",
-      "n": 30
-    },
-    {
-      "file": "berlin-ortsteile-20.tsp.json",
-      "id": "berlin-ortsteile-20",
-      "kind": "map",
-      "title": "Berlin: 20 Ortsteile",
-      "description": "Rundreise durch 20 der 96 Berliner Ortsteile (Lage nach Wikidata).",
-      "purpose": "board",
-      "region": "DE-BE",
-      "n": 20
-    },
-    {
-      "file": "deutschland-40.tsp.json",
-      "id": "deutschland-40",
-      "kind": "map",
-      "title": "Deutschland: 40 Städte",
-      "description": "Die Rundreise durch 40 bekannte deutsche Städte (ab 50.000 Einwohnern, hohes Gewicht für bekannte Städte).",
+      "title": "Exzellenzstrategie 2026–2033",
+      "description": "Das Brett zur Exzellenzstrategie: alle 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und weitere Standorte von Exzellenzclustern – alle mit mindestens zwei Clustern, in NRW alle. Nicht auf dem Brett (je ein Cluster): Bayreuth, Braunschweig, Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm.",
       "purpose": "board",
       "region": "DE",
-      "n": 40
+      "n": 25
     },
     {
-      "file": "europa-30.tsp.json",
-      "id": "europa-30",
+      "file": "exzellenzstrategie-2027.tsp.json",
+      "id": "exzellenzstrategie-2027",
       "kind": "map",
-      "title": "Europa: 30 Städte",
-      "description": "Rundreise durch 30 bekannte europäische Städte (ab 300.000 Einwohnern).",
-      "purpose": "board",
-      "region": "EU",
-      "n": 30
-    },
-    {
-      "file": "europa-hauptstaedte.tsp.json",
-      "id": "europa-hauptstaedte",
-      "kind": "map",
-      "title": "Europas Hauptstädte",
-      "description": "Die Hauptstädte der europäischen Länder mit mindestens 50.000 Einwohnern (40 Städte).",
-      "purpose": "digital",
-      "region": "EU",
-      "n": 40
-    },
-    {
-      "file": "exzellenzcluster-2026-verbuende.tsp.json",
-      "id": "exzellenzcluster-2026-verbuende",
-      "kind": "map",
-      "title": "Exzellenzcluster 2026–2032, Nachbarstandorte zusammengefasst",
-      "description": "Die 70 Exzellenzcluster ab 2026 in 32 Orten: Nachbarstädte mit gemeinsamen Clustern sind ein Ort zwischen ihnen (Bochum/Dortmund, Bonn/Köln, Gießen/Marburg, Rhein-Main).",
+      "title": "Exzellenzstrategie: alle 34 Standorte",
+      "description": "Alle 34 Orte der Exzellenzstrategie: die 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und die 20 weiteren Standorte von Exzellenzclustern 2026–2032. Die zweitbeste Rundreise ist nur 0,06 % länger – ein Puzzle für den Bildschirm.",
       "purpose": "digital",
       "region": "DE",
-      "n": 32
-    },
-    {
-      "file": "exzellenzcluster-2026.tsp.json",
-      "id": "exzellenzcluster-2026",
-      "kind": "map",
-      "title": "Exzellenzcluster 2026–2032",
-      "description": "Die 70 Exzellenzcluster der Förderperiode ab 2026 (DFG/WR, Entscheidung vom 22. Mai 2025) in 37 Städten, ein Ort pro Stadt.",
-      "purpose": "digital",
-      "region": "DE",
-      "n": 37
+      "n": 34
     },
     {
       "file": "exzellenzuniversitaeten-2027-brett.tsp.json",
@@ -92,14 +42,44 @@
       "n": 14
     },
     {
-      "file": "hamburg-stadtteile-20.tsp.json",
-      "id": "hamburg-stadtteile-20",
+      "file": "exzellenzcluster-2026-verbuende.tsp.json",
+      "id": "exzellenzcluster-2026-verbuende",
       "kind": "map",
-      "title": "Hamburg: 20 Stadtteile",
-      "description": "Rundreise durch 20 der 104 Hamburger Stadtteile (Lage nach Wikidata).",
+      "title": "Exzellenzcluster 2026–2032, Nachbarstandorte zusammengefasst",
+      "description": "Die 70 Exzellenzcluster ab 2026 in 32 Orten: Nachbarstädte mit gemeinsamen Clustern sind ein Ort zwischen ihnen (Bochum/Dortmund, Bonn/Köln, Gießen/Marburg, Rhein-Main).",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 32
+    },
+    {
+      "file": "exzellenzcluster-2026.tsp.json",
+      "id": "exzellenzcluster-2026",
+      "kind": "map",
+      "title": "Exzellenzcluster 2026–2032",
+      "description": "Die 70 Exzellenzcluster der Förderperiode ab 2026 (DFG/WR, Entscheidung vom 22. Mai 2025) in 37 Städten, ein Ort pro Stadt.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 37
+    },
+    {
+      "file": "bayern-30.tsp.json",
+      "id": "bayern-30",
+      "kind": "map",
+      "title": "Bayern: 30 Städte",
+      "description": "Rundreise durch 30 bayerische Städte.",
       "purpose": "board",
-      "region": "DE-HH",
-      "n": 20
+      "region": "DE-BY",
+      "n": 30
+    },
+    {
+      "file": "deutschland-40.tsp.json",
+      "id": "deutschland-40",
+      "kind": "map",
+      "title": "Deutschland: 40 Städte",
+      "description": "Die Rundreise durch 40 bekannte deutsche Städte (ab 50.000 Einwohnern, hohes Gewicht für bekannte Städte).",
+      "purpose": "board",
+      "region": "DE",
+      "n": 40
     },
     {
       "file": "hansestaedte-25.tsp.json",
@@ -112,16 +92,6 @@
       "n": 25
     },
     {
-      "file": "landeshauptstaedte-brett.tsp.json",
-      "id": "landeshauptstaedte-brett",
-      "kind": "map",
-      "title": "Landeshauptstädte (Brett)",
-      "description": "Die 16 Landeshauptstädte als Brett: Mainz und Wiesbaden liegen so nah beieinander, dass sie ein Nagel zwischen beiden Städten sind.",
-      "purpose": "board",
-      "region": "DE",
-      "n": 15
-    },
-    {
       "file": "landeshauptstaedte.tsp.json",
       "id": "landeshauptstaedte",
       "kind": "map",
@@ -130,6 +100,16 @@
       "purpose": "digital",
       "region": "DE",
       "n": 16
+    },
+    {
+      "file": "landeshauptstaedte-brett.tsp.json",
+      "id": "landeshauptstaedte-brett",
+      "kind": "map",
+      "title": "Landeshauptstädte (Brett)",
+      "description": "Die 16 Landeshauptstädte als Brett: Mainz und Wiesbaden liegen so nah beieinander, dass sie ein Nagel zwischen beiden Städten sind.",
+      "purpose": "board",
+      "region": "DE",
+      "n": 15
     },
     {
       "file": "nrw-25.tsp.json",
@@ -142,26 +122,6 @@
       "n": 25
     },
     {
-      "file": "olympia-sommerspiele.tsp.json",
-      "id": "olympia-sommerspiele",
-      "kind": "map",
-      "title": "Olympische Sommerspiele",
-      "description": "Alle Austragungsorte der Olympischen Sommerspiele von Athen 1896 bis Paris 2024: eine Rundreise um die Welt, gemessen auf der Kugel.",
-      "purpose": "digital",
-      "region": "WO",
-      "n": 23
-    },
-    {
-      "file": "schritt-12.tsp.json",
-      "id": "schritt-12",
-      "kind": "incremental",
-      "title": "Schritt für Schritt: 12 Nägel",
-      "description": "Die kürzeste Rundreise durch 1–3, 1–4, … bis 1–12.",
-      "purpose": "board",
-      "region": "",
-      "n": 12
-    },
-    {
       "file": "universitaetsstaedte-30.tsp.json",
       "id": "universitaetsstaedte-30",
       "kind": "map",
@@ -172,6 +132,56 @@
       "n": 30
     },
     {
+      "file": "berlin-ortsteile-20.tsp.json",
+      "id": "berlin-ortsteile-20",
+      "kind": "map",
+      "title": "Berlin: 20 Ortsteile",
+      "description": "Rundreise durch 20 der 96 Berliner Ortsteile (Lage nach Wikidata).",
+      "purpose": "board",
+      "region": "DE-BE",
+      "n": 20
+    },
+    {
+      "file": "hamburg-stadtteile-20.tsp.json",
+      "id": "hamburg-stadtteile-20",
+      "kind": "map",
+      "title": "Hamburg: 20 Stadtteile",
+      "description": "Rundreise durch 20 der 104 Hamburger Stadtteile (Lage nach Wikidata).",
+      "purpose": "board",
+      "region": "DE-HH",
+      "n": 20
+    },
+    {
+      "file": "europa-30.tsp.json",
+      "id": "europa-30",
+      "kind": "map",
+      "title": "Europa: 30 Städte",
+      "description": "Rundreise durch 30 bekannte europäische Städte (ab 300.000 Einwohnern).",
+      "purpose": "board",
+      "region": "EU",
+      "n": 30
+    },
+    {
+      "file": "europa-hauptstaedte.tsp.json",
+      "id": "europa-hauptstaedte",
+      "kind": "map",
+      "title": "Europas Hauptstädte",
+      "description": "Die Hauptstädte der europäischen Länder mit mindestens 50.000 Einwohnern (40 Städte).",
+      "purpose": "digital",
+      "region": "EU",
+      "n": 40
+    },
+    {
+      "file": "olympia-sommerspiele.tsp.json",
+      "id": "olympia-sommerspiele",
+      "kind": "map",
+      "title": "Olympische Sommerspiele",
+      "description": "Alle Austragungsorte der Olympischen Sommerspiele von Athen 1896 bis Paris 2024: eine Rundreise um die Welt, gemessen auf der Kugel.",
+      "purpose": "digital",
+      "region": "WO",
+      "n": 23
+    },
+    {
       "file": "welt-30.tsp.json",
       "id": "welt-30",
       "kind": "map",
@@ -180,6 +190,16 @@
       "purpose": "digital",
       "region": "WO",
       "n": 30
+    },
+    {
+      "file": "schritt-12.tsp.json",
+      "id": "schritt-12",
+      "kind": "incremental",
+      "title": "Schritt für Schritt: 12 Nägel",
+      "description": "Die kürzeste Rundreise durch 1–3, 1–4, … bis 1–12.",
+      "purpose": "board",
+      "region": "",
+      "n": 12
     }
   ]
 }

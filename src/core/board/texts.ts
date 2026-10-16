@@ -4,8 +4,8 @@
 import type { LabelLanguage } from '../data';
 
 export interface BoardTexts {
-  /** Subtitle under the region name. */
-  readonly subtitle: (n: number) => string;
+  /** Subtitle under the title; `places`: "Orte" (a place list) instead of "Städte". */
+  readonly subtitle: (n: number, places: boolean) => string;
   /** Caption along the scale. */
   readonly scaleCaption: string;
   readonly attribution: string;
@@ -36,7 +36,7 @@ export interface BoardTexts {
 
 export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
   de: {
-    subtitle: (n) => `${n} Städte · Finde die kürzeste Rundreise!`,
+    subtitle: (n, places) => `${n} ${places ? 'Orte' : 'Städte'} · Finde die kürzeste Rundreise!`,
     scaleCaption: 'mm Faden zu viel',
     attribution: 'Städte: GeoNames (CC BY 4.0) · Grenzen: Natural Earth · TSP Boards',
     templateTitle: (region) => `TSP-Brett ${region}: Druckvorlage im Maßstab 1:1`,
@@ -74,7 +74,7 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
     worksheetSecond: (km) => `Die zweitkürzeste Rundreise ist ${km} km länger.`,
   },
   en: {
-    subtitle: (n) => `${n} cities · Find the shortest round trip!`,
+    subtitle: (n, places) => `${n} ${places ? 'places' : 'cities'} · Find the shortest round trip!`,
     scaleCaption: 'mm of string too many',
     attribution: 'Cities: GeoNames (CC BY 4.0) · Borders: Natural Earth · TSP Boards',
     templateTitle: (region) => `TSP board ${region}: print template at 1:1 scale`,

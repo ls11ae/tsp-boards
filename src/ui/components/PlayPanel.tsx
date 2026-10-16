@@ -3,6 +3,7 @@ import { effectiveREffMm } from '../../core/params';
 import { pathLength } from '../../core/play';
 import { stringLength } from '../../core/tsp/tour';
 import { boardInstance, type BoardModel } from '../board';
+import { PlaceLegend } from './PlaceLegend';
 import { useFormat, useT } from '../i18n';
 import {
   judgePending,
@@ -135,6 +136,7 @@ export function PlayPanel({
       <section>
         <h2>{t.playTitle(fmt.integer(n))}</h2>
         <p className="hint">{digital ? t.playHintDigital : t.playHint}</p>
+        <PlaceLegend board={board} members={puzzle.members} />
         {board.sphere && <p className="hint">{t.playHintWorld}</p>}
         <dl className="metrics">
           <dt>{digital ? t.playVisitedPlaces : t.playVisited}</dt>

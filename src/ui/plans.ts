@@ -29,6 +29,12 @@ export function planKey(puzzleKey: string, p: PuzzleParams): string {
     p.targetGapMm,
     p.labelSizeMm,
     p.labelLanguage,
+    // Legend, start nail and logos change the layout.
+    JSON.stringify(useStore.getState().doc.board ?? null),
+    useStore
+      .getState()
+      .logos.map((l) => `${l.city}:${l.fileName}`)
+      .join(','),
   ].join('|');
 }
 
@@ -66,14 +72,32 @@ function getWorker(): Worker {
 
 /** Setup of the shown puzzle (slot order = ascending pool index, as in verification). */
 export function puzzleSetup(board: BoardModel, puzzle: PuzzleView): BoardSetup | null {
-  const { country, params } = useStore.getState();
+  const { country, params, doc, logos } = useStore.getState();
   if (!country) return null;
+  const start = doc.board?.startCity;
+  const labelLogos = new Map(
+    logos.flatMap((l) => {
+      const index = l.city === null ? undefined : board.index.get(l.city);
+      return index === undefined ? [] : [[index, l.logo] as const];
+    }),
+  );
   return boardSetup(
     country,
     params,
     puzzle.members.map((c) => board.pool[c]!.id),
-    useStore.getState().doc.title,
+    doc.title,
     useStore.getState().list ? board.pool : null,
+    {
+      board: doc.board
+        ? {
+            legend: doc.board.legend,
+            startPlace:
+              start === null || start === undefined ? null : (board.index.get(start) ?? null),
+          }
+        : null,
+      logos: labelLogos,
+      legendLogo: logos.find((l) => l.city === null)?.logo ?? null,
+    },
   );
 }
 

@@ -227,7 +227,12 @@ at 1440 × 900 and 390 × 844). Work through the items in order. 9.1 comes first
 board has to be lasered and tested before 2026-11-07: have its files ready by about
 2026-10-21. A poster about the TSP exists already.
 
-### 9.1 Excellence Strategy board (Exzellenzstrategie)
+### 9.1 Excellence Strategy board (Exzellenzstrategie) — done 2026-10-16
+
+(Done: board files and build note in `docs/boards/exzellenzstrategie-2027/`; string gap 5.71 mm,
+also at the scale, start nail Hannover because the best scale at the Ruhr Innovation Lab reads
+only 4.92 mm; robust for r_eff 1.0–2.0 mm (5.47–5.95 mm). Logo versions are written to the
+git-ignored `local/boards/`. Details in the decision log.)
 
 The first wooden board, to celebrate the new round of the Excellence Strategy (TU Dortmund is
 excellent from 2027 as part of the Ruhr Innovation Lab). Kevin lasers it himself on the

@@ -32,6 +32,8 @@ export interface PermalinkData {
     readonly places: readonly LinkPlace[];
     /** Selected places as indices into the list (pool mode). */
     readonly selected: readonly number[] | null;
+    /** Marked places as indices into the list. */
+    readonly highlight: readonly number[];
   } | null;
 }
 

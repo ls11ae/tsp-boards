@@ -60,6 +60,7 @@ export function resolveLines(country: CountryFile, text: string): ListEntry[] {
       text: line.text,
       query: line.name,
       ...(line.label ? { label: line.label } : {}),
+      ...(line.highlight ? { highlight: true } : {}),
     };
     if (line.members) {
       const members = line.members.map((m) =>
@@ -89,7 +90,10 @@ export function entryPlaces(
   const towns = townsById(country);
   const list: ListPlace[] = [];
   for (const e of entries) {
-    const label = e.label ? { label: e.label } : {};
+    const label = {
+      ...(e.label ? { label: e.label } : {}),
+      ...(e.highlight ? { highlight: true } : {}),
+    };
     if (e.members) {
       // A composite place needs at least two resolved members.
       const members = e.members
@@ -98,6 +102,7 @@ export function entryPlaces(
       if (e.choice < 0 || members.length < 2) continue;
       list.push({
         ...compositePlace(e.query, members, e.label),
+        ...(e.highlight ? { highlight: true } : {}),
         lines: [e.line],
         names: [e.label ?? e.query],
       });
@@ -136,6 +141,7 @@ export function entryPlaces(
       lon: p.lon,
       ...(p.label ? { label: p.label } : {}),
       ...(p.members ? { members: p.members } : {}),
+      ...(p.highlight ? { highlight: true } : {}),
     };
     return place;
   });
@@ -221,7 +227,10 @@ function memberText(m: Member): string {
 /** Sets a list from places (a file or a link); entries mirror the places one to one. */
 export function setListPlaces(mode: 'fixed' | 'pool', places: readonly Place[]): void {
   const entries: ListEntry[] = places.map((p, i) => {
-    const label = p.label ? { label: p.label } : {};
+    const label = {
+      ...(p.label ? { label: p.label } : {}),
+      ...(p.highlight ? { highlight: true } : {}),
+    };
     if (p.members) {
       return {
         line: i + 1,
@@ -237,12 +246,14 @@ export function setListPlaces(mode: 'fixed' | 'pool', places: readonly Place[]):
     return { ...mirrorEntry(i + 1, p), ...label };
   });
   const text = places
-    .map((p) =>
-      p.members
-        ? `${p.name} = ${p.members.map(memberText).join(' + ')}${p.label ? `; ${p.label}` : ''}`
-        : p.id !== undefined
-          ? p.name
-          : [p.name, p.lat, p.lon, ...(p.label ? [p.label] : [])].join(', '),
+    .map(
+      (p) =>
+        (p.highlight ? '* ' : '') +
+        (p.members
+          ? `${p.name} = ${p.members.map(memberText).join(' + ')}${p.label ? `; ${p.label}` : ''}`
+          : p.id !== undefined
+            ? p.name
+            : [p.name, p.lat, p.lon, ...(p.label ? [p.label] : [])].join(', ')),
     )
     .join('\n');
   useStore.setState({

@@ -9,20 +9,20 @@
 # 10 mm, 2 mm nails, 1 mm string): string gap 5.71 mm, also at the scale (start nail Hannover);
 # 600 x 800 mm: 10.69 mm. Runner-up +0.32 % (8 km) in Euclidean length, difficulty score 0.71.
 # Universities of Excellence and alliances:
-Aachen
-Berlin
-Bonn
-Dresden
-Hamburg
-Heidelberg
-Karlsruhe
-München
-Tübingen
-Freiburg im Breisgau
-Jena
-Köln
-Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
-Ruhr Innovation Lab = Bochum + Dortmund
+* Aachen
+* Berlin
+* Bonn
+* Dresden
+* Hamburg
+* Heidelberg
+* Karlsruhe
+* München
+* Tübingen
+* Freiburg im Breisgau
+* Jena
+* Köln
+* Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
+* Ruhr Innovation Lab = Bochum + Dortmund
 # Further sites of Clusters of Excellence:
 Hannover
 Gießen
