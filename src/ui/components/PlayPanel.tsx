@@ -19,7 +19,8 @@ import {
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 import { OverlayPicker } from './OverlayPicker';
-import { Highscores, ShareConsent, Timer } from './PlayParts';
+
+import { DailyScores, Highscores, PlayerName, ShareConsent, Timer } from './PlayParts';
 
 /**
  * Keyboard play: the next place from a list (unvisited places by name; the start once all
@@ -84,9 +85,12 @@ function NextPlace({
 export function PlayPanel({
   board,
   puzzle,
+  kiosk = false,
 }: {
   readonly board: BoardModel;
   readonly puzzle: PuzzleView | null;
+  /** Event mode: name and the day's leaderboard; no links to the gallery or designer. */
+  readonly kiosk?: boolean;
 }) {
   const t = useT();
   const fmt = useFormat();
@@ -139,6 +143,7 @@ export function PlayPanel({
     <aside className="panel side">
       <section>
         <h2>{t.playTitle(fmt.integer(n), places)}</h2>
+        {kiosk && <PlayerName />}
         <p className="hint">{digital ? t.playHintDigital : t.playHint}</p>
         <PlaceLegend board={board} members={puzzle.members} />
         {board.sphere && (
@@ -226,16 +231,22 @@ export function PlayPanel({
         )}
         {board.sphere && <FlightButtons puzzle={puzzle} />}
       </section>
-      <Highscores />
-      <ShareConsent />
-      <section className="actions">
-        <button type="button" onClick={() => useStore.setState({ page: 'gallery' })}>
-          {t.backToGallery}
-        </button>
-        <button type="button" onClick={openInDesigner}>
-          {t.playDesigner}
-        </button>
-      </section>
+      {kiosk && id ? (
+        <DailyScores id={id} />
+      ) : (
+        <>
+          <Highscores />
+          <ShareConsent />
+          <section className="actions">
+            <button type="button" onClick={() => useStore.setState({ page: 'gallery' })}>
+              {t.backToGallery}
+            </button>
+            <button type="button" onClick={openInDesigner}>
+              {t.playDesigner}
+            </button>
+          </section>
+        </>
+      )}
     </aside>
   );
 }

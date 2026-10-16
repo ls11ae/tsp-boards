@@ -7,6 +7,7 @@ import {
   readConsent,
   readNicknameConsent,
   scoresFor,
+  todaysScores,
   writeConsent,
   writeNicknameConsent,
 } from '../play';
@@ -29,25 +30,33 @@ export function Timer({
   return <>{formatDuration(stoppedMs ?? (startedAt === null ? 0 : now - startedAt))}</>;
 }
 
+/** The player's nickname for the scores. */
+export function PlayerName() {
+  const t = useT();
+  const name = useStore((s) => s.playerName);
+  return (
+    <label className="field">
+      <span>{t.playerName}</span>
+      <input
+        type="text"
+        value={name}
+        maxLength={30}
+        onChange={(e) => writePlayerName(e.target.value)}
+      />
+    </label>
+  );
+}
+
 export function Highscores() {
   const t = useT();
   const playId = useStore((s) => s.playId);
-  const name = useStore((s) => s.playerName);
   useStore((s) => s.scoresVersion);
   const excess = useExcessText();
   const scores = scoresFor(playId);
   return (
     <section>
       <h2>{t.highscores}</h2>
-      <label className="field">
-        <span>{t.playerName}</span>
-        <input
-          type="text"
-          value={name}
-          maxLength={30}
-          onChange={(e) => writePlayerName(e.target.value)}
-        />
-      </label>
+      <PlayerName />
       {scores.length === 0 ? (
         <p className="hint">{t.highscoresEmpty}</p>
       ) : (
@@ -111,6 +120,40 @@ export function ShareConsent() {
         </label>
       )}
       <p className="hint">{t.playShareHint}</p>
+    </section>
+  );
+}
+
+/** Today's best results of one puzzle, large. */
+export function DailyScores({
+  id,
+  title,
+  limit = 10,
+}: {
+  readonly id: string;
+  readonly title?: string;
+  readonly limit?: number;
+}) {
+  const t = useT();
+  const excess = useExcessText();
+  useStore((s) => s.scoresVersion);
+  const scores = todaysScores(id).slice(0, limit);
+  return (
+    <section className="daily-scores">
+      <h2>{title ?? t.kioskDaily}</h2>
+      {scores.length === 0 ? (
+        <p className="hint">{t.kioskDailyEmpty}</p>
+      ) : (
+        <ol>
+          {scores.map((s, i) => (
+            <li key={i} className={s.revealed ? 'revealed' : undefined}>
+              <span className="name">{s.name || '–'}</span>
+              <span className="num">{excess(s)}</span>
+              <span className="num">{formatDuration(s.ms)}</span>
+            </li>
+          ))}
+        </ol>
+      )}
     </section>
   );
 }

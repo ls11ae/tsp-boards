@@ -1290,3 +1290,148 @@ polyline.trace-quality {
     left: 4px;
   }
 }
+
+/* Event mode (roadmap 9.4): large touch targets, no links out. */
+.kiosk {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.kiosk button {
+  min-height: 52px;
+  padding: 0 20px;
+  font-size: 1.15rem;
+}
+
+.kiosk input[type='text'] {
+  min-height: 48px;
+  font-size: 1.15rem;
+}
+
+.kiosk-start,
+.kiosk-scores {
+  flex: 1;
+  padding: 24px 16px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.kiosk-start h1,
+.kiosk-scores h1 {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  margin: 0 0 8px;
+}
+
+.kiosk-lead {
+  font-size: 1.25rem;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+.kiosk-levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 20px;
+}
+
+.kiosk-level {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kiosk-level h2 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.kiosk .kiosk-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 84px;
+  padding: 14px 18px;
+  text-align: left;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 2px solid var(--line);
+}
+
+.kiosk .kiosk-card strong {
+  font-size: 1.25rem;
+}
+
+.kiosk .kiosk-card span {
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.kiosk-level.easy h2 {
+  color: var(--ok);
+}
+
+.kiosk-level.hard h2 {
+  color: var(--accent);
+}
+
+.kiosk-actions {
+  margin-top: 28px;
+}
+
+.kiosk-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.kiosk-header h1 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.daily-scores ol {
+  margin: 0;
+  padding: 0 0 0 2em;
+  font-size: 1.2rem;
+}
+
+.daily-scores li {
+  padding: 4px 0;
+}
+
+.daily-scores li span {
+  display: inline-block;
+}
+
+.daily-scores li .name {
+  min-width: 8em;
+  font-weight: 600;
+}
+
+.daily-scores li .num {
+  min-width: 5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.daily-scores li.revealed {
+  color: var(--muted);
+}
+
+.kiosk-score-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 24px;
+}
+
+.kiosk-footer {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 8px 16px;
+}

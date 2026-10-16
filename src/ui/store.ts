@@ -201,6 +201,8 @@ export interface AppState {
   readonly page: 'gallery' | 'app';
   /** Name for highscore entries (kept in the browser). */
   readonly playerName: string;
+  /** Event mode (#kiosk, roadmap 9.4): its screen; null outside the event mode. */
+  readonly kiosk: 'start' | 'play' | 'scores' | null;
   /** Increases when highscores change. */
   readonly scoresVersion: number;
   readonly puzzleType: PuzzleType;
@@ -303,6 +305,7 @@ export const useStore = create<AppState>()((set) => ({
   playId: null,
   page: typeof window !== 'undefined' && window.location.hash.length > 1 ? 'app' : 'gallery',
   playerName: readPlayerName(),
+  kiosk: null,
   scoresVersion: 0,
   puzzleType:
     typeof window !== 'undefined' && /[#&]m=inc(&|$)/.test(window.location.hash)

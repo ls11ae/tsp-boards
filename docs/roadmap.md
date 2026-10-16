@@ -349,7 +349,7 @@ world.
 - The rest stays as it is: great-circle distances, the exact check and the flat-map
   comparison (draw that comparison tour as straight lines on the Equal Earth map, see 9.5).
 
-### 9.4 Event mode
+### 9.4 Event mode — done 2026-10-16
 
 - A kiosk mode for a booth (e.g. `#kiosk`): full screen, a start screen with three levels
   (easy about 10–12, medium about 20, hard 30–40 places; Excellence puzzles included), large

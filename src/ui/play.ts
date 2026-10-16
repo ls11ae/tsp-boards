@@ -146,6 +146,18 @@ export function scoresFor(id: string | null): ScoreEntry[] {
   return id ? (loadScores()[id] ?? []) : [];
 }
 
+/** Today's entries of a puzzle, ranked (the booth's "Bestenliste des Tages"). */
+export function todaysScores(id: string | null): ScoreEntry[] {
+  const today = new Date().toISOString().slice(0, 10);
+  return scoresFor(id).filter((e) => e.date === today);
+}
+
+/** Reads the scores again (another tab, e.g. the booth's second screen, may have added some). */
+export function reloadScores(): void {
+  scoresMemory = null;
+  useStore.setState((s) => ({ scoresVersion: s.scoresVersion + 1 }));
+}
+
 function addScore(id: string, entry: ScoreEntry): void {
   const all = loadScores();
   scoresMemory = { ...all, [id]: rankScores([...(all[id] ?? []), entry]) };

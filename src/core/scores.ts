@@ -24,8 +24,11 @@ export function compareScores(a: ScoreEntry, b: ScoreEntry): number {
   return Number(a.revealed) - Number(b.revealed) || a.excess - b.excess || a.ms - b.ms;
 }
 
+/** Entries kept per puzzle (enough for a day at a booth, roadmap 9.4). */
+export const KEPT_SCORES = 200;
+
 /** Ranked entries, at most `limit`. */
-export function rankScores(entries: readonly ScoreEntry[], limit = 20): ScoreEntry[] {
+export function rankScores(entries: readonly ScoreEntry[], limit = KEPT_SCORES): ScoreEntry[] {
   return [...entries].sort(compareScores).slice(0, limit);
 }
 

@@ -89,3 +89,33 @@ location = /tsp-boards/play-data {
 Privacy: records are sent only with the player's explicit consent (a tick box, off by default)
 and contain no personal data; still, mention the endpoint in the site's privacy notice and keep
 the web server from logging requests to it.
+
+## Event mode at a booth (offline, roadmap 9.4)
+
+The app runs entirely in the browser, so a laptop at a booth needs no network once it is
+built:
+
+```bash
+npm ci
+npm run build
+npx vite preview --port 4173
+```
+
+(or serve the `dist` folder with any static web server). Then open
+`http://localhost:4173/#kiosk` for the game and, on a second screen,
+`http://localhost:4173/#kiosk/scores` for the day's leaderboards (it rereads the scores every
+10 s and whenever the game tab saves one).
+
+- Start screen: three levels (easy 9–14, medium 20–25, hard 30–40 places, the Excellence
+  puzzles first in each); the levels are set in `src/ui/kiosk.ts` (`KIOSK_LEVELS`, puzzle ids
+  of the collection). "Vollbild" switches to full screen; a browser in kiosk mode does the
+  same without a button (e.g. `chrome --kiosk http://localhost:4173/#kiosk`).
+- During a game: "Nächste Person" starts the game again with an empty name; "Zur Auswahl"
+  returns to the levels. After two minutes without a touch, click or key the booth goes back
+  to the start screen by itself (`INACTIVITY_MS`).
+- No designer, gallery or links out of the event mode; to leave it, remove `#kiosk` from the
+  address and reload.
+- The leaderboards ("Bestenliste des Tages") are kept in the browser's local storage of this
+  laptop (nicknames only, nothing is sent; the opt-in play data endpoint stays off unless the
+  build sets `VITE_PLAY_DATA_URL`). Only today's results are shown; clearing the site data of
+  `localhost:4173` empties them.

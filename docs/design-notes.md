@@ -784,3 +784,16 @@ Short entries: decision; alternatives considered; reason. Newest last.
   "Einmal um die Welt" (20 northern cities; the optimum winds once around the globe).
   Alternatives: a canvas renderer (faster, but SVG keeps clicks, titles and styling simple at
   these sizes), d3-zoom/d3-drag (a dependency for a few lines of pointer handling).
+- **2026-10-16 Event mode (roadmap 9.4).** `#kiosk` opens a booth version of the app: a start
+  screen with three curated levels (easy: the two Universities of Excellence puzzles and Jules
+  Verne; medium: the Excellence board, once around the world, Berlin, Olympia; hard: all 34
+  Excellence places, Germany 40, world 30, Europe 30), cards of at least 84 px height and
+  buttons of 52 px, full screen by a button, no designer, gallery or links out, "Nächste Person"
+  (new game, empty name) and a return to the start after two minutes without input. The play
+  screen reuses the normal play view and panel (also the globe) with a kiosk variant of the
+  panel: the name field at the top and today's leaderboard instead of the all-time one.
+  `#kiosk/scores` shows today's top five of every kiosk puzzle large, for a second screen in
+  another tab or window (rereads local storage on `storage` events and every 10 s). Scores stay
+  on the device: up to 200 per puzzle are kept (was 20), so a busy day is not crowded out by
+  older results; "today" is the ISO date of the result. Alternatives: a separate kiosk build
+  (one build is simpler to run), a server for the leaderboard (the booth must work offline).

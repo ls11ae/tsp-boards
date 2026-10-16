@@ -3,6 +3,7 @@ import { useBoard } from './board';
 import { BoardMap } from './components/BoardMap';
 import { PlayBoard } from './components/PlayBoard';
 import { DesignGlobe, PlayGlobe, ViewSwitch } from './components/WorldGlobe';
+import { KioskApp } from './components/Kiosk';
 import { Gallery } from './components/Gallery';
 import { IncrementalPlayBoard, IncrementalPlayPanel } from './components/IncrementalPlay';
 import { IncrementalBoard, IncrementalParams, IncrementalSide } from './components/IncrementalView';
@@ -117,6 +118,7 @@ export function App() {
   const page = useStore((s) => s.page);
   const puzzleType = useStore((s) => s.puzzleType);
   const worldView = useStore((s) => s.worldView);
+  const kiosk = useStore((s) => s.kiosk !== null);
 
   useEffect(() => {
     void loadData();
@@ -129,6 +131,8 @@ export function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page, mode, puzzleType]);
+
+  if (kiosk) return <KioskApp />;
 
   if (page === 'gallery') {
     return (
