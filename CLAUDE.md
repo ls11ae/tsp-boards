@@ -46,10 +46,12 @@ what we change and why, benchmark results, and open questions.
 - Phase 8 complete (2026-10-13): Europe as a planar, board-capable data file (`eu.json`,
   countries as regions) and the world as a digital data file (`wo.json`, continents as regions,
   great-circle distances, Equal Earth map, flat-map comparison tour).
-- **Next: Phase 9** (physical: test board, deployment, play data endpoint, license); it waits
-  for the prototype dimensions and access to the chair server. See `docs/roadmap.md`.
-- Open: prototype board dimensions (and a test board), code license, deploying to the chair
-  server, play data endpoint.
+- **Next: Phase 9, open day on Saturday 2026-11-07** (decided 2026-10-16): the Excellence
+  Strategy board first (files ready by about 2026-10-21, so it can be lasered and tested), then
+  fixes from Kevin's review, a rotatable globe for world puzzles and an event (kiosk) mode. See
+  `docs/roadmap.md`.
+- Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
+  server, play data endpoint, code license; later a physical globe.
 - Code license not chosen yet (decide before going public).
 
 ## Agreed direction
@@ -143,8 +145,9 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–8 are done except the physical items (test board, deployment). Open work, in order,
-is in `docs/roadmap.md`:
+Phases 1–8 are done. Open work, in order, is in `docs/roadmap.md`:
 
-9. **Physical:** test board with the prototype dimensions, deployment to the chair server,
-   play data endpoint, code license.
+9. **Open day (2026-11-07):** Excellence Strategy board (first wooden board), fixes from the
+   review, rotatable globe with an animated round trip, event mode, further review items.
+10. **Physical and public:** incremental test board, deployment to the chair server, play data
+    endpoint, code license; later a physical globe.

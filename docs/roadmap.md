@@ -4,7 +4,10 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-13 (evening): Phases 1–8 are done except the physical items (test board,
+Status 2026-10-16: Phases 1–8 are done. Next is Phase 9 for the open day on 2026-11-07 (the
+Excellence Strategy board first, then fixes, a rotatable globe and an event mode); the
+remaining physical items, deployment and the license are Phase 10.
+Earlier status 2026-10-13 (evening): Phases 1–8 are done except the physical items (test board,
 deployment, play data endpoint, license), which wait for the prototype dimensions and access
 to the chair server.
 Earlier status 2026-10-13: Phases 1–6 are done except the physical items; Phase 7 is next, then
@@ -109,7 +112,8 @@ preparation). Kevin decided to extend the digital side next, before building phy
   Germany-specific and needs a per-country variant). (Done 2026-10-12.)
 - Physical: test board with the prototype dimensions once known; deployment to the chair
   server and the play data endpoint when access is available. (Open: waits for the prototype
-  dimensions and for access to the chair server; everything else of Phase 6 is done.)
+  dimensions and for access to the chair server; everything else of Phase 6 is done. Moved to
+  Phase 10.)
 
 ## Phase 7: polish, usability and composite places — done 2026-10-13
 
@@ -215,6 +219,159 @@ Asia are not clickable otherwise).
 world puzzles always digital without board or worksheet; curated "Olympische Sommerspiele" and
 "Welt: 30 Metropolen". The rotatable globe was not built: the Equal Earth map already shows the
 arcs, the poles and the wrap at the map's edge.)
+
+## Phase 9: open day (Tag der offenen Tür, Saturday 2026-11-07)
+
+Decided by Kevin 2026-10-16, from his review of the app after Phases 7 and 8 (run in a browser
+at 1440 × 900 and 390 × 844). Work through the items in order. 9.1 comes first because the
+board has to be lasered and tested before 2026-11-07: have its files ready by about
+2026-10-21. A poster about the TSP exists already.
+
+### 9.1 Excellence Strategy board (Exzellenzstrategie)
+
+The first wooden board, to celebrate the new round of the Excellence Strategy (TU Dortmund is
+excellent from 2027 as part of the Ruhr Innovation Lab). Kevin lasers it himself on the
+chair's xTool P2S (CO2, working area 600 × 305 mm) without the conveyor feeder, so the board
+must fit the bed in one piece: **300 × 600 mm, portrait**.
+
+- Input: `docs/data/curated/exzellenzstrategie-2027.txt`, 34 places: the 15 Universities of
+  Excellence and alliances (14 places; Ruhr Innovation Lab and Rhein-Main-Universitäten as
+  composite places) and the 20 further sites of Clusters of Excellence 2026–2032. Sources as
+  in the other Exzellenz lists (`docs/data/curated/README.md`).
+- Findings from Kevin's review (exact checks; Euclidean for the digital numbers; difficulty
+  score as in the app; random 34-town selections of Germany have a median score of 0.57,
+  "Deutschland: 40 Städte" 0.72):
+  - All 34 places: score 0.63, but the runner-up is only 0.06 % (1.7 km) longer: Würzburg
+    between Rhein-Main and Heidelberg or between Erlangen and Bayreuth (with the string the
+    other way round); string gap 1.1 mm on 600 × 800 mm. A digital puzzle only, and the last
+    step is guessing.
+  - The universities plus the sites with at least two clusters (22 places) are easy again
+    (score 0.24, runner-up +0.05 %).
+  - A search over the 34 places as a pool with those 22 pinned (the 14 university places
+    plus Hannover, Gießen, Oldenburg, Bremen, Kiel, Marburg, Stuttgart, Würzburg), n = 26,
+    adds Düsseldorf, Leipzig, Münster and Siegen (the same four for all seeds and board sizes
+    tried): score 0.72, runner-up +0.31 % (8 km).
+  - String gap of this selection by board size (2 mm nails, 1 mm string; start nail chosen
+    by the planner): 300 × 600 mm (margin 15 mm, labels 5 mm, minimum distance 10 mm):
+    5.71 mm, also at the scale (start nail Hannover); with 1.2 mm nails and 0.5 mm string
+    5.39 mm. For comparison: 600 × 600 mm (two pieces) 8.33 mm (scale 8.08), 500 × 750 mm
+    (conveyor feeder, which processes at most 500 mm wide) 9.22 mm, 600 × 800 mm 10.69 mm.
+    On 300 × 600 mm the closest pairs are Bonn–Köln 10.3 mm and Gießen–Marburg 10.8 mm.
+  - Command used (the review copy's CLI had extra options `--margin`, `--label`, `--nail`,
+    `--string` for `list`; add them):
+    `npx tsx cli/collection.ts list --file docs/data/curated/exzellenzstrategie-2027.txt --pool --n 26 --pin '<the 22 places>' --merge 0 --board 300x600 --margin 15 --label 5 --min-dist 10`.
+- Build the board puzzle for 300 × 600 mm from this search (n = 24–26; choose by string gap,
+  difficulty and label placement). The title and description must say that it is a
+  selection, and the description names the sites that are left out. Check robustness over
+  r_eff (1.0–2.0 mm) before export: the gap is close to the 5 mm target, so if the optimum or
+  the reading at the scale is not robust, say so and propose the best alternative.
+- Highlight the Universities of Excellence and alliances (Kevin's wish): an engraved ring
+  around their nails (or another clear marker) on the board, the same distinction in the app
+  (play view and designer, e.g. a ring or bold label), and a legend.
+- Ruhr Innovation Lab with its logo (Kevin's wish): on the wooden board the logo replaces the
+  text label of the Ruhr Innovation Lab nail (as large as the label placement allows, at least
+  about 20 mm wide, else keep the text label), and a large logo with the legend in a box at
+  the bottom of the board (about 110 mm below the map are free on 300 × 600 mm; keep map
+  lines out of the box, as for the title). Suggested legend text: ring = "Exzellenzuniversität
+  oder -verbund ab 2027", plain nail = "weiterer Standort von Exzellenzclustern", "Ruhr
+  Innovation Lab: Ruhr-Universität Bochum und TU Dortmund – exzellent ab 2027", and what the
+  selection is. Mock-up of this layout: `local/exzellenz-brett-mockup.png`.
+  - The logo file is **not** committed (logo usage rights; the repository becomes public
+    later): Kevin keeps it in the git-ignored folder `local/` (`local/ruhr-innovation-lab.png`
+    as received, `local/ruhr-innovation-lab.svg` vectorised with potrace). The export takes an
+    optional image per place and for the legend from a local path (CLI option and, if easy,
+    an upload in the app's export panel); engrave it as vector paths. Kevin asks the Ruhr
+    Innovation Lab for the official vector logo and permission.
+- Board details: title such as "Exzellenzstrategie 2026–2033" (suggest wording); the Ruhr
+  Innovation Lab as the start nail with the scale if its measured gap stays at or above the
+  target, else the planner's choice; the solution sheet names the members of composite
+  places; the subtitle says "Orte", not "Städte".
+- Deliver the laser SVG (layers for engraving, scoring and cutting, sized for the P2S bed),
+  print template 1:1, solution sheet, and a short build and test note (plywood thickness,
+  nail holes lasered slightly undersized for a press fit or as marks, nail height, string
+  material, how to check the scale). Files ready by about 2026-10-21 so that a test board can
+  be lasered, strung and checked before the final one.
+- Also add the digital puzzle "Exzellenzstrategie: alle 34 Standorte" (fixed list) to the
+  collection, and put the Excellence puzzles first in the gallery (see 9.5).
+
+### 9.2 Fixes needed for the open day
+
+- Switching views keeps the scroll position (no scroll to the top): on a phone or tablet,
+  "Spielen" in the gallery lands below the board. Scroll to the top (or to the board) on every
+  view change.
+- The timer keeps running after "Lösung zeigen"; stop it there. After an optimal solution,
+  "Lösung zeigen" with its confirmation is pointless.
+- Texts: "Finde die kürzeste Rundreise durch 14 Städte" should say "Orte" (alliances are not
+  cities); singular forms ("1 Namen ausgeblendet", "1 Paare liegen …"); "Entferntestes Paar"
+  → "Am weitesten entferntes Paar"; the teaching mode says "Nagelmitten" for digital puzzles;
+  the highscore column "Mehr" shows values without a unit; the subtitle "mit Nägeln und
+  Faden" also appears for digital puzzles.
+- Accessibility and polish: the "Vergleichen mit" select has no associated label; the
+  favicon is missing (404 in the console); lint warning about the `useMemo` dependency in
+  `src/ui/overlay.ts`.
+
+### 9.3 Rotatable globe for world puzzles
+
+Kevin's wish: the world in the app as a globe, so that a round trip can travel around the
+world.
+
+- An orthographic globe (d3-geo `geoOrthographic`, clipped at the horizon) for world puzzles
+  in play mode and in the designer, with a switch between globe and the Equal Earth map.
+  Rotate by dragging (mouse and one finger; quaternion/versor rotation so it does not get
+  stuck at the poles), zoom by buttons, wheel and pinch. Great-circle legs and the tour are
+  drawn as geodesics and disappear behind the horizon.
+- Only places on the visible side can be clicked (hit test by angular distance from the
+  view centre); labels for visible places, recomputed while rotating (throttled).
+- "Fly the round trip": after solving or showing the solution, an animation that follows
+  the tour leg by leg (a marker moving along the great circle, `geoInterpolate`) and turns
+  the globe with it; optionally also for the player's own tour.
+- Curated: a puzzle whose optimal tour goes once around the world (places spread over all
+  longitudes, so the map version wraps at the edge and the globe shows one loop), and an easy
+  one after Jules Verne's "In 80 Tagen um die Welt" (London, Suez, Mumbai, Kolkata, Hong
+  Kong, Yokohama, San Francisco, New York, Liverpool). Yokohama is missing from `wo.json`
+  (probably merged into Tokyo as a district): check the district merging.
+- The rest stays as it is: great-circle distances, the exact check and the flat-map
+  comparison (draw that comparison tour as straight lines on the Equal Earth map, see 9.5).
+
+### 9.4 Event mode
+
+- A kiosk mode for a booth (e.g. `#kiosk`): full screen, a start screen with three levels
+  (easy about 10–12, medium about 20, hard 30–40 places; Excellence puzzles included), large
+  touch targets, "Nächste Person" (new game, empty name) and a reset after inactivity, no
+  designer and no links out of the kiosk.
+- A "Bestenliste des Tages" per puzzle (local to the device, nicknames only), shown large,
+  e.g. on a second screen or after each game.
+- Works offline from a laptop (`npm run build` + `vite preview`, or the `dist` folder);
+  document how to run it in `docs/deployment.md`.
+
+### 9.5 Further items from the review (after 9.1–9.4)
+
+- Europe: the cut at 45° E is drawn as a straight diagonal line through Russia (also in the
+  thumbnails) and looks like a border. Cut along the Ural or do not draw the clip edge.
+- "Welt: 30 Metropolen" is Asia-heavy (Chongqing, Tianjin, Shenzhen, …), with only three
+  cities in the Americas and without Paris, Los Angeles, São Paulo or Buenos Aires. For the
+  world, measure recognisability by prominence (alternate names or Wikipedia), not
+  population, and consider a minimum per continent (the group constraints exist).
+- Flat-map comparison: draw the comparison tour as straight lines on the map (that is how it
+  is measured) and hide the player's tour while comparing (three tours on top of each other
+  are hard to read).
+- Incremental play still uses the old millimetre drawing (small nails, measuring track, no
+  zoom): use the screen-size approach of `PlayBoard`.
+- Board variant suggestions are purely geometric (e.g. "Aachen + Köln zusammengefasst"):
+  allow marking places that must not be removed or combined.
+- Gallery: thumbnails load `de.json`, `eu.json` and `wo.json` (about 1.6 MB, 550 KB gzip):
+  load them when a card becomes visible. Order by theme (Excellence first, then Germany,
+  cities, Europe, world, step by step) instead of alphabetically.
+
+## Phase 10: physical and public
+
+- Test board of the incremental puzzle with the prototype dimensions; deployment to the
+  chair server; play data endpoint; code license (before the repository becomes public).
+- Later: a physical globe (wood or 3D print) with nails and string. A taut string follows the
+  great circle by itself; on a 40 cm globe 1 mm is about 32 km, so a 5 mm gap needs about
+  160 km (a quick search found 241 km for 20 world cities, but 30 cities typically give only
+  90–120 km). Open problems: placing the nails accurately, friction of long legs on the
+  surface, a measuring tape instead of the scale.
 
 ## Curated instances wanted by Kevin — done 2026-10-12
 

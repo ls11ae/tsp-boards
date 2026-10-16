@@ -1,0 +1,46 @@
+# Excellence Strategy from 2027 (roadmap 9.1): the 15 Universities of Excellence and excellence
+# alliances 2027-2033 (14 places; Rhein-Main-Universitäten and Ruhr Innovation Lab as composite
+# places at the centre of their cities) and the 20 further sites of Clusters of Excellence
+# 2026-2032 (cities with a cluster that are not already a university place or a member of a
+# composite place): 34 places.
+# Derived from exzellenzuniversitaeten-2027.txt and exzellenzcluster-2026.txt (sources there and
+# in README.md); details in excellence-strategy-2026-10-12.json. Built 2026-10-16.
+# Clusters per further site: Hannover 4; Gießen, Oldenburg 3; Bremen, Kiel, Marburg, Stuttgart,
+# Würzburg 2; Bayreuth, Braunschweig, Düsseldorf, Erlangen, Halle (Saale), Konstanz, Leipzig,
+# Lübeck, Münster, Regensburg, Siegen, Ulm 1.
+# Universities of Excellence and alliances:
+Aachen
+Berlin
+Bonn
+Dresden
+Hamburg
+Heidelberg
+Karlsruhe
+München
+Tübingen
+Freiburg im Breisgau
+Jena
+Köln
+Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
+Ruhr Innovation Lab = Bochum + Dortmund
+# Further sites of Clusters of Excellence:
+Hannover
+Gießen
+Oldenburg
+Bremen
+Kiel
+Marburg
+Stuttgart
+Würzburg
+Bayreuth
+Braunschweig
+Düsseldorf
+Erlangen
+Halle (Saale)
+Konstanz
+Leipzig
+Lübeck
+Münster
+Regensburg
+Siegen
+Ulm
