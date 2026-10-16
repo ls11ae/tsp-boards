@@ -46,10 +46,11 @@ what we change and why, benchmark results, and open questions.
 - Phase 8 complete (2026-10-13): Europe as a planar, board-capable data file (`eu.json`,
   countries as regions) and the world as a digital data file (`wo.json`, continents as regions,
   great-circle distances, Equal Earth map, flat-map comparison tour).
-- **Next: Phase 9, open day on Saturday 2026-11-07** (decided 2026-10-16): the Excellence
-  Strategy board first (files ready by about 2026-10-21, so it can be lasered and tested), then
-  fixes from Kevin's review, a rotatable globe for world puzzles and an event (kiosk) mode. See
-  `docs/roadmap.md`.
+- Phase 9, open day on Saturday 2026-11-07 (decided 2026-10-16): 9.1–9.4 done 2026-10-16:
+  the Excellence Strategy board (files and build note in `docs/boards/exzellenzstrategie-2027/`,
+  logo versions only in the git-ignored `local/`), fixes from Kevin's review, a rotatable globe
+  for world puzzles with a flight along the tour, and an event mode (`#kiosk`).
+- **Next: 9.5** (further review items), then Phase 10. See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - Code license not chosen yet (decide before going public).
