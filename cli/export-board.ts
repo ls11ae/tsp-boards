@@ -3,7 +3,7 @@
 // Usage:
 //   npx tsx cli/export-board.ts --link '<permalink or #hash>' [options]
 //   npx tsx cli/export-board.ts --puzzle public/puzzles/<id>.tsp.json [options]
-// Options: [--out dir] [--name base] [--paper A4|A3] [--holes cut|mark] [--stroke 0.1]
+// Options: [--out dir] [--name base] [--paper A4|A3] [--stroke 0.1]
 //   [--nail 2] [--string 1] (measured nail diameter and string thickness, mm)
 //   [--logo 'Place name=local/logo.svg'] (a logo instead of that place's label; repeatable)
 //   [--legend-logo local/logo.svg] (a large logo in the legend box)
@@ -11,6 +11,8 @@
 //   and a strip of test holes)
 //   [--hole 1.7] (diameter of the cut nail holes, mm; default the nail diameter: smaller holes
 //   give a press fit)
+//   [--holes cut|mark|pit] (cut through, crosses for drilling, or engraved drill pits; default
+//   from the puzzle file's board, else cut) [--edge | --no-edge] (cut the board outline)
 //   [--radii 1,1.25,1.5,1.75,2] (r_eff values of the robustness check, mm)
 // A link must contain the selected cities (`sel`); a puzzle file brings its places (also
 // composite ones), marked places, legend and preferred start nail. The exact string optimum,
@@ -30,7 +32,7 @@ import {
   type SetupExtras,
 } from '../src/core/board/setup';
 import { boardSvg } from '../src/core/board/svg';
-import { rotateDrawing, type BoardDrawing } from '../src/core/board/drawing';
+import { rotateDrawing, type BoardDrawing, type HoleMode } from '../src/core/board/drawing';
 import { circlePath, rectPath, type PathCommand } from '../src/core/board/shapes';
 import { textPath } from '../src/core/board/text';
 import { citiesFromColumns, listName } from '../src/core/data';
@@ -54,7 +56,7 @@ const all = (name: string) => args.flatMap((a, i) => (a === `--${name}` ? [args[
 
 const outDir = arg('out', '.');
 const paper = (arg('paper', 'A4') === 'A3' ? 'A3' : 'A4') satisfies Paper;
-const holes = arg('holes', 'cut') === 'mark' ? 'mark' : 'cut';
+const holesArg = arg('holes', '');
 const strokeMm = Number(arg('stroke', '0.1'));
 const t0 = performance.now();
 
@@ -226,8 +228,19 @@ function holeTest(nailMm: number): BoardDrawing {
 mkdirSync(outDir, { recursive: true });
 const base = path.join(outDir, arg('name', source.name));
 const title = setup.title[0]?.text ?? params.region;
+// Hole mode and board outline: options, else the board's defaults (puzzle file), else cut both.
+const defaults = source.extras.board?.export;
+const holes: HoleMode =
+  holesArg === 'cut' || holesArg === 'mark' || holesArg === 'pit'
+    ? holesArg
+    : (defaults?.holes ?? 'cut');
+const edge = args.includes('--edge')
+  ? true
+  : args.includes('--no-edge')
+    ? false
+    : (defaults?.edge ?? true);
 const holeMm = Number(arg('hole', String(params.nailDiameterMm)));
-const drawing = drawPuzzleBoard(setup, plan, { holes, holeDiameterMm: holeMm });
+const drawing = drawPuzzleBoard(setup, plan, { holes, holeDiameterMm: holeMm, edge });
 const svgOptions = {
   strokeMm,
   title: `${title} – TSP Boards`,
@@ -243,8 +256,11 @@ if (bedW && bedH) {
     writeFileSync(`${base}-bed.svg`, boardSvg(rotateDrawing(drawing), svgOptions));
     outputs.push(`${base}-bed.svg`);
   } else if (!fits) console.error(`warning: the board does not fit the bed ${bedW} × ${bedH} mm`);
-  writeFileSync(`${base}-hole-test.svg`, boardSvg(holeTest(params.nailDiameterMm), svgOptions));
-  outputs.push(`${base}-hole-test.svg`);
+  // Test holes only for holes cut by the laser (drilled boards need none).
+  if (holes === 'cut') {
+    writeFileSync(`${base}-hole-test.svg`, boardSvg(holeTest(params.nailDiameterMm), svgOptions));
+    outputs.push(`${base}-hole-test.svg`);
+  }
 }
 const marked = drawPuzzleBoard(setup, plan, { holes: 'mark' });
 writeFileSync(
@@ -291,7 +307,7 @@ const report = [
   '',
   `Generated ${new Date().toISOString().slice(0, 10)} by \`cli/export-board.ts\`.`,
   '',
-  `- Board ${params.boardWidthMm} × ${params.boardHeightMm} mm, ${setup.cities.length} places, nails ${params.nailDiameterMm} mm, string ${params.stringThicknessMm} mm (r_eff ${de(rEffMm(params))} mm), labels ${params.labelSizeMm} mm, nail holes ${holes === 'cut' ? `cut at ${holeMm} mm` : 'marked only'}.`,
+  `- Board ${params.boardWidthMm} × ${params.boardHeightMm} mm, ${setup.cities.length} places, nails ${params.nailDiameterMm} mm, string ${params.stringThicknessMm} mm (r_eff ${de(rEffMm(params))} mm), labels ${params.labelSizeMm} mm, nail holes ${holes === 'cut' ? `cut at ${holeMm} mm` : holes === 'pit' ? 'engraved as pits for drilling' : 'marked with crosses'}, board outline ${edge ? 'cut' : 'not cut'}.`,
   `- String gap (optimum to runner-up): ${mm(v.string.gap)} mm (${v.mode}).`,
   `- Start nail: ${start.name}; gap at the scale ${mm(plan.measured.gapUm)} mm (${plan.measured.kind}).`,
   `- String from the loop around the tour and the start nail: ${de(measuredUm / 1000, 0)} mm, plus ${plan.scale.targetMm} mm along the scale to the target mark (closed string length of the tour ${de(stringLength(setup.inst, tour) / 1000, 0)} mm).`,

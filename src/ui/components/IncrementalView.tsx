@@ -258,9 +258,15 @@ export function IncrementalSide() {
             <span>{t.holes}</span>
             <select
               value={options.holes}
-              onChange={(e) => setOptions({ holes: e.target.value === 'mark' ? 'mark' : 'cut' })}
+              onChange={(e) =>
+                setOptions({
+                  holes:
+                    e.target.value === 'mark' ? 'mark' : e.target.value === 'pit' ? 'pit' : 'cut',
+                })
+              }
             >
               <option value="cut">{t.holesCut}</option>
+              <option value="pit">{t.holesPit}</option>
               <option value="mark">{t.holesMark}</option>
             </select>
           </label>

@@ -4,7 +4,7 @@
 
 import { planData, type BoardPlan } from '../core/board/plan';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
-import type { Layer } from '../core/board/drawing';
+import type { HoleMode, Layer } from '../core/board/drawing';
 import { svgPathData } from '../core/board/shapes';
 import { rEffMm, type PuzzleParams } from '../core/params';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
@@ -145,20 +145,22 @@ export interface PreviewPaths {
   readonly engrave: string;
 }
 
-const previewCache = new WeakMap<BoardPlan, { holes: string; paths: PreviewPaths }>();
+const previewCache = new WeakMap<BoardPlan, { key: string; paths: PreviewPaths }>();
 
 /** SVG path data of the planned board per layer (memoised per plan and hole style). */
 export function previewPaths(
   board: BoardModel,
   puzzle: PuzzleView,
   plan: BoardPlan,
-  holes: 'cut' | 'mark',
+  holes: HoleMode,
+  edge: boolean,
 ): PreviewPaths | null {
+  const key = `${holes}|${edge}`;
   const cached = previewCache.get(plan);
-  if (cached?.holes === holes) return cached.paths;
+  if (cached?.key === key) return cached.paths;
   const setup = puzzleSetup(board, puzzle);
   if (!setup) return null;
-  const drawing = drawPuzzleBoard(setup, plan, { holes });
+  const drawing = drawPuzzleBoard(setup, plan, { holes, edge });
   const layer = (name: Layer, fill: boolean) =>
     svgPathData(
       drawing.items.filter((i) => i.layer === name && i.fill === fill).flatMap((i) => [...i.path]),
@@ -167,9 +169,9 @@ export function previewPaths(
   const paths = {
     score: layer('score', false),
     outline: layer('outline', false),
-    cut: layer('cut', false),
-    engrave: layer('engrave', true),
+    cut: layer('cut', false) + layer('edge', false),
+    engrave: layer('engrave', true) + layer('pit', true),
   };
-  previewCache.set(plan, { holes, paths });
+  previewCache.set(plan, { key, paths });
   return paths;
 }

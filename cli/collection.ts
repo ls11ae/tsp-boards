@@ -19,6 +19,7 @@
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
+import type { HoleMode } from '../src/core/board/drawing';
 import { planBoard } from '../src/core/board/plan';
 import { boardPlanInput, boardSetup } from '../src/core/board/setup';
 import { generateIncremental, stepGapUm } from '../src/core/incremental/generate';
@@ -120,6 +121,7 @@ function boardOptions(defaults: PuzzleParams): Partial<PuzzleParams> {
 interface ExtrasInput {
   readonly start: string | null;
   readonly legend: readonly LegendEntry[];
+  readonly export?: { readonly holes: HoleMode; readonly edge: boolean };
 }
 
 function readExtras(): ExtrasInput | null {
@@ -128,13 +130,18 @@ function readExtras(): ExtrasInput | null {
   const json = JSON.parse(readFileSync(file, 'utf8')) as {
     start?: string;
     legend?: { symbol?: string; text?: string }[];
+    export?: { holes?: string; edge?: boolean };
   };
+  const holes = json.export?.holes;
   return {
     start: json.start ?? null,
     legend: (json.legend ?? []).map((e) => ({
       symbol: e.symbol === 'ring' || e.symbol === 'nail' ? e.symbol : 'none',
       text: e.text ?? '',
     })),
+    ...(holes === 'cut' || holes === 'mark' || holes === 'pit'
+      ? { export: { holes, edge: json.export?.edge !== false } }
+      : {}),
   };
 }
 
@@ -220,6 +227,7 @@ async function mapDoc(
       ...(extrasInput
         ? {
             board: {
+              ...(extrasInput.export ? { export: extrasInput.export } : {}),
               legend: extrasInput.legend,
               startPlace: extrasInput.start
                 ? places.findIndex((p) => p.name === extrasInput.start)

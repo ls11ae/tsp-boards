@@ -148,7 +148,7 @@ export function BoardMap({
   const plan = planState?.status === 'done' ? planState.plan : null;
   const preview =
     plan && puzzle && exportOptions.preview
-      ? previewPaths(board, puzzle, plan, exportOptions.holes)
+      ? previewPaths(board, puzzle, plan, exportOptions.holes, exportOptions.edge)
       : null;
   const placed = useMemo(
     () => (labels && members ? placeBoardLabels(board, labels, members).labels : []),

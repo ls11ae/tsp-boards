@@ -232,12 +232,28 @@ export function ExportPanel({
                 <select
                   value={options.holes}
                   onChange={(e) =>
-                    setOptions({ holes: e.target.value === 'mark' ? 'mark' : 'cut' })
+                    setOptions({
+                      holes:
+                        e.target.value === 'mark'
+                          ? 'mark'
+                          : e.target.value === 'pit'
+                            ? 'pit'
+                            : 'cut',
+                    })
                   }
                 >
                   <option value="cut">{t.holesCut}</option>
+                  <option value="pit">{t.holesPit}</option>
                   <option value="mark">{t.holesMark}</option>
                 </select>
+              </label>
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={options.edge}
+                  onChange={(e) => setOptions({ edge: e.target.checked })}
+                />
+                {t.edgeCut}
               </label>
               <label className="field">
                 <span>{t.strokeWidth}</span>

@@ -168,6 +168,16 @@ export function openDocument(doc: PuzzleDoc, mode: 'design' | 'play' = 'design')
     return;
   }
   useStore.setState({
+    // A board's own export defaults (e.g. drill pits, no outline cut).
+    ...(map.board?.export
+      ? {
+          exportOptions: {
+            ...useStore.getState().exportOptions,
+            holes: map.board.export.holes,
+            edge: map.board.export.edge,
+          },
+        }
+      : {}),
     puzzleType: 'map',
     mode,
     doc: meta,

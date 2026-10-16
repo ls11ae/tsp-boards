@@ -1,6 +1,7 @@
 // The incremental puzzle in the app: generation and link checks in a worker, the board
 // preview, links and downloads.
 
+import type { HoleMode } from '../core/board/drawing';
 import type { Layer } from '../core/board/drawing';
 import { svgPathData } from '../core/board/shapes';
 import { drawIncremental } from '../core/incremental/drawing';
@@ -120,7 +121,7 @@ export function incrementalLink(): string {
   return `${window.location.origin}${window.location.pathname}${hash}`;
 }
 
-export function drawingOptions(params: IncrementalUiParams, holes: 'cut' | 'mark', n: number) {
+export function drawingOptions(params: IncrementalUiParams, holes: HoleMode, n: number) {
   const title = useStore.getState().doc.title;
   const line = INCREMENTAL_TEXTS[params.labelLanguage].boardLine(n);
   return {
@@ -143,7 +144,7 @@ const previewCache = new WeakMap<IncrementalPuzzle, { key: string; paths: Increm
 export function incrementalPreview(
   puzzle: IncrementalPuzzle,
   params: IncrementalUiParams,
-  holes: 'cut' | 'mark',
+  holes: HoleMode,
 ): IncrementalPreview {
   const key = [
     holes,
@@ -162,8 +163,8 @@ export function incrementalPreview(
     );
   const paths = {
     score: layer('score', false),
-    engrave: layer('engrave', true),
-    cut: layer('cut', false),
+    engrave: layer('engrave', true) + layer('pit', true),
+    cut: layer('cut', false) + layer('edge', false),
   };
   previewCache.set(puzzle, { key, paths });
   return paths;

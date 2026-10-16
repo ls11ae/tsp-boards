@@ -253,6 +253,8 @@ export const de: Messages = {
   holes: 'Nagellöcher',
   holesCut: 'schneiden (Laser)',
   holesMark: 'zum Bohren markieren',
+  holesPit: 'Bohrpunkte gravieren (dickes Holz)',
+  edgeCut: 'Brettkante schneiden',
   strokeWidth: 'Linienbreite im SVG (mm)',
   previewBoard: 'Brett wie exportiert anzeigen',
   downloadSvg: 'SVG für den Lasercutter',

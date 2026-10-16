@@ -259,6 +259,8 @@ export const en = {
   holes: 'Nail holes',
   holesCut: 'cut (laser)',
   holesMark: 'mark for drilling',
+  holesPit: 'engrave drill pits (thick wood)',
+  edgeCut: 'Cut the board outline',
   strokeWidth: 'SVG line width (mm)',
   previewBoard: 'Show the board as exported',
   downloadSvg: 'SVG for the laser cutter',

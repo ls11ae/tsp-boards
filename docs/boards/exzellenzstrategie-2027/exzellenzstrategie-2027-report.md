@@ -2,10 +2,10 @@
 
 Generated 2026-10-16 by `cli/export-board.ts`.
 
-- Board 300 × 600 mm, 25 places, nails 2 mm, string 1 mm (r_eff 1.50 mm), labels 5 mm, nail holes cut at 2 mm.
-- String gap (optimum to runner-up): 5.71 mm (string-exact).
-- Start nail: Hannover; gap at the scale 5.71 mm (exact).
-- String from the loop around the tour and the start nail: 1110 mm, plus 60 mm along the scale to the target mark (closed string length of the tour 1112 mm).
+- Board 300 × 600 mm, 25 places, nails 1.6 mm, string 1 mm (r_eff 1.30 mm), labels 5 mm, nail holes engraved as pits for drilling, board outline not cut.
+- String gap (optimum to runner-up): 5.61 mm (string-exact).
+- Start nail: Hannover; gap at the scale 5.61 mm (exact).
+- String from the loop around the tour and the start nail: 1104 mm, plus 60 mm along the scale to the target mark (closed string length of the tour 1107 mm).
 - Plan warnings: start-not-preferred.
 
 ## Robustness over r_eff (exact)
@@ -30,6 +30,5 @@ Hannover → Bremen → Oldenburg → Münster → Ruhr Innovation Lab (Bochum, 
 
 - `exzellenzstrategie-2027.svg`
 - `exzellenzstrategie-2027-bed.svg`
-- `exzellenzstrategie-2027-hole-test.svg`
 - `exzellenzstrategie-2027-template-A4.pdf`
 - `exzellenzstrategie-2027-solution.pdf`

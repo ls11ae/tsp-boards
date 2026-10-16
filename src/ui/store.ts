@@ -8,6 +8,7 @@ import type { TeachingState } from './teaching';
 import type { RobustnessState } from './robustness';
 import type { GroupConstraint, LegendEntry, Place, Purpose } from '../core/puzzle-file';
 import type { Logo } from '../core/board/logo';
+import type { HoleMode } from '../core/board/drawing';
 import type { Flight } from './components/Globe';
 import type { Paper } from '../core/board/print';
 import type { CountryFile, Manifest } from '../core/data';
@@ -69,8 +70,10 @@ export type BoardPlanState =
 
 export interface ExportOptions {
   readonly paper: Paper;
-  /** Cut the nail holes (laser) or mark them for drilling. */
-  readonly holes: 'cut' | 'mark';
+  /** Cut the nail holes (laser), mark them for drilling, or engrave drill pits. */
+  readonly holes: HoleMode;
+  /** Cut the board outline (off for boards cut to size before). */
+  readonly edge: boolean;
   /** Line width in the SVG, mm. */
   readonly strokeMm: number;
   /** Show the planned board (scale, title, final labels) instead of the map view. */
@@ -354,7 +357,7 @@ export const useStore = create<AppState>()((set) => ({
   linkWarnings: [],
   boardPlans: {},
   logos: [],
-  exportOptions: { paper: 'A4', holes: 'cut', strokeMm: 0.1, preview: true },
+  exportOptions: { paper: 'A4', holes: 'cut', edge: true, strokeMm: 0.1, preview: true },
   setExportOptions: (update) => set((s) => ({ exportOptions: { ...s.exportOptions, ...update } })),
   setLang: (lang) => {
     try {

@@ -1,8 +1,10 @@
 // The board as vector drawing in mm, by laser operation:
-//   cut      board outline and nail holes (cut through),
+//   cut      nail holes (cut through),
+//   edge     the board outline (cut through; a layer of its own, off for pre-cut boards),
 //   score    thin lines: inner borders, neighbouring countries, the scale, nail marks,
 //   outline  the country/region outline (scored with more power),
-//   engrave  filled shapes: labels, title, footer, scale numbers and target mark.
+//   engrave  filled shapes: labels, title, footer, scale numbers and target mark,
+//   pit      small filled dots at the nails, engraved deeper as drill guides.
 // The SVG and PDF writers style these layers for the laser or for printing.
 
 import type { Point } from '../geometry';
@@ -25,8 +27,14 @@ import {
 } from './shapes';
 import { FONT_METRICS, measureText, textPath } from './text';
 
-export type Layer = 'cut' | 'score' | 'outline' | 'engrave';
-export const LAYERS: readonly Layer[] = ['engrave', 'score', 'outline', 'cut'];
+export type Layer = 'cut' | 'edge' | 'score' | 'outline' | 'engrave' | 'pit';
+export const LAYERS: readonly Layer[] = ['engrave', 'pit', 'score', 'outline', 'cut', 'edge'];
+
+/**
+ * Nail holes: cut through by the laser, marked with a cross for drilling, or engraved as a
+ * pit in which a small drill centres itself (boards too thick to cut, roadmap 9.5).
+ */
+export type HoleMode = 'cut' | 'mark' | 'pit';
 
 export interface DrawItem {
   readonly layer: Layer;
@@ -67,9 +75,12 @@ function textBlockPath(lines: readonly TextLine[], x: number, y: number): PathCo
 }
 
 export interface DrawingOptions {
-  /** Cut the nail holes, or only engrave a centre mark for drilling. */
-  readonly holes: 'cut' | 'mark';
+  readonly holes: HoleMode;
   readonly holeDiameterMm: number;
+  /** Diameter of the engraved pits (holes 'pit'), mm. */
+  readonly pitDiameterMm: number;
+  /** Cut the board outline (off for boards cut to size before). */
+  readonly edge: boolean;
   readonly cornerRadiusMm: number;
   /** Map lines end this far inside the board edge, mm. */
   readonly lineInsetMm: number;
@@ -80,6 +91,8 @@ export interface DrawingOptions {
 export const DEFAULT_DRAWING: DrawingOptions = {
   holes: 'cut',
   holeDiameterMm: 2,
+  pitDiameterMm: 1,
+  edge: true,
   cornerRadiusMm: 5,
   lineInsetMm: 3,
   haloMm: 1.2,
@@ -258,9 +271,12 @@ export function drawBoard(
   // Nails.
   const nails: PathCommand[] = [];
   const marks: PathCommand[] = [];
+  const pits: PathCommand[] = [];
   for (const [x, y] of points) {
     if (options.holes === 'cut') {
       nails.push(...circlePath(x, y, options.holeDiameterMm / 2));
+    } else if (options.holes === 'pit') {
+      pits.push(...circlePath(x, y, options.pitDiameterMm / 2));
     } else {
       marks.push(
         ...polylinePath([
@@ -278,12 +294,14 @@ export function drawBoard(
     }
   }
   if (marks.length > 0) items.push({ layer: 'score', path: marks, fill: false });
+  items.push({ layer: 'pit', path: pits, fill: true });
   items.push({ layer: 'cut', path: nails, fill: false });
-  items.push({
-    layer: 'cut',
-    path: rectPath(0, 0, width, height, options.cornerRadiusMm),
-    fill: false,
-  });
+  if (options.edge)
+    items.push({
+      layer: 'edge',
+      path: rectPath(0, 0, width, height, options.cornerRadiusMm),
+      fill: false,
+    });
   return { width, height, items: items.filter((i) => i.path.length > 0) };
 }
 

@@ -86,7 +86,7 @@ describe('board export (Germany, 25 cities)', () => {
   it('draws all layers inside the board', () => {
     const drawing = drawPuzzleBoard(setup, plan);
     const layers = new Set(drawing.items.map((i) => i.layer));
-    expect([...layers].sort()).toEqual(['cut', 'engrave', 'outline', 'score']);
+    expect([...layers].sort()).toEqual(['cut', 'edge', 'engrave', 'outline', 'score']);
     for (const item of drawing.items) {
       const b = pathBounds(item.path)!;
       expect(b[0]).toBeGreaterThanOrEqual(-1e-6);
@@ -94,12 +94,17 @@ describe('board export (Germany, 25 cities)', () => {
       expect(b[2]).toBeLessThanOrEqual(params.boardWidthMm + 1e-6);
       expect(b[3]).toBeLessThanOrEqual(params.boardHeightMm + 1e-6);
     }
-    // One closed circle per nail plus the board outline in the cut layer.
-    const cut = drawing.items.filter((i) => i.layer === 'cut').flatMap((i) => i.path);
-    expect(cut.filter((c) => c[0] === 'M')).toHaveLength(25 + 1);
+    // One closed circle per nail in the cut layer; the board outline in its own layer.
+    const moves = (d: typeof drawing, layer: string) =>
+      d.items
+        .filter((i) => i.layer === layer)
+        .flatMap((i) => i.path)
+        .filter((c) => c[0] === 'M').length;
+    expect(moves(drawing, 'cut')).toBe(25);
+    expect(moves(drawing, 'edge')).toBe(1);
     const marked = drawPuzzleBoard(setup, plan, { holes: 'mark' });
-    const cutOnly = marked.items.filter((i) => i.layer === 'cut').flatMap((i) => i.path);
-    expect(cutOnly.filter((c) => c[0] === 'M')).toHaveLength(1);
+    expect(moves(marked, 'cut')).toBe(0);
+    expect(moves(marked, 'edge')).toBe(1);
   });
 
   it('writes a laser SVG in millimetres with one group per operation', () => {

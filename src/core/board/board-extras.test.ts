@@ -234,5 +234,13 @@ describe('the Excellence Strategy board', () => {
     const drawing = drawPuzzleBoard(setup, plan);
     expect(drawing.width).toBe(300);
     expect(drawing.height).toBe(600);
+    // Drilled boards (roadmap 9.5): pits on their own layer, no holes cut, no outline cut.
+    const drilled = drawPuzzleBoard(setup, plan, { holes: 'pit', edge: false });
+    const layers = new Set(drilled.items.map((i) => i.layer));
+    expect(layers.has('pit')).toBe(true);
+    expect(layers.has('cut')).toBe(false);
+    expect(layers.has('edge')).toBe(false);
+    expect(new Set(drawing.items.map((i) => i.layer)).has('edge')).toBe(true);
+    expect(map.board!.export).toEqual({ holes: 'pit', edge: false });
   }, 120_000);
 });

@@ -29,14 +29,16 @@ export const RED: Rgb = [0.8, 0.1, 0.05];
 
 const PRINT_STYLE: Record<Layer, { color: Rgb; width: number }> = {
   cut: { color: BLACK, width: 0.35 },
+  edge: { color: BLACK, width: 0.35 },
   score: { color: GREY, width: 0.25 },
   outline: { color: BLACK, width: 0.45 },
   engrave: { color: BLACK, width: 0 },
+  pit: { color: BLACK, width: 0 },
 };
 
 /** Draws the board drawing with print styles (black and grey). */
 export function drawForPrint(c: PdfCanvas, drawing: BoardDrawing, lineScale = 1): void {
-  for (const layer of ['score', 'outline', 'cut', 'engrave'] as const) {
+  for (const layer of ['score', 'outline', 'cut', 'edge', 'engrave', 'pit'] as const) {
     const style = PRINT_STYLE[layer];
     for (const item of drawing.items) {
       if (item.layer !== layer) continue;

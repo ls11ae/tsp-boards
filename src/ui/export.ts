@@ -87,7 +87,10 @@ export function downloadBoard(
   const { exportOptions, params, country, pinned, excluded, groups } = useStore.getState();
   const name = fileId(setup);
   if (kind === 'svg') {
-    const drawing = drawPuzzleBoard(setup, plan, { holes: exportOptions.holes });
+    const drawing = drawPuzzleBoard(setup, plan, {
+      holes: exportOptions.holes,
+      edge: exportOptions.edge,
+    });
     const svg = boardSvg(drawing, {
       strokeMm: exportOptions.strokeMm,
       title: `${regionName(setup)} – TSP Boards`,

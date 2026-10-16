@@ -19,7 +19,7 @@
       "boardWidthMm": 300,
       "boardHeightMm": 600,
       "marginMm": 15,
-      "nailDiameterMm": 2,
+      "nailDiameterMm": 1.6,
       "stringThicknessMm": 1,
       "minDistanceMm": 10,
       "targetGapMm": 5,
@@ -440,6 +440,10 @@
       "groups": []
     },
     "board": {
+      "export": {
+        "holes": "pit",
+        "edge": false
+      },
       "legend": [
         {
           "symbol": "ring",
@@ -488,10 +492,10 @@
         13,
         22
       ],
-      "lengthMm": 1112.499,
-      "gapMm": 5.709,
+      "lengthMm": 1106.954,
+      "gapMm": 5.612,
       "model": "string",
-      "scaleGapMm": 5.709,
+      "scaleGapMm": 5.612,
       "startPlace": 14
     }
   }

@@ -8,16 +8,20 @@ import { svgPathData, type PathCommand } from './shapes';
 
 export const LAYER_COLORS: Record<Layer, string> = {
   cut: '#ff0000',
+  edge: '#ff8000',
   score: '#0000ff',
   outline: '#00a000',
   engrave: '#000000',
+  pit: '#ff00ff',
 };
 
 export const LAYER_NAMES: Record<Layer, string> = {
-  cut: 'cut (through)',
+  cut: 'cut (nail holes)',
+  edge: 'cut (board outline)',
   score: 'score (thin lines)',
   outline: 'score (outline, more power)',
   engrave: 'engrave (fill)',
+  pit: 'engrave deeper (nail pits for drilling)',
 };
 
 export interface SvgOptions {

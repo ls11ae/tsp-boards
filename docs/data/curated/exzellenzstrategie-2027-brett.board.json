@@ -1,8 +1,15 @@
 {
-  "_comment": "Legend and preferred start nail of the Excellence Strategy board (roadmap 9.1), for cli/collection.ts --board-extras.",
+  "_comment": "Legend, preferred start nail and export defaults of the Excellence Strategy board (roadmap 9.1, 9.5: 12 mm plywood cut to size by the store, nail holes drilled at engraved pits), for cli/collection.ts --board-extras.",
   "start": "Ruhr Innovation Lab",
+  "export": {
+    "holes": "pit",
+    "edge": false
+  },
   "legend": [
-    { "symbol": "ring", "text": "Exzellenzuniversität oder -verbund ab 2027" },
+    {
+      "symbol": "ring",
+      "text": "Exzellenzuniversität oder -verbund ab 2027"
+    },
     {
       "symbol": "nail",
       "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle"

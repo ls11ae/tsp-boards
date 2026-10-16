@@ -2,7 +2,7 @@
 // pegs with one mark per instance, and a line of text. Same layers as the map board
 // (board/drawing.ts), so the SVG and PDF writers apply unchanged.
 
-import type { BoardDrawing, DrawItem } from '../board/drawing';
+import type { BoardDrawing, DrawItem, HoleMode } from '../board/drawing';
 import { labelCandidates, labelOptions, placeLabels, type Obstacle } from '../board/labels';
 import { circlePath, polygonPath, polylinePath, rectPath, type PathCommand } from '../board/shapes';
 import { measureText, textPath, FONT_METRICS } from '../board/text';
@@ -13,7 +13,9 @@ import { cornerPegs, trackPoint } from './track';
 export interface IncrementalDrawingOptions {
   readonly nailDiameterMm: number;
   readonly labelSizeMm: number;
-  readonly holes: 'cut' | 'mark';
+  readonly holes: HoleMode;
+  /** Cut the board outline. */
+  readonly edge?: boolean;
   readonly cornerRadiusMm: number;
   /** Text along the bottom edge. */
   readonly line: string;
@@ -46,6 +48,7 @@ export function drawIncremental(
   const score: PathCommand[] = [];
   const engrave: PathCommand[] = [];
   const cut: PathCommand[] = [];
+  const pits: PathCommand[] = [];
   const obstacles: Obstacle[] = [];
 
   // Track: the first leg and the edges around the pegs.
@@ -103,6 +106,7 @@ export function drawIncremental(
   const r = options.nailDiameterMm / 2;
   for (const [x, y] of [...points, ...pegs]) {
     if (options.holes === 'cut') cut.push(...circlePath(x, y, r));
+    else if (options.holes === 'pit') pits.push(...circlePath(x, y, 0.5));
     else {
       score.push(
         ...polylinePath([
@@ -150,12 +154,14 @@ export function drawIncremental(
   const size = lineWidth > w - 40 ? (LINE_TEXT_MM * (w - 40)) / lineWidth : LINE_TEXT_MM;
   engrave.push(...textPath(options.line, w / 2, h - 5, size, { anchor: 'middle' }));
 
-  cut.push(...rectPath(0, 0, w, h, options.cornerRadiusMm));
+  const edge = options.edge === false ? [] : rectPath(0, 0, w, h, options.cornerRadiusMm);
   const items: DrawItem[] = [
     { layer: 'score', path: score, fill: false },
     { layer: 'engrave', path: engrave, fill: true },
+    { layer: 'pit', path: pits, fill: true },
     { layer: 'cut', path: cut, fill: false },
-  ];
+    { layer: 'edge', path: edge, fill: false },
+  ].filter((i) => i.path.length > 0) as DrawItem[];
   return {
     drawing: { width: w, height: h, items },
     labelsComplete: placement.complete,

@@ -797,3 +797,17 @@ Short entries: decision; alternatives considered; reason. Newest last.
   on the device: up to 200 per puzzle are kept (was 20), so a busy day is not crowded out by
   older results; "today" is the ISO date of the result. Alternatives: a separate kiosk build
   (one build is simpler to run), a server for the leaderboard (the booth must work offline).
+- **2026-10-16 Board build variant (roadmap 9.5, Kevin's decision).** The Excellence board is
+  engraved on 12 mm birch plywood cut to size by the store, and the nail holes are drilled by
+  hand: a CO2 laser cannot cut clean 1.2–1.6 mm holes through 12 mm. New hole mode `pit`: a
+  filled 1 mm dot at each nail on a layer of its own (magenta, "engrave deeper"), in which a
+  1.2 mm drill centres itself (crosses are hard to hit). The board outline moved from the red
+  cut layer to a layer of its own (orange `edge`) and can be left out (`--no-edge`, the app's
+  "Brettkante schneiden"). A board's export defaults live in its puzzle file
+  (`map.board.export`; this board: pits, no outline), used by the CLI and the app's export
+  panel; options override them. Nails 1.6 × 20 mm with flat heads and 1 mm string until
+  measured: string gap 5.61 mm, also at the scale, start nail Hannover; robust for r_eff
+  1.0–2.0 mm (5.47–5.95 mm). The test-hole strip is written only for laser-cut holes. The file
+  stays 300 × 600 mm and is centred on the 1–2 mm narrower pieces with the P2S camera; the
+  build note describes tape, lasering, drilling 9 mm deep, nails 11 mm high with a gauge,
+  oiling, a test piece first, and the 6 mm laser-cut variant as alternative.

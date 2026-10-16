@@ -30,8 +30,9 @@ describe('incremental board export', () => {
     const { drawing, labelsComplete } = drawIncremental(puzzle, options);
     expect(labelsComplete).toBe(true);
     const cut = drawing.items.filter((i) => i.layer === 'cut').flatMap((i) => i.path);
-    // 10 nails, 4 pegs, the outline.
-    expect(cut.filter((c) => c[0] === 'M')).toHaveLength(10 + 4 + 1);
+    // 10 nails and 4 pegs; the board outline is a layer of its own.
+    expect(cut.filter((c) => c[0] === 'M')).toHaveLength(10 + 4);
+    expect(drawing.items.some((i) => i.layer === 'edge')).toBe(true);
     for (const item of drawing.items) {
       const b = pathBounds(item.path)!;
       expect(b[0]).toBeGreaterThanOrEqual(-1e-6);

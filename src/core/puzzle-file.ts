@@ -5,6 +5,7 @@
 // so a file stays readable when the data version changes. Results (optimum, gaps) are
 // informational: the app recomputes them when it opens a file.
 
+import type { HoleMode } from './board/drawing';
 import type { LabelLanguage } from './data';
 import type { Point } from './geometry';
 import { DEFAULT_INCREMENTAL_UI, type IncrementalUiParams } from './incremental/params';
@@ -52,6 +53,8 @@ export interface BoardExtras {
   readonly legend: readonly LegendEntry[];
   /** Preferred start nail (index into places): used if its gap at the scale reaches the target. */
   readonly startPlace: number | null;
+  /** Export defaults of this board (e.g. drill pits and no outline cut for thick plywood). */
+  readonly export?: { readonly holes: HoleMode; readonly edge: boolean };
 }
 
 /** Minimum and maximum number of places per group (e.g. per federal state). */
@@ -188,7 +191,14 @@ function parseBoardExtras(v: unknown, places: number): BoardExtras | undefined {
     (v.startPlace as number) < places
       ? (v.startPlace as number)
       : null;
-  return { legend, startPlace: start };
+  const e = isObj(v.export) ? v.export : null;
+  const holes: HoleMode | null =
+    e?.holes === 'cut' || e?.holes === 'mark' || e?.holes === 'pit' ? e.holes : null;
+  return {
+    legend,
+    startPlace: start,
+    ...(e && holes ? { export: { holes, edge: e.edge !== false } } : {}),
+  };
 }
 
 /** Mean latitude and longitude of the members (stored position of a composite place). */
