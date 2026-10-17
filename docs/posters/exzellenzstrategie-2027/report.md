@@ -1,15 +1,15 @@
 # Poster report
 
-Generated 2026-10-16 by `cli/export-poster.ts`.
+Generated 2026-10-17 by `cli/export-poster.ts`, theme neutral.
 
 | poster | places | length | second-best | problem line | flat-map optimum |
 | --- | --- | --- | --- | --- | --- |
-| exzellenzstrategie-2027-poster-14 | 14 | 2,039.3 km | +3.4 km | Find the shortest round trip out of 3.1 × 10^9 options. | same |
-| exzellenzstrategie-2027-poster-17 | 17 | 2,078.3 km | +0.6 km | Find the shortest round trip out of 1.0 × 10^13 options. | same |
-| exzellenzstrategie-2027-poster-22 | 22 | 2,521.4 km | +1.4 km | Find the shortest round trip out of 2.6 × 10^19 options. | same |
-| exzellenzstrategie-2027-poster-25 | 25 | 2,534.4 km | +8.0 km | Find the shortest round trip out of 3.1 × 10^23 options. | same |
-| exzellenzstrategie-2027-poster-34 | 34 | 2,838.1 km | +1.8 km | Find the shortest round trip out of 4.3 × 10^36 options. | same |
-| exzellenzstrategie-2027-poster-37 | 37 | 2,878.5 km | +2.4 km | Find the shortest round trip out of 1.9 × 10^41 options. | same |
+| exzellenzstrategie-2027-poster-14 | 14 | 2,039.3 km | +3.4 km | Shortest round trip out of 3.1 × 10^9 options: | same |
+| exzellenzstrategie-2027-poster-17 | 17 | 2,078.3 km | +0.6 km | Shortest round trip out of 1.0 × 10^13 options: | same |
+| exzellenzstrategie-2027-poster-22 | 22 | 2,521.4 km | +1.4 km | Shortest round trip out of 2.6 × 10^19 options: | same |
+| exzellenzstrategie-2027-poster-25 | 25 | 2,534.4 km | +8.0 km | Shortest round trip out of 3.1 × 10^23 options: | same |
+| exzellenzstrategie-2027-poster-34 | 34 | 2,838.1 km | +1.8 km | Shortest round trip out of 4.3 × 10^36 options: | same |
+| exzellenzstrategie-2027-poster-37 | 37 | 2,878.5 km | +2.4 km | Shortest round trip out of 1.9 × 10^41 options: | same |
 
 | file | language | paper | layout | labels overlapping | labels on legs | logo |
 | --- | --- | --- | --- | --- | --- | --- |

@@ -4,9 +4,12 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler poster
-texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB). Then the
-open items of Phase 10.
+Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
+game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
+Next are the open items of Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
+Earlier status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler
+poster texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB).
+Then the open items of Phase 10.
 Earlier status 2026-10-17: 9.1–9.9 are done (9.9: the Ruhr Innovation Lab poster in German and
 English, A1 and A0); the code is under the MIT License. Next are the open items of Phase 10.
 Earlier status 2026-10-16, after Kevin's review of 9.7–9.8: 9.1–9.8 are done. Next is 9.9, the
@@ -621,7 +624,7 @@ A0, the app's editable poster; the files in `docs/posters/exzellenzstrategie-202
 `/en`, A0 and the logo versions in `local/posters/` by one command, see the README there. The
 TU Dortmund logo is not in `local/` yet; the QR code waits for Phase 10.)
 
-### 9.10 Poster: simpler texts, QR code, design themes; playing on a phone (Kevin's review of 9.9, 2026-10-17)
+### 9.10 Poster: simpler texts, QR code, design themes; playing on a phone (Kevin's review of 9.9, 2026-10-17) — done 2026-10-17
 
 Kevin finds the poster text still too complicated, wants a QR code to the game ("it must play
 well on a smartphone"), and wants versions in the corporate designs of TU Dortmund (for his
@@ -702,8 +705,14 @@ order; the phone layout matters for the open day too, since visitors may play on
       `local/rub/`.
     - `fakultaet-informatik.svg` is the faculty logo of TU Dortmund ("fi fakultät für
       informatik"), taken from Kevin's posters.
+  - (Done 2026-10-17: `--theme` with `docs/posters/themes/{neutral,tu,rub}.json`, colour
+    logos with fills, strokes, `<use>` and a minimum line of 0.25 mm; the RUB sender line is
+    a placeholder in `rub.json` until Maike gives its text.)
 - **Outputs** as in 9.9 (A1 in the repository per language, A0 and logo versions in
   `local/posters/`), now also per theme.
+  - (Done 2026-10-17: the A1 posters in the repository with the new texts and the QR code;
+    `local/posters/` has the themes tu and rub, the neutral logo versions and A0, German and
+    English.)
 
 ## Phase 10: physical and public
 

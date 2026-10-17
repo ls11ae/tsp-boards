@@ -64,10 +64,13 @@ what we change and why, benchmark results, and open questions.
   licensing inventory and recommendation (`docs/licensing.md`), third-party notices in the
   build. 9.9 done 2026-10-17: the Ruhr Innovation Lab poster (emphasized place, labels off
   the legs, German and English, A1 and A0; `docs/posters/exzellenzstrategie-2027/de` and `/en`,
-  logo versions only in `local/posters/`). **Next:** 9.10 (simpler poster texts, a QR code to
-  the game, a phone layout, design themes for TU Dortmund and RUB); then the physical builds
-  (Kevin), deployment and the play data endpoint (need the chair server). See
-  `docs/roadmap.md`.
+  logo versions only in `local/posters/`). 9.10 done 2026-10-17: simpler poster texts, a QR
+  code to the game (`#p/<puzzle id>` short links), the site on GitHub Pages
+  (https://ls11ae.github.io/tsp-boards/, `.github/workflows/pages.yml`), a phone layout
+  (`npm run e2e`, Playwright), design themes neutral/tu/rub (`docs/posters/themes/`, logos
+  only from `local/`, a link to the shared folder). **Next:** the open items of Phase 10:
+  the physical builds (Kevin), the chair server and the play data endpoint; the RUB sender
+  line (Maike). See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - License: MIT for code and docs (2026-10-17; `LICENSE`, `AUTHORS`, third-party terms in
@@ -164,12 +167,12 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–8 and 9.1–9.9 are done (the open day boards are being built). Open work, in order,
-is in `docs/roadmap.md`:
+Phases 1–9 are done (the open day boards are being built). Open work, in order, is in
+`docs/roadmap.md`:
 
 9. **Open day (2026-11-07):** Excellence Strategy board (first wooden board), fixes from the
    review, rotatable globe with an animated round trip, event mode, further review items,
-   posters in DIN formats and the Ruhr Innovation Lab poster (done); open: 9.10 (poster
-   texts, QR code, phone layout, design themes).
+   posters in DIN formats, the Ruhr Innovation Lab poster, QR codes, phone layout and design
+   themes (done).
 10. **Physical and public:** incremental test board, deployment to the chair server, play data
     endpoint, code license; later a physical globe.
