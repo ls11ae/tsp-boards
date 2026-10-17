@@ -6,9 +6,8 @@ items done here when they are finished (heading "— done <date>", or "(done)" a
 
 Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
 game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
-Next is 9.11, two items from Kevin's review of 9.10 (labels clearly at their own dot, gallery
-order), then 9.12, the kiosk for the booth (no free names, no way out), then the open items of
-Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
+9.11 (labels clearly at their own dot, gallery categories) is done too. Next is 9.12, the kiosk
+for the booth (no free names, no way out), then the open items of Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
 Earlier status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler
 poster texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB).
 Then the open items of Phase 10.
@@ -716,7 +715,7 @@ order; the phone layout matters for the open day too, since visitors may play on
     `local/posters/` has the themes tu and rub, the neutral logo versions and A0, German and
     English.)
 
-### 9.11 Review of 9.10 (Kevin, 2026-10-17)
+### 9.11 Review of 9.10 (Kevin, 2026-10-17) — done 2026-10-17
 
 Two items before the kiosk.
 
@@ -739,6 +738,9 @@ Two items before the kiosk.
   - Within a category from small to large; a board and its digital version side by side.
   - The filters keep working across categories; puzzle ids and `#p/<id>` links stay
     unchanged; the kiosk keeps its own selection.
+  - (Done 2026-10-17: `category` per entry and `categories` with German and English names
+    in `index.json`, built by `cli/collection.ts index` from `cli/lib/categories.ts`; the
+    gallery shows a heading per category and leaves out categories without a match.)
 
 ### 9.12 Kiosk for the booth (feedback 2026-10-17)
 
