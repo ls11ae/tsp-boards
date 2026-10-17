@@ -1215,3 +1215,21 @@ Short entries: decision; alternatives considered; reason. Newest last.
   km on the globe and a smaller board gap), 7.50 mm at recognizability 0.530 (Kingston,
   Valparaíso, Astana); Pacific legs other than Los Angeles–Sydney were not tried (Kevin's
   choice).
+- **2026-10-17 English mode (roadmap 9.16).** Titles and descriptions of puzzles are a
+  `LocalText`: a plain string (one text for all languages, as before; user puzzles stay so) or
+  `{ de, en }` (English falls back to German), in puzzle files, `index.json` and the open
+  document. The app shows the text of its language; editing in the designer changes that
+  language's text of a `{ de, en }` text and the plain text otherwise. Links carry the title in
+  the app's language; boards, worksheets, solution sheets and posters take the board's label
+  language. Place names follow the app's language wherever nothing is engraved (play view,
+  globe, kiosk, place lists, tooltips, a digital puzzle's map in the designer); a board puzzle's
+  map in the designer keeps the board's label language, as it previews the board (its label
+  constraint in the search is measured in that language). Composite and custom places get an
+  English name from their list line (`Name | English name`, carried in puzzle files as `nameEn`
+  and in links inside the name), and "A/B" composites translate their members (Bonn/Cologne);
+  legend lines get `textEn`. The list text rebuilt from a puzzle file now keeps a town's own
+  label ("München; München ×2"), which it dropped before. Alternatives: a separate English
+  puzzle file per puzzle (doubles the collection and its results), following the board label
+  language in the play view (curated puzzles are German boards, so English players would keep
+  German names), translating composite names by a dictionary in the app (one more place to
+  maintain instead of the list).

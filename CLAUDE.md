@@ -78,9 +78,10 @@ what we change and why, benchmark results, and open questions.
   pilot holes; the incremental test board re-exported. 9.15 done 2026-10-17: open paths with a
   given leg (a fixed edge in the core, the scale at the end nail), the world board "Rund um die
   Welt" (40 cities, 600 × 300 mm, string gap 7.34 mm; `docs/boards/welt-pazifik/`,
-  `cli/world-board.ts`) and its digital version on the globe. **Next:** the open items of
-  Phase 10: the physical builds (Kevin), the chair server and the play data endpoint. See
-  `docs/roadmap.md`.
+  `cli/world-board.ts`) and its digital version on the globe. 9.16 done 2026-10-17: the app in
+  English (English place names from `nameEn`, titles and descriptions as `{ de, en }`).
+  **Next:** the open items of Phase 10: the physical builds (Kevin), the chair server and the
+  play data endpoint. See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - License: MIT for code and docs (2026-10-17; `LICENSE`, `AUTHORS`, third-party terms in

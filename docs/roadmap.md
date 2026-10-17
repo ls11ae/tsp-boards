@@ -4,7 +4,10 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-17 (late): 9.1–9.15 are done; 9.15 is the world board "Rund um die Welt" with
+Status 2026-10-17 (evening): 9.1–9.16 are done (9.16: the app in English with English place
+names and English titles and descriptions of the curated puzzles). Next are the open items of
+Phase 10.
+Earlier status 2026-10-17 (late): 9.1–9.15 are done; 9.15 is the world board "Rund um die Welt" with
 the Pacific leg given (40 cities, 600 × 300 mm, string gap 7.34 mm, files in
 `docs/boards/welt-pazifik/`) and its digital version on the globe. Next are the open items of
 Phase 10.
@@ -878,6 +881,26 @@ Optional for the open day, after 9.14.
   `#p/welt-pazifik` with the Pacific leg dashed, start and finish marked, lengths in km on the
   globe and the flight closing the loop; both in "Europa und die Welt", the digital one in the
   kiosk's hard level; `e2e/world-path.e2e.ts`.)
+
+### 9.16 English mode (Maike, 2026-10-17) — done 2026-10-17
+
+- In English, place labels, the gallery and the play view still show German names and texts
+  ("Tokio", "Moskau", "Peking", "München", "Olympische Sommerspiele", German descriptions).
+  Label places with `nameEn` from the data files where it exists (keep a label's addition such
+  as "×2"), and give the curated puzzles English titles and descriptions (`{ de, en }` in the
+  puzzle files and `index.json`, falling back to German). Check the gallery, the play view, the
+  globe and the kiosk in English.
+- (Done 2026-10-17: titles and descriptions are a plain text or `{ de, en }` (English falls
+  back to German) in puzzle files, `index.json` and the open document; all 22 curated puzzles
+  have English texts; `cli/collection.ts` takes `--title-en` and `--description-en` and keeps
+  a file's English texts when it is rebuilt. The play view, the globe, the kiosk, the place lists
+  and a digital puzzle's map in the designer name places in the app's language (Munich ×2,
+  Tokyo, Hanover); a board, its preview and its exports keep the board's label language.
+  Composite and custom places take an English name from the list (`Name | English name`, e.g.
+  Rhine-Main Universities) or, for "A/B", from their members (Bonn/Cologne); links keep it.
+  Legend lines have an English text (`textEn`), shown in the app in English and on English
+  boards. `e2e/english.e2e.ts` checks the gallery, a German puzzle, the globe and the kiosk in
+  English.)
 
 ## Phase 10: physical and public
 
