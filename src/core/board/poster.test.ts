@@ -122,7 +122,9 @@ describe('poster round trip', () => {
   });
 
   it('gives the figures of the Universities of Excellence (Kevin’s check, 9.7)', () => {
-    const cities = listCities(listPlaces('exzellenzuniversitaeten-2027'), towns);
+    // The 14 marked places: the Universities of Excellence and alliances.
+    const places = listPlaces('exzellenzstrategie-2027').filter((p) => p.highlight);
+    const cities = listCities(places, towns);
     const stops = posterStops(cities, 'centroid');
     const tour = posterTour(backend, stops, stopPoints(stops, projection));
     expect(stops).toHaveLength(14);

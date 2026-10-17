@@ -3,8 +3,8 @@
 # places at the centre of their cities) and the 20 further sites of Clusters of Excellence
 # 2026-2032 (cities with a cluster that are not already a university place or a member of a
 # composite place): 34 places.
-# Derived from exzellenzuniversitaeten-2027.txt and exzellenzcluster-2026.txt (sources there and
-# in README.md); details in excellence-strategy-2026-10-12.json. Built 2026-10-16.
+# Sources in README.md; details (universities, the 70 clusters, coordinates) in
+# excellence-strategy-2026-10-12.json. Built 2026-10-16.
 # Clusters per further site: Hannover 4; Gießen, Oldenburg 3; Bremen, Kiel, Marburg, Stuttgart,
 # Würzburg 2; Bayreuth, Braunschweig, Düsseldorf, Erlangen, Halle (Saale), Konstanz, Leipzig,
 # Lübeck, Münster, Regensburg, Siegen, Ulm 1.

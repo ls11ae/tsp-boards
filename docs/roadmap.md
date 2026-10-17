@@ -795,8 +795,9 @@ designer.
 - (Done 2026-10-17: a town's own label in place lists (`* München; München ×2`), English
   boards and posters keep a label's addition to the town's name; the board re-exported with
   gap 5.61 mm exact and at the scale, start nail Hannover; six puzzle files and three lists
-  removed; the poster now reads the list `exzellenzstrategie-2027.txt`, which stays with the
-  two source lists `exzellenzuniversitaeten-2027.txt` and `exzellenzcluster-2026.txt`.)
+  removed; the poster now reads the list `exzellenzstrategie-2027.txt`. The two source lists
+  `exzellenzuniversitaeten-2027.txt` and `exzellenzcluster-2026.txt` were deleted too, the
+  sources stay in `excellence-strategy-2026-10-12.json`.)
 
 ## Phase 10: physical and public
 

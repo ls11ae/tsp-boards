@@ -1146,3 +1146,7 @@ Short entries: decision; alternatives considered; reason. Newest last.
   the removed posters' QR codes) no longer open a puzzle. Alternatives: a separate English label
   field in place lists (more syntax for one case), building the poster from the 37 puzzle with
   composites added to it (would change the game's places).
+- **2026-10-17 Source lists deleted too.** At Maike's request `exzellenzuniversitaeten-2027.txt`
+  and `exzellenzcluster-2026.txt` are deleted as well (in the git history); the sources stay in
+  `docs/data/curated/excellence-strategy-2026-10-12.json` and the links in the curated README.
+  The poster test of the 14 universities takes the marked places of `exzellenzstrategie-2027.txt`.

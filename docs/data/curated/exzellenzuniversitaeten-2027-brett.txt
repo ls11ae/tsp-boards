@@ -1,4 +1,4 @@
-# Board variant of exzellenzuniversitaeten-2027.txt (roadmap 7.5): Bonn and Köln, 20.6 mm apart on the
+# The Universities of Excellence and alliances as a board (roadmap 7.5): Bonn and Köln, 20.6 mm apart on the
 # default board and partners in three clusters, are one composite place between them.
 # Universities of Excellence and excellence alliances, funding period from 1 January 2027 (2027-2033):
 # 10 sites continued (Excellence Commission, 11 March 2026) and 5 new sites (2 October 2026);
