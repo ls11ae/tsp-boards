@@ -1,0 +1,7 @@
+{
+  "_comment": "Export defaults of the world board (roadmap 9.15): built like the Excellence board (12 mm plywood cut to size, nail holes drilled at engraved pits), for cli/collection.ts --board-extras. No legend; start and end nail come from --path.",
+  "export": {
+    "holes": "pit",
+    "edge": false
+  }
+}

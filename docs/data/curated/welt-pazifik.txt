@@ -1,0 +1,48 @@
+# Rund um die Welt (roadmap 9.15): 40 world cities for a 600 × 300 mm world board and the same
+# puzzle digitally. The round trip cannot close on a flat board, so the flight across the
+# Pacific is given: the path runs from Los Angeles (start) through all places to Sydney (end).
+# Chosen by cli/world-board.ts (search over the 250 cities with most Wikipedia editions,
+# Los Angeles and Sydney pinned, the leg Sydney–Los Angeles fixed; nails 2 mm, string 1 mm,
+# at least 10 mm apart, 4 mm labels; docs/experiments/world-board-2026-10-17.md).
+# Built with: npx tsx cli/collection.ts list --file docs/data/curated/welt-pazifik.txt
+#   --region WO --path 'Los Angeles,Sydney' … (README). Alphabetical order.
+Baku
+Bangkok
+Barcelona
+Berlin
+Bogotá
+Brasília
+Budapest
+Buenos Aires
+Chicago
+Denver
+Dhaka
+Ho-Chi-Minh-Stadt
+Hongkong
+Istanbul
+Jakarta
+Jerusalem
+Krasnodar
+Kyjiw
+Lima
+Lissabon
+Los Angeles
+Mekka
+Mexiko-Stadt
+Moskau
+Mumbai
+Nairobi
+New York City
+Paris
+Peking
+Rio de Janeiro
+Rom
+Sankt Petersburg
+Santiago
+Seoul
+Shanghai
+Singapur
+Stockholm
+Sydney
+Tirana
+Tokio

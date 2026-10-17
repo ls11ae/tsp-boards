@@ -27,7 +27,7 @@ export const KIOSK_LEVELS: readonly {
   },
   {
     key: 'hard',
-    ids: ['exzellenzstrategie-2027-37', 'deutschland-40', 'welt-30', 'europa-30'],
+    ids: ['exzellenzstrategie-2027-37', 'deutschland-40', 'welt-30', 'europa-30', 'welt-pazifik'],
   },
 ];
 

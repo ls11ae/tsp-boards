@@ -103,6 +103,13 @@ inhabitants in 47 countries, see the decision log).
 From the world data file (`public/data/countries/wo.json`: GeoNames towns with at least 250,000
 inhabitants, city districts merged, continents as regions; distances on the sphere, see the
 decision log). World puzzles are digital; lengths are great-circle kilometres.
+Exception: the world board (roadmap 9.15) measures on the flat Equal Earth map, as the string
+does, and gives the leg across the Pacific (an open path, `--path 'Los Angeles,Sydney'`):
+
+```
+npx tsx cli/collection.ts list --file docs/data/curated/welt-pazifik.txt --region WO --title 'Rund um die Welt' --board 600x300 --margin 12 --label 4 --min-dist 10 --nail 2 --string 1 --target 5 --path 'Los Angeles,Sydney' --id welt-pazifik-brett --purpose board --flat --board-extras docs/data/curated/welt-pazifik-brett.board.json --description '…'
+npx tsx cli/collection.ts list --file docs/data/curated/welt-pazifik.txt --region WO --title 'Rund um die Welt' --board 600x300 --margin 12 --label 4 --min-dist 10 --nail 2 --string 1 --target 5 --path 'Los Angeles,Sydney' --id welt-pazifik --purpose digital --description '…'
+```
 
 | list / search | puzzle | places | purpose |
 | --- | --- | --- | --- |
@@ -110,6 +117,7 @@ decision log). World puzzles are digital; lengths are great-circle kilometres.
 | search `--region WO --n 30 --seed 1 --weights 0.3,1,3 --min-pop 2000000` | Welt: 30 Metropolen | 30 cities on all continents (Asia 11, Europe 7, North America 4, Africa 4, South America 2, Oceania 2; well-known by Wikipedia editions, roadmap 9.6) | digital (gap 248 km = 0.34 %; the optimum on the flat map is 3,164 km longer on the sphere) |
 | `80-tage-um-die-welt.txt` | In 80 Tagen um die Welt | 9 stations of Jules Verne's novel (fixed) | digital (gap 517 km = 1.56 %; Fogg's route is the optimum, once around the world) |
 | `einmal-um-die-welt.txt` | Einmal um die Welt | 20 cities of the northern mid-latitudes (fixed) | digital (gap 172 km = 0.47 %; the optimum goes once around the world) |
+| `welt-pazifik.txt` (+ `welt-pazifik-brett.board.json`) | Rund um die Welt, the world board and its digital version (roadmap 9.15) | 40 cities chosen by `cli/world-board.ts` (fixed); an open path from Los Angeles to Sydney, the flight across the Pacific given | board 600 × 300 mm on the flat map (`--flat`; string gap 7.34 mm, 7.34 mm at the scale at Sydney; files in `docs/boards/welt-pazifik/`) and digital on the sphere (gap 109 km = 0.16 %; the same order as on the board) |
 
 Source of the Olympic list: International Olympic Committee, list of the Olympic Games,
 <https://www.olympics.com/en/olympic-games> (retrieved 2026-10-13); one place per city.
