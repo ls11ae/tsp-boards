@@ -5,6 +5,7 @@
   AddType text/javascript .js .mjs
   AddType application/json .json
   AddType image/svg+xml .svg
+  AddType application/manifest+json .webmanifest
 </IfModule>
 
 <IfModule mod_headers.c>
@@ -14,6 +15,10 @@
   </FilesMatch>
   # The page and the city data keep their names across updates: revalidate.
   <FilesMatch "\.(html|json)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  # The service worker and the web app manifest: revalidate, so that updates arrive.
+  <FilesMatch "^(sw\.js|manifest\.webmanifest)$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
   Header set X-Content-Type-Options "nosniff"

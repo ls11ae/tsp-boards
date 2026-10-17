@@ -2,6 +2,7 @@ import type { Messages } from './en';
 
 export const de: Messages = {
   appTitle: 'TSP Boards',
+  updateReady: 'Neue Version – neu laden',
   appTagline: 'Puzzle-Bretter: die kürzeste Rundreise mit Nägeln und Faden finden',
   appTaglineDigital: 'Rätsel am Bildschirm: die kürzeste Rundreise finden',
   language: 'Sprache',
@@ -495,6 +496,8 @@ export const de: Messages = {
   kioskHard: 'Schwer',
   kioskFullscreen: 'Vollbild',
   kioskDaily: 'Bestenliste des Tages',
+  kioskTable: (table) => `Tisch ${table}`,
+  kioskDailyTable: (table) => `Bestenliste des Tages – Tisch ${table}`,
   kioskDailyEmpty: 'Heute noch keine Ergebnisse – sei die erste Person!',
   kioskNext: 'Nächste Person',
   kioskBack: 'Zur Auswahl',

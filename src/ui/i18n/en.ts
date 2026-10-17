@@ -3,6 +3,7 @@
 
 export const en = {
   appTitle: 'TSP Boards',
+  updateReady: 'New version – reload',
   appTagline: 'Puzzle boards: find the shortest round trip with nails and a string',
   appTaglineDigital: 'Puzzles on screen: find the shortest round trip',
   language: 'Language',
@@ -507,6 +508,8 @@ export const en = {
   kioskHard: 'Hard',
   kioskFullscreen: 'Full screen',
   kioskDaily: "Today's leaderboard",
+  kioskTable: (table: string) => `Table ${table}`,
+  kioskDailyTable: (table: string) => `Today's leaderboard – Table ${table}`,
   kioskDailyEmpty: 'No results yet today – be the first!',
   kioskNext: 'Next person',
   kioskBack: 'Back to the choice',

@@ -18,6 +18,7 @@ import { useT } from './i18n';
 import { usePuzzle } from './puzzle';
 import { localText } from '../core/puzzle-file';
 import { useStore, type Language, type PuzzleType } from './store';
+import { useUpdate } from './update';
 
 /**
  * "TSP Boards" leads to the gallery: on a phone the header's gallery button is hidden while
@@ -69,6 +70,7 @@ function Header() {
   const page = useStore((s) => s.page);
   const puzzleType = useStore((s) => s.puzzleType);
   const setPuzzleType = useStore((s) => s.setPuzzleType);
+  const install = useUpdate((s) => s.install);
   // A digital puzzle in play has no nails or string.
   const digitalPlay = useStore(
     (s) => s.page === 'app' && s.mode === 'play' && s.doc.purpose === 'digital',
@@ -111,6 +113,12 @@ function Header() {
           );
         })}
       </div>
+      {install && (
+        // A new version waits (roadmap 9.17); the gallery switches over by itself.
+        <button type="button" className="primary update" onClick={install}>
+          {t.updateReady}
+        </button>
+      )}
       <div className="lang" role="group" aria-label={t.language}>
         {(['en', 'de'] as const satisfies readonly Language[]).map((l) => (
           <button

@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import type { Plugin } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vitest/config';
 
 const LICENSES_FILE = 'third-party-licenses.txt';
@@ -77,7 +78,41 @@ export default defineConfig(({ command }) => ({
           },
         }
       : {},
-  plugins: [react(), thirdPartyLicenses()],
+  plugins: [
+    react(),
+    thirdPartyLicenses(),
+    // Offline after the first visit (roadmap 9.17: the booth laptops run the Pages site without
+    // Node): a service worker precaches the app, the solver (HiGHS WebAssembly), all maps and
+    // puzzles. A new version installs in the background and waits until the app activates it
+    // where a reload loses nothing (src/ui/update.ts), as in ls11ae/ruler-of-the-plane.
+    VitePWA({
+      registerType: 'prompt',
+      injectRegister: false,
+      manifest: {
+        name: 'TSP Boards',
+        short_name: 'TSP Boards',
+        description: 'Die kürzeste Rundreise finden – Puzzles mit Nägeln und Faden',
+        lang: 'de',
+        start_url: './',
+        scope: './',
+        display: 'standalone',
+        background_color: '#f6f5f1',
+        theme_color: '#b5482b',
+        icons: [{ src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml' }],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,wasm,json,txt}'],
+        // The solver's WebAssembly file has about 3.5 MB.
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+        cleanupOutdatedCaches: true,
+        // The first install controls the open page at once (offline right away); later
+        // versions wait for the app to activate them.
+        clientsClaim: true,
+        skipWaiting: false,
+        navigateFallback: 'index.html',
+      },
+    }),
+  ],
   define: { __APP_VERSION__: JSON.stringify(appVersion()) },
   worker: { format: 'es' },
   test: {
