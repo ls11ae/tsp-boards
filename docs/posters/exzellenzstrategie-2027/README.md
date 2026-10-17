@@ -1,6 +1,7 @@
 # Ruhr Innovation Lab posters (Exzellenzstrategie 2026–2033)
 
-Posters for the corridors of Chair 11 (TU Dortmund) and of Maike's chair (RUB) that celebrate
+Posters for the corridors of Chair 11 (TU Dortmund) and of the Chair of Algorithmics (RUB) that
+celebrate
 the Ruhr Innovation Lab (RIL) (roadmap 9.7, 9.9, 9.10): the shortest round trip through the
 sites of the Excellence Strategy, starting and ending at the RIL. Six variants for choosing the
 number of places, each in German (`de/`) and English (`en/`), DIN A1 portrait as vector PDF
@@ -74,10 +75,10 @@ space, sender line; the logos themselves come only from `local/`):
 - **tu** (Kevin's corridor): the TU Dortmund logo at the top left with clear space (the English
   logo on English posters), title and length in TU green, the round trip red, the faculty logo
   at the bottom left and the AE logo at the bottom right.
-- **rub** (Maike's corridor): the RUB logo at the top right, title, length and round trip in
-  RUB blue, a light blue tint inside alliances, the Faculty of Computer Science logo at the
-  bottom left and the chair logo at the bottom right. The sender line is a placeholder until
-  its text is known: change `sender` in `../themes/rub.json`.
+- **rub** (the corridor of the Chair of Algorithmics): the RUB logo at the top right, title,
+  length and round trip in RUB blue, a light blue tint inside alliances, the Faculty of
+  Computer Science logo at the bottom left and "Lehrstuhl für Algorithmik, Ruhr-Universität
+  Bochum" / "Chair of Algorithmics, Ruhr University Bochum" as the sender line; no chair logo.
 
 Logos at the top and in the footer keep their colours, fills and strokes (lines at least
 0.25 mm wide); logos on the map stay one colour. The font stays Fira Sans Condensed.

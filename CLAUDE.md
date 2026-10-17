@@ -72,7 +72,7 @@ what we change and why, benchmark results, and open questions.
   clearly at their own dot, gallery categories. 9.12 done 2026-10-17: the kiosk for the booth
   (names from a list, `#kiosk?names=free`, removing entries, no way out; `e2e/kiosk.e2e.ts`).
   **Next:** the open items of Phase 10: the physical builds (Kevin), the
-  chair server and the play data endpoint; the RUB sender line (Maike). See `docs/roadmap.md`.
+  chair server and the play data endpoint. See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - License: MIT for code and docs (2026-10-17; `LICENSE`, `AUTHORS`, third-party terms in

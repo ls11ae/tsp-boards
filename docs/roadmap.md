@@ -7,7 +7,7 @@ items done here when they are finished (heading "— done <date>", or "(done)" a
 Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
 game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
 9.11 (labels clearly at their own dot, gallery categories) and 9.12 (the kiosk for the booth:
-names from a list, no way out) are done too. Next are the open items of Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
+names from a list, no way out) are done too. Next are the open items of Phase 10.
 Earlier status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler
 poster texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB).
 Then the open items of Phase 10.
@@ -707,8 +707,9 @@ order; the phone layout matters for the open day too, since visitors may play on
     - `fakultaet-informatik.svg` is the faculty logo of TU Dortmund ("fi fakultät für
       informatik"), taken from Kevin's posters.
   - (Done 2026-10-17: `--theme` with `docs/posters/themes/{neutral,tu,rub}.json`, colour
-    logos with fills, strokes, `<use>` and a minimum line of 0.25 mm; the RUB sender line is
-    a placeholder in `rub.json` until Maike gives its text.)
+    logos with fills, strokes, `<use>` and a minimum line of 0.25 mm. RUB, decided by Maike
+    2026-10-17: the sender line "Lehrstuhl für Algorithmik, Ruhr-Universität Bochum" / "Chair
+    of Algorithmics, Ruhr University Bochum", and no chair logo (ALGO) in the footer.)
 - **Outputs** as in 9.9 (A1 in the repository per language, A0 and logo versions in
   `local/posters/`), now also per theme.
   - (Done 2026-10-17: the A1 posters in the repository with the new texts and the QR code;

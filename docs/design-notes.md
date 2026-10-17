@@ -1097,3 +1097,9 @@ Short entries: decision; alternatives considered; reason. Newest last.
   tries back, keys and another address (58 buttons, all inside the kiosk). Alternatives: a
   word list of adjectives and animals (more combinations, but some pairings read oddly to
   children), a staff PIN (one more thing to remember at the booth).
+- **2026-10-17 RUB poster footer (roadmap 9.10).** Maike decided the sender line of the rub
+  design: "Chair of Algorithmics"; on German posters "Lehrstuhl für Algorithmik". Both carry the
+  university after a comma, as the TU line does ("…, Ruhr-Universität Bochum" / "…, Ruhr
+  University Bochum"). The chair logo (ALGO) is removed from the footer at her request, so the
+  footer has the Faculty of Computer Science logo on the left and the sender line; the RUB
+  posters in `local/posters/` are re-exported.
