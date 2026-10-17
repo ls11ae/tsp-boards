@@ -6,7 +6,8 @@ items done here when they are finished (heading "— done <date>", or "(done)" a
 
 Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
 game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
-Next are the open items of Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
+Next is 9.11, the kiosk for the booth (no free names, no way out), then the open items of
+Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
 Earlier status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler
 poster texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB).
 Then the open items of Phase 10.
@@ -713,6 +714,29 @@ order; the phone layout matters for the open day too, since visitors may play on
   - (Done 2026-10-17: the A1 posters in the repository with the new texts and the QR code;
     `local/posters/` has the themes tu and rub, the neutral logo versions and A0, German and
     English.)
+
+### 9.11 Kiosk for the booth (feedback 2026-10-17)
+
+For the open day the app runs at the booth in the event mode (`#kiosk`, 9.4). Feedback
+reached Kevin: the leaderboard has a free name field, and from the game one gets into the
+designer.
+
+- **Names without free text in the kiosk.** On a public screen anyone could type anything.
+  - Each new player gets a name from a short list, for example animals with a number ("Fuchs
+    7", "Biber 12"). A button picks another one. German and English lists, suitable for
+    children.
+  - Free text only with a switch for supervised use (e.g. `#kiosk?names=free`).
+  - Staff can remove an entry from the day's leaderboard, behind a long press plus a
+    confirmation (or a key combination). No PIN is needed.
+- **No way out of the kiosk.** Check that the kiosk never shows the designer, the gallery,
+  the export panel, links to other pages or the "Im Puzzle-Designer öffnen" button. The
+  play panel already hides the gallery and designer buttons in the kiosk.
+  - Also check links in puzzle descriptions and the footer (licences, GeoNames), the
+    browser's back button (stay inside the kiosk) and keyboard shortcuts.
+  - Add a Playwright test that clicks through every visible button of the kiosk and stays
+    inside it.
+- `docs/deployment.md`: how to run the booth (browser in kiosk or full-screen mode, offline
+  build, second screen with `#kiosk/scores`).
 
 ## Phase 10: physical and public
 

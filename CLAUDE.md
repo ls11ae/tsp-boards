@@ -68,9 +68,9 @@ what we change and why, benchmark results, and open questions.
   code to the game (`#p/<puzzle id>` short links), the site on GitHub Pages
   (https://ls11ae.github.io/tsp-boards/, `.github/workflows/pages.yml`), a phone layout
   (`npm run e2e`, Playwright), design themes neutral/tu/rub (`docs/posters/themes/`, logos
-  only from `local/`, a link to the shared folder). **Next:** the open items of Phase 10:
-  the physical builds (Kevin), the chair server and the play data endpoint; the RUB sender
-  line (Maike). See `docs/roadmap.md`.
+  only from `local/`, a link to the shared folder). **Next:** 9.11 (kiosk for the booth: no
+  free names, no way out), then the open items of Phase 10: the physical builds (Kevin), the
+  chair server and the play data endpoint; the RUB sender line (Maike). See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - License: MIT for code and docs (2026-10-17; `LICENSE`, `AUTHORS`, third-party terms in
@@ -167,12 +167,12 @@ what we change and why, benchmark results, and open questions.
 
 ## Roadmap
 
-Phases 1–9 are done (the open day boards are being built). Open work, in order, is in
-`docs/roadmap.md`:
+Phases 1–8 and 9.1–9.10 are done (the open day boards are being built). Open work, in order,
+is in `docs/roadmap.md`:
 
 9. **Open day (2026-11-07):** Excellence Strategy board (first wooden board), fixes from the
    review, rotatable globe with an animated round trip, event mode, further review items,
    posters in DIN formats, the Ruhr Innovation Lab poster, QR codes, phone layout and design
-   themes (done).
+   themes (done); open: 9.11 (kiosk for the booth).
 10. **Physical and public:** incremental test board, deployment to the chair server, play data
     endpoint, code license; later a physical globe.
