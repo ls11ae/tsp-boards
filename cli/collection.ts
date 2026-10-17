@@ -246,7 +246,15 @@ async function mapDoc(
             },
           }
         : {}),
-      ...(pathPool ? { path: pathPool } : {}),
+      // The path's end points as indices into the puzzle's places.
+      ...(pathPool && list
+        ? {
+            path: {
+              start: (places as readonly Place[]).indexOf(list.places[pathPool.start]!),
+              end: (places as readonly Place[]).indexOf(list.places[pathPool.end]!),
+            },
+          }
+        : {}),
       results: {
         tour: v.string.optimal,
         lengthMm: v.string.optimalLength / 1000,

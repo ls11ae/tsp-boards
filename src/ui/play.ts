@@ -138,7 +138,10 @@ export function mapPlayId(puzzle: PuzzleView): string | null {
   const { params, doc } = useStore.getState();
   if (doc.id) return doc.id;
   const places = mapPlaces(puzzle);
-  return places === null ? null : `p-${places}-${params.region}`;
+  // A world board on the flat map and an open path are other games than the plain puzzle.
+  const flat = params.flatMap ? '-flat' : '';
+  const path = doc.path ? `-path${doc.path.start}-${doc.path.end}` : '';
+  return places === null ? null : `p-${places}-${params.region}${flat}${path}`;
 }
 
 // --- highscores ----------------------------------------------------------------------------

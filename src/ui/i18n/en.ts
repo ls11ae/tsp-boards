@@ -346,6 +346,7 @@ export const en = {
   playPathHint: (start: string, end: string, touch: boolean, digital: boolean) =>
     `The path starts in ${start} and ends in ${end}. ${touch ? 'Tap' : 'Click'} the places in the order of your path; ${end} comes last and closes the round trip. ${touch ? 'Tap' : 'Click'} a visited place to go back to it. The dashed flight from ${end} back to ${start} is given and does not count.${digital ? '' : ' The string wraps around the nails, so sharp turns cost a little extra string.'}`,
   playPathLength: 'Length of the path',
+  playPathAttempts: 'Paths checked',
   playPathFinish: (end: string) => `to ${end} (finish)`,
   playPathComputing: 'Computing the shortest path…',
   playPathOptimal: 'Optimal! This is the shortest path.',

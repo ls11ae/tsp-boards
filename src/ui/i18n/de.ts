@@ -331,6 +331,7 @@ export const de: Messages = {
   playPathHint: (start, end, touch, digital) =>
     `Der Weg beginnt in ${start} und endet in ${end}. ${touch ? 'Tippe' : 'Klicke'} die Orte in der Reihenfolge deines Wegs an; ${end} kommt zuletzt und schließt die Rundreise. Ein ${touch ? 'Tipp' : 'Klick'} auf einen besuchten Ort geht zu ihm zurück. Der gestrichelte Flug von ${end} zurück nach ${start} ist gegeben und zählt nicht mit.${digital ? '' : ' Der Faden legt sich um die Nägel, scharfe Kurven kosten also etwas mehr Faden.'}`,
   playPathLength: 'Länge des Wegs',
+  playPathAttempts: 'Geprüfte Wege',
   playPathFinish: (end) => `nach ${end} (Ziel)`,
   playPathComputing: 'Der kürzeste Weg wird berechnet …',
   playPathOptimal: 'Optimal! Das ist der kürzeste Weg.',

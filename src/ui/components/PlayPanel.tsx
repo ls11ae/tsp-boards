@@ -198,7 +198,7 @@ export function PlayPanel({
           <dd>
             <Timer startedAt={play.startedAt} stoppedMs={play.solvedMs ?? play.revealedMs} />
           </dd>
-          <dt>{t.playAttempts}</dt>
+          <dt>{ends ? t.playPathAttempts : t.playAttempts}</dt>
           <dd>{fmt.integer(play.attempts.length)}</dd>
         </dl>
         {play.state.closed && !judged && (
