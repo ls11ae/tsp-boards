@@ -251,8 +251,11 @@ function write(doc: PuzzleDoc): void {
 const FIRST = [
   'exzellenzstrategie-2027-brett',
   'exzellenzstrategie-2027',
+  'exzellenzstrategie-2027-37',
+  'exzellenzstrategie-2027-22',
   'exzellenzuniversitaeten-2027-brett',
   'exzellenzuniversitaeten-2027',
+  'exzellenzuniversitaeten-2027-staedte',
   'exzellenzcluster-2026-verbuende',
   'exzellenzcluster-2026',
 ];

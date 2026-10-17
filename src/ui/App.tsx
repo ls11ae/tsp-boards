@@ -11,6 +11,7 @@ import { ParamsPanel } from './components/ParamsPanel';
 import { PlayPanel } from './components/PlayPanel';
 import { SidePanel } from './components/SidePanel';
 import { loadData } from './controller';
+import { openShortLink } from './documents';
 import { useT } from './i18n';
 import { usePuzzle } from './puzzle';
 import { useStore, type Language, type PuzzleType } from './store';
@@ -125,7 +126,8 @@ export function App() {
   const kiosk = useStore((s) => s.kiosk !== null);
 
   useEffect(() => {
-    void loadData();
+    // A short play link (#p/<id>) opens its gallery puzzle once the data has loaded.
+    void loadData().then(() => openShortLink(window.location.hash));
   }, []);
   useEffect(() => {
     document.documentElement.lang = lang;

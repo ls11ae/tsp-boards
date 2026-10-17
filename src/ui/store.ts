@@ -312,7 +312,7 @@ export const useStore = create<AppState>()((set) => ({
   lang: initialLanguage(),
   // Known before the data loads, so a play link never flashes the designer.
   mode:
-    typeof window !== 'undefined' && /[#&]m=play(&|$)/.test(window.location.hash)
+    typeof window !== 'undefined' && /[#&]m=play(&|$)|^#p\//.test(window.location.hash)
       ? 'play'
       : 'design',
   play: NEW_GAME,

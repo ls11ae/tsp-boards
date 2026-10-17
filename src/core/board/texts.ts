@@ -115,13 +115,15 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
 
 /** Texts of a poster (roadmap 9.7, 9.9), in the poster's language. */
 export interface PosterTexts {
-  /** The problem around the number of round trips: "Finde … unter" n "Möglichkeiten." */
+  /** The problem around the number of round trips: "Kürzeste Rundreise unter" n "Möglichkeiten:" */
   readonly problemBefore: string;
   readonly problemAfter: string;
   /** Multiplication sign of "3,1 · 10²³" (German) or "3.1 × 10²³" (English). */
   readonly times: string;
-  /** One short line under the length: as the crow flies, proven shortest. */
+  /** One short line under the length: as the crow flies. */
   readonly proof: string;
+  /** Caption of the QR code to the game. */
+  readonly playYourself: string;
   /** Mark of the emphasized place where the round trip starts and ends. */
   readonly startFinish: string;
   /** Legend line of a group: the members of an alliance as separate stops. */
@@ -136,10 +138,11 @@ export interface PosterTexts {
 
 export const POSTER_TEXTS: Record<LabelLanguage, PosterTexts> = {
   de: {
-    problemBefore: 'Finde die kürzeste Rundreise unter ',
-    problemAfter: ' Möglichkeiten.',
+    problemBefore: 'Kürzeste Rundreise unter ',
+    problemAfter: ' Möglichkeiten:',
     times: '·',
-    proof: 'Luftlinie, mit ganzzahliger linearer Optimierung (HiGHS) als kürzeste bewiesen.',
+    proof: 'Luftlinie',
+    playYourself: 'Selbst spielen',
     startFinish: 'Start und Ziel',
     groupLegend: 'Verbund: jede Stadt ein eigener Halt',
     centroidLegend: 'Verbund mit Universitäten in mehreren Städten: ein Halt in ihrer Mitte',
@@ -148,10 +151,11 @@ export const POSTER_TEXTS: Record<LabelLanguage, PosterTexts> = {
     attribution: 'Städte: GeoNames (CC BY 4.0) · Grenzen: Natural Earth · TSP Boards',
   },
   en: {
-    problemBefore: 'Find the shortest round trip out of ',
-    problemAfter: ' options.',
+    problemBefore: 'Shortest round trip out of ',
+    problemAfter: ' options:',
     times: '×',
-    proof: 'As the crow flies; proven shortest with integer linear optimisation (HiGHS).',
+    proof: 'As the crow flies',
+    playYourself: 'Play it yourself',
     startFinish: 'Start and finish',
     groupLegend: 'alliance: every city a stop of its own',
     centroidLegend: 'alliance with universities in several cities: one stop at their centre',

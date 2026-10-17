@@ -42,6 +42,7 @@ import {
   type PosterStop,
   type PosterTour,
 } from './poster-tour';
+import { qrMatrix, qrPath } from './qr';
 import { logoMetrics } from './setup';
 import {
   circlePath,
@@ -116,6 +117,8 @@ export interface PosterInput {
   readonly legendLogo?: Logo | null;
   /** A logo at the bottom right, e.g. the university's (local files only). */
   readonly cornerLogo?: Logo | null;
+  /** The play link of the poster's puzzle as a QR code at the bottom right (roadmap 9.10). */
+  readonly qrUrl?: string | null;
   /** No map lines (points placed by hand on a blank board). */
   readonly blankMap?: boolean;
 }
@@ -147,6 +150,8 @@ export function posterSizes(short: number) {
     chair: 7.2 * f,
     footer: Math.max(2.4, 4.2 * f),
     cornerLogo: 70 * f,
+    /** The QR code to the game (with its quiet zone). */
+    qr: 40 * f,
     dot: 2.4 * f,
     ringOuter: 4.6 * f,
     ringInner: 3.8 * f,
@@ -234,8 +239,8 @@ function formatter(language: LabelLanguage) {
 }
 
 /**
- * The problem line with the number of round trips, (n − 1)!/2: "Finde die kürzeste Rundreise
- * unter 3,1 · 10²³ Möglichkeiten." (the font has no superscript digits: a raised exponent).
+ * The problem line with the number of round trips, (n − 1)!/2: "Kürzeste Rundreise unter
+ * 3,1 · 10²³ Möglichkeiten:" (the font has no superscript digits: a raised exponent).
  */
 export function problemRuns(n: number, size: number, language: LabelLanguage): Run[] {
   const t = POSTER_TEXTS[language];
@@ -298,6 +303,40 @@ function factsBlock(problem: Run[], length: string, proof: string, width: number
       c.fill(runsPath(runs, x, y + FONT_METRICS.capHeight * problemSize), INK);
       c.text(length, x, y + lengthTop + FONT_METRICS.capHeight * s.length, s.length, TOUR);
       paragraph(c, proof, x, y + proofTop, width, s.caption, GREY);
+    },
+  };
+}
+
+/**
+ * The QR code to the game with "Selbst spielen" and the link (without "https://", broken
+ * before "#") in small type below it, right-aligned.
+ */
+function qrBlock(url: string, caption: string, s: Sizes): Block & { readonly width: number } {
+  const matrix = qrMatrix(url);
+  const shown = url.replace(/^https?:\/\//, '');
+  const cut = shown.indexOf('#');
+  const urlLines = cut > 0 ? [shown.slice(0, cut), shown.slice(cut)] : [shown];
+  const captionSize = s.caption * 1.25;
+  const lineW = (text: string, size: number) => measureText(text, size).width;
+  const width = Math.max(
+    s.qr,
+    lineW(caption, captionSize),
+    ...urlLines.map((l) => lineW(l, s.footer)),
+  );
+  const height = s.qr + 1.4 * captionSize + urlLines.length * 1.3 * s.footer;
+  return {
+    width,
+    height,
+    draw(c, x, y) {
+      const right = x + width;
+      c.fill(qrPath(matrix, right - s.qr, y, s.qr), INK);
+      let base = y + s.qr + FONT_METRICS.ascender * captionSize;
+      c.text(caption, right - lineW(caption, captionSize), base, captionSize);
+      base += 0.25 * captionSize + 1.3 * s.footer;
+      for (const line of urlLines) {
+        c.text(line, right - lineW(line, s.footer), base, s.footer, GREY);
+        base += 1.3 * s.footer;
+      }
     },
   };
 }
@@ -1069,10 +1108,11 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   const n = input.stops.length;
 
   // Header.
-  const titleLines = wrapText(input.title, s.title, contentW);
+  // The title on one line, smaller if it does not fit (roadmap 9.10).
+  const titleSize = Math.min(s.title, contentW / Math.max(1e-6, measureText(input.title, 1).width));
+  const titleLines = [input.title];
   const subtitleLines = input.subtitle ? wrapText(input.subtitle, s.subtitle, contentW) : [];
-  const headerH =
-    titleLines.length * 1.12 * s.title + subtitleLines.length * 1.25 * s.subtitle + 0.4 * s.gap;
+  const headerH = 1.12 * titleSize + subtitleLines.length * 1.25 * s.subtitle + 0.4 * s.gap;
   const mapTop = M + headerH + s.gap;
 
   // Footer: the chair (large) and the credits, a logo at the bottom right.
@@ -1090,7 +1130,8 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   const problem = problemRuns(n, s.problem, input.language);
   const length = `${fmt(Math.round(input.tour.lengthKm), 0)} km`;
   const entries = legendEntries(input);
-  const side = (width: number) =>
+  const qr = input.qrUrl ? qrBlock(input.qrUrl, t.playYourself, s) : null;
+  const facts = (width: number) =>
     stack(
       [
         factsBlock(problem, length, t.proof, width, s),
@@ -1098,6 +1139,19 @@ export function drawPoster(input: PosterInput): PosterDrawing {
       ].filter((b): b is Block => b !== null),
       s.gap,
     );
+  // Below the map the code stands right of the facts; beside the map below them.
+  const side = (width: number, wide: boolean): Block => {
+    if (!qr) return facts(width);
+    if (!wide) return stack([facts(width), qr], s.gap);
+    const left = facts(width - qr.width - 2 * s.gap);
+    return {
+      height: Math.max(left.height, qr.height),
+      draw(c, x, y) {
+        left.draw(c, x, y);
+        qr.draw(c, x + width - qr.width, y + Math.max(0, left.height - qr.height));
+      },
+    };
+  };
 
   // Facts below the map (band) or beside it (column): the larger map wins.
   type Option = {
@@ -1110,7 +1164,7 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   };
   const options: Option[] = [];
   {
-    const block = side(contentW);
+    const block = side(contentW, true);
     const box: MapBox = { x: M, y: mapTop, w: contentW, h: bottom - block.height - s.gap - mapTop };
     if (box.h > 0.25 * H)
       options.push({
@@ -1124,7 +1178,7 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   }
   {
     const colW = 0.34 * contentW;
-    const block = side(colW);
+    const block = side(colW, false);
     const box: MapBox = { x: M, y: mapTop, w: contentW - colW - s.gap, h: bottom - mapTop };
     if (block.height <= box.h)
       options.push({
@@ -1144,8 +1198,8 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   const c = new Canvas();
   let y = M;
   for (const line of titleLines) {
-    c.text(line, M, y + FONT_METRICS.ascender * s.title, s.title);
-    y += 1.12 * s.title;
+    c.text(line, M, y + FONT_METRICS.ascender * titleSize, titleSize);
+    y += 1.12 * titleSize;
   }
   for (const line of subtitleLines) {
     c.text(line, M, y + FONT_METRICS.ascender * s.subtitle, s.subtitle, GREY);

@@ -313,13 +313,13 @@ describe('Ruhr Innovation Lab poster (roadmap 9.9)', () => {
 
   it('states the problem with the number of round trips, in German and English', () => {
     expect(runsText(problemRuns(25, 10, 'de'))).toBe(
-      'Finde die kürzeste Rundreise unter 3,1 · 10^23 Möglichkeiten.',
+      'Kürzeste Rundreise unter 3,1 · 10^23 Möglichkeiten:',
     );
     expect(runsText(problemRuns(37, 10, 'en'))).toBe(
-      'Find the shortest round trip out of 1.9 × 10^41 options.',
+      'Shortest round trip out of 1.9 × 10^41 options:',
     );
     expect(runsText(problemRuns(5, 10, 'de'))).toBe(
-      'Finde die kürzeste Rundreise unter 12 Möglichkeiten.',
+      'Kürzeste Rundreise unter 12 Möglichkeiten:',
     );
   });
 

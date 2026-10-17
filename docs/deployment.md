@@ -23,6 +23,26 @@ Optional build variable:
 VITE_PLAY_DATA_URL=https://example.org/tsp-boards/play-data npm run build
 ```
 
+## GitHub Pages (the public site)
+
+The site is published at **https://ls11ae.github.io/tsp-boards/** by the workflow
+`.github/workflows/pages.yml`: every push to `main` builds the site (`npm ci`, `npm run build`)
+and deploys `dist/` with `actions/deploy-pages`. It can also be started by hand (Actions →
+Pages → Run workflow).
+
+- **Once, by a maintainer:** Settings → Pages → Build and deployment → Source: **GitHub
+  Actions**. GitHub Pages of a private repository needs a paid plan; otherwise the repository
+  must be public first (see `docs/licensing.md`). Until then the deploy job fails and the CI
+  workflow is unaffected.
+- **Short play links:** `https://ls11ae.github.io/tsp-boards/#p/<puzzle id>` opens a gallery
+  puzzle in play mode (`public/puzzles/<puzzle id>.tsp.json`). The QR codes on the posters use
+  them (`cli/export-poster.ts --qr https://ls11ae.github.io/tsp-boards/`), so the puzzle ids of
+  the gallery must stay stable.
+- Pages serves `.wasm` and `.json` with the right types and ignores the `.htaccess` (which is
+  for Apache servers below); its own caching (10 minutes) is fine for the hashed assets.
+- The play data endpoint cannot run on Pages (static only); without `VITE_PLAY_DATA_URL` the app
+  sends nothing.
+
 ## Copy to the server
 
 Copy the content of `dist/` (including the hidden `.htaccess`) into a directory of the web

@@ -20,6 +20,7 @@ import { planKey } from './plans';
 import { applyIncrementalPuzzle } from './incremental';
 import type { PuzzleView } from './puzzle';
 import { customId } from '../core/places';
+import { shortLinkId } from '../core/permalink';
 import { NEW_DOC, NEW_GAME, useStore, type DocMeta } from './store';
 
 const random = () => Math.random();
@@ -305,6 +306,20 @@ async function fetchCollection(): Promise<CollectionIndex> {
 export function loadCollection(): Promise<CollectionIndex> {
   collection ??= fetchCollection();
   return collection;
+}
+
+/**
+ * Opens the gallery puzzle of a short play link (`#p/<id>`, roadmap 9.10: the QR code on a
+ * poster) in play mode. Returns false if the address is no short link.
+ */
+export function openShortLink(hash: string): boolean {
+  const id = shortLinkId(hash);
+  if (!id) return false;
+  useStore.setState({ page: 'app', mode: 'play' });
+  loadCollectionPuzzle(`${id}.tsp.json`)
+    .then((doc) => openDocument(doc, 'play'))
+    .catch(() => useStore.setState({ loadError: `unknown puzzle ${id}` }));
+  return true;
 }
 
 export async function loadCollectionPuzzle(file: string): Promise<PuzzleDoc> {

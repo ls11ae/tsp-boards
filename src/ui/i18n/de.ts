@@ -151,6 +151,7 @@ export const de: Messages = {
   legendAdd: 'Zeile hinzufügen',
   legendRemove: 'Zeile entfernen',
   posterMarked: 'markierter Ort',
+  posterQr: 'QR-Code zum Spiel (Puzzles der Galerie)',
   posterLogoHint:
     'Ein Logo des hervorgehobenen Orts (unter „Logos“) steht groß in freier Fläche neben ihm; Logos anderer Orte ersetzen deren Beschriftung.',
   posterRunning: 'Die kürzeste Rundreise wird berechnet …',

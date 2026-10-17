@@ -156,6 +156,7 @@ export const en = {
   legendAdd: 'Add a line',
   legendRemove: 'Remove the line',
   posterMarked: 'marked place',
+  posterQr: 'QR code to the game (gallery puzzles)',
   posterLogoHint:
     'A logo of the emphasized place (under "Logos") stands large in free space next to it; logos of other places replace their labels.',
   posterRunning: 'Computing the shortest round trip …',

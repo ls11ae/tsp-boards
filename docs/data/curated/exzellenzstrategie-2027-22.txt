@@ -1,0 +1,28 @@
+# Excellence Strategy, 22 places (roadmap 9.10: the game behind the 22-place poster): the board
+# list exzellenzstrategie-2027-brett.txt without its NRW-only cluster sites Düsseldorf, Münster
+# and Siegen: the 15 Universities of Excellence and alliances (14 places, marked) and the 8
+# further sites with at least two Clusters of Excellence. Built 2026-10-17.
+# Universities of Excellence and alliances:
+* Aachen
+* Berlin
+* Bonn
+* Dresden
+* Hamburg
+* Heidelberg
+* Karlsruhe
+* München
+* Tübingen
+* Freiburg im Breisgau
+* Jena
+* Köln
+* Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
+* Ruhr Innovation Lab = Bochum + Dortmund
+# Further sites of Clusters of Excellence:
+Hannover
+Gießen
+Oldenburg
+Bremen
+Kiel
+Marburg
+Stuttgart
+Würzburg

@@ -989,3 +989,22 @@ Short entries: decision; alternatives considered; reason. Newest last.
   `local/posters/`. Alternatives: a fixed logo position (over the North Sea; would not suit other
   places), keeping the label boxes of the 9.7 layout and only moving labels that touch a leg
   (would not separate Bochum's and Dortmund's names).
+- **2026-10-17 Simpler poster texts and a QR code to the game (roadmap 9.10).** Title "TSP Tour:
+  Standorte der Exzellenzstrategie 2026–2033" / "TSP Tour: Sites of the Excellence Strategy
+  2026–2033", shrunk to fit one line; a subtitle only where the variant needs one (14 and 17:
+  only the universities; 17 and 37: the cities of an alliance as separate stops); the line above
+  the length reads "Kürzeste Rundreise unter … Möglichkeiten:", and of the proof only
+  "Luftlinie" / "As the crow flies" stays. The QR code holds a short play link,
+  `#p/<puzzle id>` (`core/permalink.ts`: `shortLink`, `shortLinkId`), which the app opens in
+  play mode (also on `hashchange`); old permalinks are untouched. Every poster variant has its
+  game: new gallery puzzles for 17, 22 and 37 (the cities of the alliances as separate places).
+  The app judges digital puzzles by map distance, whose optimum is the poster's tour in all six;
+  the board puzzle (25) by string, whose optimum is the same tour. Codes are made locally with
+  `qrcode-generator` (MIT, no dependencies; error correction M, 37 modules for the longest
+  link), drawn as merged rectangles with the 4-module quiet zone, 40 mm wide on A1 at the bottom
+  right with "Selbst spielen" and the link; a test decodes them again with `jsqr` (Apache-2.0,
+  dev only). Hosting on GitHub Pages (`.github/workflows/pages.yml`, actions/deploy-pages; site
+  https://ls11ae.github.io/tsp-boards/), the QR base URL. The app's poster offers the code for
+  gallery puzzles (its own address as base, off on localhost). Alternatives: our own encoder
+  (a few hundred lines of Reed–Solomon and masks for one feature), a full permalink in the code
+  (far longer, a larger code).

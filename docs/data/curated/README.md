@@ -12,6 +12,9 @@ One place per line (town names of the country data); lines starting with `#` are
 | `exzellenzcluster-2026-verbuende.txt` | Clusters of Excellence, neighbouring sites combined | 32 places (4 composite) | digital (string gap 1.14 mm; no nails closer than 25 mm) |
 | `exzellenzstrategie-2027.txt` | Exzellenzstrategie: alle 34 Standorte (roadmap 9.1) | 34 places: universities and alliances (14, marked) and the 20 further cluster sites | digital (string gap 1.14 mm; runner-up +0.06 %) |
 | `exzellenzstrategie-2027-brett.txt` + `.board.json` | Exzellenzstrategie 2026–2033, the 300 × 600 mm board (roadmap 9.1, files in `docs/boards/exzellenzstrategie-2027/`) | 25 places: universities (14, marked), cluster sites with at least two clusters, all cluster sites in NRW | board (string gap 5.61 mm with 1.6 mm nails and 1 mm string, also at the scale; start nail Hannover) |
+| `exzellenzstrategie-2027-37.txt` | Exzellenzstrategie: alle 37 Städte, the game behind the 37-place poster (roadmap 9.10) | 37 places: as the 34, but the cities of the two alliances as separate places (marked) | digital (string gap 2.09 mm) |
+| `exzellenzstrategie-2027-22.txt` | Exzellenzstrategie: 22 Standorte, the game behind the 22-place poster (roadmap 9.10) | the board list without Düsseldorf, Münster and Siegen | digital (string gap 1.30 mm) |
+| `exzellenzuniversitaeten-2027-staedte.txt` | Exzellenzuniversitäten ab 2027: alle 17 Städte, the game behind the 17-place poster (roadmap 9.10) | 17 places: the universities, the cities of the alliances separate | digital (string gap 0.37 mm) |
 | `ruhrgebiet.txt` | Ruhrgebiet: 11 Städte, a local puzzle for the booth (roadmap 9.5, easy level of the event mode) | the 11 independent cities of the Regionalverband Ruhr (fixed; its four districts left out) | digital (string gap 2.57 mm on the NRW map) |
 
 Lines starting with `*` are marked places (a ring on the board and in the app); the

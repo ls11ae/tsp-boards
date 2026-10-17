@@ -1,0 +1,43 @@
+# Excellence Strategy from 2027, every city a place of its own (roadmap 9.10: the game behind the
+# 37-place poster): as exzellenzstrategie-2027.txt, but the cities of the alliances are separate
+# places (Ruhr Innovation Lab: Bochum, Dortmund; Rhein-Main-Universitäten: Darmstadt,
+# Frankfurt am Main, Mainz), marked like the universities: 37 places. Built 2026-10-17.
+# Universities of Excellence and the cities of the alliances:
+* Aachen
+* Berlin
+* Bonn
+* Dresden
+* Hamburg
+* Heidelberg
+* Karlsruhe
+* München
+* Tübingen
+* Freiburg im Breisgau
+* Jena
+* Köln
+* Darmstadt
+* Frankfurt am Main
+* Mainz
+* Bochum
+* Dortmund
+# Further sites of Clusters of Excellence:
+Hannover
+Gießen
+Oldenburg
+Bremen
+Kiel
+Marburg
+Stuttgart
+Würzburg
+Bayreuth
+Braunschweig
+Düsseldorf
+Erlangen
+Halle (Saale)
+Konstanz
+Leipzig
+Lübeck
+Münster
+Regensburg
+Siegen
+Ulm

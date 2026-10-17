@@ -637,6 +637,7 @@ order; the phone layout matters for the open day too, since visitors may play on
   - Drop the line about HiGHS ("any solver could do this"). Keep only "Luftlinie" / "As the
     crow flies" in small type.
   - Titles fit on one line in both languages (shrink the title to fit if needed).
+  - (Done 2026-10-17.)
 - **QR code to the game:**
   - A short link that opens a gallery puzzle in play mode, e.g. `#p/<puzzle id>`, so the QR
     stays small. Old permalinks keep working.
@@ -649,6 +650,8 @@ order; the phone layout matters for the open day too, since visitors may play on
     encoder; no web service. A test decodes the code again (decoder as a dev dependency).
   - The base URL is Kevin's decision (hosting, see Phase 10). Until then, the committed
     posters have no QR code.
+  - (Done 2026-10-17: `#p/<id>`, gallery puzzles for 17, 22 and 37, `--qr`, GitHub Pages at
+    https://ls11ae.github.io/tsp-boards/ as the base URL, the committed posters with the code.)
 - **Phones** (Kevin's review at 390 × 844 with touch, 2026-10-17):
   - The board starts halfway down the first screen, and the status (places, km, time) is
     below the board, so while playing you see neither.

@@ -13,7 +13,8 @@ import { boardSvg } from '../core/board/svg';
 import { worksheetPdf } from '../core/board/worksheet';
 import { boardLabel, listName } from '../core/data';
 import { calibrationTour, measuredLength } from '../core/board/measure';
-import { encodePermalink } from '../core/permalink';
+import { encodePermalink, shortLink } from '../core/permalink';
+import { loadCollection } from './documents';
 import { euclideanLength, stringLength } from '../core/tsp/tour';
 import { townsById, type BoardModel } from './board';
 import { puzzleSetup } from './plans';
@@ -98,6 +99,14 @@ function posterTourInWorker(request: Omit<ExactWorkerRequest & { type: 'poster' 
   });
 }
 
+/** The short play link of a gallery puzzle on this site, or null for other puzzles. */
+async function galleryLink(id: string | null): Promise<string | null> {
+  if (!id) return null;
+  const index = await loadCollection();
+  if (!index.puzzles.some((p) => p.id === id)) return null;
+  return shortLink(`${window.location.origin}${window.location.pathname}`, id);
+}
+
 /** Texts and emphasis of a poster, edited in the export panel (roadmap 9.9). */
 export interface PosterTexts {
   readonly title: string;
@@ -105,6 +114,8 @@ export interface PosterTexts {
   readonly legend: readonly LegendEntry[];
   /** City id of the emphasized place (start and finish, large name or its logo), or null. */
   readonly emphasis: number | null;
+  /** A QR code to the game (gallery puzzles only: their short play link on this site). */
+  readonly qr: boolean;
 }
 
 /**
@@ -118,7 +129,7 @@ export async function downloadPoster(
   texts: PosterTexts,
 ): Promise<PosterTour> {
   const setup = puzzleSetup(board, puzzle);
-  const { exportOptions, logos, country, lang } = useStore.getState();
+  const { exportOptions, logos, country, lang, doc } = useStore.getState();
   if (!setup || !country) throw new Error('no puzzle');
   // Labels in the app's language (English exonyms such as Munich where the data has them).
   const towns = townsById(country);
@@ -165,6 +176,7 @@ export async function downloadPoster(
     logos: placeLogos,
     legendLogo: logos.find((l) => l.city === null)?.logo ?? null,
     blankMap: setup.params.blankBoard,
+    qrUrl: texts.qr ? await galleryLink(doc.id) : null,
   });
   save(
     posterPdf(drawing),

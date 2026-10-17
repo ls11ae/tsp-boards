@@ -13,12 +13,13 @@
 //   red name or its logo) [--logo 'Place name=local/logo.svg'] (repeatable; the emphasized
 //   place's logo stands large near it, other logos replace labels) [--legend-logo file.svg]
 //   [--corner-logo file.svg] (bottom right, e.g. the university's) [--out dir] [--name base]
+//   [--qr https://…/tsp-boards/] (a QR code to the game: the base URL plus #p/<puzzle id>)
 //   [--suffix -logo] (appended to all file names) [--also-plain] (with logos: also write the
 //   versions without them, without the suffix) [--png 30] (previews, dpi)
 // A variants file lists several posters: { "paper", "orientation", "png", "languages",
-// "emphasis", "contactSheet", "names": { "en": { "German name": "English name" } },
+// "emphasis", "contactSheet", "qr", "names": { "en": { "German name": "English name" } },
 // "variants": [{ "name", "puzzle" | "list", "members", "without", "title", "subtitle",
-// "legend" }] }, where title, subtitle and legend may be given per language ({ "de": …,
+// "legend", "game" }] }, where title, subtitle and legend may be given per language ({ "de": …,
 // "en": … }). Every poster is written to <out>/<language>/<name>-<paper>.pdf; options on the
 // command line (logos, --out, --png, --paper) apply to all of them; one contact sheet PNG per
 // language and paper shows all variants side by side.
@@ -63,6 +64,7 @@ import {
 import { DEFAULT_PARAMS, type PuzzleParams } from '../src/core/params';
 import { listCities } from '../src/core/places';
 import { boardProjection } from '../src/core/projection';
+import { shortLink } from '../src/core/permalink';
 import { parsePuzzleDoc, type LegendEntry, type Place } from '../src/core/puzzle-file';
 import { projectionKind, regionFrame } from '../src/core/region';
 import type { MipBackend } from '../src/core/tsp/exact';
@@ -94,6 +96,8 @@ interface VariantSpec {
   readonly title?: Localized<string>;
   readonly subtitle?: Localized<string>;
   readonly legend?: Localized<readonly LegendEntry[] | string>;
+  /** Gallery puzzle of the QR code (default: the puzzle's own id). */
+  readonly game?: string;
 }
 
 interface Config {
@@ -103,6 +107,8 @@ interface Config {
   readonly languages?: readonly LabelLanguage[];
   readonly emphasis?: string;
   readonly contactSheet?: string;
+  /** Base URL of the site for the QR codes (the game's short link is appended). */
+  readonly qr?: string;
   readonly names?: Partial<Record<LabelLanguage, Record<string, string>>>;
   readonly variants: readonly VariantSpec[];
 }
@@ -370,6 +376,7 @@ async function main(): Promise<void> {
   const dpi = Number(arg('png', String(config?.png ?? 0)));
   const suffix = arg('suffix', '');
   const emphasisName = arg('emphasis', config?.emphasis ?? '');
+  const qrBase = arg('qr', config?.qr ?? '');
   const logosByName = new Map<string, Logo>();
   for (const spec of all('logo')) {
     const [name, file] = spec.split('=');
@@ -440,6 +447,7 @@ async function main(): Promise<void> {
             logos: withLogos ? logos : new Map(),
             legendLogo: withLogos ? legendLogo : null,
             cornerLogo: withLogos ? cornerLogo : null,
+            qrUrl: qrBase ? shortLink(qrBase, spec.game ?? v.src.name) : null,
             blankMap: v.src.params.blankBoard,
           });
           const base = path.join(dir, `${v.name}-${paper}${flavour.suffix}`);

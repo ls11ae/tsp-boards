@@ -251,3 +251,19 @@ export function decodePermalink(hash: string): PermalinkData | null {
     list,
   };
 }
+
+/**
+ * Short play link of a gallery puzzle (roadmap 9.10, the QR code on posters): `#p/<puzzle id>`
+ * opens the puzzle in play mode. It keeps the QR code small; full permalinks keep working.
+ */
+const SHORT_LINK = /^#?p\/([a-z0-9][a-z0-9-]{0,80})$/;
+
+/** The puzzle id of a short play link, or null. */
+export function shortLinkId(hash: string): string | null {
+  return SHORT_LINK.exec(hash)?.[1] ?? null;
+}
+
+/** The short play link of a puzzle on the site at `base` (e.g. https://…/tsp-boards/). */
+export function shortLink(base: string, id: string): string {
+  return `${base}#p/${id}`;
+}

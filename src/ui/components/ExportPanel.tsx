@@ -205,6 +205,10 @@ function Poster({
         : [],
   );
   const [emphasis, setEmphasis] = useState<number | null>(null);
+  // A QR code to the game for gallery puzzles; on localhost it would point nowhere useful.
+  const [qr, setQr] = useState(
+    doc.id !== null && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname),
+  );
   const [state, setState] = useState<
     | { status: 'idle' }
     | { status: 'running' }
@@ -223,6 +227,7 @@ function Poster({
           subtitle,
           legend: legend.filter((e) => e.text.trim()),
           emphasis,
+          qr,
         }),
       )
       .then((tour) => setState({ status: 'done', km: tour.lengthKm, same: tour.mapAgrees }))
@@ -347,6 +352,12 @@ function Poster({
           {t.legendAdd}
         </button>
       </fieldset>
+      {doc.id !== null && (
+        <label className="checkbox">
+          <input type="checkbox" checked={qr} onChange={(e) => setQr(e.target.checked)} />
+          {t.posterQr}
+        </label>
+      )}
       {logos && <LogoFields board={board} puzzle={puzzle} />}
       <p className="hint">{t.posterLogoHint}</p>
       <div className="actions">

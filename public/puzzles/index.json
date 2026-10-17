@@ -22,6 +22,26 @@
       "n": 34
     },
     {
+      "file": "exzellenzstrategie-2027-37.tsp.json",
+      "id": "exzellenzstrategie-2027-37",
+      "kind": "map",
+      "title": "Exzellenzstrategie: alle 37 Städte",
+      "description": "Alle Städte der Exzellenzstrategie: die Exzellenzuniversitäten und die Städte der Exzellenzverbünde ab 2027 (mit Ring) und die 20 weiteren Standorte von Exzellenzclustern 2026–2032. Jede Stadt eines Verbunds ist ein eigener Halt.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 37
+    },
+    {
+      "file": "exzellenzstrategie-2027-22.tsp.json",
+      "id": "exzellenzstrategie-2027-22",
+      "kind": "map",
+      "title": "Exzellenzstrategie: 22 Standorte",
+      "description": "Die Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und die 8 weiteren Standorte mit mindestens zwei Exzellenzclustern 2026–2032.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 22
+    },
+    {
       "file": "exzellenzuniversitaeten-2027-brett.tsp.json",
       "id": "exzellenzuniversitaeten-2027-brett",
       "kind": "map",
@@ -40,6 +60,16 @@
       "purpose": "digital",
       "region": "DE",
       "n": 14
+    },
+    {
+      "file": "exzellenzuniversitaeten-2027-staedte.tsp.json",
+      "id": "exzellenzuniversitaeten-2027-staedte",
+      "kind": "map",
+      "title": "Exzellenzuniversitäten ab 2027: alle 17 Städte",
+      "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 mit allen ihren Städten: Jede Stadt eines Verbunds (Ruhr Innovation Lab, Rhein-Main-Universitäten) ist ein eigener Halt.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 17
     },
     {
       "file": "exzellenzcluster-2026-verbuende.tsp.json",
