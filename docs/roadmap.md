@@ -4,7 +4,11 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-17 (evening): 9.1–9.16 are done (9.16: the app in English with English place
+Status 2026-10-18: 9.1–9.17 are done (9.17: GitHub Pages with a service worker for the offline
+booth, table labels for two kiosk laptops, the world board with London and Africa). Next: 9.18
+(how the computer solves it), 9.19 (guides and cards), 9.20 (the incremental board with a larger
+gap).
+Earlier status 2026-10-17 (evening): 9.1–9.16 are done (9.16: the app in English with English place
 names and English titles and descriptions of the curated puzzles). Next are the open items of
 Phase 10.
 Earlier status 2026-10-17 (late): 9.1–9.15 are done; 9.15 is the world board "Rund um die Welt" with
@@ -902,16 +906,123 @@ Optional for the open day, after 9.14.
   boards. `e2e/english.e2e.ts` checks the gallery, a German puzzle, the globe and the kiosk in
   English.)
 
+### 9.17 Deployment, offline booth, two tables (Kevin, 2026-10-18) — done 2026-10-18
+
+- **No chair server, no play data endpoint:** GitHub Pages (https://ls11ae.github.io/tsp-boards/)
+  is the deployment. Remove both from the open items of Phase 10 and from `CLAUDE.md` ("Next",
+  "Roadmap", the status lines); keep `docs/deployment.md`'s notes for copying the build to any
+  static server, and mark the play data endpoint there as not planned (the code may stay, off by
+  default).
+- **Offline at the booth without Node:** a service worker (e.g. `vite-plugin-pwa`, as in
+  ls11ae/ruler-of-the-plane), so that https://ls11ae.github.io/tsp-boards/ and `#kiosk` work
+  offline after the first visit, with all maps, puzzles, fonts and the solver cached, and an
+  update check so a new version is not stuck. The local build stays as the alternative.
+- **README:** a line at the top with the live app ("Play in the browser") and a short "Links"
+  section near the end: the app, the short link format `#p/<puzzle id>`, the chair's games page
+  https://ls11ae.github.io/, and Ruler of the Plane https://ls11ae.github.io/ruler-of-the-plane/.
+- **Nails measured:** 2.0 mm (as exported); the string thickness follows (it matters for the
+  incremental test board's marks; re-export that board then).
+- **Booth: two laptops** for the TSP game, each with its own leaderboard (no sync between
+  laptops):
+  - a table label in the kiosk address, e.g. `#kiosk?table=1` and `#kiosk/scores?table=1`,
+    shown on the start screen and in the leaderboard heading ("Tisch 1" / "Table 1"), so
+    visitors know which leaderboard is theirs; it combines with `?names=free`;
+  - `docs/deployment.md`, booth section: Chrome instead of Edge, tested by Kevin on Windows:
+    close all Chrome windows and turn off "Continue running background apps" (Settings →
+    System), then Win+R: `chrome --kiosk "https://ls11ae.github.io/tsp-boards/#kiosk?table=1"`
+    (or the full path `"C:\Program Files\Google\Chrome\Application\chrome.exe"`); Alt+F4
+    leaves it. Open the Pages URL once online before the event (service worker). The
+    leaderboard lives in this browser profile for this address: always the same Chrome
+    profile, no incognito, the same URL, do not clear site data. The second screen with
+    `#kiosk/scores` is optional.
+- **Optional, world board "Rund um die Welt":** Africa has only Nairobi and London is missing,
+  while Krasnodar, Tirana and Mekka are less known. Try variants with Kairo, Lagos or Kinshasa,
+  Kapstadt or Johannesburg, and London (dropping less known cities), keeping 40 cities, at least
+  10 mm apart and a string gap of at least 5 mm; if one works, use it for the board and the
+  digital puzzle and report the gap. Add a legend line on the board and in the app:
+  "Gestrichelt: der Rückflug über den Pazifik ist vorgegeben" / "Dashed: the flight back across
+  the Pacific is given".
+- (Done 2026-10-18: GitHub Pages is the deployment, the chair server and the play data endpoint
+  are gone from the open items and `CLAUDE.md`, the endpoint is "not planned" in
+  `docs/deployment.md`; a service worker (`vite-plugin-pwa`) precaches the whole site, updates
+  wait for a moment without a game, `e2e/offline.e2e.ts`; README with the live app and Links;
+  nails 2.0 mm noted, the incremental board waits for the string; `#kiosk?table=1` with "Tisch
+  1" and the Chrome kiosk instructions in `docs/deployment.md`; the world board with London,
+  Kairo, Lagos and Johannesburg: string gap 7.50 mm (7.50 mm at the scale), the same order on
+  the globe, a legend line with a dashed symbol on the board and in the app.)
+
+### 9.18 How the computer solves it (Kevin, 2026-10-18)
+
+Optional, kiosk and normal play. Nothing appears by itself; it is behind a button after a
+finished game.
+
+- A button "So rechnet der Computer" / "How the computer does it" in the result of a finished
+  game. It opens a view that shows the visitor's length next to nearest neighbour, an insertion
+  heuristic, 2-opt and the optimum (km or mm and % above the optimum), as a simple bar chart,
+  with the tours on the map on demand.
+- In that view, a second button "So findet der Computer die kürzeste Rundreise" / "How the
+  computer finds the shortest round trip": an animation of at most about 30 s, skippable by a
+  tap, built on the teaching mode: a heuristic tour, 2-opt improvements, then the exact solver's
+  rounds (the LP pieces and the subtours being cut off) until the optimum, ending with
+  "bewiesen: keine Rundreise ist kürzer" / "proven: no round trip is shorter". Child-friendly
+  German and English texts. Precompute or cache what the animation needs, so it runs smoothly on
+  a slow booth laptop.
+- In the kiosk the view closes with "Zurück" and on the inactivity reset; it never leads out of
+  the kiosk. Extend the e2e tests.
+
+### 9.19 Guides and cards (Kevin, 2026-10-18)
+
+PDF, A4, made by a CLI from the repository; neutral versions in `docs/print/`, versions with
+logos only in `local/print/`, logos from `local/` as for the posters.
+
+- **Building guide for Kevin** (German): step by step for the Excellence board, the world board
+  and the incremental test board, with figures from the board files and each board's numbers:
+  preparing the 12 mm birch pieces (masking tape), xTool Creative Space with the xTool P2S
+  (which colour is which operation, testing the power on an offcut, placing the file with the
+  camera), engraving, the deeper pits, drilling 1.5 mm about 9 mm deep (Wolfcraft quick-release
+  chuck in the Bosch GSB 18V-28, tape as depth mark, straight), sanding and oiling, nails 2.0 ×
+  20 mm set with the M14 nut, calibrating the string with the solution sheet, checking with the
+  runner-up at the scale (for the incremental board: at the track); the print template as the
+  way without a laser; a checklist at the end.
+- **Booth guide** (German): two laptops per game with table labels (`#kiosk?table=1` and
+  `?table=2`), Chrome kiosk mode (the command, Alt+F4), the optional second screen with
+  `#kiosk/scores`, opening the site once online for offline use, names from the list and
+  removing an entry, what to do if something goes wrong; and an overview of everything the app
+  contains beyond the kiosk: gallery and categories, playing on a phone via the QR code, the
+  puzzle designer (generating new puzzles with the search, own place lists), the board, poster
+  and worksheet export, the teaching mode, the globe and the world puzzles.
+- **Take-away cards:** A7 cards, several per A4 sheet with cut marks, front and back, with QR
+  codes and the URLs of TSP Boards (https://ls11ae.github.io/tsp-boards/) and Ruler of the Plane
+  (https://ls11ae.github.io/ruler-of-the-plane/); with the logos (TU Dortmund, Faculty of
+  Computer Science, Chair 11 AE) and a small drawing for each game: for TSP Boards a mini map
+  with a shortest round trip from one of the puzzles, for Ruler of the Plane a simple drawing in
+  code (e.g. a few castles with their Voronoi regions or a room lit by torches); only German.
+  Check every QR code by decoding it in a test.
+
+### 9.20 Incremental test board with a larger gap (Kevin, 2026-10-18)
+
+- Search for the largest smallest gap at the track instead of taking the first board above the
+  5 mm target: try many seeds (and, if it helps, 10 or 11 nails instead of 12), with the thesis'
+  conditions as now (mark spacing, the change rule from 5 nails, clearance from earlier tours),
+  nails 2.0 mm and string 1 mm until Kevin's measured value follows, aiming for at least 10 mm
+  at the track.
+- Report the best boards found (nails, smallest gap at the track, seed) in `docs/experiments/`;
+  use the best one with 12 nails, or with fewer if 12 stays far below 10 mm; re-export it and
+  update the README and the report.
+- Note in the README that the board must be re-exported with the measured string thickness
+  before lasering (same seed), since its marks depend on it.
+
 ## Phase 10: physical and public
 
-- Test board of the incremental puzzle with the prototype dimensions; deployment to the
-  chair server; play data endpoint; code license (before the repository becomes public).
+- Test board of the incremental puzzle with the prototype dimensions; deployment (GitHub Pages
+  since 2026-10-17; the chair server and the play data endpoint are not planned, roadmap 9.17);
+  code license (before the repository becomes public).
   (Done 2026-10-16: the test board files for Kevin's build, 300 × 300 mm, 12 nails, in
   `docs/boards/incremental-test/`, with a robustness check over r_eff; the licensing
   inventory, a recommendation and a checklist in `docs/licensing.md`, and the third-party
   notices in the build. License decided 2026-10-17: MIT for code and docs (`LICENSE`,
-  `AUTHORS`). Open: building and testing the board, deployment and the endpoint (server
-  access); making the repository public (maintainers).)
+  `AUTHORS`). Nails measured 2026-10-18: 2.0 mm, as exported. Open: building and testing the
+  board, re-exporting the incremental test board once the string is measured.)
 - Later: a physical globe (wood or 3D print) with nails and string. A taut string follows the
   great circle by itself; on a 40 cm globe 1 mm is about 32 km, so a 5 mm gap needs about
   160 km (a quick search found 241 km for 20 world cities, but 30 cities typically give only

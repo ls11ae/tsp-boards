@@ -1233,3 +1233,40 @@ Short entries: decision; alternatives considered; reason. Newest last.
   language in the play view (curated puzzles are German boards, so English players would keep
   German names), translating composite names by a dictionary in the app (one more place to
   maintain instead of the list).
+- **2026-10-18 GitHub Pages is the deployment, offline with a service worker (roadmap 9.17).**
+  Kevin: no chair server and no play data endpoint; the endpoint's code stays, off by default,
+  and `docs/deployment.md` keeps the notes for any static server. The booth runs the Pages site
+  offline: `vite-plugin-pwa` (as in ls11ae/ruler-of-the-plane) precaches the whole build (51
+  files, 6 MB with the HiGHS WebAssembly, all maps and puzzles). A new version installs in the
+  background and waits (`registerType: 'prompt'`, `skipWaiting: false`); the app activates it
+  only where a reload loses nothing (the gallery, the kiosk's start screen and leaderboard),
+  elsewhere the header offers "Neue Version – neu laden"; open pages check hourly. The first
+  install controls the page at once (`clientsClaim`), so the first visit is enough.
+  `e2e/offline.e2e.ts` plays the kiosk offline on a production build (a second Playwright web
+  server). Alternatives: `autoUpdate` (would reload in the middle of a visitor's game), a
+  hand-written service worker (more code for precaching and versioning), the local build only
+  (needs Node at the booth).
+- **2026-10-18 Two kiosk laptops with table labels (roadmap 9.17).** `#kiosk?table=1` (and
+  `#kiosk/scores?table=1`) shows "Tisch 1" on the start screen and in the leaderboard headings;
+  each laptop keeps its own leaderboard in its browser profile, nothing is synchronised (no
+  server). The label is only shown, not part of the score keys, so a laptop keeps its results if
+  its table changes. Chrome replaces Edge in the booth instructions (Kevin's test on Windows).
+- **2026-10-18 The world board with London and Africa (roadmap 9.17).** London lies 5.4 mm from
+  Paris and Kairo 6.4 mm from Jerusalem on the board, so with the 10 mm minimum they replace
+  them. Swapping only the less known cities gives string gaps below 3 mm, so the cities are
+  chosen again by the search with London, Kairo, Lagos and Johannesburg pinned and Krasnodar,
+  Tirana and Mekka excluded (`cli/world-board.ts --pin --exclude`): string gap 7.50 mm, also at
+  the scale, the same order on the globe (runner-up 109 km longer), Berlin kept; 11 cities
+  changed (`docs/experiments/world-board-2026-10-17.md`). Board and digital puzzle get a legend
+  line "Gestrichelt: der Rückflug über den Pazifik ist vorgegeben" with a new legend symbol, a
+  scored dashed line (in the app a dashed line; posters show the text only), and the world
+  board's legend box is narrower (`legendWidthMm`, bottom left in the Pacific) so that it does
+  not cut Antarctica. Alternatives: a full-width legend box (it would remove most of Antarctica's
+  outline), lowering the minimum distance for London (nails 5 mm apart are hard to wind and
+  read).
+- **2026-10-18 Order for the open day after 9.17 (roadmap 9.18–9.20).** Kevin's items are
+  done in this order, each committed and pushed on its own: 9.18 "So rechnet der Computer" (an
+  optional view after a finished game, never shown by itself), 9.19 the building guide, the
+  booth guide and the take-away cards as PDFs made by a CLI (logo versions only in
+  `local/print/`), 9.20 the incremental test board searched for the largest smallest gap at the
+  track. Decisions of each item follow in their own entries.
