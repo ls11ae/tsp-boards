@@ -318,9 +318,7 @@ describe('Ruhr Innovation Lab poster (roadmap 9.9)', () => {
     expect(runsText(problemRuns(37, 10, 'en'))).toBe(
       'Shortest round trip out of 1.9 × 10^41 options:',
     );
-    expect(runsText(problemRuns(5, 10, 'de'))).toBe(
-      'Kürzeste Rundreise unter 12 Möglichkeiten:',
-    );
+    expect(runsText(problemRuns(5, 10, 'de'))).toBe('Kürzeste Rundreise unter 12 Möglichkeiten:');
   });
 
   it('lists symbol entries before notes in the legend', () => {
