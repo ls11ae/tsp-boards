@@ -17,7 +17,9 @@ import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 import {
   fitBox,
+  HIT_PX,
   LABEL_PX,
+  MIN_VIEW_MM,
   labelSizeMm,
   MARKER_PX,
   screenLabels,
@@ -101,19 +103,27 @@ export function PlayBoard({
   const { wrapRef, svgRef, view, viewArea, mm, zoomBy, fit, handlers } = useZoomView(
     fitted,
     Math.max(W, H) * 1.5,
-    ([px, py], hitMm) => {
+    ([px, py], hitMm, touch, current) => {
       if (!puzzle) return;
-      let slot = -1;
-      let nearest = hitMm;
-      members.forEach((c, s) => {
-        const [x, y] = board.points[c]!;
-        const d = Math.hypot(x - px, y - py);
-        if (d < nearest) {
-          nearest = d;
-          slot = s;
-        }
-      });
-      if (slot >= 0) playClick(puzzle, slot);
+      const near = members
+        .map((c, slot) => ({
+          slot,
+          d: Math.hypot(board.points[c]![0] - px, board.points[c]![1] - py),
+        }))
+        .filter((x) => x.d < hitMm)
+        .sort((a, b) => a.d - b.d);
+      if (near.length === 0) return;
+      // A finger between two places about as near: zoom in around the tap until they are a
+      // finger apart, instead of guessing (roadmap 9.10). A mouse picks the nearest place.
+      const ambiguous = near.length >= 2 && near[1]!.d - near[0]!.d < hitMm / 2;
+      if (touch && ambiguous && current.width > MIN_VIEW_MM * 1.05) {
+        const a = board.points[members[near[0]!.slot]!]!;
+        const b = board.points[members[near[1]!.slot]!]!;
+        const apartPx = Math.hypot(a[0] - b[0], a[1] - b[1]) * current.pxPerMm;
+        current.zoomAround(Math.min(0.6, Math.max(0.15, apartPx / (2.2 * HIT_PX))), [px, py]);
+        return;
+      }
+      playClick(puzzle, near[0]!.slot);
     },
   );
 

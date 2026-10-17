@@ -305,10 +305,14 @@ export const en = {
     `Find the shortest round trip through ${n} ${places ? (n === '1' ? 'place' : 'places') : 'cities'}`,
   playHint:
     'Click the nails in the order of your round trip and click the first nail again to close it. Click a visited nail to go back to it. The string wraps around the nails, so sharp turns cost a little extra string.',
+  playHintTouch:
+    'Tap the nails in the order of your round trip and tap the first nail again to close it. Tap a visited nail to go back to it. Where nails lie close together, the map zooms in. The string wraps around the nails, so sharp turns cost a little extra string.',
   playVisited: 'Nails visited',
   playVisitedPlaces: 'Places visited',
   playHintDigital:
     'Click the places in the order of your round trip and finally the first place again (or choose them below). A click on a visited place goes back to it. Lengths are straight lines between the places.',
+  playHintDigitalTouch:
+    'Tap the places in the order of your round trip and finally the first place again (or choose them below). A tap on a visited place goes back to it. Where places lie close together, the map zooms in. Lengths are straight lines between the places.',
   legendOptimum: 'shortest round trip',
   legendMarked: 'marked place',
   legendPlain: 'further place',
@@ -494,6 +498,8 @@ export const en = {
   incPlayTitle: (n: string) => `Step by step: ${n} nails`,
   incPlayHint:
     'Find the shortest round trip through nails 1–3, then 1–4, and so on: click the active nails in order and the first one again to close the trip. When it is the shortest, the next nail joins.',
+  incPlayHintTouch:
+    'Find the shortest round trip through nails 1–3, then 1–4, and so on: tap the active nails in order and the first one again to close the trip. When it is the shortest, the next nail joins.',
   incPlayStage: 'Instance',
   incPlayNails: (k: string) => `nails 1–${k}`,
   incPlayDone: 'all done',

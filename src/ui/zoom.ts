@@ -22,6 +22,8 @@ export const MARKER_PX = 7;
 export const LABEL_PX = 13;
 /** Clicks pick the nearest place within a finger-sized radius. */
 export const HIT_PX = 24;
+/** The view is never narrower than this (board mm). */
+export const MIN_VIEW_MM = 20;
 /** A pointer that moves farther than this is a drag, not a click. */
 const DRAG_PX = 6;
 
@@ -46,9 +48,16 @@ export function fitBox(points: readonly Point[], W: number, H: number, padMm: nu
 
 /** Zooms by `factor` (< 1: in) around the board point (cx, cy). */
 export function zoomAt(view: View, factor: number, cx: number, cy: number, maxW: number): View {
-  const w = Math.min(maxW, Math.max(20, view.w * factor));
+  const w = Math.min(maxW, Math.max(MIN_VIEW_MM, view.w * factor));
   const k = w / view.w;
   return { x: cx - (cx - view.x) * k, y: cy - (cy - view.y) * k, w, h: view.h * k };
+}
+
+/** The view at a tap: its width (board mm), the scale, and a zoom around a board point. */
+export interface TapView {
+  readonly width: number;
+  readonly pxPerMm: number;
+  readonly zoomAround: (factor: number, p: Point) => void;
 }
 
 export interface ZoomView {
@@ -72,12 +81,13 @@ export interface ZoomView {
 
 /**
  * The view of a play board. It resets to `fitted` whenever that changes (a new puzzle); `onTap`
- * gets the board point of a tap and the hit radius in board mm.
+ * gets the board point of a tap, the hit radius in board mm, whether a finger tapped, and the
+ * current view (to zoom in around the tap instead of picking a place).
  */
 export function useZoomView(
   fitted: View,
   maxW: number,
-  onTap: (p: Point, hitMm: number) => void,
+  onTap: (p: Point, hitMm: number, touch: boolean, current: TapView) => void,
 ): ZoomView {
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -172,13 +182,20 @@ export function useZoomView(
     g.moved = true;
     setView((v) => ({ ...v, x: v.x - dx / pxPerMm, y: v.y - dy / pxPerMm }));
   };
+  const zoomAround = (factor: number, [x, y]: Point) =>
+    setView((v) => zoomAt(v, factor, x, y, maxW));
   const onPointerUp = (e: PointerEvent<SVGSVGElement>) => {
     const wasTap = pointers.current.size === 1 && !gesture.current.moved;
     pointers.current.delete(e.pointerId);
     if (pointers.current.size < 2) gesture.current.pinch = null;
     if (!wasTap) return;
     const p = toBoard(e.clientX, e.clientY);
-    if (p) onTap([p.x, p.y], mm(HIT_PX));
+    if (p)
+      onTap([p.x, p.y], mm(HIT_PX), e.pointerType === 'touch', {
+        width: view.w,
+        pxPerMm,
+        zoomAround,
+      });
   };
 
   return {

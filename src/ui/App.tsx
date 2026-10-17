@@ -9,6 +9,8 @@ import { IncrementalPlayBoard, IncrementalPlayPanel } from './components/Increme
 import { IncrementalBoard, IncrementalParams, IncrementalSide } from './components/IncrementalView';
 import { ParamsPanel } from './components/ParamsPanel';
 import { PlayPanel } from './components/PlayPanel';
+import { PlayStatus } from './components/PlayStatus';
+import { PHONE, useMedia } from './media';
 import { SidePanel } from './components/SidePanel';
 import { loadData } from './controller';
 import { openShortLink } from './documents';
@@ -38,7 +40,7 @@ function Header() {
         <h1>{t.appTitle}</h1>
         <p className="tagline">{digitalPlay ? t.appTaglineDigital : t.appTagline}</p>
       </div>
-      <div className="lang" role="group" aria-label={t.puzzleType}>
+      <div className="lang types" role="group" aria-label={t.puzzleType}>
         <button
           type="button"
           className={page === 'gallery' ? 'selected' : undefined}
@@ -83,10 +85,20 @@ function Header() {
   );
 }
 
-/** Title of the open puzzle above the board. */
+/** Title of the open puzzle above the board; on a phone the description folds away. */
 function BoardTitle() {
   const doc = useStore((s) => s.doc);
+  const phone = useMedia(PHONE);
   if (!doc.title) return null;
+  if (phone && doc.description)
+    return (
+      <details className="board-title">
+        <summary>
+          <h2>{doc.title}</h2>
+        </summary>
+        <p className="hint">{doc.description}</p>
+      </details>
+    );
   return (
     <div className="board-title">
       <h2>{doc.title}</h2>
@@ -124,6 +136,7 @@ export function App() {
   const puzzleType = useStore((s) => s.puzzleType);
   const worldView = useStore((s) => s.worldView);
   const kiosk = useStore((s) => s.kiosk !== null);
+  const phone = useMedia(PHONE);
 
   useEffect(() => {
     // A short play link (#p/<id>) opens its gallery puzzle once the data has loaded.
@@ -191,11 +204,15 @@ export function App() {
           </p>
         ) : board ? (
           mode === 'play' ? (
-            board.sphere && worldView === 'globe' ? (
-              <PlayGlobe board={board} puzzle={puzzle} />
-            ) : (
-              <PlayBoard board={board} puzzle={puzzle} />
-            )
+            <>
+              {board.sphere && worldView === 'globe' ? (
+                <PlayGlobe board={board} puzzle={puzzle} />
+              ) : (
+                <PlayBoard board={board} puzzle={puzzle} />
+              )}
+              {/* On a phone the figures and the main buttons stay in view while playing. */}
+              {phone && <PlayStatus board={board} puzzle={puzzle} />}
+            </>
           ) : board.sphere && worldView === 'globe' ? (
             <DesignGlobe board={board} puzzle={puzzle} />
           ) : (

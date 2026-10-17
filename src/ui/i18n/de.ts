@@ -298,10 +298,14 @@ export const de: Messages = {
     `Finde die kürzeste Rundreise durch ${n} ${places ? (n === '1' ? 'Ort' : 'Orte') : 'Städte'}`,
   playHint:
     'Klicke die Nägel in der Reihenfolge deiner Rundreise an und zum Schluss wieder den ersten Nagel. Ein Klick auf einen besuchten Nagel geht zu ihm zurück. Der Faden legt sich um die Nägel, scharfe Kurven kosten also etwas mehr Faden.',
+  playHintTouch:
+    'Tippe die Nägel in der Reihenfolge deiner Rundreise an und zum Schluss wieder den ersten Nagel. Ein Tipp auf einen besuchten Nagel geht zu ihm zurück. Liegen mehrere Nägel dicht beieinander, wird die Karte dort größer. Der Faden legt sich um die Nägel, scharfe Kurven kosten also etwas mehr Faden.',
   playVisited: 'Besuchte Nägel',
   playVisitedPlaces: 'Besuchte Orte',
   playHintDigital:
     'Klicke die Orte in der Reihenfolge deiner Rundreise an und zum Schluss wieder den ersten Ort (oder wähle sie unten aus). Ein Klick auf einen besuchten Ort geht zu ihm zurück. Gemessen wird die Luftlinie zwischen den Orten.',
+  playHintDigitalTouch:
+    'Tippe die Orte in der Reihenfolge deiner Rundreise an und zum Schluss wieder den ersten Ort (oder wähle sie unten aus). Ein Tipp auf einen besuchten Ort geht zu ihm zurück. Liegen mehrere Orte dicht beieinander, wird die Karte dort größer. Gemessen wird die Luftlinie zwischen den Orten.',
   legendOptimum: 'kürzeste Rundreise',
   legendMarked: 'markierter Ort',
   legendPlain: 'weiterer Ort',
@@ -483,6 +487,8 @@ export const de: Messages = {
   incPlayTitle: (n) => `Schritt für Schritt: ${n} Nägel`,
   incPlayHint:
     'Finde die kürzeste Rundreise durch die Nägel 1–3, dann 1–4 und so weiter: Klicke die aktiven Nägel der Reihe nach an und zum Schluss wieder den ersten. Ist es die kürzeste, kommt der nächste Nagel dazu.',
+  incPlayHintTouch:
+    'Finde die kürzeste Rundreise durch die Nägel 1–3, dann 1–4 und so weiter: Tippe die aktiven Nägel der Reihe nach an und zum Schluss wieder den ersten. Ist es die kürzeste, kommt der nächste Nagel dazu.',
   incPlayStage: 'Instanz',
   incPlayNails: (k) => `Nägel 1–${k}`,
   incPlayDone: 'alle geschafft',

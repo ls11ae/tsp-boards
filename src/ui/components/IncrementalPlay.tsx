@@ -25,6 +25,7 @@ import { useStore } from '../store';
 import { labelSizeMm, MARKER_PX, screenLabels, useZoomView } from '../zoom';
 import { Highscores, ShareConsent, Timer } from './PlayParts';
 import { ZoomControls } from './ZoomControls';
+import { TOUCH, useMedia } from '../media';
 
 const NO_POINTS: readonly Point[] = [];
 
@@ -149,6 +150,7 @@ export function IncrementalPlayPanel() {
   const inc = useStore((s) => s.inc);
   const play = useStore((s) => s.play);
   const [confirm, setConfirm] = useState(false);
+  const touch = useMedia(TOUCH);
   const puzzle = inc.puzzle;
   if (!puzzle) return <aside className="panel side">{t.loading}</aside>;
   const n = puzzle.points.length;
@@ -163,7 +165,7 @@ export function IncrementalPlayPanel() {
     <aside className="panel side">
       <section>
         <h2>{t.incPlayTitle(fmt.integer(n))}</h2>
-        <p className="hint">{t.incPlayHint}</p>
+        <p className="hint">{touch ? t.incPlayHintTouch : t.incPlayHint}</p>
         <progress value={done ? n - 2 : k - 3} max={n - 2} />
         <dl className="metrics">
           <dt>{t.incPlayStage}</dt>

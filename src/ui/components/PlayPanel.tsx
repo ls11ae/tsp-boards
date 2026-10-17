@@ -20,6 +20,7 @@ import {
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 import { OverlayPicker } from './OverlayPicker';
+import { TOUCH, useMedia } from '../media';
 
 import { DailyScores, Highscores, PlayerName, ShareConsent, Timer } from './PlayParts';
 
@@ -102,6 +103,7 @@ export function PlayPanel({
   const list = useStore((s) => s.list);
   const worldView = useStore((s) => s.worldView);
   const [confirmReveal, setConfirmReveal] = useState(false);
+  const touch = useMedia(TOUCH);
   const v = puzzle?.verification;
   const optimum = v?.status === 'done' ? v.verification.string : null;
   const pathKey = play.state.path.join(',');
@@ -150,7 +152,15 @@ export function PlayPanel({
         <h2>{t.playTitle(fmt.integer(n), places)}</h2>
         {kiosk && <PlayerName />}
         {kiosk && !digital && <p className="hint kiosk-note">{t.kioskString}</p>}
-        <p className="hint">{digital ? t.playHintDigital : t.playHint}</p>
+        <p className="hint">
+          {digital
+            ? touch
+              ? t.playHintDigitalTouch
+              : t.playHintDigital
+            : touch
+              ? t.playHintTouch
+              : t.playHint}
+        </p>
         <PlaceLegend board={board} members={puzzle.members} />
         {board.sphere && (
           <p className="hint">{worldView === 'globe' ? t.playHintGlobe : t.playHintWorld}</p>

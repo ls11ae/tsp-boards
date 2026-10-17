@@ -687,6 +687,8 @@ ul.cards {
   width: 100%;
   flex: 1 1 auto;
   min-height: 360px;
+  /* No blue flash over the whole map at every tap on a phone. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* The stage takes the window height below the header; the board fills what the title leaves. */
@@ -715,7 +717,8 @@ ul.cards {
   stroke: var(--play);
 }
 
-.play-place .start-ring {
+/* The start ring stays a ring (the selector outranks the filled start marker). */
+.play-place.start circle.start-ring {
   fill: none;
 }
 
@@ -1502,6 +1505,91 @@ polyline.trace-quality {
 
 .kiosk .segmented button {
   padding: 0 14px;
+}
+
+/* Phones (roadmap 9.10): playing needs the board and the figures on the first screen. The
+   header shrinks to one row, the description folds away, the board takes the screen's height
+   above the status bar, which stays at the bottom. */
+@media (max-width: 600px) {
+  .app.play {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .app.play .header {
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .app.play .header h1 {
+    font-size: 1.1rem;
+  }
+
+  .app.play .header .tagline,
+  .app.play .header .types {
+    display: none;
+  }
+
+  .app.play .board-title {
+    margin-bottom: 4px;
+  }
+
+  .app.play .board-title h2 {
+    display: inline;
+    font-size: 1.05rem;
+  }
+
+  .app.play details.board-title summary {
+    cursor: pointer;
+  }
+
+  .app.play .play-board {
+    height: calc(100svh - 150px);
+    min-height: 320px;
+  }
+
+  .play-status {
+    position: sticky;
+    bottom: 0;
+    align-self: stretch;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The figures wrap to a second line next to the buttons, so the bar keeps its height. */
+  .play-status .figures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 10px;
+  }
+
+  .play-status .figure {
+    font-weight: 600;
+  }
+
+  .play-status .result.optimal {
+    color: var(--ok);
+  }
+
+  .play-status .actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .play-status button {
+    min-height: 36px;
+    padding: 0 10px;
+  }
 }
 
 /* Narrow screens: the zoom buttons go to the bottom corner, the view switch keeps the top. */
