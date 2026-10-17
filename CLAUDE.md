@@ -73,6 +73,10 @@ what we change and why, benchmark results, and open questions.
   (names from a list, `#kiosk?names=free`, removing entries, no way out; `e2e/kiosk.e2e.ts`).
   9.13 done 2026-10-17: "München ×2" (two Universities of Excellence), three Excellence puzzles
   in Specials (13, the 25-place board, the 37-city poster game), only the 37-city poster.
+  9.14 done 2026-10-17: the 13-place puzzle digital, the board with 2.0 × 20 mm nails (string
+  gap 5.71 mm, 4.14 mm at the scale), start nail Ruhr Innovation Lab ("Start und Ziel"), 1.5 mm
+  pilot holes; the incremental test board re-exported. **Next:** 9.15, a world board with the
+  Pacific leg given (an open path with fixed end points; optional for the open day).
   **Next:** the open items of Phase 10: the physical builds (Kevin), the
   chair server and the play data endpoint. See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair

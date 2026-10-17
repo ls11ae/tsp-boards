@@ -7,8 +7,10 @@ items done here when they are finished (heading "— done <date>", or "(done)" a
 Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
 game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
 9.11 (labels clearly at their own dot, gallery categories), 9.12 (the kiosk for the booth:
-names from a list, no way out) and 9.13 (München ×2, three Excellence puzzles) are done too.
-Next are the open items of Phase 10.
+names from a list, no way out), 9.13 (München ×2, three Excellence puzzles) and 9.14 (the
+13-place puzzle digital, the board with 2.0 mm nails and the Ruhr Innovation Lab as start) are
+done too. Next is 9.15, a world board with the Pacific leg given (optional for the open day),
+then the open items of Phase 10.
 Earlier status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler
 poster texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB).
 Then the open items of Phase 10.
@@ -798,6 +800,68 @@ designer.
   removed; the poster now reads the list `exzellenzstrategie-2027.txt`. The two source lists
   `exzellenzuniversitaeten-2027.txt` and `exzellenzcluster-2026.txt` were deleted too, the
   sources stay in `excellence-strategy-2026-10-12.json`.)
+
+### 9.14 The 13-place puzzle and the board with 2.0 mm nails (Kevin, 2026-10-17) — done 2026-10-17
+
+- **The 13-place puzzle** `exzellenzuniversitaeten-2027-brett` ("Exzellenzuniversitäten ab
+  2027"):
+  - München "München ×2" there too (English "Munich ×2"): it has no rings, but the ×2 matters
+    most there for counting, 15 Universities of Excellence and alliances in 13 places.
+  - No longer a board: a digital puzzle (no "Brett (Nägel, Faden)" on its card), its
+    description without "als Brett". Keep its id (kiosk, links).
+- **The Excellence board** stays 300 × 600 mm:
+  - Nails 2.0 × 20 mm wire nails (1.6 mm are not available), string about 1 mm (measured
+    values follow), pilot holes 1.5 mm, about 9 mm deep; the M14 nut (DIN 934, 11 mm high)
+    stays as the height gauge.
+  - Start nail Ruhr Innovation Lab ("Start und Ziel" as on the poster). Checked exactly with
+    2.0 mm nails: string gap 5.71 mm, at the scale 4.14 mm (3.86–4.42 mm for r_eff 1.0–2.0
+    mm), below the 5 mm target but clearly readable; the scale fits east of the nail, also
+    with the logo. Accept a measured gap of at least 4 mm for the preferred start nail instead
+    of falling back to Hannover.
+  - Re-export with 2.0 mm nails: `docs/boards/exzellenzstrategie-2027`, the logo files in
+    `local/boards`, and the incremental test board `docs/boards/incremental-test` (its marks
+    depend on r_eff).
+  - Update the READMEs: nails, drill 1.5 mm, the Wolfcraft quick-release chuck 0.5–6.5 mm with
+    hex shank (the Bosch GSB 18V-28 chuck starts at 1.5 mm), the calibration, and the check at
+    the scale (name the tour that is second-best as read at the scale, if it is not the string
+    runner-up).
+- (Done 2026-10-17: the 13-place puzzle digital with München ×2 and the new description; the
+  board puzzle with 2.0 mm nails, string gap 5.71 mm, 4.14 mm at the scale, start nail Ruhr
+  Innovation Lab with "Start und Ziel" under its label or logo; the planner keeps a preferred
+  start nail from 4 mm at the scale; the board report names the runner-up as read at the scale
+  (here the same tour as the string runner-up, wound via Münster) and how far before 0 it
+  ends; both boards and the incremental test board re-exported, the nails of the incremental
+  board unchanged.)
+
+### 9.15 A world board with the Pacific leg given (Kevin, 2026-10-17)
+
+Optional for the open day, after 9.14.
+
+- A world board on 600 × 300 mm, landscape, and the same puzzle digitally. Equal Earth is about
+  2:1, so it fits one of the plywood pieces and the P2S bed in one piece. A round trip around
+  the world cannot close on a flat board, so the leg across the Pacific is given: the string
+  runs from Los Angeles (start nail, string tied) through all other places to Sydney (end nail
+  with the scale); the flight Sydney → Los Angeles closes the round trip off the board. This is
+  a shortest Hamiltonian path with fixed end points (a round trip with the edge Sydney–Los
+  Angeles fixed).
+- Core: fixed end points (a fixed edge) in the exact solvers (Euclidean and string model: no
+  turn cost across the fixed edge; the tied loop at the start nail, the wrap and the scale at
+  the end nail), in the heuristics, the gap bound, the search, the verification and the
+  robustness check.
+- Places: about 40 world cities (try 30–45). A quick check by Claude with the Pacific edge
+  fixed (string model, nails 2.0 mm, string 1 mm, at least 10 mm apart, labels not checked)
+  found exact string gaps of 6.4 mm for 35 and 7.9 mm for 40 cities, by swapping cities where
+  optimum and runner-up differ. Choose the cities with the search, with recognizability and
+  label space, for a string gap of at least 5 mm; prefer cities whose order is the same on the
+  board (flat Equal Earth string) and on the globe (great circle), and report both.
+- Board export: start and end nail marked ("Start", "Ziel"), the Pacific leg as a dashed line
+  leaving the map edges, the scale at the end nail; laser SVG in one piece, print template,
+  solution sheet and calibration for an open path.
+- Digital: the same puzzle in the app with the Pacific leg given (drawn dashed, not to be
+  placed), Los Angeles and Sydney marked as start and finish, distances in km on the globe as
+  in the other world puzzles, and the globe flight closing the loop; a `#p/<id>` short link;
+  in the gallery under "Europa und die Welt" (the board next to its digital version), and in
+  the kiosk's hard level if it plays well.
 
 ## Phase 10: physical and public
 

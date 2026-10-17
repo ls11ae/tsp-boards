@@ -19,7 +19,7 @@
       "boardWidthMm": 300,
       "boardHeightMm": 600,
       "marginMm": 15,
-      "nailDiameterMm": 1.6,
+      "nailDiameterMm": 2,
       "stringThicknessMm": 1,
       "minDistanceMm": 10,
       "targetGapMm": 5,
@@ -494,11 +494,11 @@
         13,
         22
       ],
-      "lengthMm": 1106.954,
-      "gapMm": 5.612,
+      "lengthMm": 1112.499,
+      "gapMm": 5.709,
       "model": "string",
-      "scaleGapMm": 5.612,
-      "startPlace": 14
+      "scaleGapMm": 4.138,
+      "startPlace": 13
     }
   }
 }

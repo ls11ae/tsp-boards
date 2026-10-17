@@ -6,9 +6,9 @@ One place per line (town names of the country data); lines starting with `#` are
 
 | list                              | puzzle                                         | places | purpose |
 | --------------------------------- | ---------------------------------------------- | ------ | ------- |
-| `exzellenzuniversitaeten-2027-brett.txt` | Exzellenzuniversitäten ab 2027: Bonn/Köln also combined | 13 places (3 composite) | board (string gap 10.15 mm) |
+| `exzellenzuniversitaeten-2027-brett.txt` | Exzellenzuniversitäten ab 2027: Bonn/Köln also combined | 13 places (3 composite; München ×2) | digital since 2026-10-17 (roadmap 9.14) |
 | `exzellenzstrategie-2027.txt` | no puzzle since 2026-10-17 (roadmap 9.13): the source of the 37-city poster (`docs/posters/exzellenzstrategie-2027/`, alliances split into their cities) | 34 places: universities and alliances (14, marked) and the 20 further cluster sites | – |
-| `exzellenzstrategie-2027-brett.txt` + `.board.json` | Exzellenzstrategie 2026–2033, the 300 × 600 mm board (roadmap 9.1, files in `docs/boards/exzellenzstrategie-2027/`) | 25 places: universities (14, marked), cluster sites with at least two clusters, all cluster sites in NRW | board (string gap 5.61 mm with 1.6 mm nails and 1 mm string, also at the scale; start nail Hannover) |
+| `exzellenzstrategie-2027-brett.txt` + `.board.json` | Exzellenzstrategie 2026–2033, the 300 × 600 mm board (roadmap 9.1, files in `docs/boards/exzellenzstrategie-2027/`) | 25 places: universities (14, marked), cluster sites with at least two clusters, all cluster sites in NRW | board (string gap 5.71 mm with 2.0 mm nails and 1 mm string, 4.14 mm at the scale; start nail Ruhr Innovation Lab) |
 | `exzellenzstrategie-2027-37.txt` | Exzellenzstrategie: alle 37 Städte, the game behind the 37-place poster (roadmap 9.10) | 37 places: as the 34, but the cities of the two alliances as separate places (marked) | digital (string gap 2.09 mm) |
 | `ruhrgebiet.txt` | Ruhrgebiet: 11 Städte, a local puzzle for the booth (roadmap 9.5, easy level of the event mode) | the 11 independent cities of the Regionalverband Ruhr (fixed; its four districts left out) | digital (string gap 2.57 mm on the NRW map) |
 

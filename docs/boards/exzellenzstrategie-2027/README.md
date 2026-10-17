@@ -8,8 +8,9 @@ on the xTool P2S (CO2, working area 600 × 305 mm) in one piece. Built from
 
 Build variant: **12 mm birch plywood** (HORNBACH "Fixmaß Multiplexplatte Birke BB/WG"
 1200 × 600 × 12 mm, cut by the store into four pieces of about 298 × 600 mm), engraved by the
-laser, nail holes **drilled by hand** at engraved pits. Nails: **1.6 × 20 mm wire nails with
-flat heads**; string: polyester, about 1 mm.
+laser, nail holes **drilled by hand** at engraved pits. Nails: **2.0 × 20 mm wire nails with
+flat heads** (1.6 mm nails are not available; changed 2026-10-17, roadmap 9.14); string:
+polyester, about 1 mm (measured values follow, then re-export, below).
 
 ## Files
 
@@ -49,14 +50,19 @@ outline) for cutting.
   cities) and the further sites of Clusters of Excellence with at least two clusters, plus all
   further cluster sites in North Rhine-Westphalia. Left out (one cluster each): Bayreuth,
   Braunschweig, Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm.
-- With 1.6 mm nails and 1 mm string: string gap between the shortest and the second-shortest
-  round trip **5.61 mm** (exact), at the scale also **5.61 mm**; start nail **Hannover**. The
-  Ruhr Innovation Lab as start nail reads below the 5 mm target at the scale (its scale only
-  fits turned away from the usual direction), so the planner chose Hannover.
+- **Start nail: Ruhr Innovation Lab**, with "Start und Ziel" under its label (or its logo), as
+  on the poster; the scale runs east of the nail, also with the logo.
+- With 2.0 mm nails and 1 mm string (r_eff 1.5 mm): string gap between the shortest and the
+  second-shortest round trip **5.71 mm** (exact); **at the scale 4.14 mm** (exact). That is
+  below the 5 mm target but clearly readable; the planner keeps a preferred start nail with at
+  least 4 mm at the scale (until 2026-10-17 the board started at Hannover, with 5.61 mm at the
+  scale and 1.6 mm nails).
 - Robust: for r_eff from 1.0 to 2.0 mm (nail radius plus half the string) the optimum stays the
-  same and the gap is 5.47–5.95 mm, also at the scale.
+  same; the string gap is 5.47–5.95 mm, at the scale 3.86–4.42 mm.
 - The runner-up differs only near Aachen and Köln (Düsseldorf → Köln → Aachen → Bonn instead of
-  Düsseldorf → Aachen → Köln → Bonn).
+  Düsseldorf → Aachen → Köln → Bonn). It is the second-best tour by string length and as read at
+  the scale; at the scale it ends 4.14 mm before 0 when wound from the Ruhr Innovation Lab via
+  Münster (the report names the tour in this direction).
 
 ## Building
 
@@ -70,28 +76,33 @@ Try everything on **one of the four pieces as a test board** first.
    exact size, the board can be exported for it.
 3. **Lasering**: engrave (black), pits (magenta, deeper), score (blue), outline (green). Test the
    power on an offcut first; the pits should be clearly deeper than the engraving.
-4. **Drilling**: at each pit, pre-drill with a **1.2 mm drill about 9 mm deep** (a piece of tape
+4. **Drilling**: at each pit, pre-drill with a **1.5 mm drill about 9 mm deep** (a piece of tape
    on the drill as depth mark; a drill stand if available; straight up). The pit centres the
-   drill; do not drill through the 12 mm.
+   drill; do not drill through the 12 mm. The chuck of the Bosch GSB 18V-28 starts at 1.5 mm
+   and holds such a thin drill badly: use the **Wolfcraft quick-release chuck 0.5–6.5 mm with
+   hex shank** in it.
 5. **Sanding and oiling**: remove the tape, sand lightly, oil and let it dry (before the nails,
    so the oil does not collect around them).
-6. **Nails**: drive the 1.6 × 20 mm nails into the holes until **about 11 mm protrude**. Use a
-   gauge so all are equally high: an M12 or M14 hex nut (10–13 mm high depending on the
-   standard: measure it) or a wooden block of 11 mm next to the nail; hammer until the head is level with it. Nails straight up.
+6. **Nails**: drive the 2.0 × 20 mm nails into the holes until **about 11 mm protrude**. Use
+   the **M14 hex nut (DIN 934, 11 mm high)** as a gauge next to the nail; hammer until the head
+   is level with it. Nails straight up.
 7. **String**: polyester, about 1 mm, low stretch. Measure nails and string and re-export with
    the measured values (below); the gap changes by tenths of a millimetre at most.
 8. **Calibrating** (solution sheet, "Faden kalibrieren"): tie a loose loop around the start nail
-   (Hannover, the nail with the scale), wind the tour in the order of the solution sheet, back
-   to the start nail, once around it and straight along the scale. Mark the string at the
-   target mark 0 (a knot or a bead) and cut it there.
+   (Ruhr Innovation Lab, "Start und Ziel", the nail with the scale), wind the tour in the order
+   of the solution sheet (Ruhr Innovation Lab → Düsseldorf → Aachen → Köln → …), back to the
+   start nail, once around it and straight along the scale. Mark the string at the target mark
+   0 (a knot or a bead) and cut it there.
 9. **Checking the scale**: wind the shortest tour again in the other direction: the end reaches
-   0 again. Wind the runner-up (swap Aachen and Köln): the end must stop about 5.6 mm before 0,
-   outside the scored frame around 0. If the optimum misses 0 by more than 1–2 mm, the string
-   stretches or the nails lean.
+   0 again (or a little before it; the calibration uses the longer direction). Wind the
+   runner-up, Aachen and Köln swapped, in the direction the report names (from the Ruhr
+   Innovation Lab via Münster, …, Bonn → Aachen → Köln → Düsseldorf): the end must stop about
+   4.1 mm before 0, outside the scored frame around 0. If the optimum misses 0 by more than
+   1–2 mm, the string stretches or the nails lean.
 
 ## Alternative: 6 mm plywood with laser-cut holes
 
-A CO2 laser cannot cut clean 1.2–1.6 mm holes through 12 mm, but through 6 mm it can: export
+A CO2 laser cannot cut clean 1.5–2 mm holes through 12 mm, but through 6 mm it can: export
 with `--holes cut --edge --hole <diameter>`; the export then also writes a strip of test holes
 (0.6 mm below the nail diameter up to it) to find the press fit first. Red cuts the holes,
 orange the board outline. 6 mm holds the nails less well; a backing board helps.
@@ -100,21 +111,20 @@ orange the board outline. 6 mm holds the nails less well; a backing board helps.
 
 München has two Universities of Excellence (LMU, TUM), so its label reads "München ×2" and the
 14 rings stand for the 15 Universities of Excellence and alliances (roadmap 9.13). The nails
-did not move: re-exported with the same gap, 5.61 mm exact and at the scale, start nail
-Hannover; the label fits at the same position.
+did not move.
 
 ## Re-exporting (measured nails, string, logo)
 
 Without the logo (committed):
 
 ```bash
-npx tsx cli/export-board.ts --puzzle public/puzzles/exzellenzstrategie-2027-brett.tsp.json --out docs/boards/exzellenzstrategie-2027 --name exzellenzstrategie-2027 --bed 600x305 --nail 1.6 --string 1
+npx tsx cli/export-board.ts --puzzle public/puzzles/exzellenzstrategie-2027-brett.tsp.json --out docs/boards/exzellenzstrategie-2027 --name exzellenzstrategie-2027 --bed 600x305 --nail 2 --string 1
 ```
 
 With the Ruhr Innovation Lab logo (from the git-ignored `local/`, never committed):
 
 ```bash
-npx tsx cli/export-board.ts --puzzle public/puzzles/exzellenzstrategie-2027-brett.tsp.json --out local/boards --name exzellenzstrategie-2027-logo --bed 600x305 --nail 1.6 --string 1 --logo "Ruhr Innovation Lab=local/ruhr-innovation-lab.svg" --legend-logo local/ruhr-innovation-lab.svg
+npx tsx cli/export-board.ts --puzzle public/puzzles/exzellenzstrategie-2027-brett.tsp.json --out local/boards --name exzellenzstrategie-2027-logo --bed 600x305 --nail 2 --string 1 --logo "Ruhr Innovation Lab=local/ruhr-innovation-lab.svg" --legend-logo local/ruhr-innovation-lab.svg
 ```
 
 Replace `--nail` and `--string` with the measured values. The board's defaults (drill pits, no

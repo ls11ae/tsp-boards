@@ -1150,3 +1150,25 @@ Short entries: decision; alternatives considered; reason. Newest last.
   and `exzellenzcluster-2026.txt` are deleted as well (in the git history); the sources stay in
   `docs/data/curated/excellence-strategy-2026-10-12.json` and the links in the curated README.
   The poster test of the 14 universities takes the marked places of `exzellenzstrategie-2027.txt`.
+- **2026-10-17 The 13-place puzzle digital, the board with 2.0 mm nails (roadmap 9.14).**
+  Kevin's decisions. The 13-place puzzle keeps its id (kiosk, links) but is digital (judged by
+  map distance), with "München ×2" (no ring there, but the ×2 is what makes 13 places count 15
+  Universities of Excellence and alliances) and a description without "als Brett"; its file was
+  edited directly (purpose, description, label), its tour and gap stay. The board puzzle's
+  parameters say 2.0 mm nails now (the app judges the board's game by string with them; 1.6 mm
+  nails are not available); recomputed exactly: same optimum, string gap 5.71 mm, 4.14 mm at
+  the scale with the Ruhr Innovation Lab as start. The planner keeps a preferred start nail if
+  its exact gap at the scale reaches `PREFERRED_START_MIN_GAP_UM` (4 mm), below the target:
+  the place a board celebrates should be its start, and 4 mm is clearly readable (3.86–4.42 mm
+  for r_eff 1.0–2.0 mm); before, it fell back to Hannover (5.61 mm). Such a start nail says so,
+  as on the poster: "Start und Ziel" as a second line (0.7 of the label size) under its label or
+  logo, placed by the planner with the label (only when the preferred start is the start, so
+  other boards are unchanged). The board report names the runner-up as read at the scale and
+  how far before 0 it ends, in the direction that ends nearest to 0, and the string runner-up
+  separately when they differ (here they are the same tour, Aachen and Köln swapped, ending
+  4.14 mm before 0 when wound via Münster; the old text "about the gap before 0" would have said
+  5.7 mm). The incremental test board keeps its nails with 2.0 mm nails (same seed, same points),
+  only the marks moved (now for r_eff 1.5 mm). Pilot holes 1.5 mm with the Wolfcraft chuck
+  (0.5–6.5 mm, hex shank) in the Bosch drill, whose chuck starts at 1.5 mm; the M14 nut (DIN 934,
+  11 mm) as height gauge. Alternatives: a lower target for the whole board (would also accept
+  other start nails with less), a "Start und Ziel" line in the legend (farther from the nail).
