@@ -35,6 +35,32 @@ export interface PermalinkData {
     /** Marked places as indices into the list. */
     readonly highlight: readonly number[];
   } | null;
+  /** An open path with its leg back given (roadmap 9.15), if the link has one. */
+  readonly path: LinkPath | null;
+}
+
+/**
+ * The end points of an open path (roadmap 9.15): GeoNames ids, or indices into the place list
+ * for a link with a list. Encoded as 'pa=<start>.<end>' in base 36.
+ */
+export interface LinkPath {
+  readonly start: number;
+  readonly end: number;
+}
+
+function setPath(q: Query, path: LinkPath | null): void {
+  if (path) q.set('pa', `${path.start.toString(36)}.${path.end.toString(36)}`);
+}
+
+function decodePath(text: string | null): LinkPath | null {
+  const [start, end] = (text ?? '').split('.').map((s) => parseInt(s, 36));
+  return Number.isInteger(start) &&
+    Number.isInteger(end) &&
+    start! >= 0 &&
+    end! >= 0 &&
+    start !== end
+    ? { start: start!, end: end! }
+    : null;
 }
 
 /** A place list for a link: its places and, in pool mode, the selected indices. */
@@ -130,6 +156,7 @@ export function encodePermalink(
   appVersion = '',
   title = '',
   list: LinkList | null = null,
+  path: LinkPath | null = null,
 ): string {
   const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
@@ -155,11 +182,13 @@ export function encodePermalink(
   q.set('lf', String(params.labelSizeMm));
   q.set('ll', params.labelLanguage);
   if (params.blankBoard) q.set('bl', '1');
+  if (params.flatMap) q.set('fm', '1');
   if (marks.pinned.length > 0) q.set('pin', encodeIds(marks.pinned));
   if (marks.excluded.length > 0) q.set('ex', encodeIds(marks.excluded));
   if (marks.groups && marks.groups.length > 0) q.set('gr', encodeGroups(marks.groups));
   if (list) setList(q, list);
   else if (selectedIds && selectedIds.length > 0) q.set('sel', encodeIds(selectedIds));
+  setPath(q, path);
   return `#${q.toString()}`;
 }
 
@@ -174,6 +203,7 @@ export function encodePlayLink(
   appVersion = '',
   title = '',
   list: LinkList | null = null,
+  path: LinkPath | null = null,
 ): string {
   const q = new Query();
   q.set('v', String(PERMALINK_VERSION));
@@ -189,8 +219,10 @@ export function encodePlayLink(
   q.set('lf', String(params.labelSizeMm));
   q.set('ll', params.labelLanguage);
   if (params.blankBoard) q.set('bl', '1');
+  if (params.flatMap) q.set('fm', '1');
   if (list) setList(q, list);
   else q.set('sel', encodeIds(selectedIds));
+  setPath(q, path);
   return `#${q.toString()}`;
 }
 
@@ -230,6 +262,7 @@ export function decodePermalink(hash: string): PermalinkData | null {
     labelSizeMm: num(q.get('lf'), d.labelSizeMm, 0, 100),
     labelLanguage: q.get('ll') === 'en' ? 'en' : d.labelLanguage,
     blankBoard: q.get('bl') === '1',
+    flatMap: q.get('fm') === '1',
   };
   const selected = q.get('sel') ? decodeIds(q.get('sel')) : null;
   const placeList = q.get('pl') ? decodePlaceList(q.get('pl')!) : null;
@@ -249,6 +282,7 @@ export function decodePermalink(hash: string): PermalinkData | null {
     mode: q.get('m') === 'play' && (selected || list) ? 'play' : 'design',
     title: q.get('t') ? q.get('t')!.slice(0, 200) : null,
     list,
+    path: decodePath(q.get('pa')),
   };
 }
 

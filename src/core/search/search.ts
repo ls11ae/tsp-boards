@@ -106,6 +106,11 @@ export interface SearchPool {
   readonly prominence: readonly number[];
   /** Pool indices that must be selected. */
   readonly pinned: readonly number[];
+  /**
+   * A given edge between two pinned pool cities (roadmap 9.15: the Pacific leg of the world
+   * board): the puzzle is the open path from the first to the second.
+   */
+  readonly fixedEdge?: readonly [number, number];
   /** Pool indices that must not be selected. */
   readonly excluded?: readonly number[];
   /** Board labels that must fit (omit for no label constraint). */
@@ -401,10 +406,13 @@ export class Search {
     for (const c of chosen) selection.add(c);
     const slots = [...selection.members];
     const sphere = this.pool.sphere;
+    // Pinned cities never leave their slots, so the given edge stays between the same slots.
+    const fixed = this.pool.fixedEdge;
     const inst = new Instance(
       slots.map((c) => this.pool.points[c]!),
       this.params.rEffMm,
       sphere ? { lonLat: slots.map((c) => sphere.lonLat[c]!), mmPerKm: sphere.mmPerKm } : null,
+      fixed ? [slots.indexOf(fixed[0]), slots.indexOf(fixed[1])] : null,
     );
     let evaluation = this.evaluate(inst, slots, null);
     if (this.needsRefinement(evaluation)) evaluation = this.refine(inst, slots, evaluation);

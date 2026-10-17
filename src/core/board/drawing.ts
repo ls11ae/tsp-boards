@@ -119,6 +119,18 @@ export interface DrawingInput {
   readonly labelLogos?: readonly (Logo | null)[];
   /** Legend, drawn in the plan's legend box. */
   readonly legend?: LegendLayout | null;
+  /** Captions under labels that are always drawn ("Start", "Ziel" of an open path). */
+  readonly captions?: readonly {
+    readonly slot: number;
+    readonly text: string;
+    readonly sizeMm: number;
+    readonly offsetMm: number;
+    readonly labelWidthMm: number;
+  }[];
+  /** The given leg of an open path, drawn dashed (roadmap 9.15). */
+  readonly givenLeg?: readonly (readonly Point[])[];
+  /** The start nail of an open path, where the string is tied: a ring like the scale's. */
+  readonly tieNail?: Point;
   /** A caption under the label of this slot if it is the start nail ("Start und Ziel"). */
   readonly startCaption?: {
     readonly slot: number;
@@ -155,6 +167,35 @@ function scaleText(s: ScalePlan, text: string, t: number, w: number, size: numbe
   const x = cx - Math.sin(angle) * drop;
   const y = cy + Math.cos(angle) * drop;
   return textPath(text, x, y, size, { anchor: 'middle', angle });
+}
+
+/** Polylines as dashes of `dash` mm with gaps of `gap` mm (the dash pattern runs on). */
+function dashedPath(
+  lines: readonly (readonly Point[])[],
+  dash: number,
+  gap: number,
+): PathCommand[] {
+  const out: PathCommand[] = [];
+  for (const line of lines) {
+    let phase = 0;
+    for (let i = 0; i + 1 < line.length; i++) {
+      const [a, b] = [line[i]!, line[i + 1]!];
+      const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      const at = (t: number): Point => [
+        a[0] + ((b[0] - a[0]) * t) / len,
+        a[1] + ((b[1] - a[1]) * t) / len,
+      ];
+      let t = 0;
+      while (t < len) {
+        const inDash = phase < dash;
+        const step = Math.min(len - t, inDash ? dash - phase : dash + gap - phase);
+        if (inDash) out.push(...polylinePath([at(t), at(t + step)]));
+        t += step;
+        phase = (phase + step) % (dash + gap);
+      }
+    }
+  }
+  return out;
 }
 
 /** Scale: axis, ticks every 5 mm, numbers every 10 mm (mm of string beyond the optimum). */
@@ -234,19 +275,23 @@ export function drawBoard(
   if (input.labelTexts && input.labelOptions) {
     const size = input.labelOptions.sizeMm;
     const path: PathCommand[] = [];
-    const caption =
-      input.startCaption && input.startCaption.slot === plan.scale.slot ? input.startCaption : null;
+    const captions = [
+      ...(input.startCaption && input.startCaption.slot === plan.scale.slot
+        ? [input.startCaption]
+        : []),
+      ...(input.captions ?? []),
+    ];
     for (const l of plan.labels) {
       const logo: Logo | null = input.labelLogos?.[l.slot] ?? null;
-      const captioned = caption !== null && l.slot === caption.slot;
+      const caption = captions.find((c) => c.slot === l.slot) ?? null;
       const [x, y] = l.candidate.baseline;
       if (logo) {
         const [x0, y0, x1] = l.candidate.box;
-        path.push(...placeLogo(logo, x0, y0, captioned ? caption.labelWidthMm : x1 - x0));
+        path.push(...placeLogo(logo, x0, y0, caption ? caption.labelWidthMm : x1 - x0));
       } else {
         path.push(...textPath(input.labelTexts[l.slot]!, x, y, size));
       }
-      if (captioned) path.push(...textPath(caption.text, x, y + caption.offsetMm, caption.sizeMm));
+      if (caption) path.push(...textPath(caption.text, x, y + caption.offsetMm, caption.sizeMm));
     }
     items.push({ layer: 'engrave', path, fill: true });
   }
@@ -279,6 +324,15 @@ export function drawBoard(
       fill: true,
     });
   items.push(...drawScale(plan.scale, plan.measured.gapUm, input.scaleCaption));
+  // An open path (roadmap 9.15): the given leg dashed, a ring where the string is tied.
+  if (input.givenLeg && input.givenLeg.length > 0)
+    items.push({ layer: 'score', path: dashedPath(input.givenLeg, 4, 3), fill: false });
+  if (input.tieNail)
+    items.push({
+      layer: 'score',
+      path: circlePath(input.tieNail[0], input.tieNail[1], plan.scale.startMm - 0.5),
+      fill: false,
+    });
 
   // Nails.
   const nails: PathCommand[] = [];

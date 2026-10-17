@@ -41,7 +41,7 @@ import { boardMapLines } from './map-lines';
 import type { BoardPlan, PlanInput } from './plan';
 import { FONT_METRICS, measureText, type TextMetrics } from './text';
 import { BOARD_TEXTS, type BoardTexts } from './texts';
-import type { BoardExtras } from '../puzzle-file';
+import type { BoardExtras, MapPath } from '../puzzle-file';
 
 export interface BoardSetup {
   readonly file: CountryFile;
@@ -61,6 +61,12 @@ export interface BoardSetup {
   } | null;
   /** "Start und Ziel" under the preferred start nail's label, if that nail is the start. */
   readonly startCaption: StartCaption | null;
+  /** An open path (roadmap 9.15): its start and end nails (slots), else null. */
+  readonly path: MapPath | null;
+  /** Second lines under labels that are always there ("Start", "Ziel" of an open path). */
+  readonly captions: readonly StartCaption[];
+  /** The given leg of an open path on the board (polylines, cut at the map's edges). */
+  readonly givenLeg: readonly (readonly Point[])[];
   readonly texts: BoardTexts;
   readonly title: readonly TextLine[];
   readonly footer: TextLine;
@@ -128,6 +134,8 @@ export interface SetupExtras {
   readonly logos?: ReadonlyMap<number, Logo>;
   /** Large logo in the legend box. */
   readonly legendLogo?: Logo | null;
+  /** An open path with given end points (pool indices; roadmap 9.15). */
+  readonly path?: MapPath | null;
 }
 
 /** Ink box of a logo used as a label, vertically centred on the nail at side positions. */
@@ -229,6 +237,46 @@ export function boardSetup(
     });
     labels = { texts: labelTexts, metrics, options };
   }
+  // An open path (roadmap 9.15): its end points as slots, "Start" and "Ziel" under their
+  // labels, and the given leg along the great circle, cut where it leaves the map.
+  const pathSlots: MapPath | null = extras.path
+    ? { start: members.indexOf(extras.path.start), end: members.indexOf(extras.path.end) }
+    : null;
+  if (pathSlots && (pathSlots.start < 0 || pathSlots.end < 0))
+    throw new Error("the open path's end points are not on the board");
+  const captions: StartCaption[] = [];
+  if (labels && pathSlots) {
+    const sizeMm = params.labelSizeMm * START_CAPTION_SCALE;
+    const metrics = [...labels.metrics];
+    for (const [slot, text] of [
+      [pathSlots.start, texts.pathStart],
+      [pathSlots.end, texts.pathEnd],
+    ] as const) {
+      const label = metrics[slot]!;
+      const c = captionMetrics(label, text, sizeMm);
+      metrics[slot] = c.metrics;
+      captions.push({
+        slot,
+        text,
+        sizeMm,
+        offsetMm: c.offsetMm,
+        labelWidthMm: label.inkRight - label.inkLeft,
+      });
+    }
+    labels = { ...labels, metrics };
+  }
+  const givenLeg = pathSlots
+    ? projection.lines(
+        {
+          type: 'LineString',
+          coordinates: [
+            [cities[pathSlots.end]!.lon, cities[pathSlots.end]!.lat],
+            [cities[pathSlots.start]!.lon, cities[pathSlots.start]!.lat],
+          ],
+        },
+        [BOARD_EDGE_MM, BOARD_EDGE_MM, width - BOARD_EDGE_MM, height - BOARD_EDGE_MM],
+      )
+    : [];
   const clearance = labels?.options.nailClearanceMm ?? params.nailDiameterMm / 2 + 2.5;
   const startPool = extras.board?.startPlace ?? null;
   const preferred = startPool === null ? -1 : members.indexOf(startPool);
@@ -257,14 +305,32 @@ export function boardSetup(
     projection,
     cities,
     points,
-    inst: new Instance(points, rEffMm(params), citySphere(file, cities, projection)),
+    // A world board (flatMap) measures the string on the wood, not on the globe.
+    inst: new Instance(
+      points,
+      rEffMm(params),
+      params.flatMap ? null : citySphere(file, cities, projection),
+      pathSlots ? [pathSlots.start, pathSlots.end] : null,
+    ),
     labels,
     startCaption,
+    path: pathSlots,
+    captions,
+    givenLeg,
     texts,
     title: [
       { text: title || regionName, sizeMm: TITLE_SIZE_MM },
       // A place list may hold alliances and points, not only towns: "Orte".
-      { text: texts.subtitle(cities.length, poolCities !== null), sizeMm: SUBTITLE_SIZE_MM },
+      {
+        text: pathSlots
+          ? texts.path.subtitle(
+              cities.length,
+              boardLabel(cities[pathSlots.start]!, lang),
+              boardLabel(cities[pathSlots.end]!, lang),
+            )
+          : texts.subtitle(cities.length, poolCities !== null),
+        sizeMm: SUBTITLE_SIZE_MM,
+      },
     ],
     footer,
     missing: cityIds.filter((id) => !index.has(id)),
@@ -315,6 +381,7 @@ export function boardPlanInput(setup: BoardSetup, optimum: StringOptimum): PlanI
     reserved: legendBox(setup),
     preferredStart: setup.preferredStart,
     edgeMm: BOARD_EDGE_MM,
+    ...(setup.givenLeg.length > 0 ? { lines: setup.givenLeg } : {}),
   };
 }
 
@@ -351,6 +418,8 @@ export function drawPuzzleBoard(
       labelLogos: setup.labelLogos,
       legend: setup.legend,
       startCaption: setup.startCaption,
+      captions: setup.captions,
+      ...(setup.path ? { givenLeg: setup.givenLeg, tieNail: setup.points[setup.path.start]! } : {}),
     },
     drawing,
   );

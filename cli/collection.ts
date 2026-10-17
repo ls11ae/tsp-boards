@@ -15,6 +15,8 @@
 //       ({ "start": "<place name>", "legend": [{ "symbol": "ring"|"nail"|"none", "text": … }] }:
 //       preferred start nail and a legend box at the bottom of the board, roadmap 9.1).
 //       A line "* name" in the list marks a place (a ring around its nail).
+//       For lists also [--path 'Los Angeles,Sydney'] (an open path between two list places, its
+//       leg back given; roadmap 9.15) and [--flat] (a world board: measured on the flat map).
 //   npx tsx cli/collection.ts index        (rebuilds index.json from the files; categories and
 //       order in cli/lib/categories.ts)
 
@@ -154,6 +156,20 @@ async function mapDoc(
   const startPool = extrasInput?.start
     ? (list?.places.findIndex((p) => p.name === extrasInput.start) ?? -1)
     : -1;
+  // An open path between two list places (roadmap 9.15), as pool indices.
+  const pathNames = arg('path', '')
+    .split(',')
+    .map((x) => x.trim())
+    .filter(Boolean);
+  const pathPool =
+    pathNames.length === 2 && list
+      ? {
+          start: list.places.findIndex((p) => p.name === pathNames[0]),
+          end: list.places.findIndex((p) => p.name === pathNames[1]),
+        }
+      : null;
+  if (pathPool && (pathPool.start < 0 || pathPool.end < 0))
+    throw new Error(`--path: ${pathNames.join(', ')} are not both in the list`);
   if (extrasInput?.start && startPool < 0)
     throw new Error(`--board-extras: start "${extrasInput.start}" is not in the list`);
   const extras: BoardExtras | null = extrasInput
@@ -165,7 +181,7 @@ async function mapDoc(
     selected,
     m.title,
     pool,
-    { board: extras },
+    { board: extras, path: pathPool },
   );
   if (setup.missing.length > 0)
     throw new Error(`cities not in the pool: ${setup.missing.join(',')}`);
@@ -173,8 +189,9 @@ async function mapDoc(
   const heuristic = iteratedLocalSearch(setup.inst, new Rng(1)).tour;
   const v = verifyCandidate(backend, setup.inst, heuristic, 'string-exact', { timeLimitSec: 300 });
   if (!v.string) throw new Error('exact check failed');
-  // World files measure on the sphere: digital puzzles without a board plan.
-  const sphere = file.metric === 'sphere';
+  // World files measure on the sphere: digital puzzles without a board plan (a world board
+  // measures on the flat map).
+  const sphere = file.metric === 'sphere' && !params.flatMap;
   const plan = sphere
     ? null
     : planBoard(
@@ -229,6 +246,7 @@ async function mapDoc(
             },
           }
         : {}),
+      ...(pathPool ? { path: pathPool } : {}),
       results: {
         tour: v.string.optimal,
         lengthMm: v.string.optimalLength / 1000,
@@ -278,6 +296,7 @@ if (command === 'add') {
     ...defaults,
     region: arg('region', 'DE'),
     ...boardOptions(defaults),
+    ...(args.includes('--flat') ? { flatMap: true } : {}),
   };
   if (args.includes('--pool')) {
     const searchP: PuzzleParams = {

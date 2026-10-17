@@ -94,7 +94,18 @@ export interface MapPuzzle {
     readonly groups: readonly GroupConstraint[];
   };
   readonly board?: BoardExtras;
+  /**
+   * An open path with given end points (roadmap 9.15): the round trip contains the given leg
+   * from `end` back to `start` (on the world board the leg across the Pacific); indices into
+   * places.
+   */
+  readonly path?: MapPath;
   readonly results?: MapResults;
+}
+
+export interface MapPath {
+  readonly start: number;
+  readonly end: number;
 }
 
 export interface IncrementalPuzzleFile {
@@ -280,6 +291,16 @@ export function parsePuzzleDoc(json: unknown): PuzzleDoc {
       : [];
     const places = parsePlaces(m.places, 500);
     const board = parseBoardExtras(m.board, places.length);
+    const index = (v: unknown) =>
+      Number.isInteger(v) && (v as number) >= 0 && (v as number) < places.length
+        ? (v as number)
+        : null;
+    const pathStart = isObj(m.path) ? index(m.path.start) : null;
+    const pathEnd = isObj(m.path) ? index(m.path.end) : null;
+    const path =
+      pathStart !== null && pathEnd !== null && pathStart !== pathEnd
+        ? { start: pathStart, end: pathEnd }
+        : undefined;
     const r = m.results;
     const results =
       isObj(r) && Array.isArray(r.tour) && isNum(r.lengthMm)
@@ -300,6 +321,7 @@ export function parsePuzzleDoc(json: unknown): PuzzleDoc {
         ...(list ? { list } : {}),
         constraints: { pinned: ids(c.pinned), excluded: ids(c.excluded), groups },
         ...(board ? { board } : {}),
+        ...(path ? { path } : {}),
         ...(results ? { results } : {}),
       },
     };

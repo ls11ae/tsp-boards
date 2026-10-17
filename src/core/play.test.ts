@@ -59,3 +59,34 @@ describe('puzzle hash', () => {
     expect(puzzleHash([1])).toMatch(/^[0-9a-f]{8}$/);
   });
 });
+
+describe('an open path with given end points (roadmap 9.15)', () => {
+  const ends = [0, 4] as const;
+  const click = (state: typeof EMPTY_PLAY, slots: readonly number[]) =>
+    slots.reduce((s, slot) => clickNail(s, slot, 5, ends), state);
+
+  it('starts at the start nail and closes with the end nail after all others', () => {
+    // The first click on another nail starts the trip at the start nail.
+    expect(click(EMPTY_PLAY, [2]).path).toEqual([0, 2]);
+    // The end nail is not taken before the others.
+    expect(click(EMPTY_PLAY, [2, 4])).toEqual({ path: [0, 2], closed: false });
+    const done = click(EMPTY_PLAY, [2, 1, 3, 4]);
+    expect(done).toEqual({ path: [0, 2, 1, 3, 4], closed: true });
+    // Undo and a click on the end nail take the end back; a click elsewhere cuts back.
+    expect(undo(done, ends)).toEqual({ path: [0, 2, 1, 3], closed: false });
+    expect(clickNail(done, 4, 5, ends)).toEqual({ path: [0, 2, 1, 3], closed: false });
+    expect(clickNail(done, 2, 5, ends)).toEqual({ path: [0, 2], closed: false });
+  });
+
+  it('judges the closed trip by its open path (the given leg is free)', () => {
+    const points = regularPolygon(5, 100);
+    const inst = new Instance(points, 1.5, null, ends);
+    const path = [0, 1, 2, 3, 4];
+    const plain = new Instance(points, 1.5);
+    // The open path: legs and inner turns, no leg back and no turn across it.
+    expect(stringLength(inst, path)).toBe(pathLength(plain, path));
+    expect(judge(inst, path, { tour: path, lengthUm: stringLength(inst, path) }).optimal).toBe(
+      true,
+    );
+  });
+});

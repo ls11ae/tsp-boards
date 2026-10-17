@@ -9,9 +9,9 @@
 // reaches the target wins; otherwise the best one found.
 
 import type { Point } from '../geometry';
-import type { Instance } from '../instance';
+import type { FixedEdge, Instance } from '../instance';
 import type { ExactOptions, ExactStatus, MipBackend } from '../tsp/exact';
-import type { Tour } from '../tsp/tour';
+import { openPath, type Tour } from '../tsp/tour';
 import {
   hitsObstacle,
   labelCandidates,
@@ -75,6 +75,39 @@ export interface PlanInput {
    * target (roadmap 9.14: the Ruhr Innovation Lab with 4.14 mm at the scale). Default 4 mm.
    */
   readonly preferredStartMinGapUm?: number;
+  /**
+   * Lines drawn on the board that labels, title, footer and scale keep off (the given leg of an
+   * open path, roadmap 9.15).
+   */
+  readonly lines?: readonly (readonly Point[])[];
+}
+
+/** Half width of a drawn line as an obstacle, mm. */
+const LINE_CLEARANCE_MM = 1.5;
+
+/** The segments of polylines as thin obstacles. */
+function lineObstacles(lines: readonly (readonly Point[])[]): Obstacle[] {
+  const out: Obstacle[] = [];
+  for (const line of lines)
+    for (let i = 0; i + 1 < line.length; i++) {
+      const [a, b] = [line[i]!, line[i + 1]!];
+      const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (len === 0) continue;
+      const [nx, ny] = [
+        ((a[1] - b[1]) / len) * LINE_CLEARANCE_MM,
+        ((b[0] - a[0]) / len) * LINE_CLEARANCE_MM,
+      ];
+      out.push({
+        kind: 'polygon',
+        points: [
+          [a[0] + nx, a[1] + ny],
+          [b[0] + nx, b[1] + ny],
+          [b[0] - nx, b[1] - ny],
+          [a[0] - nx, a[1] - ny],
+        ],
+      });
+    }
+  return out;
 }
 
 /** A preferred start nail is kept with this measured gap (µm) unless the input says otherwise. */
@@ -84,11 +117,12 @@ export const PREFERRED_START_MIN_GAP_UM = 4000;
 export type PlanData = Omit<PlanInput, 'inst'> & {
   readonly points: readonly Point[];
   readonly rEffMm: number;
+  readonly fixedEdge?: FixedEdge | null;
 };
 
 export function planData(input: PlanInput, rEffMm: number): PlanData {
   const { inst, ...rest } = input;
-  return { ...rest, points: inst.pointsMm(), rEffMm };
+  return { ...rest, points: inst.pointsMm(), rEffMm, fixedEdge: inst.fixedEdge };
 }
 
 export interface ScalePlan {
@@ -232,8 +266,19 @@ export function scaleCandidates(input: PlanInput): Candidate[] {
   const endMm = spec.targetMm + overshoot;
   const result: Candidate[] = [];
   const preferred = input.preferredStart ?? -1;
+  const lines = lineObstacles(input.lines ?? []);
+  // An open path (roadmap 9.15) is read at its end nail, coming from the last nail before it.
+  const end = inst.fixedEdge?.[1] ?? -1;
+  const arrival = (): Direction | null => {
+    const path = openPath(inst, tour);
+    if (!path) return null;
+    const [a, b] = [points[path[path.length - 2]!]!, points[end]!];
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    return len > 0 ? [(b[0] - a[0]) / len, (b[1] - a[1]) / len] : null;
+  };
   for (let slot = 0; slot < inst.n; slot++) {
-    const bisector = outwardBisector(points, tour, slot);
+    if (end >= 0 && slot !== end) continue;
+    const bisector = end >= 0 ? arrival() : outwardBisector(points, tour, slot);
     if (!bisector) continue;
     const origin = points[slot]!;
     // The scale runs along the outward bisector; for the preferred start nail also rotated
@@ -243,7 +288,7 @@ export function scaleCandidates(input: PlanInput): Candidate[] {
       tour[(tour.indexOf(slot) + 1) % inst.n]!,
     ];
     const directions: Direction[] = [bisector];
-    if (slot === preferred) {
+    if (slot === preferred || slot === end) {
       for (const deg of [15, -15, 30, -30, 45, -45, 60, -60, 75, -75, 90, -90]) {
         const a = (deg * Math.PI) / 180;
         const u: Direction = [
@@ -251,9 +296,11 @@ export function scaleCandidates(input: PlanInput): Candidate[] {
           bisector[0] * Math.sin(a) + bisector[1] * Math.cos(a),
         ];
         const limit = (150 * Math.PI) / 180;
+        // At the end of an open path only the arrival wraps (the other neighbour is the start).
+        const fromStart = inst.fixedEdge?.[0];
         if (
-          endWrapAngle(origin, points[na]!, u) <= limit &&
-          endWrapAngle(origin, points[nb]!, u) <= limit
+          (na === fromStart || endWrapAngle(origin, points[na]!, u) <= limit) &&
+          (nb === fromStart || endWrapAngle(origin, points[nb]!, u) <= limit)
         )
           directions.push(u);
       }
@@ -262,6 +309,16 @@ export function scaleCandidates(input: PlanInput): Candidate[] {
       const band = scaleBand(origin, u, startMm - 1, endMm + 2, spec.halfWidthMm);
       if (!insideBoard(band, input.width, input.height, edge)) continue;
       if (input.reserved && hitsObstacle(input.reserved, { kind: 'polygon', points: band }))
+        continue;
+      if (
+        lines.some(
+          (o) =>
+            o.kind === 'polygon' &&
+            o.points.some((p, i) =>
+              segmentMeetsPolygon(p, o.points[(i + 1) % o.points.length]!, band),
+            ),
+        )
+      )
         continue;
       const blocked = points.some((p, i) => {
         if (i === slot) return false;
@@ -327,7 +384,10 @@ function layout(input: PlanInput, scale: ScalePlan): Layout {
     !points.some((p) => hitsObstacle(box, { kind: 'circle', centre: p, radius: clearance })) &&
     !others.some((o) => hitsObstacle(box, o));
   const asObstacle = boxObstacle;
-  const reserved = input.reserved ? [boxObstacle(input.reserved)] : [];
+  const reserved = [
+    ...(input.reserved ? [boxObstacle(input.reserved)] : []),
+    ...lineObstacles(input.lines ?? []),
+  ];
 
   // Footer: bottom edge, centred, left or right.
   let footer: Box | null = null;

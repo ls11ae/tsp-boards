@@ -17,8 +17,18 @@ export const EMPTY_PLAY: PlayState = { path: [], closed: false };
 /**
  * Click on a nail: a new nail extends the trip; the start nail closes a trip through all
  * nails; the last nail is taken back; an earlier nail cuts the trip back to it.
+ *
+ * With given end points (an open path whose leg back is given, roadmap 9.15) the trip always
+ * starts at `ends[0]`, and `ends[1]` comes last: adding it after all other nails closes the
+ * round trip (the given leg leads back); before that it is not taken.
  */
-export function clickNail(state: PlayState, slot: number, n: number): PlayState {
+export function clickNail(
+  state: PlayState,
+  slot: number,
+  n: number,
+  ends: readonly [number, number] | null = null,
+): PlayState {
+  if (ends) return clickPathNail(state, slot, n, ends);
   const { path } = state;
   const at = path.indexOf(slot);
   if (state.closed) {
@@ -31,9 +41,27 @@ export function clickNail(state: PlayState, slot: number, n: number): PlayState 
   return { path: path.slice(0, at + 1), closed: false };
 }
 
-/** Takes back the last step (reopens a closed trip). */
-export function undo(state: PlayState): PlayState {
-  if (state.closed) return { path: state.path, closed: false };
+function clickPathNail(
+  state: PlayState,
+  slot: number,
+  n: number,
+  [start, end]: readonly [number, number],
+): PlayState {
+  const path = state.path.length > 0 ? state.path : [start];
+  const at = path.indexOf(slot);
+  // A closed trip reopens before the clicked nail's successor; the end nail goes first.
+  if (state.closed)
+    return { path: slot === end ? path.slice(0, -1) : path.slice(0, at + 1), closed: false };
+  if (slot === end)
+    return path.length === n - 1 ? { path: [...path, end], closed: true } : { path, closed: false };
+  if (at < 0) return { path: [...path, slot], closed: false };
+  if (at === path.length - 1 && at > 0) return { path: path.slice(0, -1), closed: false };
+  return { path: path.slice(0, at + 1), closed: false };
+}
+
+/** Takes back the last step (reopens a closed trip; with given end points, without its end). */
+export function undo(state: PlayState, ends: readonly [number, number] | null = null): PlayState {
+  if (state.closed) return { path: ends ? state.path.slice(0, -1) : state.path, closed: false };
   return { path: state.path.slice(0, -1), closed: false };
 }
 

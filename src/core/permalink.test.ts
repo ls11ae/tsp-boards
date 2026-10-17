@@ -95,6 +95,32 @@ describe('permalinks', () => {
     expect(decodePermalink(hash)!.params).toEqual(params);
   });
 
+  it('carry an open path and the flat world board (roadmap 9.15)', () => {
+    const params = { ...DEFAULT_PARAMS, flatMap: true };
+    const path = { start: 5368361, end: 2147714 };
+    const hash = encodePermalink(
+      params,
+      { country: 'WO', version: 4 },
+      [5368361, 2147714, 2643743],
+      undefined,
+      '',
+      '',
+      null,
+      path,
+    );
+    expect(hash).toContain('fm=1');
+    const link = decodePermalink(hash)!;
+    expect(link.path).toEqual(path);
+    expect(link.params.flatMap).toBe(true);
+    const play = encodePlayLink(params, { country: 'WO', version: 4 }, [1, 2, 3], '', '', null, {
+      start: 0,
+      end: 2,
+    });
+    expect(decodePermalink(play)!.path).toEqual({ start: 0, end: 2 });
+    expect(decodePermalink('#v=1')!.path).toBeNull();
+    expect(decodePermalink('#v=1&pa=3.3')!.path).toBeNull();
+  });
+
   it('carry the blank board option', () => {
     const params = { ...DEFAULT_PARAMS, blankBoard: true };
     const hash = encodePermalink(params, { country: 'DE', version: 3 }, null);

@@ -29,6 +29,11 @@ export interface PuzzleParams {
   readonly labelLanguage: LabelLanguage;
   /** Board without map lines (e.g. for points placed by hand). */
   readonly blankBoard: boolean;
+  /**
+   * Measure on the flat map even for a world file (great circles otherwise): a world board,
+   * where the string lies on the wood (roadmap 9.15).
+   */
+  readonly flatMap: boolean;
 }
 
 /** Placeholders until the dimensions of the prototype boards are known. */
@@ -53,6 +58,7 @@ export const DEFAULT_PARAMS: PuzzleParams = {
   labelSizeMm: 8,
   labelLanguage: 'de',
   blankBoard: false,
+  flatMap: false,
 };
 
 /** Nail radius plus half the string thickness (mm): the string's centre line wraps at r_eff. */

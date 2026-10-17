@@ -15,8 +15,9 @@
 //   from the puzzle file's board, else cut) [--edge | --no-edge] (cut the board outline)
 //   [--radii 1,1.25,1.5,1.75,2] (r_eff values of the robustness check, mm)
 // A link must contain the selected cities (`sel`); a puzzle file brings its places (also
-// composite ones), marked places, legend and preferred start nail. The exact string optimum,
-// the measured gap at the scale and the robustness are computed here (HiGHS in Node).
+// composite ones), marked places, legend and preferred start nail, and an open path with
+// given end points (roadmap 9.15: the world board, its scale at the end nail). The exact string
+// optimum, the measured gap at the scale and the robustness are computed here (HiGHS in Node).
 // Logos are read from local files and never written anywhere but the outputs.
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -43,7 +44,7 @@ import { parsePuzzleDoc } from '../src/core/puzzle-file';
 import { checkRobustness } from '../src/core/robustness';
 import { Rng } from '../src/core/rng';
 import { iteratedLocalSearch } from '../src/core/tsp/ils';
-import { euclideanLength, sameTour, stringLength } from '../src/core/tsp/tour';
+import { euclideanLength, openPath, sameTour, stringLength } from '../src/core/tsp/tour';
 import { verifyCandidate } from '../src/core/verify';
 import { loadBackend, loadCountry, ms } from './lib/country';
 
@@ -102,7 +103,7 @@ function fromPuzzle(file: string): Source {
     ids,
     title: doc.title,
     pool,
-    extras: { board: map.board ?? null, logos, legendLogo },
+    extras: { board: map.board ?? null, logos, legendLogo, path: map.path ?? null },
     link: '',
     name: doc.id,
     country,
@@ -171,8 +172,14 @@ if (!plan) {
   process.exit(1);
 }
 const start = setup.cities[plan.scale.slot]!;
+// An open path is tied at its start nail and read at its end nail.
+const openEnds = setup.path;
+const tieNail = openEnds ? setup.cities[openEnds.start]! : null;
 console.error(
-  `start nail ${start.name}, measured gap ${mm(plan.measured.gapUm)} mm (${plan.measured.kind})` +
+  (tieNail
+    ? `start nail ${tieNail.name} (tied), end nail ${start.name} with the scale`
+    : `start nail ${start.name}`) +
+    `, measured gap ${mm(plan.measured.gapUm)} mm (${plan.measured.kind})` +
     (plan.warnings.length > 0 ? `, warnings: ${plan.warnings.map((w) => w.kind).join(', ')}` : ''),
 );
 
@@ -187,6 +194,7 @@ const rows = radii.map((r) => {
     v.string!.optimal,
     { slot: plan.scale.slot, direction: plan.scale.direction },
     { timeLimitSec: 300 },
+    setup.inst.fixedEdge,
   );
   console.error(
     `r_eff ${r.toFixed(2)} mm: ${row.sameOptimum ? 'same optimum' : 'OTHER OPTIMUM'}, gap ${mm(row.gapUm)} mm` +
@@ -296,6 +304,7 @@ writeFileSync(
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
       }),
+    path: openEnds !== null,
   }),
 );
 outputs.push(`${base}-solution.pdf`);
@@ -315,6 +324,8 @@ function runnerUpSection(
   // A round trip from the start nail in the direction that ends nearest to 0 (the shorter
   // measured length; the calibration winds the optimum in its longer direction).
   const nearest = (t: readonly number[]) => {
+    // An open path has one direction only.
+    if (setup.inst.fixedEdge) return openPath(setup.inst, t) ?? [...t];
     const n = t.length;
     const i = t.indexOf(slot);
     const forward = Array.from({ length: n }, (_, k) => t[(i + k) % n]!);
@@ -365,8 +376,15 @@ const report = [
   '',
   `- Board ${params.boardWidthMm} × ${params.boardHeightMm} mm, ${setup.cities.length} places, nails ${params.nailDiameterMm} mm, string ${params.stringThicknessMm} mm (r_eff ${de(rEffMm(params))} mm), labels ${params.labelSizeMm} mm, nail holes ${holes === 'cut' ? `cut at ${holeMm} mm` : holes === 'pit' ? 'engraved as pits for drilling' : 'marked with crosses'}, board outline ${edge ? 'cut' : 'not cut'}.`,
   `- String gap (optimum to runner-up): ${mm(v.string.gap)} mm (${v.mode}).`,
-  `- Start nail: ${start.name}; gap at the scale ${mm(plan.measured.gapUm)} mm (${plan.measured.kind}).`,
-  `- String from the loop around the tour and the start nail: ${de(measuredUm / 1000, 0)} mm, plus ${plan.scale.targetMm} mm along the scale to the target mark (closed string length of the tour ${de(stringLength(setup.inst, tour) / 1000, 0)} mm).`,
+  ...(tieNail
+    ? [
+        `- Open path (roadmap 9.15): start nail ${tieNail.name} (the string is tied), end nail ${start.name} with the scale; the leg ${start.name} → ${tieNail.name} is given (dashed). Gap at the scale ${mm(plan.measured.gapUm)} mm (${plan.measured.kind}).`,
+        `- String from the knot at the start nail along the path and around the end nail: ${de(measuredUm / 1000, 0)} mm, plus ${plan.scale.targetMm} mm along the scale to the target mark (string length of the path ${de(stringLength(setup.inst, tour) / 1000, 0)} mm).`,
+      ]
+    : [
+        `- Start nail: ${start.name}; gap at the scale ${mm(plan.measured.gapUm)} mm (${plan.measured.kind}).`,
+        `- String from the loop around the tour and the start nail: ${de(measuredUm / 1000, 0)} mm, plus ${plan.scale.targetMm} mm along the scale to the target mark (closed string length of the tour ${de(stringLength(setup.inst, tour) / 1000, 0)} mm).`,
+      ]),
   ...(plan.warnings.length > 0
     ? [`- Plan warnings: ${plan.warnings.map((w) => w.kind).join(', ')}.`]
     : []),
@@ -382,7 +400,9 @@ const report = [
       } |`,
   ),
   '',
-  '## Tour from the start nail (calibration direction)',
+  tieNail
+    ? '## Path from the start nail to the end nail'
+    : '## Tour from the start nail (calibration direction)',
   '',
   tour.map((s) => listName(setup.cities[s]!, params.labelLanguage)).join(' → '),
   '',

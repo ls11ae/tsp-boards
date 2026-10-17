@@ -289,6 +289,8 @@ export interface SolutionInput {
   readonly stringGapUm: number;
   readonly link: string;
   readonly formatNumber: (value: number, decimals: number) => string;
+  /** An open path from tour[0] to the last nail (roadmap 9.15): drawn open, its own texts. */
+  readonly path?: boolean;
 }
 
 /** One A4 page: the board with the tour, the order of cities, figures and calibration. */
@@ -311,7 +313,7 @@ export function solutionPdf(input: SolutionInput): Uint8Array<ArrayBuffer> {
     c.save().transform(m).drawForm('Board');
     const tourPath: PathCommand[] = polylinePath(
       tour.map((s) => points[s]!),
-      true,
+      !input.path,
     );
     c.stroke(tourPath, RED, 0.5 / scale);
     const start = points[tour[0]!]!;
@@ -321,7 +323,8 @@ export function solutionPdf(input: SolutionInput): Uint8Array<ArrayBuffer> {
     // Order of cities, right.
     const listX = MARGIN + boxW + 6;
     const listW = pw - MARGIN - listX;
-    text(c, texts.tourOrder, listX, top + 3, 3.6);
+    const t = input.path ? { ...texts, ...texts.path } : texts;
+    text(c, t.tourOrder, listX, top + 3, 3.6);
     const size = tour.length > 45 ? 2.6 : 3;
     const perColumn = Math.ceil(tour.length / 2);
     const colW = listW / 2;
@@ -345,14 +348,14 @@ export function solutionPdf(input: SolutionInput): Uint8Array<ArrayBuffer> {
     y = paragraphs(
       c,
       [
-        texts.stringLength(mm(input.stringLengthUm)),
-        texts.centreLength(mm(input.centreLengthUm)),
-        texts.gap(mm(input.stringGapUm, 2)),
-        texts.measuredLength(
+        t.stringLength(mm(input.stringLengthUm)),
+        t.centreLength(mm(input.centreLengthUm)),
+        t.gap(mm(input.stringGapUm, 2)),
+        t.measuredLength(
           mm(input.measuredLengthUm + plan.scale.targetMm * 1000, 0),
           fmt(plan.scale.targetMm, 0),
         ),
-        texts.measuredGap(mm(plan.measured.gapUm, 2), plan.measured.kind === 'exact'),
+        t.measuredGap(mm(plan.measured.gapUm, 2), plan.measured.kind === 'exact'),
       ],
       MARGIN,
       y + 7,
@@ -363,7 +366,7 @@ export function solutionPdf(input: SolutionInput): Uint8Array<ArrayBuffer> {
     text(c, texts.calibrationTitle, MARGIN, y + 6, 4.2);
     y = paragraphs(
       c,
-      texts.calibrationSteps({ gapMm: mm(plan.measured.gapUm, 1), cutMm: fmt(cut, 0) }),
+      t.calibrationSteps({ gapMm: mm(plan.measured.gapUm, 1), cutMm: fmt(cut, 0) }),
       MARGIN,
       y + 9,
       width,

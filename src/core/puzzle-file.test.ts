@@ -46,6 +46,18 @@ describe('puzzle files', () => {
     });
   });
 
+  it('keep an open path between two places (roadmap 9.15)', () => {
+    const doc: PuzzleDoc = { ...mapDoc, map: { ...mapDoc.map!, path: { start: 1, end: 0 } } };
+    expect(parsePuzzleDoc(JSON.parse(serializePuzzleDoc(doc))).map!.path).toEqual({
+      start: 1,
+      end: 0,
+    });
+    const bad = { ...mapDoc, map: { ...mapDoc.map!, path: { start: 1, end: 1 } } };
+    expect(parsePuzzleDoc(JSON.parse(serializePuzzleDoc(bad))).map!.path).toBeUndefined();
+    const outside = { ...mapDoc, map: { ...mapDoc.map!, path: { start: 0, end: 7 } } };
+    expect(parsePuzzleDoc(JSON.parse(serializePuzzleDoc(outside))).map!.path).toBeUndefined();
+  });
+
   it('round-trip an incremental puzzle', () => {
     const doc: PuzzleDoc = {
       ...mapDoc,

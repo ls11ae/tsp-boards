@@ -18,6 +18,8 @@ export interface RunOptions {
   readonly pool: BoardPool;
   readonly backend: MipBackend | undefined;
   readonly pinnedIds?: readonly number[];
+  /** A given edge between two pinned cities (ids): an open path from the first to the second. */
+  readonly fixedIds?: readonly [number, number];
   readonly labels?: PoolLabels;
   readonly groups?: PoolGroups;
   readonly onProgress?: (search: Search, elapsedMs: number) => void;
@@ -32,10 +34,16 @@ export function runSearch(options: RunOptions): { search: Search; elapsedMs: num
     if (i === undefined) throw new Error(`pinned city ${id} is not in the pool`);
     return i;
   });
+  const fixed = options.fixedIds?.map((id) => {
+    const i = index.get(id);
+    if (i === undefined || !pinned.includes(i)) throw new Error(`fixed city ${id} is not pinned`);
+    return i;
+  });
   const t0 = performance.now();
   const search = new Search(
     {
       points: pool.points,
+      ...(fixed ? { fixedEdge: [fixed[0]!, fixed[1]!] as const } : {}),
       ...(pool.sphere ? { sphere: pool.sphere } : {}),
       prominence: pool.cities.map(prominence),
       pinned,
@@ -96,6 +104,8 @@ export function verify(
   pool: BoardPool,
   rEffMm: number,
   timeLimitSec: number,
+  /** A given edge between two pool cities (indices), as in the search. */
+  fixedEdge: readonly [number, number] | null = null,
 ): VerificationSummary {
   const t0 = performance.now();
   const inst = new Instance(
@@ -104,6 +114,7 @@ export function verify(
     pool.sphere
       ? { lonLat: e.members.map((i) => pool.sphere!.lonLat[i]!), mmPerKm: pool.sphere.mmPerKm }
       : null,
+    fixedEdge ? [e.members.indexOf(fixedEdge[0]), e.members.indexOf(fixedEdge[1])] : null,
   );
   const slot = new Map(e.members.map((c, s) => [c, s]));
   const tour = e.tour.map((c) => slot.get(c)!);

@@ -10,6 +10,9 @@ export interface BoardTexts {
   readonly scaleCaption: string;
   /** Second line under the label of a preferred start nail (roadmap 9.14). */
   readonly startFinish: string;
+  /** Second lines under the start and end nails of an open path (roadmap 9.15). */
+  readonly pathStart: string;
+  readonly pathEnd: string;
   readonly attribution: string;
   // Print template.
   readonly templateTitle: (region: string) => string;
@@ -28,6 +31,16 @@ export interface BoardTexts {
   readonly measuredGap: (mm: string, exact: boolean) => string;
   readonly calibrationTitle: string;
   readonly calibrationSteps: (info: { gapMm: string; cutMm: string }) => string[];
+  /** An open path from a start nail to an end nail (roadmap 9.15). */
+  readonly path: {
+    readonly subtitle: (n: number, start: string, end: string) => string;
+    readonly tourOrder: string;
+    readonly stringLength: (mm: string) => string;
+    readonly measuredLength: (mm: string, targetMm: string) => string;
+    readonly gap: (mm: string) => string;
+    readonly measuredGap: (mm: string, exact: boolean) => string;
+    readonly calibrationSteps: (info: { gapMm: string; cutMm: string }) => string[];
+  };
   readonly puzzleLink: string;
   // Classroom worksheet.
   readonly worksheetTask: (n: number) => string;
@@ -41,6 +54,8 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
     subtitle: (n, places) => `${n} ${places ? 'Orte' : 'Städte'} · Finde die kürzeste Rundreise!`,
     scaleCaption: 'mm Faden zu viel',
     startFinish: 'Start und Ziel',
+    pathStart: 'Start',
+    pathEnd: 'Ziel',
     attribution: 'Städte: GeoNames (CC BY 4.0) · Grenzen: Natural Earth · TSP Boards',
     templateTitle: (region) => `TSP-Brett ${region}: Druckvorlage im Maßstab 1:1`,
     templateSteps: ({ nailMm, pages, paper }) => [
@@ -69,6 +84,22 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
       '3. Den Faden genau an der Zielmarke „0“ markieren oder dort einen Knoten bzw. eine Perle setzen; den Rest abschneiden.',
       `Damit erreicht das Fadenende bei der kürzesten Rundreise die 0; jede andere Rundreise endet mindestens ${gapMm} mm davor. Die Zahlen der Skala zeigen, wie viele mm Faden eine Lösung zu viel braucht.`,
     ],
+    path: {
+      subtitle: (n, start, end) => `${n} Orte · Finde den kürzesten Weg von ${start} nach ${end}!`,
+      tourOrder: 'Kürzester Weg vom Startnagel zum Zielnagel',
+      stringLength: (mm) => `Fadenlänge des Wegs (mit Nagelkorrektur): ${mm} mm`,
+      measuredLength: (mm, targetMm) =>
+        `Faden vom Knoten am Startnagel bis zur Zielmarke: etwa ${mm} mm (davon ${targetMm} mm auf der Skala)`,
+      gap: (mm) => `Abstand zum zweitkürzesten Weg: ${mm} mm Faden`,
+      measuredGap: (mm, exact) =>
+        `An der Skala endet jeder andere Weg mindestens ${mm} mm vor der Zielmarke${exact ? '' : ' (Schranke)'}.`,
+      calibrationSteps: ({ gapMm, cutMm }) => [
+        `1. Faden auf mindestens ${cutMm} mm zuschneiden und am Startnagel festknoten.`,
+        '2. Den Weg oben wickeln, vom Startnagel durch alle Orte bis zum Zielnagel, einmal um den Zielnagel herum und den Faden straff entlang der Skala legen.',
+        '3. Den Faden genau an der Zielmarke „0“ markieren oder dort einen Knoten bzw. eine Perle setzen; den Rest abschneiden.',
+        `Damit erreicht das Fadenende beim kürzesten Weg die 0; jeder andere Weg endet mindestens ${gapMm} mm davor. Der gestrichelte Flug über den Pazifik ist gegeben und schließt die Rundreise.`,
+      ],
+    },
     puzzleLink: 'Puzzle-Link (stellt dieses Brett in der App wieder her)',
     worksheetTask: (n) =>
       `Finde die kürzeste Rundreise durch alle ${n} Orte: Sie besucht jeden Ort genau einmal und kehrt zum Start zurück. Zeichne sie mit geraden Linien ein.`,
@@ -80,6 +111,8 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
     subtitle: (n, places) => `${n} ${places ? 'places' : 'cities'} · Find the shortest round trip!`,
     scaleCaption: 'mm of string too many',
     startFinish: 'Start and finish',
+    pathStart: 'Start',
+    pathEnd: 'Finish',
     attribution: 'Cities: GeoNames (CC BY 4.0) · Borders: Natural Earth · TSP Boards',
     templateTitle: (region) => `TSP board ${region}: print template at 1:1 scale`,
     templateSteps: ({ nailMm, pages, paper }) => [
@@ -108,6 +141,22 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
       '3. Mark the string exactly at the target mark "0", or tie a knot or bead there; cut off the rest.',
       `The end of the string then reaches 0 for the shortest round trip; every other round trip ends at least ${gapMm} mm before it. The numbers on the scale tell how many mm of string a solution uses too many.`,
     ],
+    path: {
+      subtitle: (n, start, end) => `${n} places · Find the shortest path from ${start} to ${end}!`,
+      tourOrder: 'Shortest path from the start nail to the end nail',
+      stringLength: (mm) => `String length of the path (with nail correction): ${mm} mm`,
+      measuredLength: (mm, targetMm) =>
+        `String from the knot at the start nail to the target mark: about ${mm} mm (${targetMm} mm of it on the scale)`,
+      gap: (mm) => `Gap to the second-shortest path: ${mm} mm of string`,
+      measuredGap: (mm, exact) =>
+        `On the scale every other path ends at least ${mm} mm before the target mark${exact ? '' : ' (bound)'}.`,
+      calibrationSteps: ({ gapMm, cutMm }) => [
+        `1. Cut the string to at least ${cutMm} mm and tie it to the start nail.`,
+        '2. Wind the path above, from the start nail through all places to the end nail, once around the end nail, and lay the string taut along the scale.',
+        '3. Mark the string exactly at the target mark "0", or tie a knot or bead there; cut off the rest.',
+        `The end of the string then reaches 0 for the shortest path; every other path ends at least ${gapMm} mm before it. The dashed flight across the Pacific is given and closes the round trip.`,
+      ],
+    },
     puzzleLink: 'Puzzle link (restores this board in the app)',
     worksheetTask: (n) =>
       `Find the shortest round trip through all ${n} places: it visits every place exactly once and returns to the start. Draw it with straight lines.`,
