@@ -1,125 +1,53 @@
 {
   "schema": 1,
+  "categories": [
+    {
+      "id": "germany",
+      "name": {
+        "de": "Deutschland",
+        "en": "Germany"
+      }
+    },
+    {
+      "id": "regions",
+      "name": {
+        "de": "Städte und Regionen",
+        "en": "Cities and regions"
+      }
+    },
+    {
+      "id": "world",
+      "name": {
+        "de": "Europa und die Welt",
+        "en": "Europe and the world"
+      }
+    },
+    {
+      "id": "incremental",
+      "name": {
+        "de": "Schritt für Schritt",
+        "en": "Step by step"
+      }
+    },
+    {
+      "id": "specials",
+      "name": {
+        "de": "Specials",
+        "en": "Specials"
+      }
+    }
+  ],
   "puzzles": [
     {
-      "file": "exzellenzstrategie-2027-brett.tsp.json",
-      "id": "exzellenzstrategie-2027-brett",
+      "file": "landeshauptstaedte-brett.tsp.json",
+      "id": "landeshauptstaedte-brett",
       "kind": "map",
-      "title": "Exzellenzstrategie 2026–2033",
-      "description": "Das Brett zur Exzellenzstrategie: alle 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und weitere Standorte von Exzellenzclustern – alle mit mindestens zwei Clustern, in NRW alle. Nicht auf dem Brett (je ein Cluster): Bayreuth, Braunschweig, Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm.",
+      "title": "Landeshauptstädte (Brett)",
+      "description": "Die 16 Landeshauptstädte als Brett: Mainz und Wiesbaden liegen so nah beieinander, dass sie ein Nagel zwischen beiden Städten sind.",
       "purpose": "board",
       "region": "DE",
-      "n": 25
-    },
-    {
-      "file": "exzellenzstrategie-2027.tsp.json",
-      "id": "exzellenzstrategie-2027",
-      "kind": "map",
-      "title": "Exzellenzstrategie: alle 34 Standorte",
-      "description": "Alle 34 Orte der Exzellenzstrategie: die 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und die 20 weiteren Standorte von Exzellenzclustern 2026–2032. Die zweitbeste Rundreise ist nur 0,06 % länger – ein Puzzle für den Bildschirm.",
-      "purpose": "digital",
-      "region": "DE",
-      "n": 34
-    },
-    {
-      "file": "exzellenzstrategie-2027-37.tsp.json",
-      "id": "exzellenzstrategie-2027-37",
-      "kind": "map",
-      "title": "Exzellenzstrategie: alle 37 Städte",
-      "description": "Alle Städte der Exzellenzstrategie: die Exzellenzuniversitäten und die Städte der Exzellenzverbünde ab 2027 (mit Ring) und die 20 weiteren Standorte von Exzellenzclustern 2026–2032. Jede Stadt eines Verbunds ist ein eigener Halt.",
-      "purpose": "digital",
-      "region": "DE",
-      "n": 37
-    },
-    {
-      "file": "exzellenzstrategie-2027-22.tsp.json",
-      "id": "exzellenzstrategie-2027-22",
-      "kind": "map",
-      "title": "Exzellenzstrategie: 22 Standorte",
-      "description": "Die Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und die 8 weiteren Standorte mit mindestens zwei Exzellenzclustern 2026–2032.",
-      "purpose": "digital",
-      "region": "DE",
-      "n": 22
-    },
-    {
-      "file": "exzellenzuniversitaeten-2027-brett.tsp.json",
-      "id": "exzellenzuniversitaeten-2027-brett",
-      "kind": "map",
-      "title": "Exzellenzuniversitäten ab 2027 (Brett)",
-      "description": "Die Exzellenzuniversitäten und -verbünde ab 2027 als Brett: Verbünde sind ein Nagel zwischen ihren Städten (Ruhr Innovation Lab, Rhein-Main-Universitäten), ebenso Bonn und Köln, die eng beieinander liegen und drei Exzellenzcluster teilen.",
-      "purpose": "board",
-      "region": "DE",
-      "n": 13
-    },
-    {
-      "file": "exzellenzuniversitaeten-2027.tsp.json",
-      "id": "exzellenzuniversitaeten-2027",
-      "kind": "map",
-      "title": "Exzellenzuniversitäten ab 2027",
-      "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 (DFG/WR, Entscheidungen vom 11. März und 2. Oktober 2026). Verbünde mit mehreren Städten sind ein Ort zwischen ihren Städten: Ruhr Innovation Lab (Bochum, Dortmund), Rhein-Main-Universitäten (Darmstadt, Frankfurt am Main, Mainz).",
-      "purpose": "digital",
-      "region": "DE",
-      "n": 14
-    },
-    {
-      "file": "exzellenzuniversitaeten-2027-staedte.tsp.json",
-      "id": "exzellenzuniversitaeten-2027-staedte",
-      "kind": "map",
-      "title": "Exzellenzuniversitäten ab 2027: alle 17 Städte",
-      "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 mit allen ihren Städten: Jede Stadt eines Verbunds (Ruhr Innovation Lab, Rhein-Main-Universitäten) ist ein eigener Halt.",
-      "purpose": "digital",
-      "region": "DE",
-      "n": 17
-    },
-    {
-      "file": "exzellenzcluster-2026-verbuende.tsp.json",
-      "id": "exzellenzcluster-2026-verbuende",
-      "kind": "map",
-      "title": "Exzellenzcluster 2026–2032, Nachbarstandorte zusammengefasst",
-      "description": "Die 70 Exzellenzcluster ab 2026 in 32 Orten: Nachbarstädte mit gemeinsamen Clustern sind ein Ort zwischen ihnen (Bochum/Dortmund, Bonn/Köln, Gießen/Marburg, Rhein-Main).",
-      "purpose": "digital",
-      "region": "DE",
-      "n": 32
-    },
-    {
-      "file": "exzellenzcluster-2026.tsp.json",
-      "id": "exzellenzcluster-2026",
-      "kind": "map",
-      "title": "Exzellenzcluster 2026–2032",
-      "description": "Die 70 Exzellenzcluster der Förderperiode ab 2026 (DFG/WR, Entscheidung vom 22. Mai 2025) in 37 Städten, ein Ort pro Stadt.",
-      "purpose": "digital",
-      "region": "DE",
-      "n": 37
-    },
-    {
-      "file": "bayern-30.tsp.json",
-      "id": "bayern-30",
-      "kind": "map",
-      "title": "Bayern: 30 Städte",
-      "description": "Rundreise durch 30 bayerische Städte.",
-      "purpose": "board",
-      "region": "DE-BY",
-      "n": 30
-    },
-    {
-      "file": "deutschland-40.tsp.json",
-      "id": "deutschland-40",
-      "kind": "map",
-      "title": "Deutschland: 40 Städte",
-      "description": "Die Rundreise durch 40 bekannte deutsche Städte (ab 50.000 Einwohnern, hohes Gewicht für bekannte Städte).",
-      "purpose": "board",
-      "region": "DE",
-      "n": 40
-    },
-    {
-      "file": "hansestaedte-25.tsp.json",
-      "id": "hansestaedte-25",
-      "kind": "map",
-      "title": "Hansestädte: 25 Orte",
-      "description": "Rundreise durch 25 der 136 deutschen Hansestädte (nach Wikidata), mit Lübeck, Stralsund und Wismar.",
-      "purpose": "board",
-      "region": "DE",
-      "n": 25
+      "n": 15,
+      "category": "germany"
     },
     {
       "file": "landeshauptstaedte.tsp.json",
@@ -129,37 +57,19 @@
       "description": "Die Hauptstädte der 16 Bundesländer (nach Wikidata).",
       "purpose": "digital",
       "region": "DE",
-      "n": 16
+      "n": 16,
+      "category": "germany"
     },
     {
-      "file": "landeshauptstaedte-brett.tsp.json",
-      "id": "landeshauptstaedte-brett",
+      "file": "hansestaedte-25.tsp.json",
+      "id": "hansestaedte-25",
       "kind": "map",
-      "title": "Landeshauptstädte (Brett)",
-      "description": "Die 16 Landeshauptstädte als Brett: Mainz und Wiesbaden liegen so nah beieinander, dass sie ein Nagel zwischen beiden Städten sind.",
+      "title": "Hansestädte: 25 Orte",
+      "description": "Rundreise durch 25 der 136 deutschen Hansestädte (nach Wikidata), mit Lübeck, Stralsund und Wismar.",
       "purpose": "board",
       "region": "DE",
-      "n": 15
-    },
-    {
-      "file": "nrw-25.tsp.json",
-      "id": "nrw-25",
-      "kind": "map",
-      "title": "Nordrhein-Westfalen: 25 Städte",
-      "description": "Rundreise durch 25 Städte in Nordrhein-Westfalen.",
-      "purpose": "board",
-      "region": "DE-NW",
-      "n": 25
-    },
-    {
-      "file": "ruhrgebiet-11.tsp.json",
-      "id": "ruhrgebiet-11",
-      "kind": "map",
-      "title": "Ruhrgebiet: 11 Städte",
-      "description": "Die elf kreisfreien Städte des Ruhrgebiets, von Duisburg bis Hamm: eine kurze Rundreise durch das Revier.",
-      "purpose": "digital",
-      "region": "DE-NW",
-      "n": 11
+      "n": 25,
+      "category": "germany"
     },
     {
       "file": "universitaetsstaedte-30.tsp.json",
@@ -169,7 +79,30 @@
       "description": "Rundreise durch 30 der 74 deutschen Universitätsstädte (nach Wikidata).",
       "purpose": "board",
       "region": "DE",
-      "n": 30
+      "n": 30,
+      "category": "germany"
+    },
+    {
+      "file": "deutschland-40.tsp.json",
+      "id": "deutschland-40",
+      "kind": "map",
+      "title": "Deutschland: 40 Städte",
+      "description": "Die Rundreise durch 40 bekannte deutsche Städte (ab 50.000 Einwohnern, hohes Gewicht für bekannte Städte).",
+      "purpose": "board",
+      "region": "DE",
+      "n": 40,
+      "category": "germany"
+    },
+    {
+      "file": "ruhrgebiet-11.tsp.json",
+      "id": "ruhrgebiet-11",
+      "kind": "map",
+      "title": "Ruhrgebiet: 11 Städte",
+      "description": "Die elf kreisfreien Städte des Ruhrgebiets, von Duisburg bis Hamm: eine kurze Rundreise durch das Revier.",
+      "purpose": "digital",
+      "region": "DE-NW",
+      "n": 11,
+      "category": "regions"
     },
     {
       "file": "berlin-ortsteile-20.tsp.json",
@@ -179,7 +112,8 @@
       "description": "Rundreise durch 20 der 96 Berliner Ortsteile (Lage nach Wikidata).",
       "purpose": "board",
       "region": "DE-BE",
-      "n": 20
+      "n": 20,
+      "category": "regions"
     },
     {
       "file": "hamburg-stadtteile-20.tsp.json",
@@ -189,37 +123,30 @@
       "description": "Rundreise durch 20 der 104 Hamburger Stadtteile (Lage nach Wikidata).",
       "purpose": "board",
       "region": "DE-HH",
-      "n": 20
+      "n": 20,
+      "category": "regions"
     },
     {
-      "file": "europa-30.tsp.json",
-      "id": "europa-30",
+      "file": "nrw-25.tsp.json",
+      "id": "nrw-25",
       "kind": "map",
-      "title": "Europa: 30 Städte",
-      "description": "Rundreise durch 30 bekannte europäische Städte (ab 300.000 Einwohnern).",
+      "title": "Nordrhein-Westfalen: 25 Städte",
+      "description": "Rundreise durch 25 Städte in Nordrhein-Westfalen.",
       "purpose": "board",
-      "region": "EU",
-      "n": 30
+      "region": "DE-NW",
+      "n": 25,
+      "category": "regions"
     },
     {
-      "file": "europa-hauptstaedte.tsp.json",
-      "id": "europa-hauptstaedte",
+      "file": "bayern-30.tsp.json",
+      "id": "bayern-30",
       "kind": "map",
-      "title": "Europas Hauptstädte",
-      "description": "Die Hauptstädte der europäischen Länder mit mindestens 50.000 Einwohnern (40 Städte).",
-      "purpose": "digital",
-      "region": "EU",
-      "n": 40
-    },
-    {
-      "file": "einmal-um-die-welt.tsp.json",
-      "id": "einmal-um-die-welt",
-      "kind": "map",
-      "title": "Einmal um die Welt",
-      "description": "Zwanzig Städte rund um die Nordhalbkugel: Die kürzeste Rundreise führt einmal um den Globus – auf der flachen Karte verlässt sie den Rand über dem Pazifik.",
-      "purpose": "digital",
-      "region": "WO",
-      "n": 20
+      "title": "Bayern: 30 Städte",
+      "description": "Rundreise durch 30 bayerische Städte.",
+      "purpose": "board",
+      "region": "DE-BY",
+      "n": 30,
+      "category": "regions"
     },
     {
       "file": "80-tage-um-die-welt.tsp.json",
@@ -229,7 +156,19 @@
       "description": "Die Stationen von Phileas Fogg in Jules Vernes Roman: London, Suez, Bombay, Kalkutta, Hongkong, Yokohama, San Francisco, New York und Liverpool. Ist seine Reiseroute die kürzeste Rundreise?",
       "purpose": "digital",
       "region": "WO",
-      "n": 9
+      "n": 9,
+      "category": "world"
+    },
+    {
+      "file": "einmal-um-die-welt.tsp.json",
+      "id": "einmal-um-die-welt",
+      "kind": "map",
+      "title": "Einmal um die Welt",
+      "description": "Zwanzig Städte rund um die Nordhalbkugel: Die kürzeste Rundreise führt einmal um den Globus – auf der flachen Karte verlässt sie den Rand über dem Pazifik.",
+      "purpose": "digital",
+      "region": "WO",
+      "n": 20,
+      "category": "world"
     },
     {
       "file": "olympia-sommerspiele.tsp.json",
@@ -239,7 +178,19 @@
       "description": "Alle Austragungsorte der Olympischen Sommerspiele von Athen 1896 bis Paris 2024: eine Rundreise um die Welt, gemessen auf der Kugel.",
       "purpose": "digital",
       "region": "WO",
-      "n": 23
+      "n": 23,
+      "category": "world"
+    },
+    {
+      "file": "europa-30.tsp.json",
+      "id": "europa-30",
+      "kind": "map",
+      "title": "Europa: 30 Städte",
+      "description": "Rundreise durch 30 bekannte europäische Städte (ab 300.000 Einwohnern).",
+      "purpose": "board",
+      "region": "EU",
+      "n": 30,
+      "category": "world"
     },
     {
       "file": "welt-30.tsp.json",
@@ -249,7 +200,19 @@
       "description": "Rundreise durch 30 Metropolen auf allen Kontinenten, gemessen auf der Kugel: Die kürzesten Wege sind Großkreise. Nach dem Lösen lohnt der Vergleich mit der kürzesten Tour auf der flachen Karte.",
       "purpose": "digital",
       "region": "WO",
-      "n": 30
+      "n": 30,
+      "category": "world"
+    },
+    {
+      "file": "europa-hauptstaedte.tsp.json",
+      "id": "europa-hauptstaedte",
+      "kind": "map",
+      "title": "Europas Hauptstädte",
+      "description": "Die Hauptstädte der europäischen Länder mit mindestens 50.000 Einwohnern (40 Städte).",
+      "purpose": "digital",
+      "region": "EU",
+      "n": 40,
+      "category": "world"
     },
     {
       "file": "schritt-12.tsp.json",
@@ -259,7 +222,107 @@
       "description": "Die kürzeste Rundreise durch 1–3, 1–4, … bis 1–12.",
       "purpose": "board",
       "region": "",
-      "n": 12
+      "n": 12,
+      "category": "incremental"
+    },
+    {
+      "file": "exzellenzstrategie-2027-brett.tsp.json",
+      "id": "exzellenzstrategie-2027-brett",
+      "kind": "map",
+      "title": "Exzellenzstrategie 2026–2033",
+      "description": "Das Brett zur Exzellenzstrategie: alle 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und weitere Standorte von Exzellenzclustern – alle mit mindestens zwei Clustern, in NRW alle. Nicht auf dem Brett (je ein Cluster): Bayreuth, Braunschweig, Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm.",
+      "purpose": "board",
+      "region": "DE",
+      "n": 25,
+      "category": "specials"
+    },
+    {
+      "file": "exzellenzstrategie-2027-37.tsp.json",
+      "id": "exzellenzstrategie-2027-37",
+      "kind": "map",
+      "title": "Exzellenzstrategie: alle 37 Städte",
+      "description": "Alle Städte der Exzellenzstrategie: die Exzellenzuniversitäten und die Städte der Exzellenzverbünde ab 2027 (mit Ring) und die 20 weiteren Standorte von Exzellenzclustern 2026–2032. Jede Stadt eines Verbunds ist ein eigener Halt.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 37,
+      "category": "specials"
+    },
+    {
+      "file": "exzellenzuniversitaeten-2027-brett.tsp.json",
+      "id": "exzellenzuniversitaeten-2027-brett",
+      "kind": "map",
+      "title": "Exzellenzuniversitäten ab 2027 (Brett)",
+      "description": "Die Exzellenzuniversitäten und -verbünde ab 2027 als Brett: Verbünde sind ein Nagel zwischen ihren Städten (Ruhr Innovation Lab, Rhein-Main-Universitäten), ebenso Bonn und Köln, die eng beieinander liegen und drei Exzellenzcluster teilen.",
+      "purpose": "board",
+      "region": "DE",
+      "n": 13,
+      "category": "specials"
+    },
+    {
+      "file": "exzellenzuniversitaeten-2027.tsp.json",
+      "id": "exzellenzuniversitaeten-2027",
+      "kind": "map",
+      "title": "Exzellenzuniversitäten ab 2027",
+      "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 (DFG/WR, Entscheidungen vom 11. März und 2. Oktober 2026). Verbünde mit mehreren Städten sind ein Ort zwischen ihren Städten: Ruhr Innovation Lab (Bochum, Dortmund), Rhein-Main-Universitäten (Darmstadt, Frankfurt am Main, Mainz).",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 14,
+      "category": "specials"
+    },
+    {
+      "file": "exzellenzuniversitaeten-2027-staedte.tsp.json",
+      "id": "exzellenzuniversitaeten-2027-staedte",
+      "kind": "map",
+      "title": "Exzellenzuniversitäten ab 2027: alle 17 Städte",
+      "description": "Die 15 Exzellenzuniversitäten und -verbünde der Förderperiode 2027–2033 mit allen ihren Städten: Jede Stadt eines Verbunds (Ruhr Innovation Lab, Rhein-Main-Universitäten) ist ein eigener Halt.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 17,
+      "category": "specials"
+    },
+    {
+      "file": "exzellenzstrategie-2027-22.tsp.json",
+      "id": "exzellenzstrategie-2027-22",
+      "kind": "map",
+      "title": "Exzellenzstrategie: 22 Standorte",
+      "description": "Die Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und die 8 weiteren Standorte mit mindestens zwei Exzellenzclustern 2026–2032.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 22,
+      "category": "specials"
+    },
+    {
+      "file": "exzellenzcluster-2026-verbuende.tsp.json",
+      "id": "exzellenzcluster-2026-verbuende",
+      "kind": "map",
+      "title": "Exzellenzcluster 2026–2032, Nachbarstandorte zusammengefasst",
+      "description": "Die 70 Exzellenzcluster ab 2026 in 32 Orten: Nachbarstädte mit gemeinsamen Clustern sind ein Ort zwischen ihnen (Bochum/Dortmund, Bonn/Köln, Gießen/Marburg, Rhein-Main).",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 32,
+      "category": "specials"
+    },
+    {
+      "file": "exzellenzstrategie-2027.tsp.json",
+      "id": "exzellenzstrategie-2027",
+      "kind": "map",
+      "title": "Exzellenzstrategie: alle 34 Standorte",
+      "description": "Alle 34 Orte der Exzellenzstrategie: die 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und die 20 weiteren Standorte von Exzellenzclustern 2026–2032. Die zweitbeste Rundreise ist nur 0,06 % länger – ein Puzzle für den Bildschirm.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 34,
+      "category": "specials"
+    },
+    {
+      "file": "exzellenzcluster-2026.tsp.json",
+      "id": "exzellenzcluster-2026",
+      "kind": "map",
+      "title": "Exzellenzcluster 2026–2032",
+      "description": "Die 70 Exzellenzcluster der Förderperiode ab 2026 (DFG/WR, Entscheidung vom 22. Mai 2025) in 37 Städten, ein Ort pro Stadt.",
+      "purpose": "digital",
+      "region": "DE",
+      "n": 37,
+      "category": "specials"
     }
   ]
 }

@@ -292,7 +292,7 @@ export function removeFromLibrary(id: string): void {
 
 let collection: Promise<CollectionIndex> | null = null;
 
-const EMPTY_COLLECTION: CollectionIndex = { schema: PUZZLE_SCHEMA, puzzles: [] };
+const EMPTY_COLLECTION: CollectionIndex = { schema: PUZZLE_SCHEMA, categories: [], puzzles: [] };
 
 async function fetchCollection(): Promise<CollectionIndex> {
   try {

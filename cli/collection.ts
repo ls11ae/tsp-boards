@@ -15,7 +15,8 @@
 //       ({ "start": "<place name>", "legend": [{ "symbol": "ring"|"nail"|"none", "text": … }] }:
 //       preferred start nail and a legend box at the bottom of the board, roadmap 9.1).
 //       A line "* name" in the list marks a place (a ring around its nail).
-//   npx tsx cli/collection.ts index        (rebuilds index.json from the files)
+//   npx tsx cli/collection.ts index        (rebuilds index.json from the files; categories and
+//       order in cli/lib/categories.ts)
 
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
@@ -36,7 +37,6 @@ import {
   parsePuzzleDoc,
   serializePuzzleDoc,
   type BoardExtras,
-  type CollectionEntry,
   type CollectionIndex,
   type LegendEntry,
   type Place,
@@ -49,6 +49,7 @@ import { citiesFromColumns } from '../src/core/data';
 import { closePairs } from '../src/core/fixed';
 import { listCities } from '../src/core/places';
 import { boardPool, loadBackend, loadCountry, poolLabels, type BoardPool } from './lib/country';
+import { CATEGORIES, orderCollection } from './lib/categories';
 import { readPlaceList } from './lib/place-list';
 import { boardProjection } from '../src/core/projection';
 import { boardPoints, citySphere, projectionKind, regionFrame } from '../src/core/region';
@@ -247,40 +248,17 @@ function write(doc: PuzzleDoc): void {
   console.error(`wrote public/puzzles/${file}`);
 }
 
-/** The Excellence puzzles first (roadmap 9.1), in this order; then by theme. */
-const FIRST = [
-  'exzellenzstrategie-2027-brett',
-  'exzellenzstrategie-2027',
-  'exzellenzstrategie-2027-37',
-  'exzellenzstrategie-2027-22',
-  'exzellenzuniversitaeten-2027-brett',
-  'exzellenzuniversitaeten-2027',
-  'exzellenzuniversitaeten-2027-staedte',
-  'exzellenzcluster-2026-verbuende',
-  'exzellenzcluster-2026',
-];
-
-/** Gallery order (roadmap 9.5): Excellence, Germany, cities, Europe, world, step by step. */
-function theme(e: CollectionEntry): number {
-  const first = FIRST.indexOf(e.id);
-  if (first >= 0) return first;
-  if (e.kind === 'incremental') return 50;
-  if (e.region.startsWith('WO')) return 40;
-  if (e.region.startsWith('EU')) return 30;
-  if (/^DE-(BE|HH|HB)$/.test(e.region)) return 20;
-  return 10;
-}
-
 function rebuildIndex(): void {
   const files = readdirSync(DIR)
     .filter((f) => f.endsWith('.tsp.json'))
     .sort();
-  const puzzles = files
-    .map((f) =>
+  // Gallery order and categories (roadmap 9.11, cli/lib/categories.ts).
+  const puzzles = orderCollection(
+    files.map((f) =>
       collectionEntry(parsePuzzleDoc(JSON.parse(readFileSync(path.join(DIR, f), 'utf8'))), f),
-    )
-    .sort((a, b) => theme(a) - theme(b) || a.title.localeCompare(b.title, 'de'));
-  const index: CollectionIndex = { schema: PUZZLE_SCHEMA, puzzles };
+    ),
+  );
+  const index: CollectionIndex = { schema: PUZZLE_SCHEMA, categories: CATEGORIES, puzzles };
   writeFileSync(path.join(DIR, 'index.json'), `${JSON.stringify(index, null, 2)}\n`);
   console.error(`index: ${puzzles.length} puzzles`);
 }

@@ -1066,3 +1066,17 @@ Short entries: decision; alternatives considered; reason. Newest last.
   placement is a search constraint, where a stricter rule would cost feasibility).
   Alternatives: preferring E, W, N, S over corners everywhere (changes most labels on uncrowded
   posters too), a fixed list of exceptions (does not generalize).
+- **2026-10-17 Gallery categories (roadmap 9.11).** The collection began with nine Excellence
+  puzzles with near-identical thumbnails. Now `index.json` has `categories` (id and heading
+  in German and English, in gallery order) and a `category` per puzzle: Germany, cities and
+  regions, Europe and the world, step by step, and at the end "Specials" (the Excellence
+  Strategy puzzles: the board, then the 37-city puzzle of the posters' QR code). The index build
+  assigns them by rule (`cli/lib/categories.ts`: incremental, ids starting with
+  "exzellenz", regions EU and WO, the whole of Germany, else a state or city), so a new puzzle
+  needs no list entry; within a category small to large, a board next to its digital version
+  (same id without "-brett"). The names live in the index, not the UI texts, so the collection
+  describes itself. The gallery shows a heading per category; the filters apply to every
+  category and categories without a match disappear. Puzzle ids, short links and the kiosk's
+  own selection are unchanged. Alternatives: a category field in each puzzle file (one more
+  thing to keep right in 26 files), the UI grouping by region (Europe and the world and the
+  specials would not come out as wanted).

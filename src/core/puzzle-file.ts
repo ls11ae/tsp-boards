@@ -344,6 +344,12 @@ export function puzzleFileName(doc: PuzzleDoc): string {
   return `${base || 'puzzle'}.tsp.json`;
 }
 
+/** A category of the curated collection with its heading (roadmap 9.11). */
+export interface CollectionCategory {
+  readonly id: string;
+  readonly name: { readonly de: string; readonly en: string };
+}
+
 /** Entry of the curated collection's index (public/puzzles/index.json). */
 export interface CollectionEntry {
   readonly file: string;
@@ -354,14 +360,18 @@ export interface CollectionEntry {
   readonly purpose: Purpose;
   readonly region: string;
   readonly n: number;
+  /** Id of its category (in the index's categories). */
+  readonly category: string;
 }
 
 export interface CollectionIndex {
   readonly schema: typeof PUZZLE_SCHEMA;
+  /** Categories in gallery order; the puzzles are sorted by them. */
+  readonly categories: readonly CollectionCategory[];
   readonly puzzles: readonly CollectionEntry[];
 }
 
-export function collectionEntry(doc: PuzzleDoc, file: string): CollectionEntry {
+export function collectionEntry(doc: PuzzleDoc, file: string, category = ''): CollectionEntry {
   return {
     file,
     id: doc.id,
@@ -371,5 +381,6 @@ export function collectionEntry(doc: PuzzleDoc, file: string): CollectionEntry {
     purpose: doc.purpose,
     region: doc.map?.params.region ?? '',
     n: doc.map ? doc.map.places.length || doc.map.params.n : (doc.incremental?.points.length ?? 0),
+    category,
   };
 }

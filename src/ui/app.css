@@ -557,9 +557,22 @@ ul.cards {
   border-radius: 8px;
 }
 
-.card h3 {
+.card h4 {
   margin: 4px 0 0;
   font-size: 1rem;
+}
+
+/* Sections of the gallery and the categories of the collection (roadmap 9.11). */
+.gallery section > h2 {
+  margin: 16px 0 4px;
+  font-size: 1.4rem;
+}
+
+.gallery-category h3 {
+  margin: 16px 0 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: 1.1rem;
 }
 
 .card p {

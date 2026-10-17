@@ -1,8 +1,8 @@
-// Start page: the curated collection and the player's own puzzles, with their status and the
-// personal best; one click opens a puzzle to play or in the designer.
+// Start page: the curated collection by category (roadmap 9.11) and the player's own puzzles,
+// with their status and the personal best; one click opens a puzzle to play or in the designer.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { CollectionEntry, PuzzleDoc } from '../../core/puzzle-file';
+import type { CollectionCategory, CollectionEntry, PuzzleDoc } from '../../core/puzzle-file';
 import { regionInfo } from '../../core/region';
 import { thumbnail, type Thumbnail } from '../thumbnail';
 import { loadCollection, loadCollectionPuzzle, loadLibrary, openDocument } from '../documents';
@@ -13,6 +13,8 @@ import { formatDuration, useExcessText } from '../format';
 
 interface Card {
   readonly id: string;
+  /** Category of a collection puzzle ('' for the player's own). */
+  readonly category: string;
   readonly title: string;
   readonly description: string;
   readonly kind: 'map' | 'incremental';
@@ -125,7 +127,7 @@ function CardView({ card }: { readonly card: Card }) {
   return (
     <li className="card">
       <CardThumbnail card={card} />
-      <h3>{card.title || t.untitled}</h3>
+      <h4>{card.title || t.untitled}</h4>
       <p className="hint">
         {card.kind === 'incremental' ? t.incrementalPuzzle : t.mapPuzzle} ·{' '}
         {t.placesCount(fmt.integer(card.n))}
@@ -159,6 +161,7 @@ const fromEntry = (e: CollectionEntry): Card => ({
 
 const fromDoc = (d: PuzzleDoc): Card => ({
   id: d.id,
+  category: '',
   title: d.title,
   description: d.description,
   kind: d.kind,
@@ -298,11 +301,15 @@ export function Gallery() {
   useStore((s) => s.libraryVersion);
   useStore((s) => s.scoresVersion);
   const [filters, setFilters] = useState<Filters>(NO_FILTERS);
+  const lang = useStore((s) => s.lang);
   const [collection, setCollection] = useState<readonly CollectionEntry[]>([]);
+  const [categories, setCategories] = useState<readonly CollectionCategory[]>([]);
   useEffect(() => {
     let alive = true;
     void loadCollection().then((index) => {
-      if (alive) setCollection(index.puzzles);
+      if (!alive) return;
+      setCollection(index.puzzles);
+      setCategories(index.categories ?? []);
     });
     return () => {
       alive = false;
@@ -317,6 +324,20 @@ export function Gallery() {
   }
   const mineCards = loadLibrary().map(fromDoc);
   const shown = (cards: readonly Card[]) => cards.filter((c) => matches(c, filters));
+  // The collection by category, in the index's order; the filters apply to every category, and
+  // categories without a matching puzzle are left out.
+  const groups = [
+    ...categories.map((cat) => ({
+      id: cat.id,
+      name: cat.name[lang],
+      cards: shown(collectionCards.filter((c) => c.category === cat.id)),
+    })),
+    {
+      id: '',
+      name: '',
+      cards: shown(collectionCards.filter((c) => !categories.some((cat) => cat.id === c.category))),
+    },
+  ].filter((group) => group.cards.length > 0);
   const startDesigner = (type: 'map' | 'incremental') =>
     useStore.setState({ page: 'app', mode: 'design', puzzleType: type });
   return (
@@ -329,14 +350,19 @@ export function Gallery() {
       />
       <section>
         <h2>{t.collection}</h2>
-        {shown(collectionCards).length === 0 ? (
+        {groups.length === 0 ? (
           <p className="hint">{t.galleryNoMatch}</p>
         ) : (
-          <ul className="cards">
-            {shown(collectionCards).map((c) => (
-              <CardView key={c.id} card={c} />
-            ))}
-          </ul>
+          groups.map((group) => (
+            <div key={group.id} className="gallery-category">
+              {group.name && <h3>{group.name}</h3>}
+              <ul className="cards">
+                {group.cards.map((c) => (
+                  <CardView key={c.id} card={c} />
+                ))}
+              </ul>
+            </div>
+          ))
         )}
       </section>
       <section>
