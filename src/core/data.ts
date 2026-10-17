@@ -131,6 +131,8 @@ export interface City {
   /** Members of a composite place; the board point is the mean of their projections. */
   readonly members?: readonly {
     readonly name: string;
+    /** English name (a town's exonym), if it differs. */
+    readonly nameEn?: string;
     readonly lat: number;
     readonly lon: number;
   }[];
@@ -153,10 +155,17 @@ export function prominence(city: City): number {
 
 const FAME_SCALE = 50;
 
+/** A place's name in a language: the English exonym (Munich) where the data has one. */
+export function placeName(city: City, language: LabelLanguage): string {
+  return language === 'en' ? city.nameEn : city.name;
+}
+
 /** Name for lists and sheets; a composite place names its members: "RIL (Bochum, Dortmund)". */
 export function listName(city: City, language: LabelLanguage): string {
-  const name = language === 'en' ? city.nameEn : city.name;
-  return city.members ? `${name} (${city.members.map((m) => m.name).join(', ')})` : name;
+  const name = placeName(city, language);
+  const member = (m: NonNullable<City['members']>[number]) =>
+    (language === 'en' && m.nameEn) || m.name;
+  return city.members ? `${name} (${city.members.map(member).join(', ')})` : name;
 }
 
 /**

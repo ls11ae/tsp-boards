@@ -1,7 +1,7 @@
 // What the rings around places mean (roadmap 9.1): the board's legend if the puzzle has one,
 // else a short default when some places are marked.
 
-import type { LegendEntry } from '../../core/puzzle-file';
+import { legendText, type LegendEntry } from '../../core/puzzle-file';
 import type { BoardModel } from '../board';
 import { useT } from '../i18n';
 import { useStore } from '../store';
@@ -23,6 +23,7 @@ export function PlaceLegend({
   readonly members: readonly number[];
 }) {
   const t = useT();
+  const lang = useStore((s) => s.lang);
   const legend = useStore((s) => s.doc.board?.legend);
   const marked = members.some((c) => board.pool[c]?.highlight);
   const entries: readonly LegendEntry[] =
@@ -40,7 +41,7 @@ export function PlaceLegend({
       {entries.map((e, i) => (
         <li key={i} className={e.symbol === 'none' ? 'note' : undefined}>
           {e.symbol !== 'none' && <Symbol kind={e.symbol} />}
-          <span>{e.text}</span>
+          <span>{legendText(e, lang)}</span>
         </li>
       ))}
     </ul>

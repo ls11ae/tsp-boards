@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { BoardPlan, PlanWarning } from '../../core/board/plan';
 import { DIN_PAPERS } from '../../core/board/paper';
-import type { LegendEntry } from '../../core/puzzle-file';
+import { localText, type LegendEntry } from '../../core/puzzle-file';
 import { pathCities, usePathCities, type BoardModel } from '../board';
 import type { ExportKind } from '../export';
 import { planKey, prepareBoard } from '../plans';
@@ -197,7 +197,9 @@ function Poster({
   const cities = puzzle.members.map((c) => board.pool[c]!);
   // Texts of the poster, prefilled from the puzzle (not its description: that is written for
   // the screen), editable before the export (roadmap 9.9).
-  const [title, setTitle] = useState(doc.title);
+  const [title, setTitle] = useState(() =>
+    localText(doc.title, useStore.getState().params.labelLanguage),
+  );
   const [subtitle, setSubtitle] = useState('');
   const [legend, setLegend] = useState<LegendEntry[]>(() =>
     doc.board?.legend.length

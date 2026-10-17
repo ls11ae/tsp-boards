@@ -6,7 +6,7 @@ import type { BoardPlan } from '../core/board/plan';
 import type { HeuristicKind } from '../core/overlays';
 import type { TeachingState } from './teaching';
 import type { RobustnessState } from './robustness';
-import type { GroupConstraint, LegendEntry, Place, Purpose } from '../core/puzzle-file';
+import type { GroupConstraint, LegendEntry, LocalText, Place, Purpose } from '../core/puzzle-file';
 import type { Logo } from '../core/board/logo';
 import type { HoleMode } from '../core/board/drawing';
 import type { Flight } from './components/Globe';
@@ -106,6 +106,8 @@ export interface ListEntry {
   /** Custom place (CSV row). */
   readonly custom?: { readonly lat: number; readonly lon: number };
   readonly label?: string;
+  /** English name of a custom or composite place ("Name | English name", roadmap 9.16). */
+  readonly nameEn?: string;
   /** Members of a composite place, each resolved like a line of its own. */
   readonly members?: readonly ListEntry[];
   /** Marked place ("* name"): a ring on the board and in the app. */
@@ -127,8 +129,9 @@ export interface PlaceListState {
 export interface DocMeta {
   /** Library id once saved or opened from a file; null for a new puzzle. */
   readonly id: string | null;
-  readonly title: string;
-  readonly description: string;
+  /** Title and description: one text, or German and English (roadmap 9.16). */
+  readonly title: LocalText;
+  readonly description: LocalText;
   readonly purpose: Purpose;
   /** Board legend and preferred start nail (as the city id in the board's pool), roadmap 9.1. */
   readonly board?: {

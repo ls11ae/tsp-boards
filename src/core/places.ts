@@ -5,7 +5,9 @@
 // A composite place (roadmap 7.1) is one node for several towns or points:
 // "Ruhr Innovation Lab = Bochum + Dortmund", members as town names or "name (lat, lon)".
 // A leading '*' marks a place (roadmap 9.1: a ring on the board), e.g. "* Aachen". A town's
-// own label follows a semicolon (roadmap 9.13), e.g. "* München; München ×2".
+// own label follows a semicolon (roadmap 9.13), e.g. "* München; München ×2". A composite or
+// custom place may give its English name after a bar (roadmap 9.16):
+// "Rhein-Main-Universitäten | Rhine-Main Universities = Darmstadt + Frankfurt am Main + Mainz".
 
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import type { City } from './data';
@@ -25,6 +27,8 @@ export interface ParsedLine {
   readonly text: string;
   /** Name to look up, or the name of a custom place. */
   readonly name: string;
+  /** English name of a custom or composite place ("Name | English name"). */
+  readonly nameEn?: string;
   /** Coordinates for a custom place (CSV row). */
   readonly lat?: number;
   readonly lon?: number;
@@ -37,6 +41,12 @@ export interface ParsedLine {
 
 const COMPOSITE = /^([^=]+?)\s*=\s*(.+)$/;
 const MEMBER_POINT = /^(.*?)\s*\(\s*(-?\d+(?:[.,]\d+)?)\s*[,;]\s*(-?\d+(?:[.,]\d+)?)\s*\)$/;
+
+/** "Name | English name" as the name and its English version. */
+function splitName(text: string): { name: string; nameEn?: string } {
+  const [name = '', en = ''] = text.split(/\s*\|\s*/);
+  return en ? { name: name.trim(), nameEn: en.trim() } : { name: text.trim() };
+}
 
 /** "Bochum" or "Campus Nord (51.49, 7.41)". */
 function parseMember(token: string): ParsedMember | null {
@@ -69,12 +79,23 @@ function parseComposite(line: string): Omit<ParsedLine, 'line' | 'text'> | null 
     .map((t) => parseMember(t.trim()))
     .filter((x): x is ParsedMember => x !== null);
   if (members.length < 2) return null;
-  return { name: m[1]!.trim(), members, ...(label ? { label } : {}) };
+  return { ...splitName(m[1]!), members, ...(label ? { label } : {}) };
 }
 
 /** A composite place from its members; its stored position is their mean. */
-export function compositePlace(name: string, members: readonly Member[], label?: string): Place {
-  return { name, ...compositeCentre(members), ...(label ? { label } : {}), members };
+export function compositePlace(
+  name: string,
+  members: readonly Member[],
+  label?: string,
+  nameEn?: string,
+): Place {
+  return {
+    name,
+    ...compositeCentre(members),
+    ...(label ? { label } : {}),
+    ...(nameEn ? { nameEn } : {}),
+    members,
+  };
 }
 
 /**
@@ -109,7 +130,15 @@ export function parsePlaceLines(text: string): ParsedLine[] {
       Math.abs(lon) <= 180
     ) {
       const label = rest.join(', ').trim();
-      out.push({ line: i + 1, text: raw, name, lat, lon, ...(label ? { label } : {}), ...mark });
+      out.push({
+        line: i + 1,
+        text: raw,
+        ...splitName(name),
+        lat,
+        lon,
+        ...(label ? { label } : {}),
+        ...mark,
+      });
     } else if (semicolon && cells.length === 2 && a) {
       // "Town; label": the town with a label of its own.
       out.push({ line: i + 1, text: raw, name, label: a, ...mark });
@@ -285,18 +314,26 @@ function listCity(p: Place, i: number, towns: ReadonlyMap<number, City>): City {
   if (p.members && p.members.length >= 2) {
     // Population and state from the member towns (custom points count 1).
     const memberTowns = p.members.map((m) => (m.id !== undefined ? towns.get(m.id) : undefined));
+    const memberEn = p.members.map((m, k) => memberTowns[k]?.nameEn ?? m.name);
+    // "Bonn/Köln" is "Bonn/Cologne" in English; other names need their own (roadmap 9.16).
+    const joined = p.name === p.members.map((m) => m.name).join('/');
     return {
       id: customId(i),
       name: p.name,
       label: p.label ?? p.name,
-      nameEn: p.name,
+      nameEn: p.nameEn ?? (joined ? memberEn.join('/') : p.name),
       lat: p.lat,
       lon: p.lon,
       pop: memberTowns.reduce((s, t) => s + (t?.pop ?? 1), 0),
       state: memberTowns.find((t) => t !== undefined)?.state ?? '',
       wikidata: null,
       flags: 0,
-      members: p.members.map((m) => ({ name: m.name, lat: m.lat, lon: m.lon })),
+      members: p.members.map((m, k) => ({
+        name: m.name,
+        ...(memberEn[k] !== m.name ? { nameEn: memberEn[k] } : {}),
+        lat: m.lat,
+        lon: m.lon,
+      })),
     };
   }
   const town = p.id !== undefined ? towns.get(p.id) : undefined;
@@ -305,7 +342,7 @@ function listCity(p: Place, i: number, towns: ReadonlyMap<number, City>): City {
     id: customId(i),
     name: p.name,
     label: p.label ?? p.name,
-    nameEn: p.name,
+    nameEn: p.nameEn ?? p.name,
     lat: p.lat,
     lon: p.lon,
     pop: 1,
@@ -360,6 +397,7 @@ export type LinkPlace =
   | {
       readonly name: string;
       readonly label?: string;
+      readonly nameEn?: string;
       readonly members: readonly LinkMember[];
     };
 
@@ -370,10 +408,12 @@ export type LinkPlace =
  */
 export function encodePlaceList(mode: 'fixed' | 'pool', places: readonly Place[]): string {
   const round = (v: number) => Math.round(v * 1e5) / 1e5;
+  // An English name rides in the name as "Name | English name" (roadmap 9.16).
+  const name = (p: Place) => (p.nameEn ? `${p.name} | ${p.nameEn}` : p.name);
   const rows = places.map((p) =>
     p.members
       ? [
-          p.name,
+          name(p),
           p.members.map((m) => m.id ?? [m.name, round(m.lat), round(m.lon)]),
           ...(p.label ? [p.label] : []),
         ]
@@ -381,7 +421,7 @@ export function encodePlaceList(mode: 'fixed' | 'pool', places: readonly Place[]
         ? p.label
           ? [p.id, p.label]
           : p.id
-        : [p.name, round(p.lat), round(p.lon), ...(p.label ? [p.label] : [])],
+        : [name(p), round(p.lat), round(p.lon), ...(p.label ? [p.label] : [])],
   );
   // Marked places as a third element (older links have two).
   const marked = places.flatMap((p, i) => (p.highlight ? [i] : []));
@@ -409,7 +449,7 @@ function decodeRow(row: unknown): LinkPlace | null {
       .filter((m): m is LinkMember => m !== null);
     if (members.length < 2) return null;
     return {
-      name: a.slice(0, 200),
+      ...splitName(a.slice(0, 200)),
       members,
       ...(typeof c === 'string' && c ? { label: c.slice(0, 200) } : {}),
     };
@@ -419,7 +459,7 @@ function decodeRow(row: unknown): LinkPlace | null {
   if (typeof a !== 'string' || typeof b !== 'number' || typeof c !== 'number') return null;
   if (Math.abs(b) > 90 || Math.abs(c) > 180) return null;
   return {
-    name: a.slice(0, 200),
+    ...splitName(a.slice(0, 200)),
     lat: b,
     lon: c,
     ...(typeof d === 'string' && d ? { label: d.slice(0, 200) } : {}),

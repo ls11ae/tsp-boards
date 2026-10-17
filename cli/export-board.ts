@@ -42,7 +42,7 @@ import { citiesFromColumns, listName } from '../src/core/data';
 import { rEffMm, type PuzzleParams } from '../src/core/params';
 import { decodePermalink, shortLink } from '../src/core/permalink';
 import { listCities } from '../src/core/places';
-import { parsePuzzleDoc } from '../src/core/puzzle-file';
+import { localText, parsePuzzleDoc } from '../src/core/puzzle-file';
 import { checkRobustness } from '../src/core/robustness';
 import { Rng } from '../src/core/rng';
 import { iteratedLocalSearch } from '../src/core/tsp/ils';
@@ -106,7 +106,7 @@ function fromPuzzle(file: string): Source {
   return {
     params: map.params,
     ids,
-    title: doc.title,
+    title: localText(doc.title, map.params.labelLanguage),
     pool,
     extras: { board: map.board ?? null, logos, legendLogo, path: map.path ?? null },
     // A puzzle of the collection opens by its short link (roadmap 9.10).

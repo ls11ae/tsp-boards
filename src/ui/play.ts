@@ -5,6 +5,7 @@
 import type { FixedEdge, Instance } from '../core/instance';
 import { effectiveREffMm } from '../core/params';
 import { encodePlayLink } from '../core/permalink';
+import { localText } from '../core/puzzle-file';
 import { clickNail, judge, puzzleHash, undo, type PlayRecord } from '../core/play';
 import {
   excessValue,
@@ -385,7 +386,7 @@ export function playLink(puzzle: PuzzleView): string | null {
     { country: country.country, version: country.dataVersion },
     puzzle.members.map((c) => board.pool[c]!.id),
     __APP_VERSION__,
-    doc.title,
+    localText(doc.title, useStore.getState().lang),
     linkList(puzzle.members),
     linkPath(),
   );

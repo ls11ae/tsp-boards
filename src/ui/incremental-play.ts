@@ -5,6 +5,7 @@
 import { encodeIncrementalLink } from '../core/incremental/params';
 import { Instance } from '../core/instance';
 import { clickNail, judge, undo } from '../core/play';
+import { localText } from '../core/puzzle-file';
 import { puzzleHash } from '../core/play';
 import { NEW_GAME, useStore, type PlayUi } from './store';
 import { recordGameScore, startPlaying, updateGame } from './play';
@@ -142,7 +143,7 @@ export function incrementalPlayLink(): string | null {
     { ...inc.params, n: inc.puzzle.points.length },
     inc.puzzle.points,
     __APP_VERSION__,
-    doc.title,
+    localText(doc.title, useStore.getState().lang),
     true,
   );
   return `${window.location.origin}${window.location.pathname}${hash}`;

@@ -3,7 +3,7 @@
 // Clicking near a city cycles it through pinned → excluded → neutral.
 
 import { memo, useMemo, useRef, type MouseEvent } from 'react';
-import { listName } from '../../core/data';
+import { listName, placeName } from '../../core/data';
 import type { Point } from '../../core/geometry';
 import {
   givenLegPath,
@@ -147,7 +147,8 @@ export function BoardMap({
   const combining = useStore((s) => s.combining);
   const digital = useStore((s) => s.doc.purpose === 'digital');
   const lang = useStore((s) => s.lang);
-  const labels = getLabels(board, params);
+  // A board shows the labels it will have; a digital puzzle those of the app's language.
+  const labels = getLabels(board, digital ? { ...params, labelLanguage: lang } : params);
   const members = puzzle?.members;
   const exportOptions = useStore((s) => s.exportOptions);
   const planState = useStore((s) =>
@@ -261,7 +262,7 @@ export function BoardMap({
             <title>
               {city.members
                 ? listName(city, lang)
-                : `${city.name} (${city.pop.toLocaleString(lang === 'de' ? 'de-DE' : 'en-GB')})`}
+                : `${placeName(city, lang)} (${city.pop.toLocaleString(lang === 'de' ? 'de-DE' : 'en-GB')})`}
             </title>
             <circle
               className="nail-halo"

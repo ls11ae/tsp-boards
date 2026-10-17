@@ -5,7 +5,9 @@ import {
   boardLabel,
   citiesFromColumns,
   citiesToColumns,
+  listName,
   parseCountryFile,
+  placeName,
   prominence,
   type City,
   type Manifest,
@@ -122,5 +124,21 @@ describe('board labels', () => {
     expect(boardLabel(twice, 'en')).toBe('Munich ×2');
     // A label that is no addition gives way to the exonym.
     expect(boardLabel({ ...munich, label: 'TUM' }, 'en')).toBe('Munich');
+  });
+
+  it('names places and the members of composites in a language (9.16)', () => {
+    expect(placeName(munich, 'en')).toBe('Munich');
+    expect(placeName(munich, 'de')).toBe('München');
+    const pair = {
+      ...munich,
+      name: 'Bonn/Köln',
+      nameEn: 'Bonn/Cologne',
+      members: [
+        { name: 'Bonn', lat: 50.7, lon: 7.1 },
+        { name: 'Köln', nameEn: 'Cologne', lat: 50.9, lon: 6.9 },
+      ],
+    };
+    expect(listName(pair, 'en')).toBe('Bonn/Cologne (Bonn, Cologne)');
+    expect(listName(pair, 'de')).toBe('Bonn/Köln (Bonn, Köln)');
   });
 });

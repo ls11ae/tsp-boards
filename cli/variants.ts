@@ -9,7 +9,7 @@ import { citiesFromColumns } from '../src/core/data';
 import { changeSuggestions, closePairs } from '../src/core/fixed';
 import { rEffMm } from '../src/core/params';
 import { listCities } from '../src/core/places';
-import { parsePuzzleDoc } from '../src/core/puzzle-file';
+import { localText, parsePuzzleDoc } from '../src/core/puzzle-file';
 import { loadBackend, loadCountry } from './lib/country';
 
 const args = process.argv.slice(2);
@@ -27,12 +27,14 @@ const setup = boardSetup(
   file,
   map.params,
   pool.map((c) => c.id),
-  doc.title,
+  localText(doc.title, map.params.labelLanguage),
   pool,
 );
 const target = Number(arg('target', String(map.params.targetGapMm))) * 1000;
 const close = closePairs(setup.points, map.params.minDistanceMm);
-console.log(`${doc.title}: ${setup.points.length} places, ${close.length} pairs below the minimum`);
+console.log(
+  `${localText(doc.title, 'de')}: ${setup.points.length} places, ${close.length} pairs below the minimum`,
+);
 const suggestions = changeSuggestions(
   setup.points,
   rEffMm(map.params),

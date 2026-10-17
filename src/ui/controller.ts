@@ -205,7 +205,7 @@ function linkPlaces(
   function linkPlace(row: LinkPlace): Place[] {
     if ('members' in row) {
       const members = (row.members ?? []).map(member).filter((m): m is Member => m !== null);
-      return members.length >= 2 ? [compositePlace(row.name, members, row.label)] : [];
+      return members.length >= 2 ? [compositePlace(row.name, members, row.label, row.nameEn)] : [];
     }
     if ('lat' in row) return [row];
     const town = towns.get(row.id);

@@ -4,6 +4,7 @@
 import type { HoleMode } from '../core/board/drawing';
 import type { Layer } from '../core/board/drawing';
 import { svgPathData } from '../core/board/shapes';
+import { localText } from '../core/puzzle-file';
 import { drawIncremental } from '../core/incremental/drawing';
 import type { IncrementalPuzzle } from '../core/incremental/generate';
 import {
@@ -116,13 +117,13 @@ export function incrementalLink(): string {
     { ...params, n: puzzle?.points.length ?? params.n },
     puzzle?.points ?? null,
     __APP_VERSION__,
-    doc.title,
+    localText(doc.title, useStore.getState().lang),
   );
   return `${window.location.origin}${window.location.pathname}${hash}`;
 }
 
 export function drawingOptions(params: IncrementalUiParams, holes: HoleMode, n: number) {
-  const title = useStore.getState().doc.title;
+  const title = localText(useStore.getState().doc.title, params.labelLanguage);
   const line = INCREMENTAL_TEXTS[params.labelLanguage].boardLine(n);
   return {
     nailDiameterMm: params.nailDiameterMm,
@@ -151,7 +152,7 @@ export function incrementalPreview(
     params.nailDiameterMm,
     params.labelSizeMm,
     params.labelLanguage,
-    useStore.getState().doc.title,
+    localText(useStore.getState().doc.title, params.labelLanguage),
   ].join('|');
   const cached = previewCache.get(puzzle);
   if (cached?.key === key) return cached.paths;

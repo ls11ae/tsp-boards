@@ -16,6 +16,7 @@ import { loadData } from './controller';
 import { openShortLink } from './documents';
 import { useT } from './i18n';
 import { usePuzzle } from './puzzle';
+import { localText } from '../core/puzzle-file';
 import { useStore, type Language, type PuzzleType } from './store';
 
 /**
@@ -130,21 +131,24 @@ function Header() {
 /** Title of the open puzzle above the board; on a phone the description folds away. */
 function BoardTitle() {
   const doc = useStore((s) => s.doc);
+  const lang = useStore((s) => s.lang);
   const phone = useMedia(PHONE);
-  if (!doc.title) return null;
-  if (phone && doc.description)
+  const title = localText(doc.title, lang);
+  const description = localText(doc.description, lang);
+  if (!title) return null;
+  if (phone && description)
     return (
       <details className="board-title">
         <summary>
-          <h2>{doc.title}</h2>
+          <h2>{title}</h2>
         </summary>
-        <p className="hint">{doc.description}</p>
+        <p className="hint">{description}</p>
       </details>
     );
   return (
     <div className="board-title">
-      <h2>{doc.title}</h2>
-      {doc.description && <p className="hint">{doc.description}</p>}
+      <h2>{title}</h2>
+      {description && <p className="hint">{description}</p>}
     </div>
   );
 }

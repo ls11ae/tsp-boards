@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { TEACHING_KINDS, type TeachingKind, type TeachingNote } from '../../core/teaching';
 import type { BoardModel } from '../board';
+import { placeName } from '../../core/data';
 import { useFormat, useT } from '../i18n';
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
@@ -43,7 +44,7 @@ export function TeachingPanel({
     return () => clearTimeout(timer);
   }, [active?.playing, active?.frames, active?.index]);
 
-  const name = (slot: number) => board.pool[puzzle.members[slot]!]!.name;
+  const name = (slot: number) => placeName(board.pool[puzzle.members[slot]!]!, fmt.lang);
   const length = (um: number) =>
     digital
       ? `${fmt.number(um / 1000 / board.projection.mmPerKm, 0)} km`

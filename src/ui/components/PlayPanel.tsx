@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { effectiveREffMm } from '../../core/params';
 import { pathLength } from '../../core/play';
+import { placeName } from '../../core/data';
 import { stringLength } from '../../core/tsp/tour';
 import { boardInstance, pathEdge, shownRoute, type BoardModel } from '../board';
 import { PlaceLegend } from './PlaceLegend';
@@ -45,7 +46,7 @@ function NextPlace({
   const state = useStore((s) => s.play.state);
   const [choice, setChoice] = useState('');
   const n = puzzle.members.length;
-  const name = (slot: number) => board.pool[puzzle.members[slot]!]!.name;
+  const name = (slot: number) => placeName(board.pool[puzzle.members[slot]!]!, fmt.lang);
   const visited = new Set(ends ? [ends[0], ends[1], ...state.path] : state.path);
   const options = puzzle.members
     .map((_, s) => s)
@@ -158,7 +159,7 @@ export function PlayPanel({
           km(excessUm),
         )
       : (ends ? t.playPathLonger : t.playLonger)(mm(excessUm));
-  const name = (slot: number) => board.pool[puzzle.members[slot]!]!.name;
+  const name = (slot: number) => placeName(board.pool[puzzle.members[slot]!]!, fmt.lang);
   const last = play.attempts.at(-1);
   const judged = play.state.closed && play.judged === pathKey && last !== undefined;
 

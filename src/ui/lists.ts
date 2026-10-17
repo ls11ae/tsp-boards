@@ -60,6 +60,7 @@ export function resolveLines(country: CountryFile, text: string): ListEntry[] {
       text: line.text,
       query: line.name,
       ...(line.label ? { label: line.label } : {}),
+      ...(line.nameEn ? { nameEn: line.nameEn } : {}),
       ...(line.highlight ? { highlight: true } : {}),
     };
     if (line.members) {
@@ -101,7 +102,7 @@ export function entryPlaces(
         .filter((m): m is Member => m !== null);
       if (e.choice < 0 || members.length < 2) continue;
       list.push({
-        ...compositePlace(e.query, members, e.label),
+        ...compositePlace(e.query, members, e.label, e.nameEn),
         ...(e.highlight ? { highlight: true } : {}),
         lines: [e.line],
         names: [e.label ?? e.query],
@@ -115,6 +116,7 @@ export function entryPlaces(
         lat: e.custom.lat,
         lon: e.custom.lon,
         ...label,
+        ...(e.nameEn ? { nameEn: e.nameEn } : {}),
         lines: [e.line],
         names: [e.label ?? e.query],
       });
@@ -243,6 +245,7 @@ export function setListPlaces(mode: 'fixed' | 'pool', places: readonly Place[]):
   const entries: ListEntry[] = places.map((p, i) => {
     const label = {
       ...(p.label ? { label: p.label } : {}),
+      ...(p.nameEn ? { nameEn: p.nameEn } : {}),
       ...(p.highlight ? { highlight: true } : {}),
     };
     if (p.members) {
@@ -259,15 +262,19 @@ export function setListPlaces(mode: 'fixed' | 'pool', places: readonly Place[]):
     }
     return { ...mirrorEntry(i + 1, p), ...label };
   });
+  // "Name | English name" for composite and custom places; "Town; label" for a town's label.
+  const name = (p: Place) => (p.nameEn ? `${p.name} | ${p.nameEn}` : p.name);
   const text = places
     .map(
       (p) =>
         (p.highlight ? '* ' : '') +
         (p.members
-          ? `${p.name} = ${p.members.map(memberText).join(' + ')}${p.label ? `; ${p.label}` : ''}`
+          ? `${name(p)} = ${p.members.map(memberText).join(' + ')}${p.label ? `; ${p.label}` : ''}`
           : p.id !== undefined
-            ? p.name
-            : [p.name, p.lat, p.lon, ...(p.label ? [p.label] : [])].join(', ')),
+            ? p.label
+              ? `${p.name}; ${p.label}`
+              : p.name
+            : [name(p), p.lat, p.lon, ...(p.label ? [p.label] : [])].join(', ')),
     )
     .join('\n');
   useStore.setState({

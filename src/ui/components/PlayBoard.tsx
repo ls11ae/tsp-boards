@@ -100,7 +100,8 @@ export function PlayBoard({
 }) {
   const t = useT();
   const play = useStore((s) => s.play);
-  const labelLanguage = useStore((s) => s.params.labelLanguage);
+  // Names in the language of the app, not of the board (roadmap 9.16).
+  const labelLanguage = useStore((s) => s.lang);
   const country = useStore((s) => s.country);
   const showLabels = useStore((s) => s.params.labelSizeMm > 0);
   const members = useMemo(() => puzzle?.members ?? [], [puzzle?.members]);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { EVERY_STATE } from '../../core/groups';
+import { localText } from '../../core/puzzle-file';
 import { regionInfo, regionStates, type RegionInfo } from '../../core/region';
 import { offeredRegions } from '../../core/region-check';
 import type { BoardModel } from '../board';
@@ -294,7 +295,7 @@ export function ParamsPanel({
       ids,
       { pinned, excluded },
       __APP_VERSION__,
-      useStore.getState().doc.title,
+      localText(useStore.getState().doc.title, useStore.getState().lang),
       linkList(puzzle ? puzzle.members : null),
       linkPath(),
     );

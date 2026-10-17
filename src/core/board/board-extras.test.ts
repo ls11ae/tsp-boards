@@ -9,7 +9,7 @@ import { parseCountryFile, citiesFromColumns } from '../data';
 import { Instance } from '../instance';
 import { DEFAULT_PARAMS } from '../params';
 import { listCities, parsePlaceLines } from '../places';
-import { parsePuzzleDoc } from '../puzzle-file';
+import { localText, parsePuzzleDoc } from '../puzzle-file';
 import { Rng } from '../rng';
 import type { MipBackend } from '../tsp/exact';
 import { iteratedLocalSearch } from '../tsp/ils';
@@ -208,7 +208,7 @@ describe('the Excellence Strategy board', () => {
       file,
       { ...DEFAULT_PARAMS, ...map.params },
       pool.map((c) => c.id),
-      doc.title,
+      localText(doc.title, 'de'),
       pool,
       { board: map.board },
     );

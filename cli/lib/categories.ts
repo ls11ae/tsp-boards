@@ -2,7 +2,11 @@
 // with headings, the interesting puzzles first and the Excellence Strategy puzzles at the end.
 // Within a category from small to large, a board next to its digital version.
 
-import type { CollectionCategory, CollectionEntry } from '../../src/core/puzzle-file';
+import {
+  localText,
+  type CollectionCategory,
+  type CollectionEntry,
+} from '../../src/core/puzzle-file';
 
 export const CATEGORIES: readonly CollectionCategory[] = [
   { id: 'germany', name: { de: 'Deutschland', en: 'Germany' } },
@@ -43,6 +47,6 @@ export function orderCollection(entries: readonly Entry[]): CollectionEntry[] {
       pairKey(a).localeCompare(pairKey(b)) ||
       // The board before its digital version.
       (a.purpose === 'board' ? 0 : 1) - (b.purpose === 'board' ? 0 : 1) ||
-      a.title.localeCompare(b.title, 'de'),
+      localText(a.title, 'de').localeCompare(localText(b.title, 'de'), 'de'),
   );
 }

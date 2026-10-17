@@ -6,7 +6,7 @@ import type { Logo } from '../core/board/logo';
 import { drawPoster, posterPdf } from '../core/board/poster';
 import { posterStops, stopPoints, type PosterTour } from '../core/board/poster-tour';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
-import type { LegendEntry } from '../core/puzzle-file';
+import { localText, type LegendEntry } from '../core/puzzle-file';
 import { mapTemplateText, solutionPdf, templatePdf } from '../core/board/print';
 import { drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import { boardSvg } from '../core/board/svg';
@@ -70,7 +70,7 @@ export function downloadWorksheet(board: BoardModel, puzzle: PuzzleView): void {
   const pdf = worksheetPdf({
     setup,
     paper: exportOptions.paper,
-    title: doc.title,
+    title: localText(doc.title, setup.params.labelLanguage),
     tour: e.optimal,
     lengthUm: e.optimalLength,
     gapUm: e.gap,

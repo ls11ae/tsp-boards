@@ -17,6 +17,8 @@
 //       A line "* name" in the list marks a place (a ring around its nail).
 //       For lists also [--path 'Los Angeles,Sydney'] (an open path between two list places, its
 //       leg back given; roadmap 9.15) and [--flat] (a world board: measured on the flat map).
+//   English title and description (roadmap 9.16): [--title-en …] [--description-en …]; without
+//       them a rebuilt puzzle keeps the English texts of its existing file.
 //   npx tsx cli/collection.ts index        (rebuilds index.json from the files; categories and
 //       order in cli/lib/categories.ts)
 
@@ -36,11 +38,13 @@ import { decodePermalink } from '../src/core/permalink';
 import {
   PUZZLE_SCHEMA,
   collectionEntry,
+  localText,
   parsePuzzleDoc,
   serializePuzzleDoc,
   type BoardExtras,
   type CollectionIndex,
   type LegendEntry,
+  type LocalText,
   type Place,
   type PuzzleDoc,
 } from '../src/core/puzzle-file';
@@ -82,15 +86,31 @@ function defaultsFor(region: string): PuzzleParams {
   return world ? { ...DEFAULT_PARAMS, ...WORLD_PARAMS } : DEFAULT_PARAMS;
 }
 
+/** English texts of an existing puzzle file (kept when it is rebuilt without --title-en). */
+function existingEnglish(id: string): { title: string; description: string } {
+  try {
+    const doc = parsePuzzleDoc(JSON.parse(readFileSync(path.join(DIR, `${id}.tsp.json`), 'utf8')));
+    const en = (t: LocalText) => (typeof t === 'string' ? '' : (t.en ?? ''));
+    return { title: en(doc.title), description: en(doc.description) };
+  } catch {
+    return { title: '', description: '' };
+  }
+}
+
+/** A German text with its English version, or the German text alone. */
+const local = (de: string, en: string): LocalText => (en ? { de, en } : de);
+
 function meta(kind: 'map' | 'incremental'): Omit<PuzzleDoc, 'data'> {
   const title = arg('title', '');
   if (!title) throw new Error('--title is required');
+  const id = arg('id', slug(title));
+  const before = existingEnglish(id);
   return {
     schema: PUZZLE_SCHEMA,
-    id: arg('id', slug(title)),
+    id,
     kind,
-    title,
-    description: arg('description', ''),
+    title: local(title, arg('title-en', before.title)),
+    description: local(arg('description', ''), arg('description-en', before.description)),
     purpose: arg('purpose', 'board') === 'digital' ? 'digital' : 'board',
     language: arg('lang', 'de') === 'en' ? ('en' as const) : ('de' as const),
     app: version.version,
@@ -125,7 +145,7 @@ function readExtras(): ExtrasInput | null {
   if (!file) return null;
   const json = JSON.parse(readFileSync(file, 'utf8')) as {
     start?: string;
-    legend?: { symbol?: string; text?: string }[];
+    legend?: { symbol?: string; text?: string; textEn?: string }[];
     export?: { holes?: string; edge?: boolean };
   };
   const holes = json.export?.holes;
@@ -134,6 +154,7 @@ function readExtras(): ExtrasInput | null {
     legend: (json.legend ?? []).map((e) => ({
       symbol: e.symbol === 'ring' || e.symbol === 'nail' ? e.symbol : 'none',
       text: e.text ?? '',
+      ...(e.textEn ? { textEn: e.textEn } : {}),
     })),
     ...(holes === 'cut' || holes === 'mark' || holes === 'pit'
       ? { export: { holes, edge: json.export?.edge !== false } }
@@ -179,7 +200,7 @@ async function mapDoc(
     file,
     { ...params, labelLanguage: m.language },
     selected,
-    m.title,
+    localText(m.title, m.language),
     pool,
     { board: extras, path: pathPool },
   );
@@ -217,7 +238,7 @@ async function mapDoc(
       `close pairs: ${close.map((c) => `${setup.cities[c.a]!.name}–${setup.cities[c.b]!.name} ${c.distanceMm.toFixed(1)} mm`).join(', ')}`,
     );
   console.error(
-    `${m.title} (${m.purpose}): n = ${selected.length}, string gap ${(v.string.gap / 1000).toFixed(2)} mm (${v.mode}), ` +
+    `${localText(m.title, 'de')} (${m.purpose}): n = ${selected.length}, string gap ${(v.string.gap / 1000).toFixed(2)} mm (${v.mode}), ` +
       `scale ${plan ? (plan.measured.gapUm / 1000).toFixed(2) : '–'} mm` +
       (plan ? `, start ${setup.cities[plan.scale.slot]!.name}` : '') +
       (plan && plan.warnings.length > 0

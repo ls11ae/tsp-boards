@@ -252,3 +252,58 @@ describe('composite places', () => {
     expect(doc.map!.places[0]).toEqual(ril);
   });
 });
+
+describe('English names (roadmap 9.16)', () => {
+  const towns = new Map(cities.map((c) => [c.id, c]));
+  const bonn = cities.find((c) => c.name === 'Bonn')!;
+  const koeln = cities.find((c) => c.name === 'Köln' && c.pop > 500_000)!;
+  const member = (c: (typeof cities)[number]) => ({
+    id: c.id,
+    name: c.name,
+    lat: c.lat,
+    lon: c.lon,
+  });
+
+  it('read "Name | English name" for composite and custom places', () => {
+    const [rmu, point] = parsePlaceLines(
+      [
+        'Rhein-Main-Universitäten | Rhine-Main Universities = Darmstadt + Mainz; RMU',
+        'Messe | Fair; 51.5; 7.4',
+      ].join('\n'),
+    );
+    expect(rmu).toMatchObject({
+      name: 'Rhein-Main-Universitäten',
+      nameEn: 'Rhine-Main Universities',
+      label: 'RMU',
+    });
+    expect(point).toMatchObject({ name: 'Messe', nameEn: 'Fair', lat: 51.5, lon: 7.4 });
+  });
+
+  it('name pool cities in English: towns by the data, "A/B" from its members', () => {
+    const slash = compositePlace('Bonn/Köln', [member(bonn), member(koeln)]);
+    const own = compositePlace('Rheinland', [member(bonn), member(koeln)], undefined, 'Rhineland');
+    const plain = compositePlace('Rheinschiene', [member(bonn), member(koeln)]);
+    const [a, b, c, d] = listCities(
+      [slash, own, plain, { ...member(koeln), label: 'Köln ×2' }],
+      towns,
+    );
+    expect(a!.nameEn).toBe('Bonn/Cologne');
+    expect(a!.members![1]!.nameEn).toBe('Cologne');
+    expect(b!.nameEn).toBe('Rhineland');
+    expect(c!.nameEn).toBe('Rheinschiene');
+    expect(d!.nameEn).toBe('Cologne');
+    expect(d!.label).toBe('Köln ×2');
+  });
+
+  it('keep English names in links', () => {
+    const own = compositePlace('Rheinland', [member(bonn), member(koeln)], 'RL', 'Rhineland');
+    const point = { name: 'Messe', nameEn: 'Fair', lat: 51.5, lon: 7.4 };
+    const decoded = decodePlaceList(encodePlaceList('fixed', [own, point]))!;
+    expect(decoded.places[0]).toMatchObject({
+      name: 'Rheinland',
+      nameEn: 'Rhineland',
+      label: 'RL',
+    });
+    expect(decoded.places[1]).toEqual(point);
+  });
+});

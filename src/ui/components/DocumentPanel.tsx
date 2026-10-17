@@ -2,7 +2,13 @@
 // download and open files; lists of saved and curated puzzles.
 
 import { useEffect, useRef, useState } from 'react';
-import type { CollectionEntry, PuzzleDoc } from '../../core/puzzle-file';
+import {
+  localText,
+  withLocalText,
+  type CollectionEntry,
+  type LocalText,
+  type PuzzleDoc,
+} from '../../core/puzzle-file';
 import {
   downloadDocument,
   incrementalDocument,
@@ -43,7 +49,7 @@ function DocList({
 }: {
   readonly docs: readonly {
     readonly id: string;
-    readonly title: string;
+    readonly title: LocalText;
     readonly kind: string;
     readonly n: number;
   }[];
@@ -58,7 +64,7 @@ function DocList({
       {docs.map((d) => (
         <li key={d.id}>
           <button type="button" className="doc-open" onClick={() => onOpen(d.id)}>
-            <span>{d.title || t.untitled}</span>
+            <span>{localText(d.title, fmt.lang) || t.untitled}</span>
             <span className="hint">
               {d.kind === 'incremental' ? t.incrementalPuzzle : t.mapPuzzle} ·{' '}
               {t.placesCount(fmt.integer(d.n))}
@@ -93,6 +99,7 @@ export function DocumentPanel({
 }) {
   const t = useT();
   const doc = useStore((s) => s.doc);
+  const lang = useStore((s) => s.lang);
   const setDoc = useStore((s) => s.setDoc);
   const puzzleType = useStore((s) => s.puzzleType);
   const hasIncremental = useStore((s) => s.inc.puzzle !== null);
@@ -116,18 +123,20 @@ export function DocumentPanel({
         <span>{t.docTitle}</span>
         <input
           type="text"
-          value={doc.title}
+          value={localText(doc.title, lang)}
           maxLength={120}
-          onChange={(e) => setDoc({ title: e.target.value })}
+          onChange={(e) => setDoc({ title: withLocalText(doc.title, lang, e.target.value) })}
         />
       </label>
       <label className="field wide">
         <span>{t.docDescription}</span>
         <textarea
           rows={2}
-          value={doc.description}
+          value={localText(doc.description, lang)}
           maxLength={2000}
-          onChange={(e) => setDoc({ description: e.target.value })}
+          onChange={(e) =>
+            setDoc({ description: withLocalText(doc.description, lang, e.target.value) })
+          }
         />
       </label>
       <label className="field">

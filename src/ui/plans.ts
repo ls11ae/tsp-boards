@@ -5,6 +5,7 @@
 import { planData, type BoardPlan } from '../core/board/plan';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, type BoardSetup } from '../core/board/setup';
 import type { HoleMode, Layer } from '../core/board/drawing';
+import { localText } from '../core/puzzle-file';
 import { svgPathData } from '../core/board/shapes';
 import { rEffMm, type PuzzleParams } from '../core/params';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
@@ -18,7 +19,7 @@ const PLAN_TIME_LIMIT_SEC = 120;
 export function planKey(puzzleKey: string, p: PuzzleParams): string {
   return [
     puzzleKey,
-    useStore.getState().doc.title,
+    localText(useStore.getState().doc.title, p.labelLanguage),
     p.region,
     p.boardWidthMm,
     p.boardHeightMm,
@@ -88,7 +89,7 @@ export function puzzleSetup(board: BoardModel, puzzle: PuzzleView): BoardSetup |
     country,
     params,
     puzzle.members.map((c) => board.pool[c]!.id),
-    doc.title,
+    localText(doc.title, params.labelLanguage),
     useStore.getState().list ? board.pool : null,
     {
       board: doc.board

@@ -5,7 +5,7 @@
 // screen; staff remove an entry by a long press and a confirmation.
 
 import { useEffect, useState } from 'react';
-import type { CollectionEntry } from '../../core/puzzle-file';
+import { localText, type CollectionEntry } from '../../core/puzzle-file';
 import { useBoard } from '../board';
 import { loadCollection, loadCollectionPuzzle, openDocument } from '../documents';
 import { useFormat, useT } from '../i18n';
@@ -59,7 +59,7 @@ function StartScreen({ entries }: { readonly entries: readonly CollectionEntry[]
                 ? [
                     <button key={id} type="button" className="kiosk-card" onClick={() => open(e)}>
                       <EntryThumbnail entry={e} />
-                      <strong>{e.title}</strong>
+                      <strong>{localText(e.title, fmt.lang)}</strong>
                       <span>{t.placesCount(fmt.integer(e.n))}</span>
                     </button>,
                   ]
@@ -85,6 +85,7 @@ function StartScreen({ entries }: { readonly entries: readonly CollectionEntry[]
 
 function ScoresScreen({ entries }: { readonly entries: readonly CollectionEntry[] }) {
   const t = useT();
+  const lang = useStore((s) => s.lang);
   // Another tab (the booth's game) adds results: read them again regularly and on change.
   useEffect(() => {
     const onStorage = () => reloadScores();
@@ -102,7 +103,7 @@ function ScoresScreen({ entries }: { readonly entries: readonly CollectionEntry[
       <h1>{t.kioskDaily}</h1>
       <div className="kiosk-score-grid">
         {shown.map((e) => (
-          <DailyScores key={e.id} id={e.id} title={e.title} limit={5} />
+          <DailyScores key={e.id} id={e.id} title={localText(e.title, lang)} limit={5} />
         ))}
       </div>
       <div className="actions kiosk-actions">
@@ -119,7 +120,7 @@ function PlayScreen() {
   const board = useBoard();
   const puzzle = usePuzzle();
   const worldView = useStore((s) => s.worldView);
-  const title = useStore((s) => s.doc.title);
+  const title = useStore((s) => localText(s.doc.title, s.lang));
   return (
     <div className="app play kiosk-play">
       <header className="header kiosk-header">

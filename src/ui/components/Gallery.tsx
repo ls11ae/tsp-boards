@@ -2,7 +2,13 @@
 // with their status and the personal best; one click opens a puzzle to play or in the designer.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { CollectionCategory, CollectionEntry, PuzzleDoc } from '../../core/puzzle-file';
+import {
+  localText,
+  type CollectionCategory,
+  type CollectionEntry,
+  type LocalText,
+  type PuzzleDoc,
+} from '../../core/puzzle-file';
 import { regionInfo } from '../../core/region';
 import { thumbnail, type Thumbnail } from '../thumbnail';
 import { loadCollection, loadCollectionPuzzle, loadLibrary, openDocument } from '../documents';
@@ -15,8 +21,8 @@ interface Card {
   readonly id: string;
   /** Category of a collection puzzle ('' for the player's own). */
   readonly category: string;
-  readonly title: string;
-  readonly description: string;
+  readonly title: LocalText;
+  readonly description: LocalText;
   readonly kind: 'map' | 'incremental';
   readonly purpose: 'board' | 'digital';
   readonly region: string;
@@ -127,14 +133,16 @@ function CardView({ card }: { readonly card: Card }) {
   return (
     <li className="card">
       <CardThumbnail card={card} />
-      <h4>{card.title || t.untitled}</h4>
+      <h4>{localText(card.title, fmt.lang) || t.untitled}</h4>
       <p className="hint">
         {card.kind === 'incremental' ? t.incrementalPuzzle : t.mapPuzzle} ·{' '}
         {t.placesCount(fmt.integer(card.n))}
         {card.region ? ` · ${regionName(card.region)}` : ''} ·{' '}
         {card.purpose === 'digital' ? t.purposeDigital : t.purposeBoard}
       </p>
-      {card.description && <p className="card-description">{card.description}</p>}
+      {localText(card.description, fmt.lang) && (
+        <p className="card-description">{localText(card.description, fmt.lang)}</p>
+      )}
       <Status id={card.id} />
       {error && <p className="error">{error}</p>}
       <div className="actions">

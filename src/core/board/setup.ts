@@ -41,7 +41,7 @@ import { boardMapLines } from './map-lines';
 import type { BoardPlan, PlanInput } from './plan';
 import { FONT_METRICS, measureText, type TextMetrics } from './text';
 import { BOARD_TEXTS, type BoardTexts } from './texts';
-import type { BoardExtras, MapPath } from '../puzzle-file';
+import { legendText, type BoardExtras, type MapPath } from '../puzzle-file';
 
 export interface BoardSetup {
   readonly file: CountryFile;
@@ -175,7 +175,10 @@ export function boardSetup(
   const regionName = lang === 'de' ? region.name : region.nameEn;
   const { boardWidthMm: width, boardHeightMm: height } = params;
   const footer: TextLine = { text: texts.attribution, sizeMm: FOOTER_SIZE_MM };
-  const legendEntries = extras.board?.legend ?? [];
+  const legendEntries = (extras.board?.legend ?? []).map((e) => ({
+    ...e,
+    text: legendText(e, params.labelLanguage),
+  }));
   const legend =
     legendEntries.length > 0 || extras.legendLogo
       ? layoutLegend(

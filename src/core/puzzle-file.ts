@@ -34,6 +34,11 @@ export interface Place {
   readonly lon: number;
   /** Board label, if not the town's default label. */
   readonly label?: string;
+  /**
+   * English name of a custom or composite place ("Rhine-Main Universities"); towns take theirs
+   * from the country data (roadmap 9.16).
+   */
+  readonly nameEn?: string;
   /** Members of a composite place (e.g. an alliance of universities in two towns). */
   readonly members?: readonly Member[];
   /** Marked place: a ring around its nail and in the app (e.g. Universities of Excellence). */
@@ -45,6 +50,13 @@ export interface LegendEntry {
   /** 'ring': a marked place, 'nail': a plain nail, 'none': text only. */
   readonly symbol: 'ring' | 'nail' | 'none';
   readonly text: string;
+  /** The text in English, for English boards and the app in English (roadmap 9.16). */
+  readonly textEn?: string;
+}
+
+/** A legend line's text in a language (English falls back to the text). */
+export function legendText(entry: LegendEntry, language: LabelLanguage): string {
+  return (language === 'en' && entry.textEn) || entry.text;
 }
 
 /** Extras of a board (roadmap 9.1). */
@@ -123,13 +135,34 @@ export interface IncrementalPuzzleFile {
   };
 }
 
+/**
+ * A puzzle's title or description: one text for every language (a plain string), or German and
+ * English ({ de, en }; English falls back to German), roadmap 9.16.
+ */
+export type LocalText = string | { readonly de: string; readonly en?: string };
+
+/** The text in a language: its own, else the German one. */
+export function localText(text: LocalText, language: LabelLanguage): string {
+  return typeof text === 'string' ? text : (language === 'en' && text.en) || text.de;
+}
+
+/**
+ * The text with `value` as its version in `language`: a plain string stays plain when edited
+ * in German or when it has no English version yet and is edited in German; editing a German
+ * and English text changes only that language.
+ */
+export function withLocalText(text: LocalText, language: LabelLanguage, value: string): LocalText {
+  if (typeof text === 'string') return value;
+  return language === 'en' ? { de: text.de, en: value } : { ...text, de: value };
+}
+
 export interface PuzzleDoc {
   readonly schema: typeof PUZZLE_SCHEMA;
   /** Stable id (library, highscores). */
   readonly id: string;
   readonly kind: 'map' | 'incremental';
-  readonly title: string;
-  readonly description: string;
+  readonly title: LocalText;
+  readonly description: LocalText;
   readonly purpose: Purpose;
   /** Language of the board texts. */
   readonly language: LabelLanguage;
@@ -154,6 +187,13 @@ const isObj = (v: unknown): v is Record<string, unknown> =>
 const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const str = (v: unknown, max = 2000): string => (typeof v === 'string' ? v.slice(0, max) : '');
 
+/** A plain text, or { de, en } with a German text (roadmap 9.16). */
+function localTextOf(v: unknown, max: number): LocalText {
+  if (!isObj(v)) return str(v, max);
+  const en = str(v.en, max);
+  return { de: str(v.de, max), ...(en ? { en } : {}) };
+}
+
 function parseMember(v: unknown): Member | null {
   if (!isObj(v) || !isNum(v.lat) || !isNum(v.lon)) return null;
   if (Math.abs(v.lat) > 90 || Math.abs(v.lon) > 180) return null;
@@ -171,6 +211,7 @@ function parsePlace(v: unknown): Place | null {
   const base = parseMember(v);
   if (!base || !isObj(v)) return null;
   const label = typeof v.label === 'string' && v.label ? { label: str(v.label, 200) } : {};
+  const nameEn = typeof v.nameEn === 'string' && v.nameEn ? { nameEn: str(v.nameEn, 200) } : {};
   const highlight = v.highlight === true ? { highlight: true } : {};
   const members = Array.isArray(v.members)
     ? v.members
@@ -180,9 +221,16 @@ function parsePlace(v: unknown): Place | null {
     : [];
   // A composite place: at least two members; its position is their mean.
   if (members.length >= 2) {
-    return { name: base.name, ...compositeCentre(members), ...label, members, ...highlight };
+    return {
+      name: base.name,
+      ...compositeCentre(members),
+      ...label,
+      ...nameEn,
+      members,
+      ...highlight,
+    };
   }
-  return { ...base, ...label, ...highlight };
+  return { ...base, ...label, ...nameEn, ...highlight };
 }
 
 function parseBoardExtras(v: unknown, places: number): BoardExtras | undefined {
@@ -194,6 +242,7 @@ function parseBoardExtras(v: unknown, places: number): BoardExtras | undefined {
         .map((e): LegendEntry => ({
           symbol: e.symbol === 'ring' || e.symbol === 'nail' ? e.symbol : 'none',
           text: str(e.text, 300),
+          ...(typeof e.textEn === 'string' && e.textEn ? { textEn: str(e.textEn, 300) } : {}),
         }))
     : [];
   const start =
@@ -262,8 +311,8 @@ export function parsePuzzleDoc(json: unknown): PuzzleDoc {
     schema: PUZZLE_SCHEMA,
     id: str(json.id, 40).replace(/[^0-9A-Za-z_-]/g, '') || 'unnamed',
     kind,
-    title: str(json.title, 200),
-    description: str(json.description, 4000),
+    title: localTextOf(json.title, 200),
+    description: localTextOf(json.description, 4000),
     purpose: json.purpose === 'digital' ? 'digital' : 'board',
     language: json.language === 'en' ? 'en' : 'de',
     data,
@@ -355,7 +404,7 @@ export function serializePuzzleDoc(doc: PuzzleDoc): string {
 
 /** File name from the title: lower case, ASCII, dashes. */
 export function puzzleFileName(doc: PuzzleDoc): string {
-  const base = (doc.title || `${doc.kind}-${doc.id}`)
+  const base = (localText(doc.title, 'de') || `${doc.kind}-${doc.id}`)
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .replace(/ß/g, 'ss')
@@ -377,8 +426,8 @@ export interface CollectionEntry {
   readonly file: string;
   readonly id: string;
   readonly kind: 'map' | 'incremental';
-  readonly title: string;
-  readonly description: string;
+  readonly title: LocalText;
+  readonly description: LocalText;
   readonly purpose: Purpose;
   readonly region: string;
   readonly n: number;

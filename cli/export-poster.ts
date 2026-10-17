@@ -73,7 +73,13 @@ import { DEFAULT_PARAMS, type PuzzleParams } from '../src/core/params';
 import { listCities } from '../src/core/places';
 import { boardProjection } from '../src/core/projection';
 import { shortLink } from '../src/core/permalink';
-import { parsePuzzleDoc, type LegendEntry, type Place } from '../src/core/puzzle-file';
+import {
+  localText,
+  parsePuzzleDoc,
+  type LegendEntry,
+  type LocalText,
+  type Place,
+} from '../src/core/puzzle-file';
 import { projectionKind, regionFrame } from '../src/core/region';
 import type { MipBackend } from '../src/core/tsp/exact';
 import { loadBackend, loadCountry } from './lib/country';
@@ -235,7 +241,7 @@ interface Source {
   readonly file: CountryFile;
   readonly params: PuzzleParams;
   readonly places: readonly Place[];
-  readonly title: string;
+  readonly title: LocalText;
   readonly subtitle: string;
   readonly legend: readonly LegendEntry[];
   readonly name: string;
@@ -529,7 +535,7 @@ async function main(): Promise<void> {
             region: v.src.params.region,
             stops,
             tour: v.tour,
-            title: localized(spec.title, lang) ?? v.src.title,
+            title: localized(spec.title, lang) ?? localText(v.src.title, lang),
             subtitle: localized(spec.subtitle, lang) ?? v.src.subtitle,
             paper,
             orientation,

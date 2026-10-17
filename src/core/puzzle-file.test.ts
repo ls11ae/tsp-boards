@@ -3,10 +3,12 @@ import { DEFAULT_INCREMENTAL_UI } from './incremental/params';
 import { DEFAULT_PARAMS } from './params';
 import {
   collectionEntry,
+  localText,
   newPuzzleId,
   parsePuzzleDoc,
   puzzleFileName,
   serializePuzzleDoc,
+  withLocalText,
   type PuzzleDoc,
 } from './puzzle-file';
 import { Rng } from './rng';
@@ -124,5 +126,27 @@ describe('puzzle files', () => {
     expect(puzzleFileName({ ...mapDoc, title: 'Größte Städte' })).toBe('grosste-stadte.tsp.json');
     expect(collectionEntry(mapDoc, 'x.tsp.json')).toMatchObject({ n: 3, region: 'DE-NW' });
     expect(newPuzzleId(new Rng(1).float.bind(new Rng(1)))).toMatch(/^[0-9a-z]{12}$/);
+  });
+});
+
+describe('titles and descriptions in German and English (roadmap 9.16)', () => {
+  it('read plain texts and { de, en }, falling back to German', () => {
+    const doc = parsePuzzleDoc({
+      ...JSON.parse(serializePuzzleDoc(mapDoc)),
+      title: { de: 'Rund um die Welt', en: 'Around the world' },
+      description: { de: 'Nur deutsch' },
+    });
+    expect(localText(doc.title, 'en')).toBe('Around the world');
+    expect(localText(doc.title, 'de')).toBe('Rund um die Welt');
+    expect(localText(doc.description, 'en')).toBe('Nur deutsch');
+    expect(localText(mapDoc.title, 'en')).toBe('Ruhrgebiet & Umgebung');
+    expect(collectionEntry(doc, 'x.tsp.json').title).toEqual(doc.title);
+    expect(puzzleFileName(doc)).toBe('rund-um-die-welt.tsp.json');
+  });
+
+  it('edit the text of one language', () => {
+    expect(withLocalText('Alt', 'en', 'New')).toBe('New');
+    expect(withLocalText({ de: 'Alt', en: 'Old' }, 'en', 'New')).toEqual({ de: 'Alt', en: 'New' });
+    expect(withLocalText({ de: 'Alt', en: 'Old' }, 'de', 'Neu')).toEqual({ de: 'Neu', en: 'Old' });
   });
 });

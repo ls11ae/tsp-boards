@@ -36,7 +36,7 @@ export function readPlaceList(text: string, file: CountryFile, mergeKm = 2): Pla
       });
       return [
         {
-          ...compositePlace(line.name, members, line.label),
+          ...compositePlace(line.name, members, line.label, line.nameEn),
           ...(line.highlight ? { highlight: true } : {}),
           lines: [line.line],
           names: [line.label ?? line.name],
@@ -50,6 +50,7 @@ export function readPlaceList(text: string, file: CountryFile, mergeKm = 2): Pla
           lat: line.lat,
           lon: line.lon,
           ...(line.label ? { label: line.label } : {}),
+          ...(line.nameEn ? { nameEn: line.nameEn } : {}),
           ...(line.highlight ? { highlight: true } : {}),
           lines: [line.line],
           names: [line.label ?? line.name],
@@ -76,6 +77,7 @@ export function readPlaceList(text: string, file: CountryFile, mergeKm = 2): Pla
     lat: p.lat,
     lon: p.lon,
     ...(p.label ? { label: p.label } : {}),
+    ...(p.nameEn ? { nameEn: p.nameEn } : {}),
     ...(p.members ? { members: p.members } : {}),
     ...(p.highlight ? { highlight: true } : {}),
   }));

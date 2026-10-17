@@ -46,7 +46,7 @@ export function PlayGlobe({
   readonly puzzle: PuzzleView | null;
 }) {
   const play = useStore((s) => s.play);
-  const lang = useStore((s) => s.params.labelLanguage);
+  const lang = useStore((s) => s.lang);
   const flight = useStore((s) => s.flight);
   const overlay = useOverlay(board, puzzle);
   const members = puzzle?.members ?? [];
@@ -110,7 +110,7 @@ export function DesignGlobe({
   readonly board: BoardModel;
   readonly puzzle: PuzzleView | null;
 }) {
-  const lang = useStore((s) => s.params.labelLanguage);
+  const lang = useStore((s) => s.lang);
   const showTour = useStore((s) => s.showTour);
   const pinned = useStore((s) => s.pinned);
   const excluded = useStore((s) => s.excluded);
