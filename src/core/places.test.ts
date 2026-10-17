@@ -53,6 +53,19 @@ describe('place lines', () => {
     ]);
   });
 
+  it('reads a town with a label of its own after a semicolon (roadmap 9.13)', () => {
+    expect(parsePlaceLines(['* München; München ×2', 'Köln;Cologne'].join('\n'))).toEqual([
+      {
+        line: 1,
+        text: '* München; München ×2',
+        name: 'München',
+        label: 'München ×2',
+        highlight: true,
+      },
+      { line: 2, text: 'Köln;Cologne', name: 'Köln', label: 'Cologne' },
+    ]);
+  });
+
   it('normalises names', () => {
     expect(normalizeName('Mönchengladbach')).toBe('monchengladbach');
     expect(normalizeName('Halle (Saale)')).toBe('halle saale');

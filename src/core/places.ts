@@ -4,7 +4,8 @@
 // Identical or very close places merge into one node whose label can name all of them.
 // A composite place (roadmap 7.1) is one node for several towns or points:
 // "Ruhr Innovation Lab = Bochum + Dortmund", members as town names or "name (lat, lon)".
-// A leading '*' marks a place (roadmap 9.1: a ring on the board), e.g. "* Aachen".
+// A leading '*' marks a place (roadmap 9.1: a ring on the board), e.g. "* Aachen". A town's
+// own label follows a semicolon (roadmap 9.13), e.g. "* München; München ×2".
 
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import type { City } from './data';
@@ -109,6 +110,9 @@ export function parsePlaceLines(text: string): ParsedLine[] {
     ) {
       const label = rest.join(', ').trim();
       out.push({ line: i + 1, text: raw, name, lat, lon, ...(label ? { label } : {}), ...mark });
+    } else if (semicolon && cells.length === 2 && a) {
+      // "Town; label": the town with a label of its own.
+      out.push({ line: i + 1, text: raw, name, label: a, ...mark });
     } else {
       out.push({ line: i + 1, text: raw, name: line, ...mark });
     }

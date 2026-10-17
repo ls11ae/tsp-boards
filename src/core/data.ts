@@ -159,9 +159,15 @@ export function listName(city: City, language: LabelLanguage): string {
   return city.members ? `${name} (${city.members.map((m) => m.name).join(', ')})` : name;
 }
 
-/** Text on the board: the short label, or the English exonym (Munich) for English boards. */
+/**
+ * Text on the board: the short label, or the English exonym (Munich) for English boards. A label
+ * that adds to the town's name keeps its addition: "München ×2" is "Munich ×2" (roadmap 9.13).
+ */
 export function boardLabel(city: City, language: LabelLanguage): string {
-  return language === 'en' && city.nameEn !== city.name ? city.nameEn : city.label;
+  if (language !== 'en' || city.nameEn === city.name) return city.label;
+  return city.label.startsWith(city.name)
+    ? city.nameEn + city.label.slice(city.name.length)
+    : city.nameEn;
 }
 
 export function citiesFromColumns(columns: CityColumns, states: readonly StateInfo[]): City[] {

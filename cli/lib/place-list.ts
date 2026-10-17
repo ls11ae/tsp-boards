@@ -1,5 +1,6 @@
 // Place list files (docs/data/curated/*.txt) as places of a country's data: town names (exact,
-// the first option if ambiguous), coordinates, composite places "Name = A + B" and marks "* ".
+// the first option if ambiguous, "Town; label" with a label of its own), coordinates, composite
+// places "Name = A + B" and marks "* ".
 // Shared by cli/collection.ts and cli/export-poster.ts.
 
 import { citiesFromColumns, type CountryFile } from '../../src/core/data';
@@ -62,9 +63,10 @@ export function readPlaceList(text: string, file: CountryFile, mergeKm = 2): Pla
         name: town.name,
         lat: town.lat,
         lon: town.lon,
+        ...(line.label ? { label: line.label } : {}),
         ...(line.highlight ? { highlight: true } : {}),
         lines: [line.line],
-        names: [town.label],
+        names: [line.label ?? town.label],
       },
     ];
   });

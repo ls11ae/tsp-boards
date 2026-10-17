@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  boardLabel,
   citiesFromColumns,
   citiesToColumns,
   parseCountryFile,
@@ -100,4 +101,26 @@ describe('committed data files', () => {
       expect(file.cities.fame !== undefined).toBe(file.country === 'WO');
     },
   );
+});
+
+describe('board labels', () => {
+  const munich = {
+    id: 2867714,
+    name: 'München',
+    label: 'München',
+    nameEn: 'Munich',
+    lat: 48.14,
+    lon: 11.58,
+    pop: 1_500_000,
+    state: 'DE-BY',
+  } as City;
+  it('uses English exonyms and keeps an addition of the label to the name (9.13)', () => {
+    expect(boardLabel(munich, 'de')).toBe('München');
+    expect(boardLabel(munich, 'en')).toBe('Munich');
+    const twice = { ...munich, label: 'München ×2' };
+    expect(boardLabel(twice, 'de')).toBe('München ×2');
+    expect(boardLabel(twice, 'en')).toBe('Munich ×2');
+    // A label that is no addition gives way to the exonym.
+    expect(boardLabel({ ...munich, label: 'TUM' }, 'en')).toBe('Munich');
+  });
 });
