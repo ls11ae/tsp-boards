@@ -43,6 +43,7 @@ export function mapDocument(puzzle: PuzzleView | null): PuzzleDoc | null {
   const extras = doc.board
     ? {
         legend: doc.board.legend,
+        ...(doc.board.legendWidthMm ? { legendWidthMm: doc.board.legendWidthMm } : {}),
         startPlace:
           doc.board.startCity === null
             ? null
@@ -98,7 +99,11 @@ function boardMeta(doc: PuzzleDoc): DocMeta['board'] {
   if (!extras) return null;
   const map = doc.map;
   const start = extras.startPlace !== null ? map.places[extras.startPlace] : undefined;
-  return { legend: extras.legend, startCity: start ? placeCityId(doc, start) : null };
+  return {
+    legend: extras.legend,
+    startCity: start ? placeCityId(doc, start) : null,
+    ...(extras.legendWidthMm ? { legendWidthMm: extras.legendWidthMm } : {}),
+  };
 }
 
 /** The city id of a document's place in the board's pool (as in the store's DocMeta). */

@@ -185,14 +185,14 @@ export function boardSetup(
           legendEntries,
           extras.legendLogo ?? null,
           footer.text,
-          width - 2 * BOARD_EDGE_MM,
+          Math.min(extras.board?.legendWidthMm ?? Infinity, width - 2 * BOARD_EDGE_MM),
         )
       : null;
   const legendBox: Box | null = legend
     ? [
         BOARD_EDGE_MM,
         height - BOARD_EDGE_MM - legend.height,
-        width - BOARD_EDGE_MM,
+        BOARD_EDGE_MM + legend.width,
         height - BOARD_EDGE_MM,
       ]
     : null;
@@ -345,12 +345,17 @@ export function boardSetup(
   };
 }
 
-/** The legend's box on the board (bottom, full width inside the edge). */
+/** The legend's box on the board (bottom left, full width inside the edge unless narrower). */
 export function legendBox(setup: BoardSetup): Box | null {
   const { legend } = setup;
   if (!legend) return null;
-  const { boardWidthMm: w, boardHeightMm: h } = setup.params;
-  return [BOARD_EDGE_MM, h - BOARD_EDGE_MM - legend.height, w - BOARD_EDGE_MM, h - BOARD_EDGE_MM];
+  const { boardHeightMm: h } = setup.params;
+  return [
+    BOARD_EDGE_MM,
+    h - BOARD_EDGE_MM - legend.height,
+    BOARD_EDGE_MM + legend.width,
+    h - BOARD_EDGE_MM,
+  ];
 }
 
 export interface StringOptimum {

@@ -1315,8 +1315,9 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Style): MapResul
 /** Legend lines: the given ones and the automatic ones, symbol lines first, notes last. */
 export function legendEntries(input: PosterInput): { symbol: Symbol; text: string }[] {
   const t = POSTER_TEXTS[input.language];
+  // Posters draw closed round trips: a dashed line (an open path's given leg) is text only.
   const given = input.legend.map((e) => ({
-    symbol: e.symbol === 'none' ? null : e.symbol,
+    symbol: e.symbol === 'none' || e.symbol === 'dashed' ? null : e.symbol,
     text: e.text,
   }));
   const emphasized = (st: PosterStop) => input.emphasis?.place === st.place;

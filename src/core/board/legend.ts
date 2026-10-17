@@ -35,7 +35,7 @@ export interface LegendSymbols {
 }
 
 export interface LegendLine {
-  readonly symbol: 'ring' | 'nail' | null;
+  readonly symbol: 'ring' | 'nail' | 'dashed' | null;
   readonly text: string;
   /** Start of the baseline, relative to the box's top-left corner. */
   readonly x: number;
@@ -146,14 +146,21 @@ export function drawLegend(
   x: number,
   y: number,
   symbols: LegendSymbols,
-): { readonly engrave: PathCommand[] } {
+): { readonly engrave: PathCommand[]; readonly score: PathCommand[] } {
   const engrave: PathCommand[] = [];
+  const score: PathCommand[] = [];
   for (const line of layout.lines) {
     engrave.push(...textPath(line.text, x + line.x, y + line.y, line.sizeMm));
     if (!line.symbol) continue;
     // Symbol centred on the cap height of the line, in the middle of the symbol column.
     const cx = x + line.x - DEFAULT_LEGEND_STYLE.symbolMm / 2;
     const cy = y + line.y - (FONT_METRICS.capHeight * line.sizeMm) / 2;
+    if (line.symbol === 'dashed') {
+      // Three dashes across the symbol column, scored like the given leg (roadmap 9.17).
+      for (const start of [-3.6, -0.9, 1.8])
+        score.push(['M', cx + start, cy], ['L', cx + start + 1.8, cy]);
+      continue;
+    }
     engrave.push(...circlePath(cx, cy, symbols.nailRadiusMm));
     if (line.symbol === 'ring')
       engrave.push(...ringPath(cx, cy, symbols.ringOuterMm, symbols.ringInnerMm));
@@ -162,5 +169,5 @@ export function drawLegend(
     const [x0, y0, x1, y1] = layout.logo.box;
     engrave.push(...fitLogo(layout.logo.logo, [x + x0, y + y0, x + x1, y + y1]));
   }
-  return { engrave };
+  return { engrave, score };
 }

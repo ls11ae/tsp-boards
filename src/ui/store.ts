@@ -137,6 +137,8 @@ export interface DocMeta {
   readonly board?: {
     readonly legend: readonly LegendEntry[];
     readonly startCity: number | null;
+    /** Width of the legend box at the bottom left (roadmap 9.17). */
+    readonly legendWidthMm?: number;
   } | null;
   /**
    * An open path with its leg back given (roadmap 9.15): start and end as city ids in the

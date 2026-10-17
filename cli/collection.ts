@@ -38,6 +38,7 @@ import { decodePermalink } from '../src/core/permalink';
 import {
   PUZZLE_SCHEMA,
   collectionEntry,
+  legendSymbol,
   localText,
   parsePuzzleDoc,
   serializePuzzleDoc,
@@ -138,6 +139,8 @@ interface ExtrasInput {
   readonly start: string | null;
   readonly legend: readonly LegendEntry[];
   readonly export?: { readonly holes: HoleMode; readonly edge: boolean };
+  /** Width of the legend box at the bottom left, mm (roadmap 9.17). */
+  readonly legendWidthMm?: number;
 }
 
 function readExtras(): ExtrasInput | null {
@@ -147,18 +150,20 @@ function readExtras(): ExtrasInput | null {
     start?: string;
     legend?: { symbol?: string; text?: string; textEn?: string }[];
     export?: { holes?: string; edge?: boolean };
+    legendWidthMm?: number;
   };
   const holes = json.export?.holes;
   return {
     start: json.start ?? null,
     legend: (json.legend ?? []).map((e) => ({
-      symbol: e.symbol === 'ring' || e.symbol === 'nail' ? e.symbol : 'none',
+      symbol: legendSymbol(e.symbol),
       text: e.text ?? '',
       ...(e.textEn ? { textEn: e.textEn } : {}),
     })),
     ...(holes === 'cut' || holes === 'mark' || holes === 'pit'
       ? { export: { holes, edge: json.export?.edge !== false } }
       : {}),
+    ...(json.legendWidthMm ? { legendWidthMm: json.legendWidthMm } : {}),
   };
 }
 
@@ -194,7 +199,11 @@ async function mapDoc(
   if (extrasInput?.start && startPool < 0)
     throw new Error(`--board-extras: start "${extrasInput.start}" is not in the list`);
   const extras: BoardExtras | null = extrasInput
-    ? { legend: extrasInput.legend, startPlace: startPool >= 0 ? startPool : null }
+    ? {
+        legend: extrasInput.legend,
+        startPlace: startPool >= 0 ? startPool : null,
+        ...(extrasInput.legendWidthMm ? { legendWidthMm: extrasInput.legendWidthMm } : {}),
+      }
     : null;
   const setup = boardSetup(
     file,
@@ -264,6 +273,7 @@ async function mapDoc(
               startPlace: extrasInput.start
                 ? places.findIndex((p) => p.name === extrasInput.start)
                 : null,
+              ...(extrasInput.legendWidthMm ? { legendWidthMm: extrasInput.legendWidthMm } : {}),
             },
           }
         : {}),

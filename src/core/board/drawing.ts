@@ -310,6 +310,7 @@ export function drawBoard(
       nailRadiusMm: nailRadius,
     });
     items.push({ layer: 'engrave', path: paths.engrave, fill: true });
+    if (paths.score.length > 0) items.push({ layer: 'score', path: paths.score, fill: false });
   }
   if (plan.title && input.title)
     items.push({

@@ -47,8 +47,11 @@ export interface Place {
 
 /** A line of a board's legend; the symbol in front shows what the line explains. */
 export interface LegendEntry {
-  /** 'ring': a marked place, 'nail': a plain nail, 'none': text only. */
-  readonly symbol: 'ring' | 'nail' | 'none';
+  /**
+   * 'ring': a marked place, 'nail': a plain nail, 'dashed': a dashed line (the given leg of an
+   * open path, roadmap 9.17), 'none': text only.
+   */
+  readonly symbol: 'ring' | 'nail' | 'dashed' | 'none';
   readonly text: string;
   /** The text in English, for English boards and the app in English (roadmap 9.16). */
   readonly textEn?: string;
@@ -67,6 +70,16 @@ export interface BoardExtras {
   readonly startPlace: number | null;
   /** Export defaults of this board (e.g. drill pits and no outline cut for thick plywood). */
   readonly export?: { readonly holes: HoleMode; readonly edge: boolean };
+  /**
+   * Width of the legend box at the bottom left (mm); without it the box spans the board (the
+   * world board keeps Antarctica, roadmap 9.17).
+   */
+  readonly legendWidthMm?: number;
+}
+
+/** The symbol of a legend line from a file (unknown symbols: text only). */
+export function legendSymbol(v: unknown): LegendEntry['symbol'] {
+  return v === 'ring' || v === 'nail' || v === 'dashed' ? v : 'none';
 }
 
 /** Minimum and maximum number of places per group (e.g. per federal state). */
@@ -240,7 +253,7 @@ function parseBoardExtras(v: unknown, places: number): BoardExtras | undefined {
         .filter((e): e is Record<string, unknown> => isObj(e) && typeof e.text === 'string')
         .slice(0, 12)
         .map((e): LegendEntry => ({
-          symbol: e.symbol === 'ring' || e.symbol === 'nail' ? e.symbol : 'none',
+          symbol: legendSymbol(e.symbol),
           text: str(e.text, 300),
           ...(typeof e.textEn === 'string' && e.textEn ? { textEn: str(e.textEn, 300) } : {}),
         }))
@@ -254,10 +267,12 @@ function parseBoardExtras(v: unknown, places: number): BoardExtras | undefined {
   const e = isObj(v.export) ? v.export : null;
   const holes: HoleMode | null =
     e?.holes === 'cut' || e?.holes === 'mark' || e?.holes === 'pit' ? e.holes : null;
+  const width = isNum(v.legendWidthMm) && v.legendWidthMm >= 20 ? v.legendWidthMm : null;
   return {
     legend,
     startPlace: start,
     ...(e && holes ? { export: { holes, edge: e.edge !== false } } : {}),
+    ...(width !== null ? { legendWidthMm: width } : {}),
   };
 }
 

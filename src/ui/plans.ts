@@ -95,6 +95,7 @@ export function puzzleSetup(board: BoardModel, puzzle: PuzzleView): BoardSetup |
       board: doc.board
         ? {
             legend: doc.board.legend,
+            ...(doc.board.legendWidthMm ? { legendWidthMm: doc.board.legendWidthMm } : {}),
             startPlace:
               start === null || start === undefined ? null : (board.index.get(start) ?? null),
           }

@@ -9,6 +9,8 @@
 //   [--label 4] [--nail 2] [--string 1] [--target 5] [--weights 1,0.5,1] [--top 6]
 //   [--pool-top 250] (only the best-known cities, by Wikipedia editions) [--out file.json] (the
 //   candidates with ids, names, tours and gaps)
+//   [--pin 'London,Kairo'] (cities every candidate has, roadmap 9.17; also from outside the
+//   pool's top) [--exclude 'Krasnodar,Tirana'] (cities left out of the pool)
 
 import { writeFileSync } from 'node:fs';
 import { citiesFromColumns, prominence, type City } from '../src/core/data';
@@ -54,11 +56,29 @@ async function main(): Promise<void> {
   // Only the best-known cities (Wikipedia editions); on the board the string lies on the flat
   // map: no great circles in the search.
   const top = num('pool-top', 250);
-  const keep = world.cities
+  const list = (name: string) =>
+    arg(name, '')
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean);
+  const pins = list('pin');
+  const excluded = new Set(list('exclude'));
+  const ranked = world.cities
     .map((c, i) => ({ i, fame: prominence(c) }))
     .sort((a, b) => b.fame - a.fame || a.i - b.i)
-    .slice(0, top)
-    .map((x) => x.i)
+    .map((x) => x.i);
+  const keep = [
+    ...new Set([
+      ...ranked.slice(0, top),
+      // Pinned cities (by name, the best-known of a name) also from below the top.
+      ...pins.map((name) => {
+        const i = ranked.find((k) => world.cities[k]!.name === name);
+        if (i === undefined) throw new Error(`--pin: ${name} is not in the world data`);
+        return i;
+      }),
+    ]),
+  ]
+    .filter((i) => !excluded.has(world.cities[i]!.name))
     .sort((a, b) => a - b);
   const pool: BoardPool = {
     projection: world.projection,
@@ -94,7 +114,7 @@ async function main(): Promise<void> {
         params,
         pool,
         backend,
-        pinnedIds: fixedIds,
+        pinnedIds: [...fixedIds, ...pins.map(id)],
         fixedIds,
         labels,
       });

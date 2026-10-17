@@ -14,7 +14,7 @@ import { Rng } from '../rng';
 import type { MipBackend } from '../tsp/exact';
 import { iteratedLocalSearch } from '../tsp/ils';
 import { verifyCandidate } from '../verify';
-import { layoutLegend, wrapText } from './legend';
+import { drawLegend, layoutLegend, wrapText } from './legend';
 import { parsePathData, parseSvgLogo, parseTransform, placeLogo } from './logo';
 import { withoutBoxEdges } from '../region';
 import {
@@ -107,6 +107,31 @@ describe('legend', () => {
     // Text right of the logo.
     expect(layout.lines[0]!.x).toBeGreaterThan(layout.logo!.box[2]);
     expect(layout.height).toBeGreaterThan(layout.logo!.box[3]);
+  });
+
+  it('scores a dashed line for the given leg of an open path (roadmap 9.17)', () => {
+    const layout = layoutLegend(
+      [{ symbol: 'dashed', text: 'Gestrichelt: der Rückflug über den Pazifik ist vorgegeben' }],
+      null,
+      'Städte: GeoNames (CC BY 4.0)',
+      120,
+    );
+    expect(layout.width).toBe(120);
+    const paths = drawLegend(layout, 10, 250, { ringOuterMm: 3, ringInnerMm: 2, nailRadiusMm: 1 });
+    expect(paths.score.filter((c) => c[0] === 'M')).toHaveLength(3);
+    expect(
+      parsePuzzleDoc({
+        schema: 1,
+        id: 'x',
+        kind: 'map',
+        title: 'X',
+        map: {
+          params: {},
+          places: [],
+          board: { legend: [{ symbol: 'dashed', text: 'a' }], legendWidthMm: 120 },
+        },
+      }).map!.board,
+    ).toMatchObject({ legend: [{ symbol: 'dashed' }], legendWidthMm: 120 });
   });
 });
 
