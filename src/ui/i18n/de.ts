@@ -463,6 +463,11 @@ export const de: Messages = {
   galleryNewMap: 'Neues Karten-Puzzle',
   galleryNewIncremental: 'Neues Schritt-für-Schritt-Puzzle',
   backToGallery: 'Galerie',
+  leaveTitle: 'Zur Galerie',
+  leavePlay: 'Puzzle verlassen und zur Galerie? Dein Spielstand bleibt erhalten.',
+  leaveDesign: 'Designer verlassen und zur Galerie?',
+  leaveToGallery: 'Zur Galerie',
+  leaveStayPlay: 'Weiterspielen',
   kioskTitle: 'Finde die kürzeste Rundreise!',
   kioskLead:
     'Besuche jeden Ort genau einmal und kehre zum Start zurück – mit möglichst wenig Weg. Wähle ein Puzzle:',

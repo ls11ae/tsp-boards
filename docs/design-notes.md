@@ -1109,3 +1109,11 @@ Short entries: decision; alternatives considered; reason. Newest last.
   drawn as outlines: ink in neutral and tu, RUB blue in rub. The emphasized place (Ruhr
   Innovation Lab) keeps the tour colour. Posters 17 and 37 (the ones with the outline) are
   re-exported, in the repository and in `local/posters/`.
+- **2026-10-17 "TSP Boards" leads to the gallery.** Maike: on a phone the gallery is too
+  hidden (the header's gallery button is hidden while playing, 9.10). The title in the header
+  is now a button to the gallery on every screen size; from a puzzle or the designer it asks
+  first ("Puzzle verlassen und zur Galerie? Dein Spielstand bleibt erhalten." with "Zur
+  Galerie" and "Weiterspielen"), since a stray tap at the top of the screen is easy; the game
+  is kept anyway (games are stored per puzzle). On the gallery the title scrolls to the top.
+  The kiosk has its own header and is unchanged. Alternatives: showing the gallery button in
+  the phone header (one more button in a row that is full), a menu (hides it again).

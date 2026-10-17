@@ -474,6 +474,11 @@ export const en = {
   galleryNewMap: 'New map puzzle',
   galleryNewIncremental: 'New step-by-step puzzle',
   backToGallery: 'Gallery',
+  leaveTitle: 'To the gallery',
+  leavePlay: 'Leave the puzzle for the gallery? Your game is kept.',
+  leaveDesign: 'Leave the designer for the gallery?',
+  leaveToGallery: 'To the gallery',
+  leaveStayPlay: 'Keep playing',
   kioskTitle: 'Find the shortest round trip!',
   kioskLead:
     'Visit every place exactly once and return to the start, travelling as little as possible. Choose a puzzle:',

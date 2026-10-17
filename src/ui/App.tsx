@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useBoard } from './board';
 import { BoardMap } from './components/BoardMap';
 import { PlayBoard } from './components/PlayBoard';
@@ -17,6 +17,48 @@ import { openShortLink } from './documents';
 import { useT } from './i18n';
 import { usePuzzle } from './puzzle';
 import { useStore, type Language, type PuzzleType } from './store';
+
+/**
+ * "TSP Boards" leads to the gallery: on a phone the header's gallery button is hidden while
+ * playing. From a puzzle it asks first; the game is kept anyway.
+ */
+function HomeTitle() {
+  const t = useT();
+  const page = useStore((s) => s.page);
+  const mode = useStore((s) => s.mode);
+  const [asking, setAsking] = useState(false);
+  const toGallery = () => {
+    setAsking(false);
+    useStore.setState({ page: 'gallery' });
+  };
+  return (
+    <div className="home">
+      <h1>
+        <button
+          type="button"
+          className="home-link"
+          aria-expanded={asking}
+          onClick={() => (page === 'gallery' ? window.scrollTo(0, 0) : setAsking(!asking))}
+        >
+          {t.appTitle}
+        </button>
+      </h1>
+      {asking && page !== 'gallery' && (
+        <div className="home-confirm" role="alertdialog" aria-label={t.leaveTitle}>
+          <p>{mode === 'play' ? t.leavePlay : t.leaveDesign}</p>
+          <div className="actions">
+            <button type="button" className="primary" onClick={toGallery}>
+              {t.leaveToGallery}
+            </button>
+            <button type="button" onClick={() => setAsking(false)}>
+              {mode === 'play' ? t.leaveStayPlay : t.combineCancel}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Header() {
   const t = useT();
@@ -37,7 +79,7 @@ function Header() {
   return (
     <header className="header">
       <div>
-        <h1>{t.appTitle}</h1>
+        <HomeTitle />
         <p className="tagline">{digitalPlay ? t.appTaglineDigital : t.appTagline}</p>
       </div>
       <div className="lang types" role="group" aria-label={t.puzzleType}>

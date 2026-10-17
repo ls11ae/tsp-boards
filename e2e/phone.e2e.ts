@@ -156,3 +156,31 @@ test('a whole round trip by taps on a phone', async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/3-closed.jpg`, quality: 80 });
   console.log(`37 places tapped, ${zooms} taps zoomed in, result ${result}`);
 });
+
+test('the title leads to the gallery after a question; the game is kept', async ({ page }) => {
+  await page.goto('#p/exzellenzstrategie-2027-37');
+  await expect(page.locator('g.play-place')).toHaveCount(37);
+  const first = (await places(page))[0]!;
+  await page.touchscreen.tap(first.x, first.y);
+  const status = page.locator('.play-status');
+  await expect(status).toContainText('1/37');
+
+  const title = page.getByRole('button', { name: 'TSP Boards' });
+  await title.tap();
+  const dialog = page.getByRole('alertdialog');
+  await expect(dialog).toContainText('Dein Spielstand bleibt erhalten');
+  await page.screenshot({ path: `${SHOTS}/4-leave.jpg`, quality: 80 });
+  await page.getByRole('button', { name: 'Weiterspielen' }).tap();
+  await expect(dialog).toHaveCount(0);
+  await expect(status).toContainText('1/37');
+
+  await title.tap();
+  await page.getByRole('button', { name: 'Zur Galerie' }).tap();
+  await expect(page.locator('.gallery-page')).toHaveCount(1);
+  // Back to the puzzle: the game goes on where it was.
+  await page
+    .locator('.card', { hasText: 'alle 37 Städte' })
+    .getByRole('button', { name: 'Spielen' })
+    .tap();
+  await expect(page.locator('.play-status')).toContainText('1/37');
+});
