@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { BoardPlan, PlanWarning } from '../../core/board/plan';
 import { DIN_PAPERS } from '../../core/board/paper';
 import type { LegendEntry } from '../../core/puzzle-file';
-import { pathCities, type BoardModel } from '../board';
+import { pathCities, usePathCities, type BoardModel } from '../board';
 import type { ExportKind } from '../export';
 import { planKey, prepareBoard } from '../plans';
 import { useFormat, useT } from '../i18n';
@@ -393,6 +393,8 @@ export function ExportPanel({
   const verified = v?.status === 'done' && v.verification.string !== null;
   const digital = useStore((s) => s.doc.purpose === 'digital');
   const plan = state?.status === 'done' ? state.plan : null;
+  // Worksheet and poster draw closed round trips: not for an open path (roadmap 9.15).
+  const path = usePathCities(board, puzzle.members) !== null;
   const download = (kind: ExportKind) => {
     // The downloads (SVG and PDF writers) load on first use.
     if (plan) void import('../export').then((m) => m.downloadBoard(kind, board, puzzle, plan));
@@ -406,8 +408,8 @@ export function ExportPanel({
       ) : digital ? (
         <>
           <p className="hint">{t.exportDigital}</p>
-          {verified && <Worksheet board={board} puzzle={puzzle} paperField />}
-          <Poster key={puzzle.key} board={board} puzzle={puzzle} logos />
+          {verified && !path && <Worksheet board={board} puzzle={puzzle} paperField />}
+          {!path && <Poster key={puzzle.key} board={board} puzzle={puzzle} logos />}
         </>
       ) : !verified ? (
         <p className="hint">{t.exportNeedsCheck}</p>
@@ -505,8 +507,8 @@ export function ExportPanel({
               <p className="hint">{t.exportHint}</p>
             </>
           )}
-          <Worksheet board={board} puzzle={puzzle} paperField={!plan} />
-          <Poster key={puzzle.key} board={board} puzzle={puzzle} logos={false} />
+          {!path && <Worksheet board={board} puzzle={puzzle} paperField={!plan} />}
+          {!path && <Poster key={puzzle.key} board={board} puzzle={puzzle} logos={false} />}
         </>
       )}
     </section>

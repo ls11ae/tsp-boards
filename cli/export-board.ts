@@ -14,6 +14,8 @@
 //   [--holes cut|mark|pit] (cut through, crosses for drilling, or engraved drill pits; default
 //   from the puzzle file's board, else cut) [--edge | --no-edge] (cut the board outline)
 //   [--radii 1,1.25,1.5,1.75,2] (r_eff values of the robustness check, mm)
+//   [--site https://ls11ae.github.io/tsp-boards/] (the site whose short link #p/<id> the solution
+//   sheet prints for a puzzle of the collection, public/puzzles/; --site '' for none)
 // A link must contain the selected cities (`sel`); a puzzle file brings its places (also
 // composite ones), marked places, legend and preferred start nail, and an open path with
 // given end points (roadmap 9.15: the world board, its scale at the end nail). The exact string
@@ -38,7 +40,7 @@ import { circlePath, rectPath, type PathCommand } from '../src/core/board/shapes
 import { textPath } from '../src/core/board/text';
 import { citiesFromColumns, listName } from '../src/core/data';
 import { rEffMm, type PuzzleParams } from '../src/core/params';
-import { decodePermalink } from '../src/core/permalink';
+import { decodePermalink, shortLink } from '../src/core/permalink';
 import { listCities } from '../src/core/places';
 import { parsePuzzleDoc } from '../src/core/puzzle-file';
 import { checkRobustness } from '../src/core/robustness';
@@ -80,6 +82,9 @@ function readLogo(file: string): Logo {
   return logo;
 }
 
+const COLLECTION = path.resolve(import.meta.dirname, '../public/puzzles');
+const SITE = arg('site', 'https://ls11ae.github.io/tsp-boards/');
+
 function fromPuzzle(file: string): Source {
   const doc = parsePuzzleDoc(JSON.parse(readFileSync(file, 'utf8')));
   if (!doc.map) throw new Error(`${file}: not a map puzzle`);
@@ -104,7 +109,8 @@ function fromPuzzle(file: string): Source {
     title: doc.title,
     pool,
     extras: { board: map.board ?? null, logos, legendLogo, path: map.path ?? null },
-    link: '',
+    // A puzzle of the collection opens by its short link (roadmap 9.10).
+    link: path.dirname(path.resolve(file)) === COLLECTION && SITE ? shortLink(SITE, doc.id) : '',
     name: doc.id,
     country,
   };
@@ -338,6 +344,7 @@ function runnerUpSection(
   const before = (t: readonly number[]) =>
     mm(measuredLength(setup.inst, t, slot, direction) - measuredUm);
   const out: string[] = [];
+  const trip = setup.inst.fixedEdge ? 'path' : 'round trip';
   const stringSecond = stringResult.second ? nearest(stringResult.second) : null;
   const scaleSecond = p.measured.second ? nearest(p.measured.second) : null;
   const differs =
@@ -348,7 +355,7 @@ function runnerUpSection(
     out.push(
       '## Runner-up at the scale (for checking the scale)',
       '',
-      `The second-best round trip as read at the scale is not the string runner-up: it ends ${before(scaleSecond)} mm before 0 (the gap at the scale).`,
+      `The second-best ${trip} as read at the scale is not the string runner-up: it ends ${before(scaleSecond)} mm before 0 (the gap at the scale).`,
       '',
       names(scaleSecond),
       '',
@@ -358,8 +365,8 @@ function runnerUpSection(
       differs ? '## String runner-up' : '## Runner-up (for checking the scale)',
       '',
       differs
-        ? `The second-shortest round trip by string length; at the scale it ends ${before(stringSecond)} mm before 0.`
-        : `The second-shortest round trip, by string length and as read at the scale: it ends ${before(stringSecond)} mm before 0.`,
+        ? `The second-shortest ${trip} by string length; at the scale it ends ${before(stringSecond)} mm before 0.`
+        : `The second-shortest ${trip}, by string length and as read at the scale: it ends ${before(stringSecond)} mm before 0.`,
       '',
       names(stringSecond),
       '',
