@@ -1,7 +1,7 @@
 import { lazy, Suspense, useMemo } from 'react';
 import { tourMetrics } from '../../core/metrics';
 import type { Evaluation } from '../../core/search/search';
-import { boardInstance, legMm, type BoardModel } from '../board';
+import { boardInstance, legMm, pathCities, shownRoute, type BoardModel } from '../board';
 import { PlaceLegend } from './PlaceLegend';
 import { clearMarks, showCandidate } from '../controller';
 import { useFormat, useT } from '../i18n';
@@ -122,8 +122,14 @@ function PuzzleMetrics({
             : t.euclidExactStringLocal;
 
   const tour = puzzle.tour;
-  const euclideanMm = tour
-    ? tour.reduce((sum, c, i) => sum + legMm(board, c, tour[(i + 1) % tour.length]!), 0)
+  // An open path (roadmap 9.15) without its given leg.
+  const route = tour ? shownRoute(tour, pathCities(board, puzzle.members)) : null;
+  const euclideanMm = route
+    ? route.cities.reduce(
+        (sum, c, i, r) =>
+          i + 1 < r.length || route.closed ? sum + legMm(board, c, r[(i + 1) % r.length]!) : sum,
+        0,
+      )
     : null;
   const stringMm = exact?.string ? exact.string.optimalLength / 1000 : e ? e.lengthUm / 1000 : null;
   const thesis = useMemo(

@@ -8,7 +8,7 @@ import {
   type CountryFile,
   type Manifest,
 } from '../core/data';
-import { compositePlace, type LinkMember, type LinkPlace } from '../core/places';
+import { compositePlace, listCities, type LinkMember, type LinkPlace } from '../core/places';
 import type { Member, Place } from '../core/puzzle-file';
 import {
   DEFAULT_PARAMS,
@@ -32,7 +32,7 @@ import type {
   SearchRequest,
   SearchResponse,
 } from '../workers/protocol';
-import { getBoard, slotSphere, townsById } from './board';
+import { getBoard, pathEdge, slotSphere, townsById } from './board';
 import { openListPuzzle } from './lists';
 import { applyIncrementalLink } from './incremental';
 import { getLabels, poolLabels } from './labels';
@@ -114,7 +114,12 @@ export async function switchCountry(code: string): Promise<void> {
   >((p, key) => ({ ...p, [key]: (sphere ? WORLD_PARAMS : DEFAULT_PARAMS)[key] }), {});
   useStore.setState({
     country,
-    params: { ...params, ...(sphere !== wasSphere ? board : {}), region: country.country },
+    params: {
+      ...params,
+      ...(sphere !== wasSphere ? board : {}),
+      region: country.country,
+      flatMap: false,
+    },
     list: null,
     loaded: null,
     shown: { kind: 'auto' },
@@ -156,9 +161,16 @@ function applyPermalink(hash: string): void {
     mode: link.mode,
   });
   if (link.title !== null) useStore.getState().setDoc({ title: link.title });
+  // An open path (roadmap 9.15): GeoNames ids, or list indices for a list link.
+  useStore.getState().setDoc({ path: link.list ? null : link.path });
   if (link.list) {
     const places = linkPlaces(country, link.list.places, warnings, link.list.highlight);
     useStore.setState({ linkWarnings: warnings });
+    if (link.path) {
+      const cities = listCities(places, townsById(country));
+      const [start, end] = [cities[link.path.start], cities[link.path.end]];
+      useStore.getState().setDoc({ path: start && end ? { start: start.id, end: end.id } : null });
+    }
     openListPuzzle(link.list.mode, places, link.list.selected);
   } else if (link.selected) {
     openSelection(link.selected, warnings);
@@ -321,8 +333,16 @@ function searchPool(): SearchPool | null {
     ids.map((id) => board.index.get(id)).filter((i): i is number => i !== undefined);
   const labels = getLabels(board, params);
   const groups = boardGroups();
+  // An open path (roadmap 9.15) needs both end points in every candidate: pinned.
+  const path = useStore.getState().doc.path;
+  const ends = path ? indices([path.start, path.end]) : [];
+  const fixedEdge =
+    ends.length === 2 && path && pinned.includes(path.start) && pinned.includes(path.end)
+      ? ([ends[0]!, ends[1]!] as const)
+      : null;
   return {
     points: board.points,
+    ...(fixedEdge ? { fixedEdge } : {}),
     ...(board.sphere ? { sphere: board.sphere } : {}),
     prominence: board.pool.map(prominence),
     pinned: indices(pinned),
@@ -544,6 +564,7 @@ function pump(): void {
     key: job.key,
     points: job.members.map((c) => board.points[c]!),
     sphere: slotSphere(board, job.members),
+    fixedEdge: pathEdge(board, job.members),
     tour: job.tour ? job.tour.map((c) => slot.get(c)!) : [],
     rEffMm: effectiveREffMm(params, doc.purpose),
     timeLimitSec: VERIFY_TIME_LIMIT_SEC,
@@ -580,9 +601,11 @@ export function setPurpose(purpose: Purpose): void {
   if (useStore.getState().puzzleType === 'map') purposeChanged();
 }
 
-// World files measure great-circle distances: their puzzles are digital (roadmap 8.2).
+// World files measure great-circle distances: their puzzles are digital (roadmap 8.2), except
+// a world board measured on the flat map (roadmap 9.15).
 useStore.subscribe((s) => {
-  if (s.country?.metric === 'sphere' && s.doc.purpose !== 'digital') setPurpose('digital');
+  if (s.country?.metric === 'sphere' && !s.params.flatMap && s.doc.purpose !== 'digital')
+    setPurpose('digital');
 });
 
 function purposeChanged(): void {
@@ -622,9 +645,11 @@ let checkedPool = '';
  * or population threshold) must not be reused for the same key.
  */
 function checkPool(): void {
-  const { country, params } = useStore.getState();
+  const { country, params, doc } = useStore.getState();
   if (!country) return;
-  const signature = poolSignature(getBoard(country, params).pool);
+  // An open path changes every result too.
+  const path = doc.path ? `|${doc.path.start}-${doc.path.end}` : '';
+  const signature = poolSignature(getBoard(country, params).pool) + path;
   if (signature === checkedPool) return;
   checkedPool = signature;
   resetVerifications();

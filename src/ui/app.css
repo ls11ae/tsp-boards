@@ -778,6 +778,29 @@ ul.cards {
   fill: none;
 }
 
+/* The finish of an open path (roadmap 9.15): two rings, filled once reached. */
+.play-place.finish circle {
+  stroke: var(--play);
+}
+
+.play-place.finish circle.start-ring {
+  fill: none;
+}
+
+/* The given leg of an open path (roadmap 9.15): dashed, not part of the puzzle. */
+.given-leg {
+  fill: none;
+  stroke: var(--nail);
+  stroke-width: 2px;
+  stroke-dasharray: 8 6;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.8;
+}
+
+.globe .given-leg {
+  vector-effect: none;
+}
+
 /* Marked places (roadmap 9.1): a ring, as on the board. */
 .play-place circle.mark-ring,
 .play-place.visited circle.mark-ring,

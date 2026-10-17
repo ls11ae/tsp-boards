@@ -2,7 +2,7 @@
 // puzzle (switching keeps progress, also across reloads), local highscores, and the anonymous
 // game record (sent only with consent and only if an endpoint is configured).
 
-import { Instance } from '../core/instance';
+import type { FixedEdge, Instance } from '../core/instance';
 import { effectiveREffMm } from '../core/params';
 import { encodePlayLink } from '../core/permalink';
 import { clickNail, judge, puzzleHash, undo, type PlayRecord } from '../core/play';
@@ -15,9 +15,9 @@ import {
   type ScoreEntry,
 } from '../core/scores';
 import { euclideanLength } from '../core/tsp/tour';
-import { boardInstance, getBoard } from './board';
+import { boardInstance, getBoard, pathEdge } from './board';
 import { KIOSK_LEVELS, kioskName } from './kiosk';
-import { linkList } from './lists';
+import { linkList, linkPath } from './lists';
 import type { PuzzleView } from './puzzle';
 import { NEW_GAME, useStore, writePlayerName, type PlayUi } from './store';
 
@@ -252,29 +252,38 @@ export function recordUnfinishedScore(): void {
 let instanceCache: { key: string; rEff: number; inst: Instance } | null = null;
 
 function puzzleInstance(puzzle: PuzzleView): Instance | null {
-  const { country, params } = useStore.getState();
+  const { country, params, doc } = useStore.getState();
   if (!country) return null;
-  const rEff = effectiveREffMm(params, useStore.getState().doc.purpose);
-  if (instanceCache?.key === puzzle.key && instanceCache.rEff === rEff) return instanceCache.inst;
+  const rEff = effectiveREffMm(params, doc.purpose);
+  const key = `${puzzle.key}|${JSON.stringify(doc.path ?? null)}`;
+  if (instanceCache?.key === key && instanceCache.rEff === rEff) return instanceCache.inst;
   const inst = boardInstance(getBoard(country, params), puzzle.members, rEff);
-  instanceCache = { key: puzzle.key, rEff, inst };
+  instanceCache = { key, rEff, inst };
   return inst;
 }
 
+/** The end points of the shown puzzle's open path as slots (roadmap 9.15), or null. */
+export function puzzleEnds(puzzle: PuzzleView): FixedEdge | null {
+  const { country, params } = useStore.getState();
+  return country ? pathEdge(getBoard(country, params), puzzle.members) : null;
+}
+
 export function playClick(puzzle: PuzzleView, slot: number): void {
+  const ends = puzzleEnds(puzzle);
   updateGame((p) => {
     if (p.revealed) return p;
     return {
       ...p,
-      state: clickNail(p.state, slot, puzzle.members.length),
+      state: clickNail(p.state, slot, puzzle.members.length, ends),
       startedAt: p.startedAt ?? Date.now(),
     };
   });
   judgePending(puzzle);
 }
 
-export function playUndo(): void {
-  updateGame((p) => (p.revealed ? p : { ...p, state: undo(p.state) }));
+export function playUndo(puzzle: PuzzleView | null = null): void {
+  const ends = puzzle ? puzzleEnds(puzzle) : null;
+  updateGame((p) => (p.revealed ? p : { ...p, state: undo(p.state, ends) }));
 }
 
 /** Clears the board; the game (time, attempts, a solution found or shown) goes on. */
@@ -375,6 +384,7 @@ export function playLink(puzzle: PuzzleView): string | null {
     __APP_VERSION__,
     doc.title,
     linkList(puzzle.members),
+    linkPath(),
   );
   return `${window.location.origin}${window.location.pathname}${hash}`;
 }

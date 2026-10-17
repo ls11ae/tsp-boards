@@ -6,7 +6,7 @@ import type { BoardPlan } from '../core/board/plan';
 import { rEffMm } from '../core/params';
 import { robustnessRadii, type RobustnessRow } from '../core/robustness';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
-import type { BoardModel } from './board';
+import { pathEdge, type BoardModel } from './board';
 import { planKey } from './plans';
 import type { PuzzleView } from './puzzle';
 import { useStore } from './store';
@@ -61,6 +61,7 @@ export function checkBoardRobustness(board: BoardModel, puzzle: PuzzleView, plan
     points: puzzle.members.map((c) => board.points[c]!),
     radii: robustnessRadii(rEffMm(params)),
     reference: v.verification.string.optimal,
+    fixedEdge: pathEdge(board, puzzle.members),
     scale: { slot: plan.scale.slot, direction: plan.scale.direction },
     timeLimitSec: TIME_LIMIT_SEC,
   } satisfies ExactWorkerRequest);

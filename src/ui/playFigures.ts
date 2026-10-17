@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { effectiveREffMm } from '../core/params';
 import { pathLength } from '../core/play';
 import { stringLength } from '../core/tsp/tour';
-import { boardInstance, type BoardModel } from './board';
+import { boardInstance, pathEdge, type BoardModel } from './board';
 import type { PuzzleView } from './puzzle';
 import { useStore } from './store';
 
@@ -27,9 +27,10 @@ export function usePlayFigures(board: BoardModel, puzzle: PuzzleView | null): Pl
   const purpose = useStore((s) => s.doc.purpose);
   const members = puzzle?.members;
   const rEff = effectiveREffMm(params, purpose);
+  const docPath = useStore((s) => s.doc.path);
   const inst = useMemo(
-    () => (members ? boardInstance(board, members, rEff) : null),
-    [board, members, rEff],
+    () => (members ? boardInstance(board, members, rEff, pathEdge(board, members, docPath)) : null),
+    [board, members, rEff, docPath],
   );
   if (!puzzle || !inst) return null;
   const path = play.state.path;

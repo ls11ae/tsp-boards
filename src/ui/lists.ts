@@ -11,7 +11,7 @@ import {
   parsePlaceLines,
   type ListPlace,
 } from '../core/places';
-import type { LinkList } from '../core/permalink';
+import type { LinkList, LinkPath } from '../core/permalink';
 import type { Member, Place } from '../core/puzzle-file';
 import type { ExactWorkerRequest, ExactWorkerResponse } from '../workers/protocol';
 import { getBoard, townsById } from './board';
@@ -199,6 +199,20 @@ export function linkList(members: readonly number[] | null): LinkList | null {
   const { list } = useStore.getState();
   if (!list) return null;
   return { mode: list.mode, places: list.places, selected: list.mode === 'pool' ? members : null };
+}
+
+/**
+ * The open path for a link (roadmap 9.15): indices into the place list with a list, else the
+ * end points' GeoNames ids; null without a path.
+ */
+export function linkPath(): LinkPath | null {
+  const { doc, list, country, params } = useStore.getState();
+  const path = doc.path;
+  if (!path || !list) return path ?? null;
+  if (!country) return null;
+  const board = getBoard(country, params);
+  const [start, end] = [board.index.get(path.start), board.index.get(path.end)];
+  return start !== undefined && end !== undefined ? { start, end } : null;
 }
 
 /** Back to the region's towns. */

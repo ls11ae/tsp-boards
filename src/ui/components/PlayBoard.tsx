@@ -8,7 +8,14 @@ import { useMemo, type CSSProperties } from 'react';
 import type { Obstacle } from '../../core/board/labels';
 import { boardLabel, listName, type CountryFile } from '../../core/data';
 import type { Point } from '../../core/geometry';
-import { routePath, townsById, type BoardModel } from '../board';
+import {
+  givenLegPath,
+  routePath,
+  shownRoute,
+  townsById,
+  usePathCities,
+  type BoardModel,
+} from '../board';
 import { ViewSwitch } from './WorldGlobe';
 import { useT } from '../i18n';
 import { useOverlay } from '../overlay';
@@ -181,7 +188,11 @@ export function PlayBoard({
   const overlay = useOverlay(board, puzzle);
   const revealed = play.revealed;
   const showOverlay = overlay && (revealed || play.solvedMs !== null);
-  const solution = revealed && puzzle?.tour ? routePath(board, puzzle.tour, true) : null;
+  // An open path (roadmap 9.15): start and finish marked, the given leg dashed, tours open.
+  const ends = usePathCities(board, puzzle?.members);
+  const givenLeg = ends ? givenLegPath(board, ends[0], ends[1]) : null;
+  const shown = revealed && puzzle?.tour ? shownRoute(puzzle.tour, ends) : null;
+  const solution = shown ? routePath(board, shown.cities, shown.closed) : null;
   // While a comparison is drawn next to the solution, the own tour would be a third one
   // (roadmap 9.6); after solving without the solution shown it is the optimum and stays.
   const path =
@@ -189,7 +200,7 @@ export function PlayBoard({
       ? routePath(
           board,
           play.state.path.map((s) => puzzle.members[s]!),
-          play.state.closed,
+          play.state.closed && !ends,
         )
       : '';
   const visited = new Set(play.state.path);
@@ -224,6 +235,7 @@ export function PlayBoard({
             ))}
           </g>
         )}
+        {givenLeg && <path className="given-leg" d={givenLeg} />}
         {solution && <path className="solution-tour" d={solution} />}
         {showOverlay && <Overlay board={board} overlay={overlay} showRemoved={solution !== null} />}
         {path && <path className={revealed ? 'play-path dashed' : 'play-path'} d={path} />}
@@ -235,14 +247,22 @@ export function PlayBoard({
         {members.map((c, slot) => {
           const [x, y] = board.points[c]!;
           const city = board.pool[c]!;
-          const state =
-            play.state.path[0] === slot ? ' start' : visited.has(slot) ? ' visited' : '';
+          const state = (ends ? c === ends[0] : play.state.path[0] === slot)
+            ? ' start'
+            : ends && c === ends[1]
+              ? ' finish'
+              : visited.has(slot)
+                ? ' visited'
+                : '';
           return (
             <g key={c} className={`play-place${state}`}>
               <title>{listName(city, labelLanguage)}</title>
               <circle cx={x} cy={y} r={r} />
               {city.highlight && <circle className="mark-ring" cx={x} cy={y} r={r * 1.55} />}
-              {state === ' start' && <circle className="start-ring" cx={x} cy={y} r={r * 1.9} />}
+              {(state === ' start' || state === ' finish') && (
+                <circle className="start-ring" cx={x} cy={y} r={r * 1.9} />
+              )}
+              {state === ' finish' && <circle className="start-ring" cx={x} cy={y} r={r * 2.5} />}
             </g>
           );
         })}

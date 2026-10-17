@@ -135,6 +135,11 @@ export interface DocMeta {
     readonly legend: readonly LegendEntry[];
     readonly startCity: number | null;
   } | null;
+  /**
+   * An open path with its leg back given (roadmap 9.15): start and end as city ids in the
+   * board's pool. The trip runs from start through all places to end; end → start is given.
+   */
+  readonly path?: { readonly start: number; readonly end: number } | null;
 }
 
 /** A logo for the board export (from a local SVG file, kept in memory only). */

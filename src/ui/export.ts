@@ -236,6 +236,11 @@ export function downloadBoard(
     setup.cities.map((c) => c.id),
     { pinned, excluded, groups },
     __APP_VERSION__,
+    '',
+    null,
+    setup.path
+      ? { start: setup.cities[setup.path.start]!.id, end: setup.cities[setup.path.end]!.id }
+      : null,
   );
   const pdf = solutionPdf({
     drawing,
@@ -251,6 +256,7 @@ export function downloadBoard(
     stringGapUm: v.verification.string.gap,
     link: `${window.location.origin}${window.location.pathname}${hash}`,
     formatNumber: boardNumberFormat(setup),
+    path: setup.path !== null,
   });
   save(pdf, 'application/pdf', `tsp-board-${name}-solution.pdf`);
 }

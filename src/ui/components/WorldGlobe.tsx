@@ -3,7 +3,7 @@
 
 import { listName } from '../../core/data';
 import { boardLabel } from '../../core/data';
-import type { BoardModel } from '../board';
+import { shownRoute, usePathCities, type BoardModel } from '../board';
 import { cycleCity } from '../controller';
 import { useT } from '../i18n';
 import { useOverlay } from '../overlay';
@@ -50,10 +50,17 @@ export function PlayGlobe({
   const flight = useStore((s) => s.flight);
   const overlay = useOverlay(board, puzzle);
   const members = puzzle?.members ?? [];
+  const ends = usePathCities(board, puzzle?.members);
   const visited = new Set(play.state.path);
   const places: GlobePlace[] = members.map((c, slot) => {
     const city = board.pool[c]!;
-    const state = play.state.path[0] === slot ? 'start' : visited.has(slot) ? 'visited' : '';
+    const state = (ends ? c === ends[0] : play.state.path[0] === slot)
+      ? 'start'
+      : ends && c === ends[1]
+        ? 'finish'
+        : visited.has(slot)
+          ? 'visited'
+          : '';
     return {
       city: c,
       label: boardLabel(city, lang),
@@ -64,16 +71,19 @@ export function PlayGlobe({
   });
   const revealed = play.revealed;
   const routes: GlobeRoute[] = [];
+  // The given leg of an open path (roadmap 9.15), dashed.
+  if (ends) routes.push({ cities: [ends[1], ends[0]], closed: false, className: 'given-leg' });
   const solution = revealed && puzzle?.tour;
-  if (solution) routes.push({ cities: puzzle.tour, closed: true, className: 'solution-tour' });
+  if (solution) routes.push({ ...shownRoute(puzzle.tour, ends), className: 'solution-tour' });
   const comparing = overlay && (revealed || play.solvedMs !== null);
-  if (comparing) routes.push({ cities: overlay.tour, closed: true, className: 'overlay-tour' });
+  if (comparing)
+    routes.push({ cities: overlay.tour, closed: overlay.closed, className: 'overlay-tour' });
   // During a flight only the solution and the flown legs are drawn; next to the solution and a
   // comparison the own tour would be a third one.
   if (play.state.path.length > 1 && !flight && !(comparing && solution))
     routes.push({
       cities: play.state.path.map((s) => members[s]!),
-      closed: play.state.closed,
+      closed: play.state.closed && !ends,
       className: revealed ? 'play-path dashed' : 'play-path',
     });
   return (
@@ -133,10 +143,13 @@ export function DesignGlobe({
       });
     }
   }
+  const ends = usePathCities(board, puzzle?.members);
   const routes: GlobeRoute[] = [];
+  if (ends) routes.push({ cities: [ends[1], ends[0]], closed: false, className: 'given-leg' });
   if (showTour && puzzle?.tour)
-    routes.push({ cities: puzzle.tour, closed: true, className: 'tour' });
-  if (overlay) routes.push({ cities: overlay.tour, closed: true, className: 'overlay-tour' });
+    routes.push({ ...shownRoute(puzzle.tour, ends), className: 'tour' });
+  if (overlay)
+    routes.push({ cities: overlay.tour, closed: overlay.closed, className: 'overlay-tour' });
   return (
     <Globe
       className="board-globe globe"

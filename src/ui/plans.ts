@@ -29,8 +29,10 @@ export function planKey(puzzleKey: string, p: PuzzleParams): string {
     p.targetGapMm,
     p.labelSizeMm,
     p.labelLanguage,
-    // Legend, start nail and logos change the layout.
+    // Legend, start nail, an open path and logos change the layout.
     JSON.stringify(useStore.getState().doc.board ?? null),
+    JSON.stringify(useStore.getState().doc.path ?? null),
+    p.flatMap,
     useStore
       .getState()
       .logos.map((l) => `${l.city}:${l.fileName}`)
@@ -75,6 +77,7 @@ export function puzzleSetup(board: BoardModel, puzzle: PuzzleView): BoardSetup |
   const { country, params, doc, logos } = useStore.getState();
   if (!country) return null;
   const start = doc.board?.startCity;
+  const ends = doc.path ? [board.index.get(doc.path.start), board.index.get(doc.path.end)] : [];
   const labelLogos = new Map(
     logos.flatMap((l) => {
       const index = l.city === null ? undefined : board.index.get(l.city);
@@ -97,6 +100,8 @@ export function puzzleSetup(board: BoardModel, puzzle: PuzzleView): BoardSetup |
         : null,
       logos: labelLogos,
       legendLogo: logos.find((l) => l.city === null)?.logo ?? null,
+      path:
+        ends[0] !== undefined && ends[1] !== undefined ? { start: ends[0], end: ends[1] } : null,
     },
   );
 }

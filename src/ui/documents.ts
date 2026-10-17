@@ -51,6 +51,9 @@ export function mapDocument(puzzle: PuzzleView | null): PuzzleDoc | null {
               ),
       }
     : null;
+  // An open path (roadmap 9.15) by its end points' city ids, as indices into the places.
+  const pathIndex = (id: number) => members.findIndex((c) => board.pool[c]?.id === id);
+  const path = doc.path ? { start: pathIndex(doc.path.start), end: pathIndex(doc.path.end) } : null;
   let results: MapResults | undefined;
   const v = puzzle?.verification;
   if (puzzle && v?.status === 'done' && v.verification.string) {
@@ -83,6 +86,7 @@ export function mapDocument(puzzle: PuzzleView | null): PuzzleDoc | null {
       ...(list ? { list: { mode: list.mode, places: list.places } } : {}),
       constraints: { pinned: s.pinned, excluded: s.excluded, groups: s.groups },
       ...(extras ? { board: extras } : {}),
+      ...(path && path.start >= 0 && path.end >= 0 ? { path } : {}),
       ...(results ? { results } : {}),
     },
   };
@@ -94,16 +98,29 @@ function boardMeta(doc: PuzzleDoc): DocMeta['board'] {
   if (!extras) return null;
   const map = doc.map;
   const start = extras.startPlace !== null ? map.places[extras.startPlace] : undefined;
-  let startCity: number | null = null;
-  if (start) {
-    // A town keeps its id; a list's custom or composite place is −1 − its list index.
-    const listIndex =
-      map.list?.places.findIndex(
-        (q) => q.name === start.name && q.lat === start.lat && q.lon === start.lon,
-      ) ?? -1;
-    startCity = start.id ?? (listIndex >= 0 ? customId(listIndex) : null);
-  }
-  return { legend: extras.legend, startCity };
+  return { legend: extras.legend, startCity: start ? placeCityId(doc, start) : null };
+}
+
+/** The city id of a document's place in the board's pool (as in the store's DocMeta). */
+function placeCityId(doc: PuzzleDoc, place: Place): number | null {
+  // A town keeps its id; a list's custom or composite place is −1 − its list index.
+  const listIndex =
+    doc.map?.list?.places.findIndex(
+      (q) => q.name === place.name && q.lat === place.lat && q.lon === place.lon,
+    ) ?? -1;
+  return place.id ?? (listIndex >= 0 ? customId(listIndex) : null);
+}
+
+/** The open path of a document (roadmap 9.15) by its end points' city ids. */
+function pathMeta(doc: PuzzleDoc): DocMeta['path'] {
+  const map = doc.map;
+  if (!map?.path) return null;
+  const id = (i: number) => {
+    const place = map.places[i];
+    return place ? placeCityId(doc, place) : null;
+  };
+  const [start, end] = [id(map.path.start), id(map.path.end)];
+  return start !== null && end !== null ? { start, end } : null;
 }
 
 /** The open incremental puzzle as a document; null without points. */
@@ -146,6 +163,7 @@ export function openDocument(doc: PuzzleDoc, mode: 'design' | 'play' = 'design')
     description: doc.description,
     purpose: doc.purpose,
     board: boardMeta(doc),
+    path: pathMeta(doc),
   };
   if (doc.kind === 'incremental' && doc.incremental) {
     useStore.setState({ puzzleType: 'incremental', mode, doc: meta, play: NEW_GAME, playId: null });

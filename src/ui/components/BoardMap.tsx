@@ -5,7 +5,14 @@
 import { memo, useMemo, useRef, type MouseEvent } from 'react';
 import { listName } from '../../core/data';
 import type { Point } from '../../core/geometry';
-import { legsPath, routePath, type BoardModel } from '../board';
+import {
+  givenLegPath,
+  legsPath,
+  routePath,
+  shownRoute,
+  usePathCities,
+  type BoardModel,
+} from '../board';
 import { cycleCity } from '../controller';
 import { addHandPoint, removeHandPoint, toggleCombine } from '../lists';
 import { planKey, previewPaths } from '../plans';
@@ -120,7 +127,7 @@ export function Overlay({
         // Left-out edges belong to the optimum: great circles.
         <path className="overlay-removed" d={legsPath(board, overlay.removed)} />
       )}
-      <path className="overlay-tour" d={routePath(board, overlay.tour, true, straight)} />
+      <path className="overlay-tour" d={routePath(board, overlay.tour, overlay.closed, straight)} />
       <path className="overlay-added" d={legsPath(board, overlay.added, straight)} />
     </g>
   );
@@ -160,7 +167,11 @@ export function BoardMap({
   const nailRadius = digital
     ? Math.max(MIN_VISUAL_RADIUS_MM, 0.004 * Math.max(widthMm, heightMm))
     : params.nailDiameterMm / 2;
-  const tourPath = puzzle?.tour && showTour ? routePath(board, puzzle.tour, true) : null;
+  // An open path (roadmap 9.15): the tour from start to end, its given leg dashed.
+  const ends = usePathCities(board, members);
+  const route = puzzle?.tour && showTour ? shownRoute(puzzle.tour, ends) : null;
+  const tourPath = route ? routePath(board, route.cities, route.closed) : null;
+  const givenLeg = ends ? givenLegPath(board, ends[0], ends[1]) : null;
   const overlay = useOverlay(board, puzzle);
   const teaching = useStore((s) => s.teaching);
   const teachFrame =
@@ -223,6 +234,7 @@ export function BoardMap({
           <PoolDots points={board.points} />
         </>
       )}
+      {givenLeg && <path className="given-leg" d={givenLeg} />}
       {tourPath && !teachFrame && <path className="tour" d={tourPath} />}
       {teachFrame && puzzle && (
         <TeachingLayer board={board} members={puzzle.members} frame={teachFrame} />

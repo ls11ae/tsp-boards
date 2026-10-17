@@ -1,7 +1,7 @@
 // Messages between the UI thread and the workers. Plain data only (structured clone).
 
 import type { Point } from '../core/geometry';
-import type { Sphere } from '../core/instance';
+import type { FixedEdge, Sphere } from '../core/instance';
 import type {
   Evaluation,
   SearchParams,
@@ -59,6 +59,8 @@ export interface VerifyJob {
   readonly points: readonly Point[];
   /** Great-circle distances (world puzzles); omitted or null: the board's plane. */
   readonly sphere?: Sphere | null;
+  /** The given leg of an open path (slots, roadmap 9.15); omitted or null: a round trip. */
+  readonly fixedEdge?: FixedEdge | null;
   /** Best known tour over slots. */
   readonly tour: readonly number[];
   readonly rEffMm: number;
@@ -98,6 +100,7 @@ export interface RoundsJob {
   /** Board points (mm) in slot order. */
   readonly points: readonly Point[];
   readonly sphere?: Sphere | null;
+  readonly fixedEdge?: FixedEdge | null;
 }
 
 export interface RobustnessJob {
@@ -106,6 +109,7 @@ export interface RobustnessJob {
   readonly radii: readonly number[];
   /** The board's optimal tour (slots). */
   readonly reference: readonly number[];
+  readonly fixedEdge?: FixedEdge | null;
   readonly scale: ScalePosition | null;
   readonly timeLimitSec: number;
 }

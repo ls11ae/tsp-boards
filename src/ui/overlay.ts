@@ -4,15 +4,17 @@
 import { useMemo } from 'react';
 import { edgeDifference, heuristicTour } from '../core/overlays';
 import { effectiveREffMm } from '../core/params';
-import { stringLength } from '../core/tsp/tour';
+import { openPath, stringLength } from '../core/tsp/tour';
 import { boardInstance, type BoardModel } from './board';
 import type { PuzzleView } from './puzzle';
 import { useStore, type OverlayChoice } from './store';
 
 export interface OverlayView {
   readonly kind: Exclude<OverlayChoice, 'none'>;
-  /** Pool indices. */
+  /** Pool indices; with given end points (roadmap 9.15) the open path from start to end. */
   readonly tour: readonly number[];
+  /** False for an open path (its given leg is drawn on its own). */
+  readonly closed: boolean;
   /** Edges (pool indices) of the overlay that the optimum does not use, and vice versa. */
   readonly added: readonly (readonly [number, number])[];
   readonly removed: readonly (readonly [number, number])[];
@@ -51,9 +53,11 @@ export function useOverlay(
     const optimumUm = stringLength(inst, optimum);
     const d = edgeDifference(optimum, other, inst.n);
     const pool = ([a, b]: readonly [number, number]) => [members[a]!, members[b]!] as const;
+    const open = inst.fixedEdge ? openPath(inst, other) : null;
     return {
       kind,
-      tour: other.map((s) => members[s]!),
+      tour: (open ?? other).map((s) => members[s]!),
+      closed: open === null,
       added: d.added.map(pool),
       removed: d.removed.map(pool),
       excessUm: stringLength(inst, other) - optimumUm,

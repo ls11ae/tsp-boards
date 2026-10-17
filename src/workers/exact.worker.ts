@@ -42,16 +42,25 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
     }
     case 'robustness': {
       for (const r of request.radii) {
-        const row = checkRobustness(highs, request.points, r, request.reference, request.scale, {
-          timeLimitSec: request.timeLimitSec,
-        });
+        const row = checkRobustness(
+          highs,
+          request.points,
+          r,
+          request.reference,
+          request.scale,
+          { timeLimitSec: request.timeLimitSec },
+          request.fixedEdge ?? null,
+        );
         reply({ type: 'robustness-row', jobId: request.jobId, row });
       }
       reply({ type: 'robustness-done', jobId: request.jobId });
       break;
     }
     case 'rounds': {
-      const rounds = subtourRounds(highs, new Instance(request.points, 0, request.sphere ?? null));
+      const rounds = subtourRounds(
+        highs,
+        new Instance(request.points, 0, request.sphere ?? null, request.fixedEdge ?? null),
+      );
       reply({ type: 'rounds', jobId: request.jobId, rounds });
       break;
     }
@@ -74,9 +83,10 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
     }
     case 'plan': {
       const start = performance.now();
-      const { points, rEffMm, ...rest } = request.data;
+      const { points, rEffMm, fixedEdge, ...rest } = request.data;
       try {
-        const plan = planBoard({ ...rest, inst: new Instance(points, rEffMm) }, highs, {
+        const inst = new Instance(points, rEffMm, null, fixedEdge ?? null);
+        const plan = planBoard({ ...rest, inst }, highs, {
           exact: { timeLimitSec: request.timeLimitSec },
         });
         reply({
@@ -95,7 +105,12 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
     case 'verify': {
       const start = performance.now();
       try {
-        const inst = new Instance(request.points, request.rEffMm, request.sphere ?? null);
+        const inst = new Instance(
+          request.points,
+          request.rEffMm,
+          request.sphere ?? null,
+          request.fixedEdge ?? null,
+        );
         // Puzzles from a link come without a tour: start from a heuristic one.
         const tour =
           request.tour.length === inst.n

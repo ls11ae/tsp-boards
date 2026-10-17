@@ -54,7 +54,11 @@ export function PlayStatus({
         )}
       </span>
       <span className="actions">
-        <button type="button" onClick={playUndo} disabled={visited === 0 || play.revealed}>
+        <button
+          type="button"
+          onClick={() => playUndo(puzzle)}
+          disabled={visited === 0 || play.revealed}
+        >
           {t.playUndo}
         </button>
         {done ? (

@@ -44,7 +44,8 @@ export function startTeaching(
   kind: TeachingKind,
   start: number,
 ): void {
-  const inst = boardInstance(board, puzzle.members, 0);
+  // The heuristics are shown on round trips, also for an open path (roadmap 9.15).
+  const inst = boardInstance(board, puzzle.members, 0, null);
   worker?.terminate();
   worker = null;
   const base = { key: puzzle.key, kind, start, index: 0, playing: true, error: null };

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { effectiveREffMm } from '../../core/params';
 import { pathLength } from '../../core/play';
 import { stringLength } from '../../core/tsp/tour';
-import { boardInstance, type BoardModel } from '../board';
+import { boardInstance, pathEdge, shownRoute, type BoardModel } from '../board';
 import { PlaceLegend } from './PlaceLegend';
 import { useFormat, useT } from '../i18n';
 import {
@@ -26,16 +26,19 @@ import { DailyScores, Highscores, KioskPlayerName, ShareConsent, Timer } from '.
 
 /**
  * Keyboard play: the next place from a list (unvisited places by name; the start once all
- * are visited, to close the round trip).
+ * are visited, to close the round trip). With given end points (roadmap 9.15) the end comes
+ * last and closes the round trip.
  */
 function NextPlace({
   board,
   puzzle,
   digital,
+  ends,
 }: {
   readonly board: BoardModel;
   readonly puzzle: PuzzleView;
   readonly digital: boolean;
+  readonly ends: readonly [number, number] | null;
 }) {
   const t = useT();
   const fmt = useFormat();
@@ -43,13 +46,13 @@ function NextPlace({
   const [choice, setChoice] = useState('');
   const n = puzzle.members.length;
   const name = (slot: number) => board.pool[puzzle.members[slot]!]!.name;
-  const visited = new Set(state.path);
+  const visited = new Set(ends ? [ends[0], ends[1], ...state.path] : state.path);
   const options = puzzle.members
     .map((_, s) => s)
     .filter((s) => !visited.has(s))
     .sort((a, b) => name(a).localeCompare(name(b), fmt.lang));
-  const start = state.path[0];
-  const canClose = !state.closed && state.path.length === n && start !== undefined;
+  const start = ends ? ends[1] : state.path[0];
+  const canClose = !state.closed && state.path.length === (ends ? n - 1 : n) && start !== undefined;
   if (state.closed) return null;
   const add = (value: string) => {
     const slot = Number(value);
@@ -69,7 +72,11 @@ function NextPlace({
         <span>{digital ? t.nextPlace : t.nextNail}</span>
         <select value={choice} onChange={(e) => setChoice(e.target.value)}>
           <option value="">–</option>
-          {canClose && <option value={start}>{t.closeTrip(name(start))}</option>}
+          {canClose && (
+            <option value={start}>
+              {ends ? t.playPathFinish(name(start)) : t.closeTrip(name(start))}
+            </option>
+          )}
           {options.map((s) => (
             <option key={s} value={s}>
               {name(s)}
@@ -125,9 +132,14 @@ export function PlayPanel({
 
   const members = puzzle?.members;
   const rEff = effectiveREffMm(params, purpose);
+  const docPath = useStore((s) => s.doc.path);
+  const ends = useMemo(
+    () => (members ? pathEdge(board, members, docPath) : null),
+    [board, members, docPath],
+  );
   const inst = useMemo(
-    () => (members ? boardInstance(board, members, rEff) : null),
-    [board, members, rEff],
+    () => (members ? boardInstance(board, members, rEff, ends) : null),
+    [board, members, rEff, ends],
   );
 
   if (!puzzle || !inst) return <aside className="panel side">{t.loading}</aside>;
@@ -141,25 +153,35 @@ export function PlayPanel({
   const km = (um: number, d = 1) => fmt.number(um / 1000 / board.projection.mmPerKm, d);
   const longer = (excessUm: number) =>
     digital && optimum
-      ? t.playLongerDigital(fmt.number((100 * excessUm) / optimum.optimalLength, 2), km(excessUm))
-      : t.playLonger(mm(excessUm));
+      ? (ends ? t.playPathLongerDigital : t.playLongerDigital)(
+          fmt.number((100 * excessUm) / optimum.optimalLength, 2),
+          km(excessUm),
+        )
+      : (ends ? t.playPathLonger : t.playLonger)(mm(excessUm));
+  const name = (slot: number) => board.pool[puzzle.members[slot]!]!.name;
   const last = play.attempts.at(-1);
   const judged = play.state.closed && play.judged === pathKey && last !== undefined;
 
   return (
     <aside className="panel side">
       <section>
-        <h2>{t.playTitle(fmt.integer(n), places)}</h2>
+        <h2>
+          {ends
+            ? t.playPathTitle(fmt.integer(n), name(ends[0]), name(ends[1]))
+            : t.playTitle(fmt.integer(n), places)}
+        </h2>
         {kiosk && <KioskPlayerName />}
         {kiosk && !digital && <p className="hint kiosk-note">{t.kioskString}</p>}
         <p className="hint">
-          {digital
-            ? touch
-              ? t.playHintDigitalTouch
-              : t.playHintDigital
-            : touch
-              ? t.playHintTouch
-              : t.playHint}
+          {ends
+            ? t.playPathHint(name(ends[0]), name(ends[1]), touch, digital)
+            : digital
+              ? touch
+                ? t.playHintDigitalTouch
+                : t.playHintDigital
+              : touch
+                ? t.playHintTouch
+                : t.playHint}
         </p>
         <PlaceLegend board={board} members={puzzle.members} />
         {board.sphere && (
@@ -170,7 +192,7 @@ export function PlayPanel({
           <dd>
             {fmt.integer(path.length)} / {fmt.integer(n)}
           </dd>
-          <dt>{digital ? t.tourLengthKm : t.stringLength}</dt>
+          <dt>{ends ? t.playPathLength : digital ? t.tourLengthKm : t.stringLength}</dt>
           <dd>{digital ? `${km(length, 0)} km` : `${mm(length)} mm`}</dd>
           <dt>{t.playTime}</dt>
           <dd>
@@ -179,10 +201,12 @@ export function PlayPanel({
           <dt>{t.playAttempts}</dt>
           <dd>{fmt.integer(play.attempts.length)}</dd>
         </dl>
-        {play.state.closed && !judged && <p className="hint">{t.playComputing}</p>}
+        {play.state.closed && !judged && (
+          <p className="hint">{ends ? t.playPathComputing : t.playComputing}</p>
+        )}
         {judged &&
           (last.excessUm === 0 ? (
-            <p className="play-result optimal">{t.playOptimal}</p>
+            <p className="play-result optimal">{ends ? t.playPathOptimal : t.playOptimal}</p>
           ) : (
             <p className="play-result">{longer(last.excessUm)}</p>
           ))}
@@ -192,13 +216,15 @@ export function PlayPanel({
         {play.revealed && optimum && (
           <p className="hint">
             {digital
-              ? t.playRevealedDigital(km(optimum.optimalLength, 0))
-              : t.playRevealed(mm(optimum.optimalLength))}
+              ? (ends ? t.playPathRevealedDigital : t.playRevealedDigital)(
+                  km(optimum.optimalLength, 0),
+                )
+              : (ends ? t.playPathRevealed : t.playRevealed)(mm(optimum.optimalLength))}
           </p>
         )}
         {play.revealed && (
           <p className="legend">
-            <span className="legend-line solution" /> {t.legendOptimum}{' '}
+            <span className="legend-line solution" /> {ends ? t.legendPathOptimum : t.legendOptimum}{' '}
             {path.length > 1 && (
               <>
                 <span className="legend-line dashed" /> {t.legendOwn}
@@ -207,10 +233,14 @@ export function PlayPanel({
           </p>
         )}
         {!play.revealed && play.solvedMs === null && (
-          <NextPlace puzzle={puzzle} board={board} digital={digital} />
+          <NextPlace puzzle={puzzle} board={board} digital={digital} ends={ends} />
         )}
         <div className="actions">
-          <button type="button" onClick={playUndo} disabled={path.length === 0 || play.revealed}>
+          <button
+            type="button"
+            onClick={() => playUndo(puzzle)}
+            disabled={path.length === 0 || play.revealed}
+          >
             {t.playUndo}
           </button>
           <button type="button" onClick={playRestart} disabled={path.length === 0}>
@@ -245,7 +275,12 @@ export function PlayPanel({
         {(play.revealed || play.solvedMs !== null) && (
           <OverlayPicker board={board} puzzle={puzzle} />
         )}
-        {board.sphere && <FlightButtons puzzle={puzzle} />}
+        {board.sphere && (
+          <FlightButtons
+            puzzle={puzzle}
+            ends={ends && [puzzle.members[ends[0]]!, puzzle.members[ends[1]]!]}
+          />
+        )}
       </section>
       {kiosk && id ? (
         <DailyScores id={id} />
@@ -267,8 +302,17 @@ export function PlayPanel({
   );
 }
 
-/** Flights on the globe (roadmap 9.3): the solution, or the player's own closed round trip. */
-function FlightButtons({ puzzle }: { readonly puzzle: PuzzleView }) {
+/**
+ * Flights on the globe (roadmap 9.3): the solution, or the player's own closed round trip. An
+ * open path (roadmap 9.15) is flown from its start, and its given leg closes the loop.
+ */
+function FlightButtons({
+  puzzle,
+  ends,
+}: {
+  readonly puzzle: PuzzleView;
+  readonly ends: readonly [number, number] | null;
+}) {
   const t = useT();
   const play = useStore((s) => s.play);
   const flying = useStore((s) => s.flight !== null);
@@ -286,7 +330,11 @@ function FlightButtons({ puzzle }: { readonly puzzle: PuzzleView }) {
       ) : (
         <>
           {done && puzzle.tour && (
-            <button type="button" className="primary" onClick={() => fly(puzzle.tour!)}>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => fly(shownRoute(puzzle.tour!, ends).cities)}
+            >
               {t.flyTour}
             </button>
           )}

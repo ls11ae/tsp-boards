@@ -6,7 +6,7 @@ import type { BoardModel } from '../board';
 import { changeParams, startSearch, stopSearch, switchCountry } from '../controller';
 import { useFormat, useT } from '../i18n';
 import { encodePermalink } from '../../core/permalink';
-import { linkList } from '../lists';
+import { linkList, linkPath } from '../lists';
 import { playLink } from '../play';
 import { DocumentPanel } from './DocumentPanel';
 import { Group } from './Group';
@@ -296,6 +296,7 @@ export function ParamsPanel({
       __APP_VERSION__,
       useStore.getState().doc.title,
       linkList(puzzle ? puzzle.members : null),
+      linkPath(),
     );
     window.history.replaceState(null, '', hash);
     copy(window.location.href, 'link');

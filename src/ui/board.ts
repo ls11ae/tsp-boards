@@ -1,13 +1,14 @@
 // Board geometry derived from the country data and the board parameters: projection, city pool
 // with board coordinates, and SVG paths of the map layers (all in board mm).
 
-import { useStore, type UiParams } from './store';
+import { useMemo } from 'react';
+import { useStore, type DocMeta, type UiParams } from './store';
 import { citiesFromColumns, type City, type CountryFile } from '../core/data';
 import { listCities } from '../core/places';
 import type { Place } from '../core/puzzle-file';
 import { distance, greatCircleKm, type Point } from '../core/geometry';
 import { boardProjection, type BoardProjection } from '../core/projection';
-import { Instance, type Sphere } from '../core/instance';
+import { Instance, type FixedEdge, type Sphere } from '../core/instance';
 import {
   boardPoints,
   citySphere,
@@ -24,7 +25,7 @@ export interface BoardModel {
   readonly projection: BoardProjection;
   readonly pool: readonly City[];
   readonly points: readonly Point[];
-  /** Great-circle distances of the pool (world files); null on the plane. */
+  /** Great-circle distances of the pool (world files, not a world board); null on the plane. */
   readonly sphere: Sphere | null;
   /** GeoNames id -> pool index. */
   readonly index: ReadonlyMap<number, number>;
@@ -59,6 +60,7 @@ function boardKey(p: UiParams): string {
     p.marginMm,
     p.minPopulation,
     p.blankBoard,
+    p.flatMap,
   ].join('|');
 }
 
@@ -89,7 +91,8 @@ export function getBoard(
     projection,
     pool,
     points: boardPoints(pool, projection),
-    sphere: citySphere(country, pool, projection),
+    // A world board measures on the flat map (roadmap 9.15).
+    sphere: params.flatMap ? null : citySphere(country, pool, projection),
     index: new Map(pool.map((c, i) => [c.id, i])),
     paths: params.blankBoard
       ? { neighbors: '', neighborLines: '', states: '', country: '', region: null, sphere: null }
@@ -113,17 +116,90 @@ export function slotSphere(board: BoardModel, members: readonly number[]): Spher
     : null;
 }
 
-/** The instance of some pool cities (slot order), on the sphere for world files. */
+/**
+ * The given leg of the open puzzle's path (roadmap 9.15) as slots of these members: [start,
+ * end], or null without a path (or if an end point is not among the members).
+ */
+export function pathEdge(
+  board: BoardModel,
+  members: readonly number[],
+  path: DocMeta['path'] = useStore.getState().doc.path,
+): FixedEdge | null {
+  if (!path) return null;
+  const slot = (id: number) => {
+    const c = board.index.get(id);
+    return c === undefined ? -1 : members.indexOf(c);
+  };
+  const [start, end] = [slot(path.start), slot(path.end)];
+  return start >= 0 && end >= 0 && start !== end ? [start, end] : null;
+}
+
+/**
+ * The instance of some pool cities (slot order), on the sphere for world files; with the open
+ * puzzle's given leg (an open path) unless told otherwise.
+ */
 export function boardInstance(
   board: BoardModel,
   members: readonly number[],
   rEffMm: number,
+  fixedEdge: FixedEdge | null = pathEdge(board, members),
 ): Instance {
   return new Instance(
     members.map((c) => board.points[c]!),
     rEffMm,
     slotSphere(board, members),
+    fixedEdge,
   );
+}
+
+/** The end points of the open puzzle's path as pool indices [start, end], or null. */
+export function pathCities(
+  board: BoardModel,
+  members: readonly number[],
+  path: DocMeta['path'] = useStore.getState().doc.path,
+): readonly [number, number] | null {
+  const edge = pathEdge(board, members, path);
+  return edge ? [members[edge[0]]!, members[edge[1]]!] : null;
+}
+
+/** pathCities of the shown puzzle, re-rendering when the document's path changes. */
+export function usePathCities(
+  board: BoardModel | null,
+  members: readonly number[] | undefined,
+): readonly [number, number] | null {
+  const path = useStore((s) => s.doc.path);
+  return useMemo(
+    () => (board && members ? pathCities(board, members, path) : null),
+    [board, members, path],
+  );
+}
+
+/**
+ * A round trip (pool indices) as drawn: with given end points (roadmap 9.15) the open path from
+ * the start to the end, whose leg back is drawn on its own; else the closed round trip.
+ */
+export function shownRoute(
+  tour: readonly number[],
+  ends: readonly [number, number] | null,
+): { readonly cities: readonly number[]; readonly closed: boolean } {
+  if (!ends) return { cities: tour, closed: true };
+  const n = tour.length;
+  const i = tour.indexOf(ends[0]);
+  const step = tour[(i + n - 1) % n] === ends[1] ? 1 : tour[(i + 1) % n] === ends[1] ? -1 : 0;
+  if (i < 0 || step === 0) return { cities: tour, closed: true };
+  return {
+    cities: Array.from({ length: n }, (_, k) => tour[(i + step * k + n * n) % n]!),
+    closed: false,
+  };
+}
+
+/**
+ * SVG path data of the given leg of an open path between two pool cities: the great-circle arc
+ * from the end back to the start, cut where it leaves the map (as on the board, roadmap 9.15).
+ */
+export function givenLegPath(board: BoardModel, start: number, end: number): string {
+  const at = (c: number): [number, number] => [board.pool[c]!.lon, board.pool[c]!.lat];
+  return board.projection.path({ type: 'LineString', coordinates: [at(end), at(start)] });
 }
 
 /**

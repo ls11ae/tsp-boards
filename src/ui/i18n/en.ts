@@ -340,6 +340,22 @@ export const en = {
   playShare: 'Share my anonymous results (time and attempts) to help calibrate puzzle difficulty',
   playShareHint:
     'Nothing is sent without this tick. No name, no location, no cookies: only the results for this puzzle.',
+  // An open path whose leg back is given (roadmap 9.15)
+  playPathTitle: (n: string, start: string, end: string) =>
+    `Find the shortest path from ${start} to ${end} through all ${n} places`,
+  playPathHint: (start: string, end: string, touch: boolean, digital: boolean) =>
+    `The path starts in ${start} and ends in ${end}. ${touch ? 'Tap' : 'Click'} the places in the order of your path; ${end} comes last and closes the round trip. ${touch ? 'Tap' : 'Click'} a visited place to go back to it. The dashed flight from ${end} back to ${start} is given and does not count.${digital ? '' : ' The string wraps around the nails, so sharp turns cost a little extra string.'}`,
+  playPathLength: 'Length of the path',
+  playPathFinish: (end: string) => `to ${end} (finish)`,
+  playPathComputing: 'Computing the shortest path…',
+  playPathOptimal: 'Optimal! This is the shortest path.',
+  playPathLonger: (mm: string) => `Not yet: ${mm} mm of string longer than the shortest path.`,
+  playPathLongerDigital: (pct: string, km: string) =>
+    `Not yet: ${pct} % (${km} km) longer than the shortest path.`,
+  playPathRevealed: (mm: string) => `The shortest path needs ${mm} mm of string.`,
+  playPathRevealedDigital: (km: string) => `The shortest path is ${km} km long.`,
+  legendPathOptimum: 'shortest path',
+  legendGivenLeg: 'given flight',
   playDesigner: 'Open in the puzzle designer',
   playLink: 'Copy play link',
 
