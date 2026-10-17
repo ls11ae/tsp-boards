@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Games · Chair 11 Algorithm Engineering</title>
+<meta name="description" content="Browser games on algorithms and geometry from Chair 11 Algorithm Engineering, TU Dortmund University: Ruler of the Plane and TSP Boards.">
+<style>
+  :root {
+    --bg: #f7f4ee;
+    --card: #ffffff;
+    --ink: #1f1f1f;
+    --muted: #5b5b5b;
+    --line: #e2ddd3;
+    --accent: #2f6f2f;
+    --accent-ink: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --card: #252522;
+      --ink: #eeeeea;
+      --muted: #b0aea6;
+      --line: #3a3934;
+      --accent: #8dc26f;
+      --accent-ink: #14210e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 40px 16px 32px; }
+  header h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.15; margin: 0 0 6px; }
+  header p { margin: 0; color: var(--muted); }
+  .games {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 28px;
+  }
+  article {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  figure { margin: 0; }
+  figure a { display: block; aspect-ratio: 4 / 3; background: var(--line); }
+  figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  figcaption { padding: 10px 18px 0; color: var(--muted); font-size: 0.9rem; }
+  .body { padding: 12px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  h2 { font-size: 1.3rem; margin: 0; }
+  .body p { margin: 0; }
+  ul { margin: 0; padding-left: 1.1em; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 8px; }
+  .button {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .link { color: var(--ink); align-self: center; }
+  footer { margin-top: 32px; color: var(--muted); font-size: 0.9rem; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Algorithms to play with</h1>
+    <p>Browser games on algorithms and geometry from Chair 11 Algorithm Engineering, Department of Computer Science, TU Dortmund University.</p>
+  </header>
+
+  <section class="games">
+    <article>
+      <figure>
+        <a href="https://ls11ae.github.io/ruler-of-the-plane/">
+          <img src="ruler-of-the-plane.jpg" alt="Start map of Ruler of the Plane: a parchment kingdom with one place per game" width="1200" height="900">
+        </a>
+      </figure>
+      <div class="body">
+        <h2>Ruler of the Plane</h2>
+        <p>Hands-on computational geometry in a medieval kingdom:</p>
+        <ul>
+          <li><b>Light the Dungeon:</b> how few torches will do? (art gallery problem)</li>
+          <li><b>Conquer the Land:</b> build castles against the computer (Voronoi game)</li>
+          <li><b>Walk the Dog:</b> how short can the leash be? (Fréchet distance)</li>
+          <li><b>Mow the Lawn:</b> two mowers, short tours (lawn mowing)</li>
+          <li><b>Road Works:</b> every village, little road (minimum spanning tree)</li>
+        </ul>
+        <div class="actions">
+          <a class="button" href="https://ls11ae.github.io/ruler-of-the-plane/">Play</a>
+          <a class="link" href="https://github.com/ls11ae/ruler-of-the-plane">Source code</a>
+        </div>
+      </div>
+    </article>
+
+    <article>
+      <figure>
+        <a href="https://ls11ae.github.io/tsp-boards/#p/einmal-um-die-welt">
+          <img src="tsp-boards.jpg" alt="Globe seen from above the North Pole with the shortest round trip through 20 cities" width="1200" height="900">
+        </a>
+        <figcaption>Around the world: the shortest round trip through 20 cities of the northern hemisphere circles the North Pole. Can you find it?</figcaption>
+      </figure>
+      <div class="body">
+        <h2>TSP Boards</h2>
+        <p>Find the shortest round trip: the travelling salesperson problem, on maps of Germany, Europe and the world, with a globe you can turn. Every puzzle has been solved exactly, so you can see how close you are.</p>
+        <p>We also build the puzzles as wooden boards with nails and a string: if the end of the string reaches the zero mark on the scale, you have found the shortest tour.</p>
+        <div class="actions">
+          <a class="button" href="https://ls11ae.github.io/tsp-boards/">Play</a>
+          <a class="link" href="https://ls11ae.github.io/tsp-boards/#p/einmal-um-die-welt">Around the world</a>
+          <a class="link" href="https://github.com/ls11ae/tsp-boards">Source code</a>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <footer>
+    <p>The original Unity version of Ruler of the Plane (TU Eindhoven, 2017–2020) is still playable at <a href="https://kbuchin.github.io/ruler/">kbuchin.github.io/ruler</a>.</p>
+    <p>All games run in the browser. No sign-up needed.</p>
+  </footer>
+</main>
+</body>
+</html>
