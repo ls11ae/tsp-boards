@@ -30,7 +30,7 @@ export default defineConfig([
     languageOptions: { globals: globals.worker },
   },
   {
-    files: ['cli/**/*.ts', 'scripts/**/*.ts', '*.config.ts', '**/*.test.{ts,tsx}'],
+    files: ['cli/**/*.ts', 'scripts/**/*.ts', 'e2e/**/*.ts', '*.config.ts', '**/*.test.{ts,tsx}'],
     languageOptions: { globals: globals.node },
   },
   {

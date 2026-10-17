@@ -90,7 +90,8 @@ npm run check     # format check, lint, typecheck, tests, production build
 ```
 
 Individual steps: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`,
-`npm run format`.
+`npm run format`. Browser tests (playing on a phone, Playwright) are separate: once
+`npx playwright install chromium`, then `npm run e2e`.
 
 ### City data
 

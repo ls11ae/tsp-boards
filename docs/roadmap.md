@@ -666,6 +666,10 @@ order; the phone layout matters for the open day too, since visitors may play on
   - On touch devices the texts say "Tippe" instead of "Klicke".
   - Test with Playwright mobile emulation (390 × 844, touch) on the 37 puzzle: a whole round
     trip by taps, with screenshots.
+  - (Done 2026-10-17: below 600 px the play view has a one-row header, the description folds,
+    the board takes the screen above a sticky status bar; an ambiguous tap zooms in; "Tippe"
+    on touch devices; `npm run e2e` with screenshots in
+    `docs/experiments/phone-play-2026-10-17/`.)
 - **Design themes** (`--theme neutral|tu|rub`):
   - Theme files in the repository hold colours, texts and the names of logo files. The logos
     themselves come only from `local/`.

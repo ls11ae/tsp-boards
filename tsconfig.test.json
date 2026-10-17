@@ -12,6 +12,8 @@
     "src/**/*.test.tsx",
     "cli/**/*.test.ts",
     "scripts/**/*.test.ts",
+    "e2e/**/*.ts",
+    "playwright.config.ts",
     "scripts/build-data/mapshaper.d.ts",
     "src/ui/env.d.ts"
   ]

@@ -1008,3 +1008,17 @@ Short entries: decision; alternatives considered; reason. Newest last.
   gallery puzzles (its own address as base, off on localhost). Alternatives: our own encoder
   (a few hundred lines of Reed–Solomon and masks for one feature), a full permalink in the code
   (far longer, a larger code).
+- **2026-10-17 Playing on a phone (roadmap 9.10).** Below 600 px CSS width the play view keeps
+  the header to one row (no tagline, no puzzle-type switch), folds the puzzle's description
+  into the title (`<details>`), and gives the board the screen's height minus 150 px, above a
+  sticky status bar with places n/N, length, time, the result, Zurück and Lösung zeigen; the
+  full play panel follows below. A finger tap zooms in around the tap, until the two places
+  are about two hit radii apart, when the two nearest places within the hit radius (24 px)
+  differ in distance by less than half of it; a clear tap still picks the nearer place, and a
+  mouse always picks. Alternatives: zoom whenever two places are within 24 px (would also zoom
+  at accurate taps on Köln, 13 px from Bonn, and lose the overview more often), a small chooser
+  of the close places (another overlay to learn; zooming also shows the names). Hints say
+  "Tippe" when the primary pointer is coarse (`(pointer: coarse)`). The browser's tap
+  highlight is off on the board. Playwright (1.63, dev dependency) tests the phone in
+  `e2e/`, run by `npm run e2e` and not by `npm run check` (it needs a downloaded browser);
+  screenshots in `docs/experiments/phone-play-2026-10-17/`.
