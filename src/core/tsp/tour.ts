@@ -1,6 +1,9 @@
 // Tours are arrays of node indices (a cyclic order). Costs are exact integers in µm.
+//
+// With a given edge (Instance.fixedEdge, roadmap 9.15) the lengths add its cost back: a tour
+// with the edge costs its open path (the edge is free), a tour without it about 10⁹ µm more.
 
-import type { Instance } from '../instance';
+import { FIXED_EDGE_UM, type Instance } from '../instance';
 
 export type Tour = readonly number[];
 
@@ -14,11 +17,36 @@ export function isTour(tour: Tour, n: number): boolean {
   return true;
 }
 
-/** Euclidean length L in µm. */
+/** Euclidean length L in µm (of the open path, with a given edge). */
 export function euclideanLength(inst: Instance, tour: ArrayLike<number>): number {
-  let sum = 0;
+  let sum = inst.fixedEdge ? -FIXED_EDGE_UM : 0;
   for (let i = 0; i < tour.length; i++) sum += inst.dist(tour[i]!, tour[(i + 1) % tour.length]!);
   return sum;
+}
+
+/** Whether the tour contains the instance's given edge (true without one). */
+export function hasFixedEdge(inst: Instance, tour: ArrayLike<number>): boolean {
+  const f = inst.fixedEdge;
+  if (!f) return true;
+  for (let i = 0; i < tour.length; i++)
+    if (inst.isFixed(tour[i]!, tour[(i + 1) % tour.length]!)) return true;
+  return false;
+}
+
+/**
+ * The tour as the open path start → … → end of the given edge (the edge leaves from end back
+ * to start); the tour itself without one. Null if the tour lacks the edge.
+ */
+export function openPath(inst: Instance, tour: Tour): number[] | null {
+  const f = inst.fixedEdge;
+  if (!f) return [...tour];
+  const n = tour.length;
+  const i = tour.indexOf(f[0]);
+  if (tour[(i + n - 1) % n] === f[1])
+    return Array.from({ length: n }, (_, k) => tour[(i + k) % n]!);
+  if (tour[(i + 1) % n] === f[1])
+    return Array.from({ length: n }, (_, k) => tour[(i - k + n) % n]!);
+  return null;
 }
 
 /** Sum of turn costs r_eff · Σ|θ| in µm. */

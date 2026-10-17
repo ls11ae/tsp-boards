@@ -37,15 +37,20 @@ export function tourMetrics(inst: Instance, tour: Tour): TourMetrics {
   for (let i = 0; i < n; i++) {
     let nearest = Infinity;
     for (let j = 0; j < n; j++) {
-      if (j === i) continue;
+      // A given edge (roadmap 9.15) is no neighbourhood.
+      if (j === i || inst.isFixed(i, j)) continue;
       nearest = Math.min(nearest, inst.dist(i, j));
       if (j > i) minDist = Math.min(minDist, distance(points[i]!, points[j]!));
     }
     for (let j = 0; j < n; j++)
-      if (j !== i && inst.dist(i, j) <= nearest + 1) nng.add(edgeKey(i, j, n));
+      if (j !== i && !inst.isFixed(i, j) && inst.dist(i, j) <= nearest + 1)
+        nng.add(edgeKey(i, j, n));
   }
   let nonNearest = 0;
-  for (let i = 0; i < n; i++) if (!nng.has(edgeKey(tour[i]!, tour[(i + 1) % n]!, n))) nonNearest++;
+  for (let i = 0; i < n; i++) {
+    const [a, b] = [tour[i]!, tour[(i + 1) % n]!];
+    if (!inst.isFixed(a, b) && !nng.has(edgeKey(a, b, n))) nonNearest++;
+  }
   return {
     n,
     stringMm: stringLength(inst, tour) / UM_PER_MM,

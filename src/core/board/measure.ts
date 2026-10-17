@@ -22,6 +22,12 @@
 // The builder calibrates the string by winding the optimal tour (solution sheet) and marking
 // the end at the target mark, so model errors common to all tours cancel; only differences
 // between tours (the gap) rely on the model.
+//
+// An open path with fixed end points (Instance.fixedEdge, roadmap 9.15: the world board, whose
+// Pacific leg is given) is measured at its end nail t: the string is tied to the start nail
+// (no wrap), runs through all other nails to t, wraps around t and lies along the scale:
+//   M(P) = L(P) + r_eff·Σ_{inner j} θ_j + r_eff·φ(v),   v the last nail before t.
+// There is one direction only, so no spread; the scale slot is t.
 
 import { turningAngle, type Point } from '../geometry';
 import type { Instance } from '../instance';
@@ -31,7 +37,7 @@ import {
   type ExactStatus,
   type MipBackend,
 } from '../tsp/exact';
-import { sameTour, stringLength, type Tour } from '../tsp/tour';
+import { openPath, sameTour, stringLength, type Tour } from '../tsp/tour';
 
 /** Unit vector. */
 export type Direction = readonly [number, number];
@@ -83,6 +89,7 @@ export function outwardBisector(
  * the outward bisector): r_eff·|φ(a) − φ(b)| for its neighbours a and b at s.
  */
 export function directionSpread(inst: Instance, tour: Tour, slot: number, u: Direction): number {
+  if (inst.fixedEdge) return 0;
   const points = inst.pointsMm();
   const s = points[slot]!;
   const [a, b] = neighbours(tour, slot);
@@ -95,6 +102,8 @@ export function directionSpread(inst: Instance, tour: Tour, slot: number, u: Dir
  * direction): the other direction then ends at or beyond the target mark.
  */
 export function calibrationTour(inst: Instance, tour: Tour, slot: number, u: Direction): number[] {
+  // An open path runs from its start nail to its end nail.
+  if (inst.fixedEdge) return openPath(inst, tour) ?? [...tour];
   const n = tour.length;
   const start = tour.indexOf(slot);
   const forward = Array.from({ length: n }, (_, i) => tour[(start + i) % n]!);
@@ -109,7 +118,14 @@ export function measurementInstance(inst: Instance, slot: number, u: Direction):
   const points = inst.pointsMm();
   const s = points[slot]!;
   const phi = points.map((p) => endWrapAngle(s, p, u));
-  return inst.withTurnCosts(slot, (i, k) => inst.rEffUm * Math.min(phi[i]!, phi[k]!));
+  // At the end nail of an open path one neighbour is the start (the given edge): only the
+  // arrival from the other wraps.
+  const start = inst.fixedEdge?.[0] ?? -1;
+  return inst.withTurnCosts(
+    slot,
+    (i, k) =>
+      inst.rEffUm * (i === start ? phi[k]! : k === start ? phi[i]! : Math.min(phi[i]!, phi[k]!)),
+  );
 }
 
 /**
@@ -124,6 +140,16 @@ export function measuredLength(
   reverse = false,
 ): number {
   const n = inst.n;
+  if (inst.fixedEdge) {
+    // The open path from the start nail to the end nail `slot`: legs, inner turns, end wrap.
+    const path = openPath(inst, tour);
+    if (!path) throw new Error('measuredLength: the tour lacks the given edge');
+    let sum = 0;
+    for (let i = 0; i + 1 < n; i++) sum += inst.dist(path[i]!, path[i + 1]!);
+    for (let i = 1; i + 1 < n; i++) sum += inst.turn(path[i - 1]!, path[i]!, path[i + 1]!);
+    const points = inst.pointsMm();
+    return sum + Math.round(inst.rEffUm * endWrapAngle(points[slot]!, points[path[n - 2]!]!, u));
+  }
   const order = reverse ? [...tour].reverse() : [...tour];
   const start = order.indexOf(slot);
   const walk = Array.from({ length: n }, (_, i) => order[(start + i) % n]!);
@@ -151,6 +177,17 @@ export function measuredGapBound(
   const points = inst.pointsMm();
   const s = points[slot]!;
   const phi = points.map((p) => endWrapAngle(s, p, u));
+  if (inst.fixedEdge) {
+    // An open path ends at `slot` coming from some v: the wrap r_eff·φ(v) replaces nothing.
+    const start = inst.fixedEdge[0];
+    const path = openPath(inst, opt);
+    const own = path ? Math.round(inst.rEffUm * phi[path[n - 2]!]!) : 0;
+    let least = 0;
+    for (let v = 0; v < n; v++)
+      if (v !== slot && v !== start)
+        least = Math.min(least, Math.round(inst.rEffUm * phi[v]!) - own);
+    return stringGapUm + least;
+  }
   const delta = (i: number, k: number) =>
     Math.round(inst.rEffUm * Math.min(phi[i]!, phi[k]!)) - inst.turn(i, slot, k);
   const [a, b] = neighbours(opt, slot);

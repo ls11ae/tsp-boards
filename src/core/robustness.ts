@@ -5,7 +5,7 @@
 import type { Direction } from './board/measure';
 import { checkMeasurement } from './board/measure';
 import type { Point } from './geometry';
-import { Instance } from './instance';
+import { Instance, type FixedEdge } from './instance';
 import {
   optimalAndSecond,
   type ExactOptions,
@@ -55,8 +55,10 @@ export function checkRobustness(
   reference: Tour,
   scale: ScalePosition | null,
   options: ExactOptions,
+  /** The given edge of an open path (roadmap 9.15); its scale is at the end nail. */
+  fixedEdge: FixedEdge | null = null,
 ): RobustnessRow {
-  const inst = new Instance(points, rEffMm);
+  const inst = new Instance(points, rEffMm, null, fixedEdge);
   const result = optimalAndSecond(backend, inst, 'string', { optimal: reference }, options);
   const optimal = result.optimal.tour;
   if (result.optimal.status !== 'optimal' || !optimal || result.second?.status !== 'optimal')

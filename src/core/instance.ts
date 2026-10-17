@@ -11,11 +11,23 @@
 // point's longitude and latitude; distances are kilometres on the sphere times the map scale,
 // so they stay in board units (µm) and the app shows them in km like other digital puzzles.
 // There is no string on a sphere: r_eff is 0.
+//
+// A given edge (roadmap 9.15: the leg across the Pacific of a world board, which a flat board
+// cannot show) turns the round trip into an open path with fixed end points: the edge costs
+// FIXED_EDGE_UM, so negative that every good tour keeps it (heuristics need no special moves),
+// and the turns at its two ends across it cost nothing. Tour lengths (tsp/tour.ts) add the
+// amount back, so they are the lengths of the open path; the MIP forces the edge instead.
 
 import { greatCircleKm, turningAngle, type Point } from './geometry';
 
 /** Board units are mm; costs are integers in µm. */
 export const UM_PER_MM = 1000;
+
+/** Cost of the given edge in µm: far below any tour, added back by the tour lengths. */
+export const FIXED_EDGE_UM = -1_000_000_000;
+
+/** The given edge [start, end] of an open path: the path runs start → … → end. */
+export type FixedEdge = readonly [number, number];
 
 /** Great-circle distances: [longitude, latitude] of each point and the map scale. */
 export interface Sphere {
@@ -37,16 +49,27 @@ export class Instance {
   readonly rEffUm: number;
   /** Great-circle distances (null: Euclidean distances on the board). */
   readonly sphere: { readonly lonLat: Point[]; readonly mmPerKm: number } | null;
+  /** The given edge of an open path (null: a plain round trip). */
+  readonly fixedEdge: FixedEdge | null;
 
   /**
    * @param pointsMm board coordinates in mm
    * @param rEffMm nail radius + half string thickness in mm (0 for Euclidean costs; ignored on
    *   the sphere)
    * @param sphere longitude and latitude of each point for great-circle distances
+   * @param fixedEdge the given edge [start, end] of an open path (roadmap 9.15)
    */
-  constructor(pointsMm: readonly Point[], rEffMm: number, sphere: Sphere | null = null) {
+  constructor(
+    pointsMm: readonly Point[],
+    rEffMm: number,
+    sphere: Sphere | null = null,
+    fixedEdge: FixedEdge | null = null,
+  ) {
     const n = pointsMm.length;
     this.n = n;
+    if (fixedEdge && (fixedEdge[0] === fixedEdge[1] || fixedEdge.some((v) => v < 0 || v >= n)))
+      throw new Error(`fixed edge ${fixedEdge.join('–')} for ${n} points`);
+    this.fixedEdge = fixedEdge ? [fixedEdge[0], fixedEdge[1]] : null;
     if (sphere && sphere.lonLat.length !== n)
       throw new Error(`sphere: ${sphere.lonLat.length} positions for ${n} points`);
     this.sphere = sphere ? { lonLat: [...sphere.lonLat], mmPerKm: sphere.mmPerKm } : null;
@@ -62,12 +85,23 @@ export class Instance {
 
   /** Same points with zero turn costs (the Euclidean instance; on the sphere: itself). */
   euclidean(): Instance {
-    return new Instance(this.pointsMm(), 0, this.sphere);
+    return new Instance(this.pointsMm(), 0, this.sphere, this.fixedEdge);
   }
 
   /** The same map points measured on the flat map (Euclidean, r_eff 0). */
   plane(): Instance {
-    return new Instance(this.pointsMm(), 0);
+    return new Instance(this.pointsMm(), 0, null, this.fixedEdge);
+  }
+
+  /** The same points and given edge with another r_eff (mm). */
+  withREff(rEffMm: number): Instance {
+    return new Instance(this.pointsMm(), rEffMm, this.sphere, this.fixedEdge);
+  }
+
+  /** Whether {i, j} is the given edge. */
+  isFixed(i: number, j: number): boolean {
+    const f = this.fixedEdge;
+    return f !== null && ((f[0] === i && f[1] === j) || (f[0] === j && f[1] === i));
   }
 
   /** Independent copy (cheaper than rebuilding: no trigonometry). */
@@ -81,6 +115,7 @@ export class Instance {
       d: this.d.slice(),
       t: this.t.slice(),
       sphere: this.sphere && { lonLat: [...this.sphere.lonLat], mmPerKm: this.sphere.mmPerKm },
+      fixedEdge: this.fixedEdge,
     });
   }
 
@@ -149,7 +184,10 @@ export class Instance {
       d[p * n + j] = dist;
       d[j * n + p] = dist;
     }
-    if (this.rEffUm === 0) return;
+    if (this.rEffUm === 0) {
+      this.applyFixedEdge();
+      return;
+    }
     const pt = (i: number): Point => [x[i]!, y[i]!];
     const set = (i: number, j: number, k: number) => {
       const cost = Math.round(this.rEffUm * turningAngle(pt(i), pt(j), pt(k)));
@@ -160,6 +198,26 @@ export class Instance {
       for (let k = i; k < n; k++) set(i, p, k);
       if (i === p) continue;
       for (let k = 0; k < n; k++) set(p, i, k);
+    }
+    this.applyFixedEdge();
+  }
+
+  /** The given edge's cost, and no turn cost across it at its ends. */
+  private applyFixedEdge(): void {
+    const f = this.fixedEdge;
+    if (!f) return;
+    const { n, d, t } = this;
+    const [a, b] = f;
+    d[a * n + b] = FIXED_EDGE_UM;
+    d[b * n + a] = FIXED_EDGE_UM;
+    for (const [j, across] of [
+      [a, b],
+      [b, a],
+    ] as const) {
+      for (let k = 0; k < n; k++) {
+        t[(j * n + across) * n + k] = 0;
+        t[(j * n + k) * n + across] = 0;
+      }
     }
   }
 }

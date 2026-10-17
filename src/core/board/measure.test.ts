@@ -4,8 +4,9 @@ import { Instance } from '../instance';
 import { randomPoints } from '../test-utils';
 import { allTours } from '../tsp/brute-force';
 import { optimalAndSecond, type MipBackend } from '../tsp/exact';
-import { sameTour, stringLength } from '../tsp/tour';
+import { hasFixedEdge, openPath, sameTour, stringLength } from '../tsp/tour';
 import {
+  calibrationTour,
   checkMeasurement,
   endWrapAngle,
   measuredGapBound,
@@ -122,5 +123,43 @@ describe('exact measured gap against brute force', () => {
     expect(check.sameOptimum).toBe(true);
     const stringGap = exact.second!.cost - exact.optimal.cost;
     expect(Math.abs(check.gapUm - stringGap)).toBeLessThan(1.5 * 1500 * Math.PI);
+  });
+});
+
+describe('an open path measured at its end nail (roadmap 9.15)', () => {
+  it('finds the measured optimum and runner-up (n = 5..8) and is bounded by the cheap bound', () => {
+    for (let seed = 0; seed < 12; seed++) {
+      const n = 5 + (seed % 4);
+      const points = randomPoints(n, 1300 + seed, 300, 300);
+      const [start, end] = [seed % n, (seed + 2) % n];
+      const inst = new Instance(points, 1.5, null, [start, end]);
+      const ranked = allTours(inst).filter((t) => hasFixedEdge(inst, t.tour));
+      const opt = ranked[0]!.tour;
+      // The scale leaves the end nail straight on from the last leg, turned by up to 60°.
+      const path = openPath(inst, opt)!;
+      const [a, b] = [points[path[n - 2]!]!, points[end]!];
+      const angle = Math.atan2(b[1] - a[1], b[0] - a[0]) + (((seed % 5) - 2) * Math.PI) / 6;
+      const u = [Math.cos(angle), Math.sin(angle)] as const;
+      // Measured by hand: legs and inner turns of the path plus the wrap at the end nail.
+      const plain = new Instance(points, 1.5);
+      const byHand = (tour: readonly number[]) => {
+        const p = openPath(inst, tour)!;
+        let sum = 0;
+        for (let i = 0; i + 1 < n; i++) sum += plain.dist(p[i]!, p[i + 1]!);
+        for (let i = 1; i + 1 < n; i++) sum += plain.turn(p[i - 1]!, p[i]!, p[i + 1]!);
+        return sum + Math.round(1500 * endWrapAngle(points[end]!, points[p[n - 2]!]!, u));
+      };
+      const measured = ranked
+        .map(({ tour }) => ({ tour, m: measuredLength(inst, tour, end, u) }))
+        .sort((x, y) => x.m - y.m);
+      for (const { tour, m } of measured.slice(0, 4)) expect(m).toBe(byHand(tour));
+      const check = checkMeasurement(backend, inst, opt, end, u, {}, { timeLimitSec: 60 });
+      expect(check.status).toBe('optimal');
+      expect(check.lengthUm).toBe(measured[0]!.m);
+      expect(check.gapUm).toBe(measured[1]!.m - measured[0]!.m);
+      expect(calibrationTour(inst, opt, end, u)[0]).toBe(start);
+      const bound = measuredGapBound(inst, opt, end, u, ranked[1]!.length - ranked[0]!.length);
+      if (check.sameOptimum) expect(bound).toBeLessThanOrEqual(check.gapUm);
+    }
   });
 });

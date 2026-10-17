@@ -8,6 +8,8 @@
 //     S = L + Σ turn costs. For integral x the y are forced to be integral, so only x branch.
 // The second-best tour is found by adding the no-good cut Σ_{e∈OPT} x_e ≤ n − 2 (two different
 // tours share at most n − 2 edges) and keeping all SECs collected so far.
+// A given edge (Instance.fixedEdge, roadmap 9.15) is forced (x_e = 1) and costs nothing, so the
+// objective is the open path's length, as the tour lengths count it.
 
 import type { Instance } from '../instance';
 import { euclideanLength, stringLength, tourFromEdges, type Tour } from './tour';
@@ -160,7 +162,8 @@ export class ExactTsp {
     for (let i = 0; i < n; i++) {
       for (let j = i + 1; j < n; j++) {
         const e = edgeIndex(i, j, n);
-        colCost[e] = inst.dist(i, j);
+        colCost[e] = inst.isFixed(i, j) ? 0 : inst.dist(i, j);
+        if (inst.isFixed(i, j)) colLower[e] = 1;
         integrality[e] = 1;
       }
     }
