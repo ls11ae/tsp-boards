@@ -48,16 +48,17 @@ export function fitLogo(logo: Logo, box: readonly [number, number, number, numbe
 
 // --- SVG parsing ------------------------------------------------------------------------------
 
-const TAG = /<(\/?)([a-zA-Z][\w:-]*)((?:\s+[\w:-]+\s*=\s*(?:"[^"]*"|'[^']*'))*)\s*(\/?)>/g;
+/** An SVG start, end or empty tag: closing slash, name, attributes, self-closing slash. */
+export const TAG = /<(\/?)([a-zA-Z][\w:-]*)((?:\s+[\w:-]+\s*=\s*(?:"[^"]*"|'[^']*'))*)\s*(\/?)>/g;
 const ATTR = /([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
 
-function attributes(text: string): Record<string, string> {
+export function attributes(text: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const m of text.matchAll(ATTR)) out[m[1]!] = m[2] ?? m[3] ?? '';
   return out;
 }
 
-const numbers = (text: string): number[] =>
+export const numbers = (text: string): number[] =>
   (text.match(/[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?/g) ?? []).map(Number);
 
 /** SVG transform attribute as one matrix (applied right to left, as in SVG). */
@@ -247,7 +248,8 @@ export function parsePathData(d: string): PathCommand[] {
   return out;
 }
 
-function shapePath(name: string, a: Record<string, string>): PathCommand[] {
+/** Outline of a basic shape element (polygons and polylines closed), or [] for other elements. */
+export function shapePath(name: string, a: Record<string, string>): PathCommand[] {
   const n = (key: string) => Number(a[key] ?? 0);
   switch (name) {
     case 'path':
@@ -299,7 +301,8 @@ export function parseSvgLogo(svg: string): Logo {
   ];
   const skip = new Set(['defs', 'clipPath', 'mask', 'symbol', 'pattern', 'marker', 'title']);
   let skipping = 0;
-  for (const m of svg.matchAll(TAG)) {
+  // Comments may hold markup that is no shape.
+  for (const m of svg.replace(/<!--[\s\S]*?-->/g, '').matchAll(TAG)) {
     const [, close, name, attrText, selfClose] = m;
     const top = stack[stack.length - 1]!;
     if (close) {

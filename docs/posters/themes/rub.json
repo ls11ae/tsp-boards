@@ -1,0 +1,24 @@
+{
+  "_comment": "Ruhr-Universität Bochum design for Maike's corridor (roadmap 9.10): the RUB logo at the top right (where the RUB label stands in the RUB poster template), title, length and round trip in RUB blue (#003560, CMYK 100/50/0/60), a light blue tint inside alliances, the Faculty of Computer Science logo (English only) at the bottom left and the chair logo at the bottom right. The sender line is a PLACEHOLDER until Maike gives its text. Logo files are looked up in --logo-dir (default local/) and are never committed.",
+  "colors": {
+    "title": "#003560",
+    "length": "#003560",
+    "tour": "#003560",
+    "group": "#DCE6F0"
+  },
+  "header": {
+    "logo": "rub.svg",
+    "align": "right",
+    "heightMm": 24,
+    "clearSpace": 0.5
+  },
+  "footer": {
+    "left": "rub-informatik.svg",
+    "right": "rub-lehrstuhl.svg",
+    "heightMm": 30
+  },
+  "sender": {
+    "de": "Lehrstuhl [Platzhalter: Absenderzeile folgt], Fakultät für Informatik, Ruhr-Universität Bochum",
+    "en": "Chair [placeholder: sender line to follow], Faculty of Computer Science, Ruhr University Bochum"
+  }
+}

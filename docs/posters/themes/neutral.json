@@ -1,0 +1,9 @@
+{
+  "_comment": "Neutral design (roadmap 9.9, 9.10): no logos, dark title, red round trip and length, a light red tint inside alliances. The posters in the repository use it (it is also the default without --theme).",
+  "colors": {
+    "title": "#1A1A1A",
+    "length": "#C72117",
+    "tour": "#C72117",
+    "group": "#FCE6D6"
+  }
+}

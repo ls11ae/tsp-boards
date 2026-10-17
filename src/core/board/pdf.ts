@@ -10,6 +10,16 @@ const PT_PER_MM = 72 / 25.4;
 
 export type Rgb = readonly [number, number, number];
 
+/** Line ends and corners of a stroke (default: round, as for board and map lines). */
+export interface StrokeStyle {
+  readonly cap?: 'butt' | 'round' | 'square';
+  readonly join?: 'miter' | 'round' | 'bevel';
+  readonly miterLimit?: number;
+}
+
+const CAPS = { butt: 0, round: 1, square: 2 } as const;
+const JOINS = { miter: 0, round: 1, bevel: 2 } as const;
+
 function num(v: number): string {
   if (!Number.isFinite(v)) throw new Error(`PDF: invalid number ${v}`);
   const s = v.toFixed(3);
@@ -62,20 +72,30 @@ export class PdfCanvas {
     }
   }
 
-  stroke(path: Path, color: Rgb, widthMm: number, dash?: readonly number[]): this {
+  stroke(
+    path: Path,
+    color: Rgb,
+    widthMm: number,
+    dash?: readonly number[],
+    style: StrokeStyle = {},
+  ): this {
     if (path.length === 0) return this;
-    this.ops.push(`${color.map(num).join(' ')} RG ${num(widthMm)} w 1 J 1 j`);
+    const cap = CAPS[style.cap ?? 'round'];
+    const join = JOINS[style.join ?? 'round'];
+    const miter = style.miterLimit !== undefined ? ` ${num(Math.max(1, style.miterLimit))} M` : '';
+    this.ops.push(`${color.map(num).join(' ')} RG ${num(widthMm)} w ${cap} J ${join} j${miter}`);
     this.ops.push(dash ? `[${dash.map(num).join(' ')}] 0 d` : '[] 0 d');
     this.pathOps(path);
     this.ops.push('S');
     return this;
   }
 
-  fill(path: Path, color: Rgb): this {
+  /** Fills the path, by the nonzero rule or the even-odd rule. */
+  fill(path: Path, color: Rgb, evenOdd = false): this {
     if (path.length === 0) return this;
     this.ops.push(`${color.map(num).join(' ')} rg`);
     this.pathOps(path);
-    this.ops.push('f');
+    this.ops.push(evenOdd ? 'f*' : 'f');
     return this;
   }
 

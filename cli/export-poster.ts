@@ -16,6 +16,9 @@
 //   [--qr https://…/tsp-boards/] (a QR code to the game: the base URL plus #p/<puzzle id>)
 //   [--suffix -logo] (appended to all file names) [--also-plain] (with logos: also write the
 //   versions without them, without the suffix) [--png 30] (previews, dpi)
+//   [--theme neutral|tu|rub] (or a list: tu,rub; a design theme from docs/posters/themes/ or a
+//   .json file: colours, logos at the top and in the footer, the sender line; each theme but
+//   neutral adds -<theme> to the file names) [--logo-dir local] (where the themes' logos are)
 // A variants file lists several posters: { "paper", "orientation", "png", "languages",
 // "emphasis", "contactSheet", "qr", "names": { "en": { "German name": "English name" } },
 // "variants": [{ "name", "puzzle" | "list", "members", "without", "title", "subtitle",
@@ -24,14 +27,17 @@
 // command line (logos, --out, --png, --paper) apply to all of them; one contact sheet PNG per
 // language and paper shows all variants side by side.
 // Logos are read from local files and written only into the outputs: write logo versions to
-// the git-ignored local/ folder, never into the repository.
+// the git-ignored local/ folder, never into the repository. Logos on the map are drawn in one
+// colour; logos at the top, in the footer and in the legend keep their colours.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
 import { parseSvgLogo, type Logo } from '../src/core/board/logo';
+import { parseColor, parseSvgColorLogo } from '../src/core/board/logo-color';
 import {
   DIN_PAPERS,
+  NEUTRAL_COLORS,
   drawPoster,
   posterPdf,
   posterSvg,
@@ -41,7 +47,9 @@ import {
   segmentMeetsBox,
   type DinPaper,
   type Orientation,
+  type PosterColors,
   type PosterDrawing,
+  type PosterTheme,
 } from '../src/core/board/poster';
 import {
   posterStops,
@@ -128,14 +136,90 @@ const paperOf = (v: string): DinPaper => {
   return p;
 };
 
-function readLogo(file: string): Logo | null {
-  if (!existsSync(file)) {
-    console.error(`logo ${file} is missing: the posters are built without it`);
-    return null;
+const logoCache = new Map<string, Logo | null>();
+
+/** A logo from a local file, in one colour (on the map) or in its colours; null if missing. */
+function readLogo(file: string, colors = false): Logo | null {
+  const key = `${colors ? 'colour' : 'mono'}:${file}`;
+  if (logoCache.has(key)) return logoCache.get(key)!;
+  let logo: Logo | null = null;
+  if (!existsSync(file)) console.error(`logo ${file} is missing: the posters are built without it`);
+  else {
+    const svg = readFileSync(file, 'utf8');
+    logo = colors ? parseSvgColorLogo(svg) : parseSvgLogo(svg);
+    console.error(`logo ${file}: ${logo.path.length} path commands`);
   }
-  const logo = parseSvgLogo(readFileSync(file, 'utf8'));
-  console.error(`logo ${file}: ${logo.path.length} path commands`);
+  logoCache.set(key, logo);
   return logo;
+}
+
+/** A design theme file (docs/posters/themes/<name>.json, roadmap 9.10). */
+interface ThemeFile {
+  readonly colors?: Partial<Record<keyof PosterColors, string>>;
+  readonly header?: {
+    readonly logo: Localized<string>;
+    readonly align?: 'left' | 'right';
+    readonly heightMm?: number;
+    readonly clearSpace?: number;
+  };
+  readonly footer?: {
+    readonly left?: Localized<string>;
+    readonly right?: Localized<string>;
+    readonly heightMm?: number;
+  };
+  readonly sender?: Localized<string>;
+}
+
+interface Theme {
+  readonly name: string;
+  readonly file: ThemeFile;
+}
+
+function loadTheme(spec: string): Theme {
+  const file = spec.endsWith('.json') ? spec : path.join('docs/posters/themes', `${spec}.json`);
+  if (!existsSync(file)) throw new Error(`--theme ${spec}: no theme file ${file}`);
+  return {
+    name: path.basename(file, '.json'),
+    file: JSON.parse(readFileSync(file, 'utf8')) as ThemeFile,
+  };
+}
+
+/** The theme in a language, with its logos from `logoDir` (missing logos are left out). */
+function posterTheme(theme: Theme, lang: LabelLanguage, logoDir: string): PosterTheme {
+  const t = theme.file;
+  const color = (key: keyof PosterColors) => {
+    const value = t.colors?.[key];
+    if (value === undefined) return NEUTRAL_COLORS[key];
+    const rgb = parseColor(value);
+    if (!rgb) throw new Error(`theme ${theme.name}: colour ${key} ${value} is not a colour`);
+    return rgb;
+  };
+  const logo = (name: Localized<string> | undefined) => {
+    const file = localized(name, lang);
+    return file ? readLogo(path.join(logoDir, file), true) : null;
+  };
+  const head = t.header ? logo(t.header.logo) : null;
+  return {
+    colors: {
+      title: color('title'),
+      length: color('length'),
+      tour: color('tour'),
+      group: color('group'),
+    },
+    header:
+      t.header && head
+        ? {
+            logo: head,
+            align: t.header.align ?? 'left',
+            heightMm: t.header.heightMm ?? 20,
+            clearSpace: t.header.clearSpace ?? 0.5,
+          }
+        : null,
+    footerLeft: logo(t.footer?.left),
+    footerRight: logo(t.footer?.right),
+    footerHeightMm: t.footer?.heightMm ?? 25,
+    sender: localized(t.sender, lang) ?? '',
+  };
 }
 
 /** Legend lines: inline, or the legend of a board extras file (.board.json). */
@@ -275,20 +359,20 @@ interface Output {
   readonly base: string;
   /** Labels that meet a leg of the tour (should be 0). */
   readonly onLegs: number;
-  /** File name suffix (the logo versions). */
+  /** File name suffix (the theme and the logo versions). */
   readonly suffix: string;
 }
 
 const fmt = (v: number, d: number) =>
   v.toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
 
-function report(outputs: readonly Output[]): string {
+function report(outputs: readonly Output[], theme: string): string {
   const first = new Map<string, Output>();
   for (const o of outputs) if (!first.has(o.solved.name)) first.set(o.solved.name, o);
   const lines = [
     '# Poster report',
     '',
-    `Generated ${new Date().toISOString().slice(0, 10)} by \`cli/export-poster.ts\`.`,
+    `Generated ${new Date().toISOString().slice(0, 10)} by \`cli/export-poster.ts\`, theme ${theme}.`,
     '',
     '| poster | places | length | second-best | problem line | flat-map optimum |',
     '| --- | --- | --- | --- | --- | --- |',
@@ -384,8 +468,10 @@ async function main(): Promise<void> {
     const logo = readLogo(file.trim());
     if (logo) logosByName.set(name.trim(), logo);
   }
-  const legendLogo = arg('legend-logo', '') ? readLogo(arg('legend-logo', '')) : null;
-  const cornerLogo = arg('corner-logo', '') ? readLogo(arg('corner-logo', '')) : null;
+  const legendLogo = arg('legend-logo', '') ? readLogo(arg('legend-logo', ''), true) : null;
+  const cornerLogo = arg('corner-logo', '') ? readLogo(arg('corner-logo', ''), true) : null;
+  const logoDir = arg('logo-dir', 'local');
+  const themes = arg('theme', '') ? list(arg('theme', '')).map(loadTheme) : [null];
   const langArg = arg('lang', '');
   const languages: LabelLanguage[] = langArg
     ? list(langArg).map((l) => (l === 'en' ? 'en' : 'de'))
@@ -405,11 +491,19 @@ async function main(): Promise<void> {
         },
       ];
   const multiLanguage = config !== null || languages.length > 1;
-  // With logos, --also-plain also writes the versions without them (no suffix).
-  const hasLogos = logosByName.size > 0 || legendLogo !== null || cornerLogo !== null;
+  // One edition per theme (each but neutral adds its name to the file names); with logos,
+  // --also-plain also writes the neutral versions without them (no suffix).
+  const hasLogos =
+    logosByName.size > 0 || legendLogo !== null || cornerLogo !== null || themes[0] !== null;
   const flavours = [
-    { suffix, logos: true },
-    ...(hasLogos && args.includes('--also-plain') ? [{ suffix: '', logos: false }] : []),
+    ...themes.map((theme) => ({
+      theme,
+      suffix: (theme && theme.name !== 'neutral' ? `-${theme.name}` : '') + suffix,
+      logos: true,
+    })),
+    ...(hasLogos && args.includes('--also-plain')
+      ? [{ theme: null as Theme | null, suffix: '', logos: false }]
+      : []),
   ];
   const outputs: Output[] = [];
   for (const spec of specs) {
@@ -447,6 +541,7 @@ async function main(): Promise<void> {
             logos: withLogos ? logos : new Map(),
             legendLogo: withLogos ? legendLogo : null,
             cornerLogo: withLogos ? cornerLogo : null,
+            theme: withLogos && flavour.theme ? posterTheme(flavour.theme, lang, logoDir) : null,
             qrUrl: qrBase ? shortLink(qrBase, spec.game ?? v.src.name) : null,
             blankMap: v.src.params.blankBoard,
           });
@@ -488,7 +583,7 @@ async function main(): Promise<void> {
       outDir,
       config ? `report${flavour.suffix}.md` : `${path.basename(mine[0]!.base)}-report.md`,
     );
-    writeFileSync(reportFile, report(mine));
+    writeFileSync(reportFile, report(mine, flavour.theme?.name ?? 'neutral'));
     console.error(`wrote ${reportFile}`);
     if (config?.contactSheet && specs.length > 1) {
       for (const lang of languages)

@@ -10,6 +10,10 @@
 // off the legs of the tour, other outlines and the logo, and each sits clearly next to its own
 // dot.
 //
+// Design themes (roadmap 9.10) set the colours of title, length, tour and alliances, a logo at
+// the top with its clear space, logos at both ends of the footer and the sender line. Logos on
+// the map stay one colour; logos at the top, in the footer and in the legend keep their colours.
+//
 // Everything is vector, text as outlines (as on the boards), with a white margin and no bleed.
 // Typography and lines scale with the paper: A1 is the reference (A0 is A1 enlarged by √2), and
 // title and length are readable from about 3 m there.
@@ -31,10 +35,11 @@ import {
   type LabelOptions,
   type Obstacle,
 } from './labels';
-import { fitLogo, logoHeight, placeLogo, type Logo } from './logo';
+import { logoHeight, type Logo } from './logo';
+import { isColorLogo } from './logo-color';
 import { boardMapLines } from './map-lines';
 import { pageSize, type DinPaper, type Orientation } from './paper';
-import { PdfDocument, type Rgb } from './pdf';
+import { PdfDocument, type Rgb, type StrokeStyle } from './pdf';
 import {
   possibleTours,
   startAtPlace,
@@ -52,6 +57,7 @@ import {
   svgPathData,
   transformPath,
   translate,
+  type Matrix,
   type Path,
   type PathCommand,
 } from './shapes';
@@ -69,10 +75,57 @@ const TOUR: Rgb = [0.78, 0.13, 0.09];
 const GROUP: Rgb = [0.99, 0.9, 0.84];
 const WHITE: Rgb = [1, 1, 1];
 
+/** Lines of colour logos are at least this wide on paper (mm). */
+export const MIN_LOGO_LINE = 0.25;
+
 export interface PosterItem {
   readonly path: Path;
   readonly fill?: Rgb;
-  readonly stroke?: { readonly color: Rgb; readonly width: number; readonly dash?: number[] };
+  /** Filled by the even-odd rule (logos). */
+  readonly evenOdd?: boolean;
+  readonly stroke?: {
+    readonly color: Rgb;
+    readonly width: number;
+    readonly dash?: number[];
+  } & StrokeStyle;
+}
+
+/** Colours of a poster (roadmap 9.10). */
+export interface PosterColors {
+  readonly title: Rgb;
+  /** The length, the answer. */
+  readonly length: Rgb;
+  /** The round trip, the outlines of alliances and the emphasized place. */
+  readonly tour: Rgb;
+  /** The tint inside the outlines of alliances. */
+  readonly group: Rgb;
+}
+
+export const NEUTRAL_COLORS: PosterColors = { title: INK, length: TOUR, tour: TOUR, group: GROUP };
+
+/** A logo at the top of the poster, with clear space around it. */
+export interface PosterHeaderLogo {
+  readonly logo: Logo;
+  readonly align: 'left' | 'right';
+  /** Height on A1 (scaled with the paper like everything else). */
+  readonly heightMm: number;
+  /** Free space around the logo, as a fraction of its height (corporate design rules). */
+  readonly clearSpace: number;
+}
+
+/**
+ * A design theme (roadmap 9.10): colours, a logo at the top, logos at both ends of the footer
+ * and the sender line. Logos come from local files only.
+ */
+export interface PosterTheme {
+  readonly colors: PosterColors;
+  readonly header: PosterHeaderLogo | null;
+  readonly footerLeft: Logo | null;
+  readonly footerRight: Logo | null;
+  /** Height of the footer logos on A1. */
+  readonly footerHeightMm: number;
+  /** The sender line of the footer instead of the chair line ('' keeps the chair line). */
+  readonly sender: string;
 }
 
 export interface PosterDrawing {
@@ -115,8 +168,11 @@ export interface PosterInput {
   /** Logos instead of other places' labels, by place index (local files, never stored). */
   readonly logos?: ReadonlyMap<number, Logo>;
   readonly legendLogo?: Logo | null;
-  /** A logo at the bottom right, e.g. the university's (local files only). */
+  /** A logo at the bottom right, e.g. the university's (local files only; a theme's footer
+   * logo takes its place). */
   readonly cornerLogo?: Logo | null;
+  /** Design theme (default: neutral, no logos). */
+  readonly theme?: PosterTheme | null;
   /** The play link of the poster's puzzle as a QR code at the bottom right (roadmap 9.10). */
   readonly qrUrl?: string | null;
   /** No map lines (points placed by hand on a blank board). */
@@ -162,6 +218,8 @@ export function posterSizes(short: number) {
   };
 }
 type Sizes = ReturnType<typeof posterSizes>;
+/** Sizes and the theme's colours. */
+type Style = Sizes & { readonly color: PosterColors };
 
 // --- text --------------------------------------------------------------------------------------
 
@@ -188,13 +246,53 @@ function runsPath(runs: readonly Run[], x: number, baseline: number): PathComman
 class Canvas {
   readonly items: PosterItem[] = [];
 
-  fill(path: Path, color: Rgb): void {
-    if (path.length > 0) this.items.push({ path, fill: color });
+  fill(path: Path, color: Rgb, evenOdd = false): void {
+    if (path.length > 0) this.items.push({ path, fill: color, ...(evenOdd ? { evenOdd } : {}) });
   }
 
-  stroke(path: Path, color: Rgb, width: number, dash?: number[]): void {
+  stroke(path: Path, color: Rgb, width: number, dash?: number[], style: StrokeStyle = {}): void {
     if (path.length > 0)
-      this.items.push({ path, stroke: { color, width, ...(dash ? { dash } : {}) } });
+      this.items.push({ path, stroke: { color, width, ...(dash ? { dash } : {}), ...style } });
+  }
+
+  /**
+   * A logo fitted into the box (aspect kept, centred): a one-colour logo in ink, a colour logo
+   * in its colours, its lines at least MIN_LOGO_LINE wide.
+   */
+  logo(logo: Logo, box: Box): void {
+    const [x0, y0, x1, y1] = logo.box;
+    const scale = (b: Box) => Math.min((b[2] - b[0]) / (x1 - x0), (b[3] - b[1]) / (y1 - y0));
+    // Lines widened to the minimum may reach past the logo's box: keep them inside.
+    const widened =
+      isColorLogo(logo) &&
+      logo.parts.some((p) => p.stroke && p.stroke.width * scale(box) < MIN_LOGO_LINE);
+    const e = widened ? MIN_LOGO_LINE / 2 : 0;
+    const inner: Box = [box[0] + e, box[1] + e, box[2] - e, box[3] - e];
+    const k = scale(inner);
+    const m: Matrix = [
+      k,
+      0,
+      0,
+      k,
+      inner[0] + (inner[2] - inner[0] - k * (x1 - x0)) / 2 - k * x0,
+      inner[1] + (inner[3] - inner[1] - k * (y1 - y0)) / 2 - k * y0,
+    ];
+    if (!isColorLogo(logo)) {
+      this.fill(transformPath(logo.path, m), INK);
+      return;
+    }
+    for (const part of logo.parts) {
+      const path = transformPath(part.path, m);
+      if (part.fill) this.fill(path, part.fill, part.evenOdd);
+      if (part.stroke) {
+        const { color, width, cap, join, miterLimit } = part.stroke;
+        this.stroke(path, color, Math.max(MIN_LOGO_LINE, width * k), undefined, {
+          cap,
+          join,
+          miterLimit,
+        });
+      }
+    }
   }
 
   /** Text with its baseline start at (x, y). */
@@ -286,7 +384,7 @@ function stack(blocks: readonly Block[], gap: number): Block {
  * The problem in one line, the length below it in large type (the answer), and one short
  * line in small type. The problem line shrinks if it does not fit the width.
  */
-function factsBlock(problem: Run[], length: string, proof: string, width: number, s: Sizes): Block {
+function factsBlock(problem: Run[], length: string, proof: string, width: number, s: Style): Block {
   const scale = Math.min(1, width / runsWidth(problem));
   const runs = problem.map((r) => ({
     ...r,
@@ -301,7 +399,13 @@ function factsBlock(problem: Run[], length: string, proof: string, width: number
     height,
     draw(c, x, y) {
       c.fill(runsPath(runs, x, y + FONT_METRICS.capHeight * problemSize), INK);
-      c.text(length, x, y + lengthTop + FONT_METRICS.capHeight * s.length, s.length, TOUR);
+      c.text(
+        length,
+        x,
+        y + lengthTop + FONT_METRICS.capHeight * s.length,
+        s.length,
+        s.color.length,
+      );
       paragraph(c, proof, x, y + proofTop, width, s.caption, GREY);
     },
   };
@@ -348,7 +452,7 @@ function legendBlock(
   entries: readonly { readonly symbol: Symbol; readonly text: string }[],
   logo: Logo | null,
   width: number,
-  s: Sizes,
+  s: Style,
 ): Block | null {
   if (entries.length === 0 && !logo) return null;
   const size = s.legend;
@@ -377,7 +481,7 @@ function legendBlock(
     height,
     draw(c, x, top) {
       if (logo && logoBox) {
-        c.fill(fitLogo(logo, [x, top, x + logoBox[0], top + logoBox[1]]), INK);
+        c.logo(logo, [x, top, x + logoBox[0], top + logoBox[1]]);
       }
       const shift = (height - y) / 2;
       for (const l of lines) {
@@ -395,8 +499,8 @@ function legendBlock(
             ],
             s.ringOuter * 1.15,
           );
-          c.fill(shape, GROUP);
-          c.stroke(shape, TOUR, s.strong);
+          c.fill(shape, s.color.group);
+          c.stroke(shape, s.color.tour, s.strong);
           c.fill(
             [...circlePath(cx - d, cy, s.dot * 0.8), ...circlePath(cx + d, cy, s.dot * 0.8)],
             INK,
@@ -673,7 +777,7 @@ interface MapResult {
 }
 
 /** Draws the map with the tour, dots, groups, logo and labels into `c` (page coordinates). */
-function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResult {
+function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Style): MapResult {
   const projection = mapProjection(input, box, s);
   const { stops } = input;
   const t = POSTER_TEXTS[input.language];
@@ -751,8 +855,8 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResul
   }
   for (const g of groups) {
     const hull = move(polygonPath(g.hull));
-    c.fill(hull, GROUP);
-    c.stroke(hull, TOUR, g.emphasized ? 2 * s.strong : s.strong);
+    c.fill(hull, s.color.group);
+    c.stroke(hull, s.color.tour, g.emphasized ? 2 * s.strong : s.strong);
   }
 
   // Composite stops at their centroid: the members as small dots, connected to the stop.
@@ -780,7 +884,7 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResul
         true,
       ),
     ),
-    TOUR,
+    s.color.tour,
     s.tour,
   );
 
@@ -802,7 +906,7 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResul
   );
   if (emphasis && tour.length > 0) {
     const [x, y] = points[tour[0]!]!;
-    c.fill(move(ringPath(x, y, 1.3 * s.ringOuter, 1.3 * s.ringOuter - 1.2 * s.f)), TOUR);
+    c.fill(move(ringPath(x, y, 1.3 * s.ringOuter, 1.3 * s.ringOuter - 1.2 * s.f)), s.color.tour);
   }
 
   // Scale bar at the bottom left of the map.
@@ -921,8 +1025,9 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResul
         Math.min(Math.max(from[0], best.box[0]), best.box[2]),
         Math.min(Math.max(from[1], best.box[1]), best.box[3]),
       ];
-      c.stroke(move(polylinePath([from, to])), TOUR, 0.8 * s.f);
-      c.fill(move(fitLogo(logo, best.box)), INK);
+      c.stroke(move(polylinePath([from, to])), s.color.tour, 0.8 * s.f);
+      const [bx0, by0, bx1, by1] = best.box;
+      c.logo(logo, [bx0 + box.x, by0 + box.y, bx1 + box.x, by1 + box.y]);
       obstacles.push({ kind: 'polygon', points: boxPolygon(best.box) });
     }
   }
@@ -941,8 +1046,8 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResul
     logo: Logo | null = null,
   ) => items.push({ anchor, reach, lines, logo, metrics: linesMetrics(lines), group });
   const emphasisLines = (name: string): LabelLine[] => [
-    ...(logoBox ? [] : [{ text: name, size: s.emphasis, color: TOUR, bold: true }]),
-    { text: t.startFinish, size: s.startCaption, color: TOUR, bold: false },
+    ...(logoBox ? [] : [{ text: name, size: s.emphasis, color: s.color.tour, bold: true }]),
+    { text: t.startFinish, size: s.startCaption, color: s.color.tour, bold: false },
   ];
   stops.forEach((st, i) => {
     if (st.group || i === emphasizedCentre) return;
@@ -958,7 +1063,7 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResul
     item(
       g.centre,
       g.reach + 0.2 * s.label,
-      g.emphasized ? emphasisLines(g.name) : plain(g.name, TOUR),
+      g.emphasized ? emphasisLines(g.name) : plain(g.name, s.color.tour),
       g.name,
     );
 
@@ -1053,7 +1158,7 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Sizes): MapResul
     labelBoxes.push([x0 + box.x, y0 + box.y, x1 + box.x, y1 + box.y]);
     const logo = logoAt[i];
     if (logo) {
-      c.fill(placeLogo(logo, box.x + x0, box.y + y0, x1 - x0), INK);
+      c.logo(logo, [box.x + x0, box.y + y0, box.x + x1, box.y + y0 + logoHeight(logo, x1 - x0)]);
       return;
     }
     let y = box.y + cand.baseline[1];
@@ -1100,30 +1205,54 @@ export function legendEntries(input: PosterInput): { symbol: Symbol; text: strin
 
 export function drawPoster(input: PosterInput): PosterDrawing {
   const [W, H] = pageSize(input.paper, input.orientation);
-  const s = posterSizes(Math.min(W, H));
+  const theme = input.theme ?? null;
+  const s: Style = { ...posterSizes(Math.min(W, H)), color: theme?.colors ?? NEUTRAL_COLORS };
   const t = POSTER_TEXTS[input.language];
   const fmt = formatter(input.language);
   const M = s.margin;
   const contentW = W - 2 * M;
   const n = input.stops.length;
 
-  // Header.
+  // Logo sizes: by height, at most a share of the content width.
+  const sized = (logo: Logo, h: number, maxW: number): [number, number] => {
+    const w = Math.min(maxW, (h * (logo.box[2] - logo.box[0])) / (logo.box[3] - logo.box[1]));
+    return [w, logoHeight(logo, w)];
+  };
+
+  // Header: a theme's logo at the top with its clear space, then the title.
+  const head = theme?.header ?? null;
+  let headBox: Box | null = null;
+  let titleTop = M;
+  if (head) {
+    const [w, h] = sized(head.logo, head.heightMm * s.f, 0.5 * contentW);
+    const x = head.align === 'left' ? M : W - M - w;
+    headBox = [x, M, x + w, M + h];
+    titleTop = M + h + Math.max(head.clearSpace * h, s.gap);
+  }
   // The title on one line, smaller if it does not fit (roadmap 9.10).
   const titleSize = Math.min(s.title, contentW / Math.max(1e-6, measureText(input.title, 1).width));
   const titleLines = [input.title];
   const subtitleLines = input.subtitle ? wrapText(input.subtitle, s.subtitle, contentW) : [];
   const headerH = 1.12 * titleSize + subtitleLines.length * 1.25 * s.subtitle + 0.4 * s.gap;
-  const mapTop = M + headerH + s.gap;
+  const mapTop = titleTop + headerH + s.gap;
 
-  // Footer: the chair (large) and the credits, a logo at the bottom right.
-  const corner = input.cornerLogo ?? null;
-  const cornerW = corner ? s.cornerLogo : 0;
-  const cornerH = corner ? Math.min(logoHeight(corner, cornerW), 0.6 * cornerW) : 0;
-  const footerW = contentW - (corner ? cornerW + s.gap : 0);
-  const chairLines = wrapText(t.chair, s.chair, footerW);
+  // Footer: the chair or the theme's sender line (large) and the credits; logos at the bottom
+  // left and right (a theme's, by height), or a corner logo at the bottom right.
+  const footerLogoH = (theme?.footerHeightMm ?? 0) * s.f;
+  const left = theme?.footerLeft ?? null;
+  const right = theme?.footerRight ?? input.cornerLogo ?? null;
+  const [leftW, leftH] = left ? sized(left, footerLogoH, 0.3 * contentW) : [0, 0];
+  const [rightW, rightH] = !right
+    ? [0, 0]
+    : theme?.footerRight
+      ? sized(right, footerLogoH, 0.3 * contentW)
+      : [s.cornerLogo, Math.min(logoHeight(right, s.cornerLogo), 0.6 * s.cornerLogo)];
+  const footerX = M + (left ? leftW + s.gap : 0);
+  const footerW = contentW - (left ? leftW + s.gap : 0) - (right ? rightW + s.gap : 0);
+  const chairLines = wrapText(theme?.sender || t.chair, s.chair, footerW);
   const creditLines = wrapText(t.attribution, s.footer, footerW);
   const footerTextH = chairLines.length * 1.25 * s.chair + creditLines.length * 1.3 * s.footer;
-  const footerH = Math.max(footerTextH, cornerH);
+  const footerH = Math.max(footerTextH, leftH, rightH);
   const bottom = H - M - footerH - 0.6 * s.gap;
 
   // The problem, the answer, the legend.
@@ -1196,9 +1325,10 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   const best = options.reduce((a, b) => (b.scale > a.scale * 1.03 ? b : a));
 
   const c = new Canvas();
-  let y = M;
+  if (head && headBox) c.logo(head.logo, headBox);
+  let y = titleTop;
   for (const line of titleLines) {
-    c.text(line, M, y + FONT_METRICS.ascender * titleSize, titleSize);
+    c.text(line, M, y + FONT_METRICS.ascender * titleSize, titleSize, s.color.title);
     y += 1.12 * titleSize;
   }
   for (const line of subtitleLines) {
@@ -1209,18 +1339,15 @@ export function drawPoster(input: PosterInput): PosterDrawing {
   best.side.draw(c, best.sideX, best.sideY);
   let fy = H - M - footerH + (footerH - footerTextH);
   for (const line of chairLines) {
-    c.text(line, M, fy + FONT_METRICS.ascender * s.chair, s.chair);
+    c.text(line, footerX, fy + FONT_METRICS.ascender * s.chair, s.chair);
     fy += 1.25 * s.chair;
   }
   for (const line of creditLines) {
-    c.text(line, M, fy + FONT_METRICS.ascender * s.footer, s.footer, GREY);
+    c.text(line, footerX, fy + FONT_METRICS.ascender * s.footer, s.footer, GREY);
     fy += 1.3 * s.footer;
   }
-  if (corner) {
-    const x1 = W - M;
-    const y1 = H - M;
-    c.fill(fitLogo(corner, [x1 - cornerW, y1 - cornerH, x1, y1]), INK);
-  }
+  if (left) c.logo(left, [M, H - M - leftH, M + leftW, H - M]);
+  if (right) c.logo(right, [W - M - rightW, H - M - rightH, W - M, H - M]);
   return {
     width: W,
     height: H,
@@ -1241,8 +1368,9 @@ export function posterPdf(drawing: PosterDrawing): Uint8Array<ArrayBuffer> {
   const doc = new PdfDocument(drawing.title);
   doc.addPage(drawing.width, drawing.height, (c) => {
     for (const item of drawing.items) {
-      if (item.fill) c.fill(item.path, item.fill);
-      if (item.stroke) c.stroke(item.path, item.stroke.color, item.stroke.width, item.stroke.dash);
+      if (item.fill) c.fill(item.path, item.fill, item.evenOdd);
+      if (item.stroke)
+        c.stroke(item.path, item.stroke.color, item.stroke.width, item.stroke.dash, item.stroke);
     }
   });
   return doc.toBytes();
@@ -1257,11 +1385,16 @@ export function posterSvgBody(drawing: PosterDrawing): string {
   const out = [`<rect width="${drawing.width}" height="${drawing.height}" fill="#fff"/>`];
   for (const item of drawing.items) {
     const d = svgPathData(item.path, 2);
-    if (item.fill) out.push(`<path d="${d}" fill="${rgb(item.fill)}"/>`);
-    if (item.stroke) {
-      const dash = item.stroke.dash ? ` stroke-dasharray="${item.stroke.dash.join(' ')}"` : '';
+    if (item.fill)
       out.push(
-        `<path d="${d}" fill="none" stroke="${rgb(item.stroke.color)}" stroke-width="${item.stroke.width.toFixed(3)}" stroke-linecap="round" stroke-linejoin="round"${dash}/>`,
+        `<path d="${d}" fill="${rgb(item.fill)}"${item.evenOdd ? ' fill-rule="evenodd"' : ''}/>`,
+      );
+    if (item.stroke) {
+      const st = item.stroke;
+      const dash = st.dash ? ` stroke-dasharray="${st.dash.join(' ')}"` : '';
+      const miter = st.miterLimit !== undefined ? ` stroke-miterlimit="${st.miterLimit}"` : '';
+      out.push(
+        `<path d="${d}" fill="none" stroke="${rgb(st.color)}" stroke-width="${st.width.toFixed(3)}" stroke-linecap="${st.cap ?? 'round'}" stroke-linejoin="${st.join ?? 'round'}"${miter}${dash}/>`,
       );
     }
   }

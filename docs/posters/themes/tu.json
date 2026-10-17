@@ -1,0 +1,24 @@
+{
+  "_comment": "TU Dortmund design for the corridor of Chair 11 (roadmap 9.10): the TU logo at the top left with clear space (the English logo on English posters), title and length in TU green (RGB 132/184/24, as in the AE logo), the round trip red (the AE logo pairs TU green with red), the faculty logo at the bottom left and the AE logo at the bottom right. Logo files are looked up in --logo-dir (default local/) and are never committed. clearSpace is a fraction of the logo height; check it against the TU design manual.",
+  "colors": {
+    "title": "#84B818",
+    "length": "#84B818",
+    "tour": "#C72117",
+    "group": "#FCE6D6"
+  },
+  "header": {
+    "logo": { "de": "tu-dortmund.svg", "en": "tu-dortmund-en.svg" },
+    "align": "left",
+    "heightMm": 28,
+    "clearSpace": 0.5
+  },
+  "footer": {
+    "left": "fakultaet-informatik.svg",
+    "right": "ae-logo.svg",
+    "heightMm": 30
+  },
+  "sender": {
+    "de": "Lehrstuhl 11 Algorithm Engineering, TU Dortmund",
+    "en": "Chair 11 Algorithm Engineering, TU Dortmund University"
+  }
+}

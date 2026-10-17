@@ -25,7 +25,10 @@ import {
   runsText,
   segmentMeetsBox,
   type PosterInput,
+  type PosterTheme,
 } from './poster';
+import { parseSvgColorLogo } from './logo-color';
+import type { Rgb } from './pdf';
 import {
   possibleTours,
   posterStops,
@@ -327,6 +330,120 @@ describe('Ruhr Innovation Lab poster (roadmap 9.9)', () => {
     expect(symbols).toEqual(['ring', 'group', null]);
     const centroid = legendEntries(input(variants[0]!, { emphasis: null }));
     expect(centroid.map((e) => e.symbol)).toEqual(['ring', 'centroid', null]);
+  });
+});
+
+describe('design themes (roadmap 9.10)', () => {
+  const { cities, region } = puzzleCities('exzellenzstrategie-2027-brett');
+  const stops = posterStops(cities, 'separate');
+  let tour: ReturnType<typeof posterTour>;
+  beforeAll(() => {
+    tour = posterTour(backend, stops, stopPoints(stops, projection));
+  });
+  // Stand-ins for logos (real logos never enter the repository): a wide one in two colours, and
+  // one with a line far thinner than 0.25 mm at poster size.
+  const wide = parseSvgColorLogo(
+    '<svg><rect width="300" height="50" fill="#84b818"/><rect x="300" width="100" height="50" fill="#1a1a18"/></svg>',
+  );
+  const thin = parseSvgColorLogo(
+    '<svg><rect width="100" height="100" fill="#003560"/><path d="M 0 50 L 1000 50" stroke="#c4022e"/></svg>',
+  );
+  const green: Rgb = [0x84 / 255, 0xb8 / 255, 0x18 / 255];
+  const blue: Rgb = [0, 0x35 / 255, 0x60 / 255];
+  const red: Rgb = [0xc4 / 255, 2 / 255, 0x2e / 255];
+  const same = (a: Rgb | undefined, b: Rgb) => !!a && a.every((v, i) => Math.abs(v - b[i]!) < 1e-6);
+  const theme: PosterTheme = {
+    colors: { title: blue, length: blue, tour: blue, group: [0.87, 0.91, 0.94] },
+    header: { logo: wide, align: 'left', heightMm: 20, clearSpace: 0.5 },
+    footerLeft: wide,
+    footerRight: thin,
+    footerHeightMm: 25,
+    sender: 'Absenderzeile',
+  };
+  const draw = (over: Partial<PosterInput> = {}) =>
+    drawPoster({
+      file: de,
+      region,
+      stops,
+      tour,
+      title: 'Titel',
+      subtitle: '',
+      paper: 'A1',
+      orientation: 'portrait',
+      language: 'de',
+      legend: [],
+      theme,
+      ...over,
+    });
+  const M = posterSizes(DIN_SIZES.A1[0]).margin;
+  const [W, H] = DIN_SIZES.A1;
+
+  it('puts the logo at the top left with its clear space, and the title below it', () => {
+    const d = draw();
+    const logo = d.items.filter((i) => same(i.fill, green)).map((i) => pathBounds(i.path)!);
+    // The header logo, 20 mm high on A1 (the first green shape), at the margins.
+    expect(logo[0]![0]).toBeCloseTo(M, 6);
+    expect(logo[0]![1]).toBeCloseTo(M, 6);
+    expect(logo[0]![3]).toBeCloseTo(M + 20, 6);
+    // The title is the first text in the title colour; it starts below the clear space.
+    const title = pathBounds(d.items.find((i) => same(i.fill, blue))!.path)!;
+    expect(title[1]).toBeGreaterThanOrEqual(M + 20 + 10 - 1e-6);
+    // The footer logo at the bottom left.
+    expect(logo.at(-1)![0]).toBeCloseTo(M, 6);
+    expect(logo.at(-1)![3]).toBeCloseTo(H - M, 6);
+  });
+
+  it('aligns the logo right when the theme asks', () => {
+    const d = draw({ theme: { ...theme, header: { ...theme.header!, align: 'right' } } });
+    const first = d.items
+      .filter((i) => i.fill)
+      .slice(0, 2)
+      .map((i) => pathBounds(i.path)!);
+    expect(first[1]![2]).toBeCloseTo(W - M, 6);
+  });
+
+  it('draws the round trip and the length in the theme colours', () => {
+    const d = draw();
+    // The tour: the only wide stroke in the tour colour (label halos are white).
+    const tourItems = d.items.filter((i) => same(i.stroke?.color, blue) && i.stroke!.width > 2);
+    expect(tourItems).toHaveLength(1);
+    // Neutral: the red tour of 9.9.
+    const neutral = draw({ theme: null });
+    const red99 = neutral.items.filter(
+      (i) => same(i.stroke?.color, [0.78, 0.13, 0.09]) && i.stroke!.width > 2,
+    );
+    expect(red99).toHaveLength(1);
+  });
+
+  it('keeps logo lines at least 0.25 mm wide, with their caps and joins', () => {
+    const d = draw();
+    const line = d.items.find((i) => same(i.stroke?.color, red))!;
+    expect(line.stroke!.width).toBe(0.25);
+    expect(line.stroke!.cap).toBe('butt');
+    expect(line.stroke!.join).toBe('miter');
+    // The footer logo at the bottom right.
+    expect(pathBounds(line.path)![2]).toBeLessThanOrEqual(W - M + 1e-6);
+    expect(posterSvg(d)).toContain(
+      'stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"',
+    );
+  });
+
+  it('stays inside the margins on every paper', () => {
+    for (const paper of ['A1', 'A0', 'A4'] as const) {
+      const d = draw({ paper });
+      const [w, h] = pageSize(paper, 'portrait');
+      for (const item of d.items) {
+        const b = pathBounds(item.path);
+        if (!b) continue;
+        // Logos may touch the margin.
+        const pad = item.stroke ? item.stroke.width / 2 : 0;
+        expect(b[0] - pad).toBeGreaterThanOrEqual(10 - 1e-6);
+        expect(b[1] - pad).toBeGreaterThanOrEqual(10 - 1e-6);
+        expect(b[2] + pad).toBeLessThanOrEqual(w - 10 + 1e-6);
+        expect(b[3] + pad).toBeLessThanOrEqual(h - 10 + 1e-6);
+      }
+      expect(d.unplacedLabels).toBe(0);
+    }
   });
 });
 

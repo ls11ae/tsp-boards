@@ -1022,3 +1022,27 @@ Short entries: decision; alternatives considered; reason. Newest last.
   highlight is off on the board. Playwright (1.63, dev dependency) tests the phone in
   `e2e/`, run by `npm run e2e` and not by `npm run check` (it needs a downloaded browser);
   screenshots in `docs/experiments/phone-play-2026-10-17/`.
+- **2026-10-17 Poster design themes (roadmap 9.10).** `--theme neutral|tu|rub` (a list builds
+  several) reads `docs/posters/themes/<name>.json`: colours of title, length, round trip and
+  the alliance tint, a logo at the top (left or right, height on A1, clear space as a fraction
+  of its height), logos at both ends of the footer (by height, at most 30 % of the width) and
+  the sender line, per language where needed; the file names name only logo files, looked up
+  in `--logo-dir` (default `local/`), so no logo enters the repository. Each theme but
+  neutral adds `-<theme>` to the file names. tu: the TU logo at the top left, 28 mm high on A1
+  with half its height free around it, title and length in TU green #84B818 (the ITMC page
+  gives RGB 132/184/25; the TU logo file uses #83B818), the round trip red, the faculty logo
+  bottom left, the AE sign (`ae-logo.svg`) bottom right. rub: the RUB logo at the top right,
+  as the RUB label stands in the RUB A3 template, title, length and round trip in RUB blue
+  #003560, the tint #DCE6F0, the faculty logo (English only, also on German posters) bottom
+  left and the chair logo bottom right; the sender line is a placeholder. Logos at the top, in
+  the footer and in the legend keep their colours: a new parser (`core/board/logo-color.ts`)
+  keeps fills with their rule, strokes with width, caps, joins and miter limit, inline styles,
+  simple CSS rules and `<use>` references, and lines are at least 0.25 mm wide (the chair
+  logo's lines are 0.1 mm at poster size); the PDF writer gained even-odd fills and stroke
+  styles. Logos on the map stay one colour (white parts are holes there); boards are untouched.
+  The TU design manual with the exact clear space was not reachable (the ITMC page only says
+  the protection zone borders the top and left edges): check `clearSpace` against it. The
+  font stays Fira Sans Condensed (Akkurat is licensed). Alternatives: the logo beside the
+  title (would shrink the title, which must stay on one line), embedding the SVG logos as they
+  are (the PDF writer has no SVG import; outlines keep one drawing model for PDF, SVG and PNG),
+  themes as code (files are easier for Kevin and Maike to change).
