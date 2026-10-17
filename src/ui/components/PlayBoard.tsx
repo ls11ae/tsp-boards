@@ -43,7 +43,8 @@ import { ZoomControls } from './ZoomControls';
 function fitView(board: BoardModel, members: readonly number[]): View {
   const { widthMm: W, heightMm: H } = board.projection.board;
   const pts = members.length > 0 ? members.map((c) => board.points[c]!) : board.points;
-  if (pts.length === 0 || board.sphere) return { x: 0, y: 0, w: W, h: H };
+  // A world board measured on the flat map too (its given leg leaves the map, roadmap 9.15).
+  if (pts.length === 0 || board.sphere || board.paths.sphere) return { x: 0, y: 0, w: W, h: H };
   // A small cluster (a city-scale puzzle on a state's board) gets a margin to its size.
   const span = Math.max(
     Math.max(...pts.map((p) => p[0])) - Math.min(...pts.map((p) => p[0])),

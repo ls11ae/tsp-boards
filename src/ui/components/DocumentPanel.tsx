@@ -96,7 +96,10 @@ export function DocumentPanel({
   const setDoc = useStore((s) => s.setDoc);
   const puzzleType = useStore((s) => s.puzzleType);
   const hasIncremental = useStore((s) => s.inc.puzzle !== null);
-  const sphere = useStore((s) => puzzleType === 'map' && s.country?.metric === 'sphere');
+  const world = useStore((s) => puzzleType === 'map' && s.country?.metric === 'sphere');
+  // A world board (roadmap 9.15) measures on the flat map: it may be a board.
+  const flatMap = useStore((s) => s.params.flatMap);
+  const sphere = world && !flatMap;
   useStore((s) => s.libraryVersion);
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -140,6 +143,7 @@ export function DocumentPanel({
         </select>
       </label>
       {sphere && <p className="hint">{t.purposeWorld}</p>}
+      {world && flatMap && <p className="hint">{t.purposeWorldBoard}</p>}
       <div className="actions">
         <button
           type="button"

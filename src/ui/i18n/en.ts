@@ -266,6 +266,7 @@ export const en = {
   noScaleSpace:
     'No start nail has room for the measuring scale. Try a larger board margin or fewer cities near the edge.',
   startNail: 'Start nail',
+  endNail: 'End nail (with the scale)',
   measuredGap: 'Gap at the scale',
   lowerBound: (value: string) => `≥ ${value} mm (bound)`,
   warnLabels: (count: string) =>
@@ -403,6 +404,8 @@ export const en = {
   exportWorld:
     'World puzzles are digital: the round trip is shortest on the sphere, but a board or paper measures on the flat map. So world maps have neither a board nor a worksheet.',
   docPurpose: 'Purpose',
+  purposeWorldBoard:
+    'A world board: distances are measured on the flat map (Equal Earth), as with the string on the board.',
   purposeWorld:
     'World maps measure distances on the sphere (great circles). A board could only measure distances on the flat map, so world puzzles are digital.',
   purposeBoard: 'board (nails, string)',

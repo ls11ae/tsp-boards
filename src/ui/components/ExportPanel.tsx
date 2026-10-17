@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { BoardPlan, PlanWarning } from '../../core/board/plan';
 import { DIN_PAPERS } from '../../core/board/paper';
 import type { LegendEntry } from '../../core/puzzle-file';
-import type { BoardModel } from '../board';
+import { pathCities, type BoardModel } from '../board';
 import type { ExportKind } from '../export';
 import { planKey, prepareBoard } from '../plans';
 import { useFormat, useT } from '../i18n';
@@ -46,13 +46,15 @@ function PlanSummary({
   const fmt = useFormat();
   const mm = (um: number) => fmt.number(um / 1000, 2);
   const start = board.pool[puzzle.members[plan.scale.slot]!]!;
+  // An open path (roadmap 9.15) is tied at its start and read at its end nail.
+  const ends = pathCities(board, puzzle.members);
   const warnings = plan.warnings
     .map((w) => warningText(t, w, mm))
     .filter((w): w is string => w !== null);
   return (
     <>
       <dl className="metrics">
-        <dt>{t.startNail}</dt>
+        <dt>{ends ? t.endNail : t.startNail}</dt>
         <dd>{start.name}</dd>
         <dt>{t.measuredGap}</dt>
         <dd className="gap">

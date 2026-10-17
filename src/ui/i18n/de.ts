@@ -259,6 +259,7 @@ export const de: Messages = {
   noScaleSpace:
     'Kein Startnagel hat Platz für die Messskala. Einen größeren Rand oder weniger Städte am Rand wählen.',
   startNail: 'Startnagel',
+  endNail: 'Zielnagel (mit Skala)',
   measuredGap: 'Lücke an der Skala',
   lowerBound: (value) => `≥ ${value} mm (Schranke)`,
   warnLabels: (count) =>
@@ -394,6 +395,8 @@ export const de: Messages = {
   exportWorld:
     'Weltpuzzles sind digital: Die Rundreise ist auf der Kugel am kürzesten, auf einem Brett oder Papier misst man aber auf der flachen Karte. Daher gibt es für Weltkarten weder Brett noch Arbeitsblatt.',
   docPurpose: 'Zweck',
+  purposeWorldBoard:
+    'Ein Weltbrett: gemessen wird auf der flachen Karte (Equal Earth), wie mit dem Faden auf dem Brett.',
   purposeWorld:
     'Weltkarten messen Entfernungen auf der Kugel (Großkreise). Ein Brett könnte nur Strecken auf der flachen Karte messen, daher sind Weltpuzzles digital.',
   purposeBoard: 'Brett (Nägel, Faden)',
