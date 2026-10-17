@@ -1103,3 +1103,9 @@ Short entries: decision; alternatives considered; reason. Newest last.
   University Bochum"). The chair logo (ALGO) is removed from the footer at her request, so the
   footer has the Faculty of Computer Science logo on the left and the sender line; the RUB
   posters in `local/posters/` are re-exported.
+- **2026-10-17 Names of alliances in black next to a red tour.** Maike: next to the red round
+  trip (neutral and tu designs) "Rhein-Main-Universitäten" in red stands out too much; with the
+  blue tour (rub) blue is fine. Themes have a colour `groupName` for the names of alliances
+  drawn as outlines: ink in neutral and tu, RUB blue in rub. The emphasized place (Ruhr
+  Innovation Lab) keeps the tour colour. Posters 17 and 37 (the ones with the outline) are
+  re-exported, in the repository and in `local/posters/`.

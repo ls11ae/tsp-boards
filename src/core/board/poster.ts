@@ -114,9 +114,21 @@ export interface PosterColors {
   readonly tour: Rgb;
   /** The tint inside the outlines of alliances. */
   readonly group: Rgb;
+  /**
+   * The names of alliances drawn as outlines (not the emphasized place): ink next to a red
+   * round trip, where red names would stand out too much; the tour colour where it is calm
+   * (RUB blue).
+   */
+  readonly groupName: Rgb;
 }
 
-export const NEUTRAL_COLORS: PosterColors = { title: INK, length: TOUR, tour: TOUR, group: GROUP };
+export const NEUTRAL_COLORS: PosterColors = {
+  title: INK,
+  length: TOUR,
+  tour: TOUR,
+  group: GROUP,
+  groupName: INK,
+};
 
 /** A logo at the top of the poster, with clear space around it. */
 export interface PosterHeaderLogo {
@@ -1123,7 +1135,7 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Style): MapResul
     item(
       g.centre,
       g.reach + 0.2 * s.label,
-      g.emphasized ? emphasisLines(g.name) : plain(g.name, s.color.tour),
+      g.emphasized ? emphasisLines(g.name) : plain(g.name, s.color.groupName),
       g.name,
     );
 

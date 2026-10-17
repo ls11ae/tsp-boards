@@ -205,6 +205,7 @@ function posterTheme(theme: Theme, lang: LabelLanguage, logoDir: string): Poster
       length: color('length'),
       tour: color('tour'),
       group: color('group'),
+      groupName: color('groupName'),
     },
     header:
       t.header && head

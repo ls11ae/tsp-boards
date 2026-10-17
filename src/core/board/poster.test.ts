@@ -399,9 +399,10 @@ describe('design themes (roadmap 9.10)', () => {
   const green: Rgb = [0x84 / 255, 0xb8 / 255, 0x18 / 255];
   const blue: Rgb = [0, 0x35 / 255, 0x60 / 255];
   const red: Rgb = [0xc4 / 255, 2 / 255, 0x2e / 255];
+  const purple: Rgb = [0.5, 0, 0.5];
   const same = (a: Rgb | undefined, b: Rgb) => !!a && a.every((v, i) => Math.abs(v - b[i]!) < 1e-6);
   const theme: PosterTheme = {
-    colors: { title: blue, length: blue, tour: blue, group: [0.87, 0.91, 0.94] },
+    colors: { title: blue, length: blue, tour: blue, group: [0.87, 0.91, 0.94], groupName: purple },
     header: { logo: wide, align: 'left', heightMm: 20, clearSpace: 0.5 },
     footerLeft: wide,
     footerRight: thin,
@@ -461,6 +462,10 @@ describe('design themes (roadmap 9.10)', () => {
       (i) => same(i.stroke?.color, [0.78, 0.13, 0.09]) && i.stroke!.width > 2,
     );
     expect(red99).toHaveLength(1);
+    // Names of alliances in their own colour (the board has the Rhine-Main alliance as an
+    // outline); neutral: in ink next to the red tour, so the only red text is the length.
+    expect(d.items.some((i) => same(i.fill, purple))).toBe(true);
+    expect(neutral.items.filter((i) => same(i.fill, [0.78, 0.13, 0.09]))).toHaveLength(1);
   });
 
   it('keeps logo lines at least 0.25 mm wide, with their caps and joins', () => {

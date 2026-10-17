@@ -4,7 +4,8 @@
     "title": "#003560",
     "length": "#003560",
     "tour": "#003560",
-    "group": "#DCE6F0"
+    "group": "#DCE6F0",
+    "groupName": "#003560"
   },
   "header": {
     "logo": "rub.svg",

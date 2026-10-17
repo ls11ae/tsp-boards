@@ -4,10 +4,14 @@
     "title": "#84B818",
     "length": "#84B818",
     "tour": "#C72117",
-    "group": "#FCE6D6"
+    "group": "#FCE6D6",
+    "groupName": "#1A1A1A"
   },
   "header": {
-    "logo": { "de": "tu-dortmund.svg", "en": "tu-dortmund-en.svg" },
+    "logo": {
+      "de": "tu-dortmund.svg",
+      "en": "tu-dortmund-en.svg"
+    },
     "align": "left",
     "heightMm": 28,
     "clearSpace": 0.5
