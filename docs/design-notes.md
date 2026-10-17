@@ -1117,3 +1117,11 @@ Short entries: decision; alternatives considered; reason. Newest last.
   is kept anyway (games are stored per puzzle). On the gallery the title scrolls to the top.
   The kiosk has its own header and is unchanged. Alternatives: showing the gallery button in
   the phone header (one more button in a row that is full), a menu (hides it again).
+- **2026-10-17 Only the 37-city poster.** Maike: of the six Excellence variants only the
+  37-city poster is needed, without the subtitle "Jede Stadt eines Verbunds als eigener Halt" /
+  "Every city of an alliance a stop of its own". `variants.json` keeps that variant only (the
+  others are in the git history), without subtitle and contact sheet; the other files are
+  removed from the repository and `local/posters/`. The legend line for the outline ("Verbund:
+  jede Stadt ein eigener Halt") stays, since it explains the symbol. The gallery puzzles made
+  for the other posters' QR codes (17 and 22 places) stay in the collection, so their short
+  links keep working.

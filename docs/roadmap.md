@@ -714,7 +714,8 @@ order; the phone layout matters for the open day too, since visitors may play on
   `local/posters/`), now also per theme.
   - (Done 2026-10-17: the A1 posters in the repository with the new texts and the QR code;
     `local/posters/` has the themes tu and rub, the neutral logo versions and A0, German and
-    English.)
+    English. Later the same day only the 37-city poster was kept, without
+    subtitle.)
 
 ### 9.11 Review of 9.10 (Kevin, 2026-10-17) — done 2026-10-17
 
