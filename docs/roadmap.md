@@ -4,7 +4,10 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-17: 9.1–9.9 are done (9.9: the Ruhr Innovation Lab poster in German and
+Status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler poster
+texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB). Then the
+open items of Phase 10.
+Earlier status 2026-10-17: 9.1–9.9 are done (9.9: the Ruhr Innovation Lab poster in German and
 English, A1 and A0); the code is under the MIT License. Next are the open items of Phase 10.
 Earlier status 2026-10-16, after Kevin's review of 9.7–9.8: 9.1–9.8 are done. Next is 9.9, the
 Ruhr Innovation Lab poster for the corridor of Chair 11 (German and English, A1 and A0); then
@@ -617,6 +620,83 @@ variants.
 A0, the app's editable poster; the files in `docs/posters/exzellenzstrategie-2027/de` and
 `/en`, A0 and the logo versions in `local/posters/` by one command, see the README there. The
 TU Dortmund logo is not in `local/` yet; the QR code waits for Phase 10.)
+
+### 9.10 Poster: simpler texts, QR code, design themes; playing on a phone (Kevin's review of 9.9, 2026-10-17)
+
+Kevin finds the poster text still too complicated, wants a QR code to the game ("it must play
+well on a smartphone"), and wants versions in the corporate designs of TU Dortmund (for his
+corridor) and of the Ruhr-Universität Bochum (for Maike's). Work through the items in this
+order; the phone layout matters for the open day too, since visitors may play on their phones.
+
+- **Texts, German and English:**
+  - Title: "TSP Tour: Standorte der Exzellenzstrategie 2026–2033" / "TSP Tour: Sites of the
+    Excellence Strategy 2026–2033". A short subtitle only where the variant needs one (e.g.
+    "Jede Stadt eines Verbunds als eigener Halt" for 17 and 37).
+  - The line above the length starts without "Finde die": "Kürzeste Rundreise unter
+    1,9 · 10⁴¹ Möglichkeiten:" / "Shortest round trip out of 1.9 × 10⁴¹ options:".
+  - Drop the line about HiGHS ("any solver could do this"). Keep only "Luftlinie" / "As the
+    crow flies" in small type.
+  - Titles fit on one line in both languages (shrink the title to fit if needed).
+- **QR code to the game:**
+  - A short link that opens a gallery puzzle in play mode, e.g. `#p/<puzzle id>`, so the QR
+    stays small. Old permalinks keep working.
+  - A gallery puzzle for every poster variant that has none yet, at least "Exzellenzstrategie:
+    alle 37 Städte" (alliances as separate stops), so that poster and game show the same
+    places.
+  - On the poster: `--qr <base url>` (the CLI appends `#p/<id>`). Put the code bottom right,
+    about 40 mm wide on A1, with "Selbst spielen" / "Play it yourself" and the URL in small
+    type. Generate the code locally: a small dependency with a permissive license, or our own
+    encoder; no web service. A test decodes the code again (decoder as a dev dependency).
+  - The base URL is Kevin's decision (hosting, see Phase 10). Until then, the committed
+    posters have no QR code.
+- **Phones** (Kevin's review at 390 × 844 with touch, 2026-10-17):
+  - The board starts halfway down the first screen, and the status (places, km, time) is
+    below the board, so while playing you see neither.
+  - Places are too close together for a finger at the full view: Köln–Bonn are 13 CSS px
+    apart, Bochum–Dortmund about 8 px in the 37 variant. A tap goes to the nearest place,
+    which works with a mouse but not reliably with a finger.
+  - Fix: a phone layout for narrow screens. Keep the header compact and the description
+    collapsible. Show the board first and as large as the screen allows. Add a compact
+    sticky status bar (places n/N, km, time, Zurück, Lösung zeigen).
+  - Ambiguous taps: when several places lie within about 24 CSS px of a tap, zoom in around
+    the tap (or show a small chooser) instead of guessing.
+  - On touch devices the texts say "Tippe" instead of "Klicke".
+  - Test with Playwright mobile emulation (390 × 844, touch) on the 37 puzzle: a whole round
+    trip by taps, with screenshots.
+- **Design themes** (`--theme neutral|tu|rub`):
+  - Theme files in the repository hold colours, texts and the names of logo files. The logos
+    themselves come only from `local/`.
+  - **neutral**: as now.
+  - **tu**: like Kevin's chair posters (sciebo `poster/final/*.pdf`, made in InDesign). The TU
+    Dortmund logo is at the top left. Title and length are in TU green (#84B818, as in
+    `local/ae-logo.svg`). The footer has the faculty logo at the bottom left and the AE logo
+    at the bottom right. The tour stays red, because the AE logo pairs TU green with red.
+  - **rub**: the RUB logo at the top, the faculty logo and Maike's chair logo in the footer.
+    Title, length and tour are in RUB blue (#003560; CMYK 100/50/0/60 in the RUB A3 poster
+    template `local/rub/09_PlakatA3.zip`), the alliance tint is light blue. The sender line is
+    configurable; Maike gives its text.
+  - Poster logos keep their SVG colours, fills and strokes.
+    - The AE logo has three colours.
+    - The RUB faculty logo and Maike's chair logo use stroked lines (`stroke`,
+      `stroke-width`, caps, joins) and the faculty logo uses `<use>` glyph references. Draw
+      both on posters.
+    - Maike's chair logo has very thin lines (1.2 of 1072 units). Keep a minimum line width
+      on the poster, about 0.25 mm.
+    - Boards stay one colour.
+  - The font stays Fira Sans Condensed. Akkurat, the TU font, is licensed and stays out of
+    the repository.
+  - Logo files in `local/` (see `local/LIESMICH-logo.txt`):
+    - `tu-dortmund.svg` is the German TU logo, `tu-dortmund-en.svg` the English one; use it on
+      the English posters. Keep the clear space around the TU logo that the TU design
+      guidelines require.
+    - `ae-logo.svg` and `ae-logo-text.svg` are Kevin's chair logos.
+    - `rub.svg` is the RUB logo, `rub-informatik.svg` the RUB Faculty of Computer Science
+      (English only), and `rub-lehrstuhl.svg` Maike's chair logo. The sources are in
+      `local/rub/`.
+    - `fakultaet-informatik.svg` is the faculty logo of TU Dortmund ("fi fakultät für
+      informatik"), taken from Kevin's posters.
+- **Outputs** as in 9.9 (A1 in the repository per language, A0 and logo versions in
+  `local/posters/`), now also per theme.
 
 ## Phase 10: physical and public
 
