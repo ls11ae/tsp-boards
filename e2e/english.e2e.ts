@@ -62,6 +62,6 @@ test('the kiosk in English', async ({ page }) => {
   await expect(page.locator('.panel.side h2').first()).toContainText('from Los Angeles to Sydney');
   await page.getByRole('button', { name: 'Map', exact: true }).click();
   const names = await placeTitles(page);
-  expect(names).toEqual(expect.arrayContaining(['Mexico City', 'Saint Petersburg', 'Lisbon']));
+  expect(names).toEqual(expect.arrayContaining(['Mexico City', 'Saint Petersburg', 'Cairo']));
   await page.screenshot({ path: `${SHOTS}/kiosk-world.png` });
 });

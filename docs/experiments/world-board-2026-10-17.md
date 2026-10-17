@@ -66,3 +66,37 @@ The string runner-up swaps the Balkans and Central Europe (Paris → Rom → Tir
 Berlin …, Kyjiw → Istanbul), 7.34 mm longer. Files: `docs/data/curated/welt-pazifik.txt`,
 `public/puzzles/welt-pazifik-brett.tsp.json` (board) and `welt-pazifik.tsp.json` (digital),
 `docs/boards/welt-pazifik/`.
+
+## Variants with London and Africa (2026-10-18, roadmap 9.17)
+
+Kevin: Africa had only Nairobi and London was missing, while Krasnodar, Tirana and Mekka are less
+known. On the board London is 5.4 mm from Paris and Kairo 6.4 mm from Jerusalem, so with at
+least 10 mm between nails London replaces Paris and Kairo replaces Jerusalem.
+
+- **Small changes do not work.** The chosen board with Paris, Jerusalem, Krasnodar, Tirana and
+  Mekka replaced by London, Kairo, Lagos or Kinshasa, Kapstadt or Johannesburg, and Bagdad
+  (exact string model): string gaps of 0.87–2.78 mm, and the globe orders another path.
+- **The search with the cities pinned** (`--pin 'London,Kairo,<Lagos|Kinshasa>,<Kapstadt|Johannesburg>'
+  --exclude 'Krasnodar,Tirana,Mekka'`, n = 40, seeds 1–3, 2500 iterations, weights 1, 0.5, 2):
+
+| variant | candidates | same order on the globe | string gaps (mm) |
+| --- | --- | --- | --- |
+| Lagos, Kapstadt | 15 | 13 | 6.19–10.80 |
+| Lagos, Johannesburg | 15 | 10 | 6.09–8.98 |
+| Kinshasa, Kapstadt | 15 | 8 | 5.67–10.68 |
+| Kinshasa, Johannesburg | 15 | 10 | 6.02–10.68 |
+
+Taken: Lagos and Johannesburg, seed 3, **string gap 7.50 mm** (7.50 mm at the scale at
+Sydney), robust for r_eff 1.0–2.0 mm (7.34–7.66 mm), the same order on the globe (70,851 km,
+runner-up 109 km longer, Bangkok and Ho-Chi-Minh-Stadt swapped as on the board),
+recognizability 0.536 (0.556 before), with Berlin. Against the first board it adds Lagos,
+Karatschi, Kairo, Johannesburg, London, Bagdad, Teheran, Kabul, Madrid, Caracas and Lyon and
+drops Lima, Baku, Brasília, Paris, Barcelona, Mekka, Jerusalem, Krasnodar, Denver, Lissabon and
+Tirana. It has the highest recognizability of the 41 same-order candidates with a gap of at
+least 5 mm; the others change 11–14 cities, some drop Berlin.
+
+Path: Los Angeles → Mexiko-Stadt → Chicago → New York City → Caracas → Bogotá → Santiago →
+Buenos Aires → Rio de Janeiro → Johannesburg → Nairobi → Lagos → Madrid → London → Lyon → Rom →
+Budapest → Berlin → Stockholm → Sankt Petersburg → Moskau → Kyjiw → Istanbul → Kairo → Bagdad →
+Teheran → Kabul → Karatschi → Mumbai → Dhaka → Peking → Seoul → Tokio → Shanghai → Hongkong →
+Bangkok → Ho-Chi-Minh-Stadt → Singapur → Jakarta → Sydney.

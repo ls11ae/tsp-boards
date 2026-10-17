@@ -1,7 +1,15 @@
 {
-  "_comment": "Export defaults of the world board (roadmap 9.15): built like the Excellence board (12 mm plywood cut to size, nail holes drilled at engraved pits), for cli/collection.ts --board-extras. No legend; start and end nail come from --path.",
+  "_comment": "Export defaults and legend of the world board (roadmap 9.15, 9.17): built like the Excellence board (12 mm plywood cut to size, nail holes drilled at engraved pits), for cli/collection.ts --board-extras. The legend box sits at the bottom left in the ocean (legendWidthMm), so Antarctica keeps its outline; start and end nail come from --path.",
   "export": {
     "holes": "pit",
     "edge": false
-  }
+  },
+  "legendWidthMm": 115,
+  "legend": [
+    {
+      "symbol": "dashed",
+      "text": "Gestrichelt: der Rückflug über den Pazifik ist vorgegeben",
+      "textEn": "Dashed: the flight back across the Pacific is given"
+    }
+  ]
 }

@@ -1,0 +1,10 @@
+{
+  "_comment": "Legend of the digital world puzzle (roadmap 9.17), shown in the app as on the board, for cli/collection.ts --board-extras.",
+  "legend": [
+    {
+      "symbol": "dashed",
+      "text": "Gestrichelt: der Rückflug über den Pazifik ist vorgegeben",
+      "textEn": "Dashed: the flight back across the Pacific is given"
+    }
+  ]
+}

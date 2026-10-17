@@ -4,36 +4,38 @@
 # Chosen by cli/world-board.ts (search over the 250 cities with most Wikipedia editions,
 # Los Angeles and Sydney pinned, the leg Sydney–Los Angeles fixed; nails 2 mm, string 1 mm,
 # at least 10 mm apart, 4 mm labels; docs/experiments/world-board-2026-10-17.md).
+# 2026-10-18 (roadmap 9.17): with London, Kairo, Lagos and Johannesburg, chosen by the same search
+# with --pin 'London,Kairo,Lagos,Johannesburg' --exclude 'Krasnodar,Tirana,Mekka'.
 # Built with: npx tsx cli/collection.ts list --file docs/data/curated/welt-pazifik.txt
 #   --region WO --path 'Los Angeles,Sydney' … (README). Alphabetical order.
-Baku
+Bagdad
 Bangkok
-Barcelona
 Berlin
 Bogotá
-Brasília
 Budapest
 Buenos Aires
+Caracas
 Chicago
-Denver
 Dhaka
 Ho-Chi-Minh-Stadt
 Hongkong
 Istanbul
 Jakarta
-Jerusalem
-Krasnodar
+Johannesburg
+Kabul
+Kairo
+Karatschi
 Kyjiw
-Lima
-Lissabon
+Lagos
+London
 Los Angeles
-Mekka
+Lyon
+Madrid
 Mexiko-Stadt
 Moskau
 Mumbai
 Nairobi
 New York City
-Paris
 Peking
 Rio de Janeiro
 Rom
@@ -44,5 +46,5 @@ Shanghai
 Singapur
 Stockholm
 Sydney
-Tirana
+Teheran
 Tokio

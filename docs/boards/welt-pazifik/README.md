@@ -5,14 +5,21 @@ working area 600 × 305 mm) in one piece. A round trip around the world cannot c
 board, so **the flight across the Pacific is given**: the string runs from **Los Angeles**
 (start nail, the string is tied there) through all other places to **Sydney** (end nail with
 the scale); the dashed line Sydney → Los Angeles leaves the map at both edges and closes the
-round trip. Built from `public/puzzles/welt-pazifik-brett.tsp.json` (list
-`docs/data/curated/welt-pazifik.txt`, export defaults in `welt-pazifik-brett.board.json`); the
-same puzzle is in the app as a digital puzzle on the globe (`#p/welt-pazifik`), the board
-version is `#p/welt-pazifik-brett`.
+round trip; a legend line at the bottom left says so ("Gestrichelt: der Rückflug über den
+Pazifik ist vorgegeben", with a scored dashed line). Built from
+`public/puzzles/welt-pazifik-brett.tsp.json` (list `docs/data/curated/welt-pazifik.txt`, export
+defaults and legend in `welt-pazifik-brett.board.json`); the same puzzle is in the app as a
+digital puzzle on the globe (`#p/welt-pazifik`), the board version is `#p/welt-pazifik-brett`.
 
 Build variant as the Excellence board (`docs/boards/exzellenzstrategie-2027/README.md`): one
 of the **12 mm birch plywood** pieces (about 298 × 600 mm), engraved, nail holes **drilled by
-hand** at engraved pits; nails **2.0 × 20 mm**, polyester string about **1 mm**.
+hand** at engraved pits; nails **2.0 × 20 mm** (measured 2026-10-18), polyester string about
+**1 mm** (measured value follows; re-export then, below).
+
+Cities since 2026-10-18 (roadmap 9.17, Kevin's review): London, Kairo, Lagos and Johannesburg
+are on the board, so Africa has four cities; London replaces Paris and Kairo replaces Jerusalem
+(5.4 mm and 6.4 mm apart on the board, below the 10 mm minimum), and Krasnodar, Tirana and Mekka
+are gone. The first version (7.34 mm) is in the git history.
 
 ## Files
 
@@ -31,16 +38,18 @@ power). No red or orange: the piece is pre-cut and the holes are drilled.
 ## The puzzle
 
 - 40 cities on all continents, chosen by the search (`cli/world-board.ts`) among the 250 cities
-  with the most Wikipedia editions, for label space, recognizability and the gap; details in
+  with the most Wikipedia editions (plus the pinned London, Kairo, Lagos and Johannesburg), for
+  label space, recognizability and the gap; details in
   `docs/experiments/world-board-2026-10-17.md`.
 - With 2.0 mm nails and 1 mm string (r_eff 1.5 mm): string gap between the shortest and the
-  second-shortest path **7.34 mm** (exact); **at the scale at Sydney also 7.34 mm** (exact).
-- Robust: for r_eff from 1.0 to 2.0 mm the shortest path stays the same; the gap is 5.58–7.66
+  second-shortest path **7.50 mm** (exact); **at the scale at Sydney also 7.50 mm** (exact).
+- Robust: for r_eff from 1.0 to 2.0 mm the shortest path stays the same; the gap is 7.34–7.66
   mm, at the scale the same.
-- The same order on the globe: the shortest path by great circles (the digital puzzle, 66,732
-  km) visits the cities in the same order; there the runner-up is 109 km longer (0.16 %).
-- The runner-up swaps the Balkans and Central Europe (Paris → Rom → Tirana → Budapest → Berlin …
-  Kyjiw → Istanbul instead of Paris → Berlin … Kyjiw → Budapest → Rom → Tirana → Istanbul).
+- The same order on the globe: the shortest path by great circles (the digital puzzle, 70,851
+  km) visits the cities in the same order; there the runner-up is 109 km longer (0.15 %).
+- The runner-up swaps Bangkok and Ho-Chi-Minh-Stadt (… Hongkong → Ho-Chi-Minh-Stadt → Bangkok →
+  Singapur … instead of … Hongkong → Bangkok → Ho-Chi-Minh-Stadt → Singapur …), on the board and
+  on the globe.
 
 ## Building
 
@@ -49,13 +58,13 @@ Wolfcraft chuck, sanding and oiling, nails with the M14 nut as height gauge), ex
 
 1. **Placing**: the pieces are 1–2 mm narrower than 300 mm. Keep the file at 600 × 300 mm and
    centre it on the piece (equal margins top and bottom; the title keeps 12 mm from the edge).
-2. **Calibrating** (solution sheet, "Faden kalibrieren"): cut at least 1.4 m of string, **tie it
-   to the start nail Los Angeles**, wind the path in the order of the solution sheet (Los
-   Angeles → Denver → Chicago → … → Jakarta → Sydney), **once around the end nail Sydney** and
-   straight along the scale. Mark the string at the target mark 0 (a knot or a bead) and cut it
-   there. The string from the knot to 0 is about 1,214 mm.
-3. **Checking the scale**: wind the runner-up (above; the report has the full order): its end
-   must stop about 7.3 mm before 0, outside the scored frame around 0. A path has one direction
+2. **Calibrating** (solution sheet, "Faden kalibrieren"): cut at least 1.45 m of string, **tie
+   it to the start nail Los Angeles**, wind the path in the order of the solution sheet (Los
+   Angeles → Mexiko-Stadt → Chicago → … → Jakarta → Sydney), **once around the end nail Sydney**
+   and straight along the scale. Mark the string at the target mark 0 (a knot or a bead) and cut
+   it there. The string from the knot to 0 is about 1,263 mm.
+3. **Checking the scale**: wind the runner-up (Bangkok and Ho-Chi-Minh-Stadt swapped, above):
+   its end must stop about 7.5 mm before 0, outside the scored frame around 0. A path has one direction
    only, so there is no second calibration direction. If the shortest path misses 0 by more than
    1–2 mm, the string stretches or the nails lean.
 4. **Playing**: the string stays tied at Los Angeles; players wind it through all places and

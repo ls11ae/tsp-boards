@@ -19,6 +19,11 @@ test('a path from Los Angeles to Sydney with the flight back given', async ({ pa
   expect(((await given.getAttribute('d')) ?? '').split('M').length - 1).toBeGreaterThanOrEqual(2);
   await expect(page.locator('.play-place.start title')).toHaveText('Los Angeles');
   await expect(page.locator('.play-place.finish title')).toHaveText('Sydney');
+  // The legend explains the dashed line (roadmap 9.17).
+  await expect(page.locator('.place-legend')).toContainText(
+    'Gestrichelt: der Rückflug über den Pazifik',
+  );
+  await expect(page.locator('.place-legend line.given-leg')).toHaveCount(1);
   await page.screenshot({ path: `${SHOTS}/start.png` });
 
   // The keyboard list: Los Angeles and Sydney are not offered while other places are open.
