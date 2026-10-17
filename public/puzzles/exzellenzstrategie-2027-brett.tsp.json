@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "exzellenzstrategie-2027-brett",
   "kind": "map",
-  "title": "Exzellenzstrategie 2026–2033",
-  "description": "Das Brett zur Exzellenzstrategie: alle 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und weitere Standorte von Exzellenzclustern – alle mit mindestens zwei Clustern, in NRW alle. Nicht auf dem Brett (je ein Cluster): Bayreuth, Braunschweig, Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm.",
+  "title": {
+    "de": "Exzellenzstrategie 2026–2033",
+    "en": "Excellence Strategy 2026–2033"
+  },
+  "description": {
+    "de": "Das Brett zur Exzellenzstrategie: alle 15 Exzellenzuniversitäten und -verbünde ab 2027 (14 Orte, mit Ring) und weitere Standorte von Exzellenzclustern – alle mit mindestens zwei Clustern, in NRW alle. Nicht auf dem Brett (je ein Cluster): Bayreuth, Braunschweig, Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm.",
+    "en": "The Excellence Strategy board: all 15 Universities of Excellence and excellence alliances from 2027 (14 places, with a ring) and further sites of Clusters of Excellence – all with at least two clusters, all of them in North Rhine-Westphalia. Not on the board (one cluster each): Bayreuth, Braunschweig, Erlangen, Halle (Saale), Konstanz, Leipzig, Lübeck, Regensburg, Ulm."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.9.0",
@@ -125,6 +131,7 @@
         "name": "Rhein-Main-Universitäten",
         "lat": 49.9897,
         "lon": 8.5382,
+        "nameEn": "Rhine-Main Universities",
         "members": [
           {
             "id": 2938913,
@@ -326,6 +333,7 @@
           "name": "Rhein-Main-Universitäten",
           "lat": 49.9897,
           "lon": 8.5382,
+          "nameEn": "Rhine-Main Universities",
           "members": [
             {
               "id": 2938913,
@@ -449,19 +457,23 @@
       "legend": [
         {
           "symbol": "ring",
-          "text": "Exzellenzuniversität oder -verbund ab 2027"
+          "text": "Exzellenzuniversität oder -verbund ab 2027",
+          "textEn": "University of Excellence or excellence alliance from 2027"
         },
         {
           "symbol": "nail",
-          "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle"
+          "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle",
+          "textEn": "further site of Clusters of Excellence: all with at least two clusters, all of them in NRW"
         },
         {
           "symbol": "none",
-          "text": "Ruhr Innovation Lab: Ruhr-Universität Bochum und TU Dortmund – exzellent ab 2027"
+          "text": "Ruhr Innovation Lab: Ruhr-Universität Bochum und TU Dortmund – exzellent ab 2027",
+          "textEn": "Ruhr Innovation Lab: Ruhr University Bochum and TU Dortmund University – excellent from 2027"
         },
         {
           "symbol": "none",
-          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+          "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033",
+          "textEn": "Funding: Clusters of Excellence 2026–2032, Universities of Excellence and excellence alliances 2027–2033"
         }
       ],
       "startPlace": 13

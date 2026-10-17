@@ -3,6 +3,12 @@
 Inputs of the curated fixed instances in `public/puzzles/` (built with
 `npx tsx cli/collection.ts list --file docs/data/curated/<name>.txt --id <name> --title …`).
 One place per line (town names of the country data); lines starting with `#` are comments.
+English titles and descriptions come with `--title-en` and `--description-en` (roadmap 9.16;
+a rebuilt puzzle keeps the English texts of its existing file). Towns take their English names
+from the data (Munich); a composite or custom place gives its own after a bar,
+`Rhein-Main-Universitäten | Rhine-Main Universities = Darmstadt + Frankfurt am Main + Mainz`,
+and "A/B" composites translate their members (Bonn/Cologne). Legend lines in `.board.json`
+files have an English `textEn`.
 
 | list                              | puzzle                                         | places | purpose |
 | --------------------------------- | ---------------------------------------------- | ------ | ------- |

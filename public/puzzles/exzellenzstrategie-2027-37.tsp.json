@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "exzellenzstrategie-2027-37",
   "kind": "map",
-  "title": "Exzellenzstrategie: alle 37 Städte",
-  "description": "Alle Städte der Exzellenzstrategie: die Exzellenzuniversitäten und die Städte der Exzellenzverbünde ab 2027 (mit Ring) und die 20 weiteren Standorte von Exzellenzclustern 2026–2032. Jede Stadt eines Verbunds ist ein eigener Halt.",
+  "title": {
+    "de": "Exzellenzstrategie: alle 37 Städte",
+    "en": "Excellence Strategy: all 37 cities"
+  },
+  "description": {
+    "de": "Alle Städte der Exzellenzstrategie: die Exzellenzuniversitäten und die Städte der Exzellenzverbünde ab 2027 (mit Ring) und die 20 weiteren Standorte von Exzellenzclustern 2026–2032. Jede Stadt eines Verbunds ist ein eigener Halt.",
+    "en": "All cities of the Excellence Strategy: the Universities of Excellence and the cities of the excellence alliances from 2027 (with a ring) and the 20 further sites of Clusters of Excellence 2026–2032. Every city of an alliance is a stop of its own."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.9.0",

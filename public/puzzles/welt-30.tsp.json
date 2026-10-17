@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "welt-30",
   "kind": "map",
-  "title": "Welt: 30 Metropolen",
-  "description": "Rundreise durch 30 Metropolen auf allen Kontinenten, gemessen auf der Kugel: Die kürzesten Wege sind Großkreise. Nach dem Lösen lohnt der Vergleich mit der kürzesten Tour auf der flachen Karte.",
+  "title": {
+    "de": "Welt: 30 Metropolen",
+    "en": "World: 30 metropolises"
+  },
+  "description": {
+    "de": "Rundreise durch 30 Metropolen auf allen Kontinenten, gemessen auf der Kugel: Die kürzesten Wege sind Großkreise. Nach dem Lösen lohnt der Vergleich mit der kürzesten Tour auf der flachen Karte.",
+    "en": "A round trip through 30 metropolises on all continents, measured on the sphere: the shortest connections are great circles. After solving, compare it with the shortest tour on the flat map."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.9.0",

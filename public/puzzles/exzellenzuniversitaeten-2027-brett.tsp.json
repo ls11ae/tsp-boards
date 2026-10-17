@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "exzellenzuniversitaeten-2027-brett",
   "kind": "map",
-  "title": "Exzellenzuniversitäten ab 2027",
-  "description": "Die 15 Exzellenzuniversitäten und -verbünde ab 2027 in 13 Orten: München hat zwei, Bonn und Köln sind ein Ort (eng beieinander, drei gemeinsame Exzellenzcluster), Verbünde sind ein Ort zwischen ihren Städten.",
+  "title": {
+    "de": "Exzellenzuniversitäten ab 2027",
+    "en": "Universities of Excellence from 2027"
+  },
+  "description": {
+    "de": "Die 15 Exzellenzuniversitäten und -verbünde ab 2027 in 13 Orten: München hat zwei, Bonn und Köln sind ein Ort (eng beieinander, drei gemeinsame Exzellenzcluster), Verbünde sind ein Ort zwischen ihren Städten.",
+    "en": "The 15 Universities of Excellence and excellence alliances from 2027 in 13 places: Munich has two, Bonn and Cologne are one place (close together, three joint Clusters of Excellence), alliances are a place between their cities."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.0.0",
@@ -101,6 +107,7 @@
         "name": "Rhein-Main-Universitäten",
         "lat": 49.9897,
         "lon": 8.5382,
+        "nameEn": "Rhine-Main Universities",
         "members": [
           {
             "id": 2938913,
@@ -229,6 +236,7 @@
           "name": "Rhein-Main-Universitäten",
           "lat": 49.9897,
           "lon": 8.5382,
+          "nameEn": "Rhine-Main Universities",
           "members": [
             {
               "id": 2938913,

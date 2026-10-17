@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "bayern-30",
   "kind": "map",
-  "title": "Bayern: 30 Städte",
-  "description": "Rundreise durch 30 bayerische Städte.",
+  "title": {
+    "de": "Bayern: 30 Städte",
+    "en": "Bavaria: 30 cities"
+  },
+  "description": {
+    "de": "Rundreise durch 30 bayerische Städte.",
+    "en": "A round trip through 30 Bavarian cities."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.0.0",

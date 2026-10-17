@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "landeshauptstaedte-brett",
   "kind": "map",
-  "title": "Landeshauptstädte (Brett)",
-  "description": "Die 16 Landeshauptstädte als Brett: Mainz und Wiesbaden liegen so nah beieinander, dass sie ein Nagel zwischen beiden Städten sind.",
+  "title": {
+    "de": "Landeshauptstädte (Brett)",
+    "en": "State capitals (board)"
+  },
+  "description": {
+    "de": "Die 16 Landeshauptstädte als Brett: Mainz und Wiesbaden liegen so nah beieinander, dass sie ein Nagel zwischen beiden Städten sind.",
+    "en": "The 16 state capitals as a board: Mainz and Wiesbaden are so close together that they are one nail between the two cities."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.0.0",

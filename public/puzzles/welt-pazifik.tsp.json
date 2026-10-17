@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "welt-pazifik",
   "kind": "map",
-  "title": "Rund um die Welt",
-  "description": "Von Los Angeles durch 38 Metropolen aller Kontinente nach Sydney, gemessen auf der Kugel: Die Verbindungen sind Großkreise. Der Flug über den Pazifik zurück nach Los Angeles ist gegeben und schließt die Rundreise.",
+  "title": {
+    "de": "Rund um die Welt",
+    "en": "Around the world"
+  },
+  "description": {
+    "de": "Von Los Angeles durch 38 Metropolen aller Kontinente nach Sydney, gemessen auf der Kugel: Die Verbindungen sind Großkreise. Der Flug über den Pazifik zurück nach Los Angeles ist gegeben und schließt die Rundreise.",
+    "en": "From Los Angeles through 38 metropolises on all continents to Sydney, measured on the sphere: the connections are great circles. The flight across the Pacific back to Los Angeles is given and closes the round trip."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.9.0",

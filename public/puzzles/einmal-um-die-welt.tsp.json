@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "einmal-um-die-welt",
   "kind": "map",
-  "title": "Einmal um die Welt",
-  "description": "Zwanzig Städte rund um die Nordhalbkugel: Die kürzeste Rundreise führt einmal um den Globus – auf der flachen Karte verlässt sie den Rand über dem Pazifik.",
+  "title": {
+    "de": "Einmal um die Welt",
+    "en": "Once around the world"
+  },
+  "description": {
+    "de": "Zwanzig Städte rund um die Nordhalbkugel: Die kürzeste Rundreise führt einmal um den Globus – auf der flachen Karte verlässt sie den Rand über dem Pazifik.",
+    "en": "Twenty cities around the northern hemisphere: the shortest round trip goes once around the globe – on the flat map it leaves the edge over the Pacific."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.9.0",

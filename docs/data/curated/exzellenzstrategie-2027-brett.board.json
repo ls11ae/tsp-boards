@@ -8,19 +8,23 @@
   "legend": [
     {
       "symbol": "ring",
-      "text": "Exzellenzuniversität oder -verbund ab 2027"
+      "text": "Exzellenzuniversität oder -verbund ab 2027",
+      "textEn": "University of Excellence or excellence alliance from 2027"
     },
     {
       "symbol": "nail",
-      "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle"
+      "text": "weiterer Standort von Exzellenzclustern: alle mit mindestens zwei Clustern, in NRW alle",
+      "textEn": "further site of Clusters of Excellence: all with at least two clusters, all of them in NRW"
     },
     {
       "symbol": "none",
-      "text": "Ruhr Innovation Lab: Ruhr-Universität Bochum und TU Dortmund – exzellent ab 2027"
+      "text": "Ruhr Innovation Lab: Ruhr-Universität Bochum und TU Dortmund – exzellent ab 2027",
+      "textEn": "Ruhr Innovation Lab: Ruhr University Bochum and TU Dortmund University – excellent from 2027"
     },
     {
       "symbol": "none",
-      "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033"
+      "text": "Förderung: Exzellenzcluster 2026–2032, Exzellenzuniversitäten und -verbünde 2027–2033",
+      "textEn": "Funding: Clusters of Excellence 2026–2032, Universities of Excellence and excellence alliances 2027–2033"
     }
   ]
 }

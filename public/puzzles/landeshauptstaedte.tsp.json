@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "landeshauptstaedte",
   "kind": "map",
-  "title": "Landeshauptstädte",
-  "description": "Die Hauptstädte der 16 Bundesländer (nach Wikidata).",
+  "title": {
+    "de": "Landeshauptstädte",
+    "en": "State capitals"
+  },
+  "description": {
+    "de": "Die Hauptstädte der 16 Bundesländer (nach Wikidata).",
+    "en": "The capitals of the 16 German states (from Wikidata)."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.0.0",

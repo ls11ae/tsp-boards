@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "europa-hauptstaedte",
   "kind": "map",
-  "title": "Europas Hauptstädte",
-  "description": "Die Hauptstädte der europäischen Länder mit mindestens 50.000 Einwohnern (40 Städte).",
+  "title": {
+    "de": "Europas Hauptstädte",
+    "en": "Capitals of Europe"
+  },
+  "description": {
+    "de": "Die Hauptstädte der europäischen Länder mit mindestens 50.000 Einwohnern (40 Städte).",
+    "en": "The capitals of the European countries with at least 50,000 inhabitants (40 cities)."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.9.0",

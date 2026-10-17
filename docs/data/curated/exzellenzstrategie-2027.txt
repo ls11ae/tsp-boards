@@ -21,7 +21,7 @@
 * Freiburg im Breisgau
 * Jena
 * Köln
-* Rhein-Main-Universitäten = Darmstadt + Frankfurt am Main + Mainz
+* Rhein-Main-Universitäten | Rhine-Main Universities = Darmstadt + Frankfurt am Main + Mainz
 * Ruhr Innovation Lab = Bochum + Dortmund
 # Further sites of Clusters of Excellence:
 Hannover

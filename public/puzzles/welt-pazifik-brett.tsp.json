@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "welt-pazifik-brett",
   "kind": "map",
-  "title": "Rund um die Welt",
-  "description": "Von Los Angeles durch 38 Metropolen aller Kontinente nach Sydney: der kürzeste Weg mit Nägeln und Faden auf der flachen Weltkarte (600 × 300 mm). Der Flug über den Pazifik zurück nach Los Angeles ist gegeben.",
+  "title": {
+    "de": "Rund um die Welt",
+    "en": "Around the world"
+  },
+  "description": {
+    "de": "Von Los Angeles durch 38 Metropolen aller Kontinente nach Sydney: der kürzeste Weg mit Nägeln und Faden auf der flachen Weltkarte (600 × 300 mm). Der Flug über den Pazifik zurück nach Los Angeles ist gegeben.",
+    "en": "From Los Angeles through 38 metropolises on all continents to Sydney: the shortest path with nails and string on the flat world map (600 × 300 mm). The flight across the Pacific back to Los Angeles is given."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.9.0",

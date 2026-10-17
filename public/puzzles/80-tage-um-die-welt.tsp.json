@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "80-tage-um-die-welt",
   "kind": "map",
-  "title": "In 80 Tagen um die Welt",
-  "description": "Die Stationen von Phileas Fogg in Jules Vernes Roman: London, Suez, Bombay, Kalkutta, Hongkong, Yokohama, San Francisco, New York und Liverpool. Ist seine Reiseroute die kürzeste Rundreise?",
+  "title": {
+    "de": "In 80 Tagen um die Welt",
+    "en": "Around the World in 80 Days"
+  },
+  "description": {
+    "de": "Die Stationen von Phileas Fogg in Jules Vernes Roman: London, Suez, Bombay, Kalkutta, Hongkong, Yokohama, San Francisco, New York und Liverpool. Ist seine Reiseroute die kürzeste Rundreise?",
+    "en": "The stops of Phileas Fogg in Jules Verne's novel: London, Suez, Bombay, Calcutta, Hong Kong, Yokohama, San Francisco, New York and Liverpool. Is his route the shortest round trip?"
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.9.0",

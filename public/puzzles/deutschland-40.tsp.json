@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "deutschland-40",
   "kind": "map",
-  "title": "Deutschland: 40 Städte",
-  "description": "Die Rundreise durch 40 bekannte deutsche Städte (ab 50.000 Einwohnern, hohes Gewicht für bekannte Städte).",
+  "title": {
+    "de": "Deutschland: 40 Städte",
+    "en": "Germany: 40 cities"
+  },
+  "description": {
+    "de": "Die Rundreise durch 40 bekannte deutsche Städte (ab 50.000 Einwohnern, hohes Gewicht für bekannte Städte).",
+    "en": "The round trip through 40 well-known German cities (50,000 inhabitants or more, a high weight for well-known cities)."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.0.0",

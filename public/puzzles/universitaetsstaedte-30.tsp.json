@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "universitaetsstaedte-30",
   "kind": "map",
-  "title": "Universitätsstädte: 30 Orte",
-  "description": "Rundreise durch 30 der 74 deutschen Universitätsstädte (nach Wikidata).",
+  "title": {
+    "de": "Universitätsstädte: 30 Orte",
+    "en": "University towns: 30 places"
+  },
+  "description": {
+    "de": "Rundreise durch 30 der 74 deutschen Universitätsstädte (nach Wikidata).",
+    "en": "A round trip through 30 of the 74 German university towns (from Wikidata)."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.0.0",

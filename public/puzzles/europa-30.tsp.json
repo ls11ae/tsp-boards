@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "europa-30",
   "kind": "map",
-  "title": "Europa: 30 Städte",
-  "description": "Rundreise durch 30 bekannte europäische Städte (ab 300.000 Einwohnern).",
+  "title": {
+    "de": "Europa: 30 Städte",
+    "en": "Europe: 30 cities"
+  },
+  "description": {
+    "de": "Rundreise durch 30 bekannte europäische Städte (ab 300.000 Einwohnern).",
+    "en": "A round trip through 30 well-known European cities (300,000 inhabitants or more)."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.9.0",

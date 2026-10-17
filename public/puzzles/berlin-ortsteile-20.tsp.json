@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "berlin-ortsteile-20",
   "kind": "map",
-  "title": "Berlin: 20 Ortsteile",
-  "description": "Rundreise durch 20 der 96 Berliner Ortsteile (Lage nach Wikidata).",
+  "title": {
+    "de": "Berlin: 20 Ortsteile",
+    "en": "Berlin: 20 localities"
+  },
+  "description": {
+    "de": "Rundreise durch 20 der 96 Berliner Ortsteile (Lage nach Wikidata).",
+    "en": "A round trip through 20 of Berlin's 96 localities (Ortsteile; positions from Wikidata)."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.0.0",

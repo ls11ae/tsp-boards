@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "olympia-sommerspiele",
   "kind": "map",
-  "title": "Olympische Sommerspiele",
-  "description": "Alle Austragungsorte der Olympischen Sommerspiele von Athen 1896 bis Paris 2024: eine Rundreise um die Welt, gemessen auf der Kugel.",
+  "title": {
+    "de": "Olympische Sommerspiele",
+    "en": "Summer Olympic Games"
+  },
+  "description": {
+    "de": "Alle Austragungsorte der Olympischen Sommerspiele von Athen 1896 bis Paris 2024: eine Rundreise um die Welt, gemessen auf der Kugel.",
+    "en": "All host cities of the Summer Olympic Games from Athens 1896 to Paris 2024: a round trip around the world, measured on the sphere."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.9.0",

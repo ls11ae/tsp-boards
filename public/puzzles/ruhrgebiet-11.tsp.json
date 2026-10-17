@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "ruhrgebiet-11",
   "kind": "map",
-  "title": "Ruhrgebiet: 11 Städte",
-  "description": "Die elf kreisfreien Städte des Ruhrgebiets, von Duisburg bis Hamm: eine kurze Rundreise durch das Revier.",
+  "title": {
+    "de": "Ruhrgebiet: 11 Städte",
+    "en": "Ruhr area: 11 cities"
+  },
+  "description": {
+    "de": "Die elf kreisfreien Städte des Ruhrgebiets, von Duisburg bis Hamm: eine kurze Rundreise durch das Revier.",
+    "en": "The eleven independent cities of the Ruhr area, from Duisburg to Hamm: a short round trip through the Ruhr."
+  },
   "purpose": "digital",
   "language": "de",
   "app": "0.9.0",

@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "nrw-25",
   "kind": "map",
-  "title": "Nordrhein-Westfalen: 25 Städte",
-  "description": "Rundreise durch 25 Städte in Nordrhein-Westfalen.",
+  "title": {
+    "de": "Nordrhein-Westfalen: 25 Städte",
+    "en": "North Rhine-Westphalia: 25 cities"
+  },
+  "description": {
+    "de": "Rundreise durch 25 Städte in Nordrhein-Westfalen.",
+    "en": "A round trip through 25 cities in North Rhine-Westphalia."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.0.0",

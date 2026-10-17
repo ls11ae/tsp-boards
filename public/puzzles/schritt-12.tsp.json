@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "schritt-12",
   "kind": "incremental",
-  "title": "Schritt für Schritt: 12 Nägel",
-  "description": "Die kürzeste Rundreise durch 1–3, 1–4, … bis 1–12.",
+  "title": {
+    "de": "Schritt für Schritt: 12 Nägel",
+    "en": "Step by step: 12 nails"
+  },
+  "description": {
+    "de": "Die kürzeste Rundreise durch 1–3, 1–4, … bis 1–12.",
+    "en": "The shortest round trip through 1–3, 1–4, … up to 1–12."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.0.0",

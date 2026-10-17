@@ -2,8 +2,14 @@
   "schema": 1,
   "id": "hansestaedte-25",
   "kind": "map",
-  "title": "Hansestädte: 25 Orte",
-  "description": "Rundreise durch 25 der 136 deutschen Hansestädte (nach Wikidata), mit Lübeck, Stralsund und Wismar.",
+  "title": {
+    "de": "Hansestädte: 25 Orte",
+    "en": "Hanseatic towns: 25 places"
+  },
+  "description": {
+    "de": "Rundreise durch 25 der 136 deutschen Hansestädte (nach Wikidata), mit Lübeck, Stralsund und Wismar.",
+    "en": "A round trip through 25 of the 136 German Hanseatic towns (from Wikidata), with Lübeck, Stralsund and Wismar."
+  },
   "purpose": "board",
   "language": "de",
   "app": "0.0.0",
