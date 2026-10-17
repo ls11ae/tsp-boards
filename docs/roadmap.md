@@ -725,6 +725,9 @@ Two items before the kiosk.
   - Place labels so that each is clearly nearer its own dot than any other place (e.g.
     Würzburg below or right of its dot), and check the other labels the same way.
   - Re-export the posters (repository and `local/posters/`, all themes).
+  - (Done 2026-10-17: a label above, below or at a corner of its dot keeps other dots,
+    labels and alliance outlines farther than its own dot, at a corner 1.5 times as far;
+    outlines count as places for every label; all 72 posters re-exported, 0 unclear labels.)
 - **Gallery order.** The collection starts with nine Excellence puzzles with near-identical
   thumbnails. Make it clearer and put the interesting puzzles first.
   - Group the collection into categories with headings (a `category` field in

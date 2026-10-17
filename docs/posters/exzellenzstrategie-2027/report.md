@@ -11,20 +11,20 @@ Generated 2026-10-17 by `cli/export-poster.ts`, theme neutral.
 | exzellenzstrategie-2027-poster-34 | 34 | 2,838.1 km | +1.8 km | Shortest round trip out of 4.3 × 10^36 options: | same |
 | exzellenzstrategie-2027-poster-37 | 37 | 2,878.5 km | +2.4 km | Shortest round trip out of 1.9 × 10^41 options: | same |
 
-| file | language | paper | layout | labels overlapping | labels on legs | logo |
-| --- | --- | --- | --- | --- | --- | --- |
-| exzellenzstrategie-2027-poster-14-A1 | de | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-14-A1 | en | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-17-A1 | de | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-17-A1 | en | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-22-A1 | de | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-22-A1 | en | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-25-A1 | de | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-25-A1 | en | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-34-A1 | de | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-34-A1 | en | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-37-A1 | de | A1 | facts below | 0 | 0 | – |
-| exzellenzstrategie-2027-poster-37-A1 | en | A1 | facts below | 0 | 0 | – |
+| file | language | paper | layout | labels overlapping | labels on legs | labels unclear | logo |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| exzellenzstrategie-2027-poster-14-A1 | de | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-14-A1 | en | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-17-A1 | de | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-17-A1 | en | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-22-A1 | de | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-22-A1 | en | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-25-A1 | de | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-25-A1 | en | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-34-A1 | de | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-34-A1 | en | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-37-A1 | de | A1 | facts below | 0 | 0 | 0 | – |
+| exzellenzstrategie-2027-poster-37-A1 | en | A1 | facts below | 0 | 0 | 0 | – |
 
 ## exzellenzstrategie-2027-poster-14
 

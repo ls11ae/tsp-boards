@@ -49,8 +49,10 @@ subtitles, legends and games of both languages. The design themes are in
   map, whose shortest round trip is the poster's in all six variants; the board puzzle (25) by
   string, whose optimum is the same round trip.
 - **Labels keep off the round trip:** no label covers a leg, an outline of another alliance or
-  the logo, and each name sits clearly next to its own dot (checked for all files; see
-  `report.md`).
+  the logo, and each name sits clearly next to its own dot: nearer to it than to any other dot
+  or outline, and a name above, below or at a corner of its dot keeps other names away, so
+  that Würzburg does not read as a city of the Rhine-Main alliance (checked for all files; see
+  `report.md`, column "labels unclear").
 - **German and English:** English uses the official terms (Excellence Strategy, Universities of
   Excellence, Clusters of Excellence, excellence alliance, Rhine-Main Universities), English
   place names where they are common (Munich, Cologne, Hanover) and the English number format
