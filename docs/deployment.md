@@ -110,7 +110,7 @@ Privacy: records are sent only with the player's explicit consent (a tick box, o
 and contain no personal data; still, mention the endpoint in the site's privacy notice and keep
 the web server from logging requests to it.
 
-## Event mode at a booth (offline, roadmap 9.4)
+## Event mode at a booth (offline, roadmap 9.4, 9.12)
 
 The app runs entirely in the browser, so a laptop at a booth needs no network once it is
 built:
@@ -123,19 +123,42 @@ npx vite preview --port 4173
 
 (or serve the `dist` folder with any static web server). Then open
 `http://localhost:4173/#kiosk` for the game and, on a second screen,
-`http://localhost:4173/#kiosk/scores` for the day's leaderboards (it rereads the scores every
-10 s and whenever the game tab saves one).
+`http://localhost:4173/#kiosk/scores` for the day's leaderboards. Open both in the same
+browser and profile: the leaderboards live in the browser's local storage, and the second
+screen rereads them every 10 s and whenever the game tab saves one.
+
+### Setting up the booth
+
+- **Browser in kiosk mode,** so there is no address bar, tab bar or back button, e.g.
+  `chrome --kiosk --app=http://localhost:4173/#kiosk`, or on Windows
+  `msedge --kiosk http://localhost:4173/#kiosk --edge-kiosk-type=fullscreen`. Without kiosk
+  mode, "Vollbild" on the start screen switches to full screen (F11 leaves it).
+- **Second screen:** a second browser window (same profile) with `#kiosk/scores`, moved to
+  the second screen and switched to full screen there.
+- **Offline:** the build has everything (maps, puzzles, fonts, the solver); no requests leave
+  the laptop unless the build sets `VITE_PLAY_DATA_URL`.
+
+### During the day
 
 - Start screen: three levels (easy 9–14, medium 20–25, hard 30–40 places, the Excellence
   puzzles first in each); the levels are set in `src/ui/kiosk.ts` (`KIOSK_LEVELS`, puzzle ids
-  of the collection). "Vollbild" switches to full screen; a browser in kiosk mode does the
-  same without a button (e.g. `chrome --kiosk http://localhost:4173/#kiosk`).
-- During a game: "Nächste Person" starts the game again with an empty name; "Zur Auswahl"
+  of the collection).
+- **Names:** every player gets a name from a list of animals with a number ("Fuchs 7",
+  "Biber 12"; German or English with the app's language), not one on today's leaderboards;
+  "Anderer Name" picks another. There is no free text on the public screen. For supervised use
+  (a class, a workshop) `#kiosk?names=free` brings back the name field.
+- During a game: "Nächste Person" starts the game again with a new name; "Zur Auswahl"
   returns to the levels. After two minutes without a touch, click or key the booth goes back
   to the start screen by itself (`INACTIVITY_MS`).
-- No designer, gallery or links out of the event mode; to leave it, remove `#kiosk` from the
-  address and reload.
+- **Removing an entry** (e.g. a name someone typed with free names): press and hold the entry
+  on a leaderboard for 1.5 s (or focus it and press Shift+Delete), then confirm with
+  "Entfernen". No PIN is needed; the confirmation keeps it from happening by accident.
+- **No way out:** the kiosk shows no designer, gallery, export, links or puzzle descriptions;
+  the back button and an address changed to another part of the app return to the booth. To
+  leave the event mode, load the page without `#kiosk` (edit the address and reload). A
+  Playwright test (`npm run e2e`, `e2e/kiosk.e2e.ts`) clicks every visible button on every
+  screen and checks that the page stays in the kiosk.
 - The leaderboards ("Bestenliste des Tages") are kept in the browser's local storage of this
-  laptop (nicknames only, nothing is sent; the opt-in play data endpoint stays off unless the
-  build sets `VITE_PLAY_DATA_URL`). Only today's results are shown; clearing the site data of
+  laptop (names only, nothing is sent; the opt-in play data endpoint stays off unless the build
+  sets `VITE_PLAY_DATA_URL`). Only today's results are shown; clearing the site data of
   `localhost:4173` empties them.

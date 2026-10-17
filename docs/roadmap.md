@@ -6,8 +6,8 @@ items done here when they are finished (heading "— done <date>", or "(done)" a
 
 Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
 game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
-9.11 (labels clearly at their own dot, gallery categories) is done too. Next is 9.12, the kiosk
-for the booth (no free names, no way out), then the open items of Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
+9.11 (labels clearly at their own dot, gallery categories) and 9.12 (the kiosk for the booth:
+names from a list, no way out) are done too. Next are the open items of Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
 Earlier status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler
 poster texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB).
 Then the open items of Phase 10.
@@ -742,7 +742,7 @@ Two items before the kiosk.
     in `index.json`, built by `cli/collection.ts index` from `cli/lib/categories.ts`; the
     gallery shows a heading per category and leaves out categories without a match.)
 
-### 9.12 Kiosk for the booth (feedback 2026-10-17)
+### 9.12 Kiosk for the booth (feedback 2026-10-17) — done 2026-10-17
 
 For the open day the app runs at the booth in the event mode (`#kiosk`, 9.4). Feedback
 reached Kevin: the leaderboard has a free name field, and from the game one gets into the
@@ -764,6 +764,11 @@ designer.
     inside it.
 - `docs/deployment.md`: how to run the booth (browser in kiosk or full-screen mode, offline
   build, second screen with `#kiosk/scores`).
+- (Done 2026-10-17: names from a list of 32 animals with a number, German and English, not one
+  on today's leaderboards, "Anderer Name"; `#kiosk?names=free` for free text; removing an
+  entry by a 1.5 s press or Shift+Delete plus a confirmation; the back button and other
+  addresses stay in the kiosk; `e2e/kiosk.e2e.ts` clicks every visible button on every
+  screen; the booth set-up in `docs/deployment.md`.)
 
 ## Phase 10: physical and public
 

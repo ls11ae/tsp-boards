@@ -1080,3 +1080,20 @@ Short entries: decision; alternatives considered; reason. Newest last.
   own selection are unchanged. Alternatives: a category field in each puzzle file (one more
   thing to keep right in 26 files), the UI grouping by region (Europe and the world and the
   specials would not come out as wanted).
+- **2026-10-17 Kiosk for the booth (roadmap 9.12).** Names: on a public screen nobody types;
+  every player gets an animal with a number (32 animals, the same list in German and English,
+  numbers 1–99, so 3,168 names), drawn again if it is on today's leaderboards, with "Anderer
+  Name" for another one; `#kiosk?names=free` brings back the text field for supervised use.
+  Random names use `Math.random` (UI only, nothing to reproduce). Staff remove an entry by
+  pressing it 1.5 s or with Shift+Delete on the focused entry, then "Entfernen"; no PIN (the
+  booth is staffed, and the confirmation keeps it from happening by accident). Entries are
+  removed by value (`withoutScore`), after reading the stored list again, since the second
+  screen's copy may be older. No way out: the kiosk already rendered no designer, gallery,
+  export, descriptions or links; now the back button and an address changed to another part of
+  the app return to the booth's address (a buffer entry in the history, pushed again at every
+  step back, and `replaceState` on a foreign hash), while loading the page without `#kiosk`
+  still leaves it. A Playwright test clicks every visible, enabled button on the start screen,
+  the leaderboards and three games (screen, globe, board; also with the solution shown), and
+  tries back, keys and another address (58 buttons, all inside the kiosk). Alternatives: a
+  word list of adjectives and animals (more combinations, but some pairings read oddly to
+  children), a staff PIN (one more thing to remember at the booth).
