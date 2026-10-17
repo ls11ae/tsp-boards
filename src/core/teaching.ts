@@ -224,11 +224,18 @@ export function twoOptFrames(inst: Instance, start: Tour): TeachingFrame[] {
   return frames;
 }
 
-/** Edges of each round of the exact (Euclidean) solver until the solution is one round trip. */
+/**
+ * Edges of each round of the exact solver until the solution is one round trip: Euclidean for an
+ * instance without nail radius (the teaching mode, digital puzzles), the string model otherwise
+ * (a board's optimum as judged, roadmap 9.18).
+ */
 export function subtourRounds(backend: MipBackend, inst: Instance): Edge[][] {
   const rounds: Edge[][] = [];
   backend.withModel((model) => {
-    const tsp = new ExactTsp(model, inst.euclidean(), 'euclidean', { timeLimitSec: 60 });
+    const tsp =
+      inst.rEffUm > 0
+        ? new ExactTsp(model, inst, 'string', { timeLimitSec: 120 })
+        : new ExactTsp(model, inst.euclidean(), 'euclidean', { timeLimitSec: 60 });
     tsp.solve(undefined, (edges) => rounds.push(edges.map(([a, b]) => [a, b] as const)));
   });
   return rounds;

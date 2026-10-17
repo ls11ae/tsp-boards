@@ -8,8 +8,10 @@ import { useMemo, type CSSProperties } from 'react';
 import type { Obstacle } from '../../core/board/labels';
 import { boardLabel, listName, type CountryFile } from '../../core/data';
 import type { Point } from '../../core/geometry';
+import { computerDrawing, skipAnimation, useRounds } from '../computer';
 import {
   givenLegPath,
+  legsPath,
   routePath,
   shownRoute,
   townsById,
@@ -114,6 +116,8 @@ export function PlayBoard({
     Math.max(W, H) * 1.5,
     ([px, py], hitMm, touch, current) => {
       if (!puzzle) return;
+      // During "So findet der Computer …" a tap skips to the end (roadmap 9.18).
+      if (skipAnimation()) return;
       const near = members
         .map((c, slot) => ({
           slot,
@@ -188,6 +192,10 @@ export function PlayBoard({
   }, [context, showLabels, labelMm, members, board, placed, viewArea]);
 
   const overlay = useOverlay(board, puzzle);
+  // "So rechnet der Computer" (roadmap 9.18): a strategy's tour, or the animation's step.
+  const computer = useStore((s) => s.computer);
+  useRounds((s) => s.byKey);
+  const drawing = computer && puzzle ? computerDrawing(board, puzzle, computer, play.best) : null;
   const revealed = play.revealed;
   const showOverlay = overlay && (revealed || play.solvedMs !== null);
   // An open path (roadmap 9.15): start and finish marked, the given leg dashed, tours open.
@@ -238,9 +246,35 @@ export function PlayBoard({
           </g>
         )}
         {givenLeg && <path className="given-leg" d={givenLeg} />}
-        {solution && <path className="solution-tour" d={solution} />}
-        {showOverlay && <Overlay board={board} overlay={overlay} showRemoved={solution !== null} />}
-        {path && <path className={revealed ? 'play-path dashed' : 'play-path'} d={path} />}
+        {drawing ? (
+          <g className="computer-layer">
+            {drawing.route && (
+              <path
+                className="computer-tour"
+                d={routePath(board, drawing.route.cities, drawing.route.closed)}
+              />
+            )}
+            <path className="teach-edge" d={legsPath(board, drawing.edges)} />
+            <path className="teach-hl" d={legsPath(board, drawing.highlight)} />
+            {drawing.nodes.map((c) => (
+              <circle
+                key={c}
+                className="teach-node"
+                cx={board.points[c]![0]}
+                cy={board.points[c]![1]}
+                r={mm(MARKER_PX * 1.6)}
+              />
+            ))}
+          </g>
+        ) : (
+          <>
+            {solution && <path className="solution-tour" d={solution} />}
+            {showOverlay && (
+              <Overlay board={board} overlay={overlay} showRemoved={solution !== null} />
+            )}
+            {path && <path className={revealed ? 'play-path dashed' : 'play-path'} d={path} />}
+          </>
+        )}
         <g className="play-labels">
           {labels.map((d, i) => (
             <path key={i} className="play-label" d={d} />

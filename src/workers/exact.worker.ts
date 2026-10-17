@@ -59,7 +59,12 @@ async function handle(request: ExactWorkerRequest): Promise<void> {
     case 'rounds': {
       const rounds = subtourRounds(
         highs,
-        new Instance(request.points, 0, request.sphere ?? null, request.fixedEdge ?? null),
+        new Instance(
+          request.points,
+          request.rEffMm ?? 0,
+          request.sphere ?? null,
+          request.fixedEdge ?? null,
+        ),
       );
       reply({ type: 'rounds', jobId: request.jobId, rounds });
       break;

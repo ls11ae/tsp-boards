@@ -4,7 +4,9 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-18: 9.1–9.17 are done (9.17: GitHub Pages with a service worker for the offline
+Status 2026-10-18 (later): 9.1–9.18 are done (9.18: "So rechnet der Computer" after a game).
+Next: 9.19 (guides and cards), 9.20 (the incremental board with a larger gap).
+Earlier status 2026-10-18: 9.1–9.17 are done (9.17: GitHub Pages with a service worker for the offline
 booth, table labels for two kiosk laptops, the world board with London and Africa). Next: 9.18
 (how the computer solves it), 9.19 (guides and cards), 9.20 (the incremental board with a larger
 gap).
@@ -951,7 +953,7 @@ Optional for the open day, after 9.14.
   Kairo, Lagos and Johannesburg: string gap 7.50 mm (7.50 mm at the scale), the same order on
   the globe, a legend line with a dashed symbol on the board and in the app.)
 
-### 9.18 How the computer solves it (Kevin, 2026-10-18)
+### 9.18 How the computer solves it (Kevin, 2026-10-18) — done 2026-10-18
 
 Optional, kiosk and normal play. Nothing appears by itself; it is behind a button after a
 finished game.
@@ -969,6 +971,16 @@ finished game.
   a slow booth laptop.
 - In the kiosk the view closes with "Zurück" and on the inactivity reset; it never leads out of
   the kiosk. Extend the e2e tests.
+- (Done 2026-10-18: "So rechnet der Computer" after a finished game (solved, judged or the
+  solution shown), in the play panel of the app and the kiosk: bars of how much longer the
+  visitor's round trip, nearest neighbour (best start), insertion and 2-opt are than the proven
+  optimum (km or mm and %), a row shows its tour on the map; "So findet der Computer die
+  kürzeste Rundreise": nearest neighbour, 2-opt, the exact solver's rounds (in the string model
+  for boards, with the given leg for paths) and "Bewiesen: Keine Rundreise ist kürzer!" in at
+  most 30 s, skipped by a tap on the map or "Überspringen"; the rounds are computed in a worker
+  as soon as the puzzle's optimum is known and kept per puzzle in local storage; the view closes
+  with "Zurück", a new game, the next person, the inactivity reset and any change of the kiosk's
+  screen; `src/core/computer.ts`, `e2e/computer.e2e.ts`.)
 
 ### 9.19 Guides and cards (Kevin, 2026-10-18)
 

@@ -4,6 +4,7 @@
 import { listName } from '../../core/data';
 import { boardLabel } from '../../core/data';
 import { shownRoute, usePathCities, type BoardModel } from '../board';
+import { computerDrawing, skipAnimation, useRounds } from '../computer';
 import { cycleCity } from '../controller';
 import { useT } from '../i18n';
 import { useOverlay } from '../overlay';
@@ -73,14 +74,23 @@ export function PlayGlobe({
   const routes: GlobeRoute[] = [];
   // The given leg of an open path (roadmap 9.15), dashed.
   if (ends) routes.push({ cities: [ends[1], ends[0]], closed: false, className: 'given-leg' });
-  const solution = revealed && puzzle?.tour;
+  // "So rechnet der Computer" (roadmap 9.18) instead of the game's tours.
+  const computer = useStore((s) => s.computer);
+  useRounds((s) => s.byKey);
+  const drawing = computer && puzzle ? computerDrawing(board, puzzle, computer, play.best) : null;
+  if (drawing) {
+    if (drawing.route) routes.push({ ...drawing.route, className: 'computer-tour' });
+    routes.push({ cities: [], closed: false, edges: drawing.edges, className: 'teach-edge' });
+    routes.push({ cities: [], closed: false, edges: drawing.highlight, className: 'teach-hl' });
+  }
+  const solution = !drawing && revealed && puzzle?.tour;
   if (solution) routes.push({ ...shownRoute(puzzle.tour, ends), className: 'solution-tour' });
-  const comparing = overlay && (revealed || play.solvedMs !== null);
+  const comparing = !drawing && overlay && (revealed || play.solvedMs !== null);
   if (comparing)
     routes.push({ cities: overlay.tour, closed: overlay.closed, className: 'overlay-tour' });
   // During a flight only the solution and the flown legs are drawn; next to the solution and a
   // comparison the own tour would be a third one.
-  if (play.state.path.length > 1 && !flight && !(comparing && solution))
+  if (play.state.path.length > 1 && !flight && !drawing && !(comparing && solution))
     routes.push({
       cities: play.state.path.map((s) => members[s]!),
       closed: play.state.closed && !ends,
@@ -93,6 +103,7 @@ export function PlayGlobe({
       places={places}
       routes={routes}
       onPick={(c) => {
+        if (skipAnimation()) return;
         const slot = members.indexOf(c);
         if (puzzle && slot >= 0) playClick(puzzle, slot);
       }}

@@ -101,6 +101,8 @@ export interface RoundsJob {
   readonly points: readonly Point[];
   readonly sphere?: Sphere | null;
   readonly fixedEdge?: FixedEdge | null;
+  /** r_eff for the string model (a board, roadmap 9.18); omitted or 0: Euclidean. */
+  readonly rEffMm?: number;
 }
 
 export interface RobustnessJob {

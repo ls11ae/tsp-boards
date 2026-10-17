@@ -21,6 +21,8 @@ import {
 import type { PuzzleView } from '../puzzle';
 import { useStore } from '../store';
 import { OverlayPicker } from './OverlayPicker';
+import { ComputerView } from './ComputerView';
+import { openComputer, prepareRounds } from '../computer';
 import { TOUCH, useMedia } from '../media';
 
 import { DailyScores, Highscores, KioskPlayerName, ShareConsent, Timer } from './PlayParts';
@@ -143,6 +145,12 @@ export function PlayPanel({
     () => (members ? boardInstance(board, members, rEff, ends) : null),
     [board, members, rEff, ends],
   );
+  // "So rechnet der Computer" (roadmap 9.18): the solver's rounds for its animation are computed
+  // in the background once the optimum is known, so they are ready after the game.
+  const computer = useStore((s) => s.computer);
+  useEffect(() => {
+    if (puzzle && optimum) prepareRounds(board, puzzle);
+  }, [board, puzzle, optimum]);
 
   if (!puzzle || !inst) return <aside className="panel side">{t.loading}</aside>;
   const n = puzzle.members.length;
@@ -164,126 +172,139 @@ export function PlayPanel({
   const last = play.attempts.at(-1);
   const judged = play.state.closed && play.judged === pathKey && last !== undefined;
 
+  const finished = judged || play.revealed || play.solvedMs !== null;
   return (
     <aside className="panel side">
-      <section>
-        <h2>
-          {ends
-            ? t.playPathTitle(fmt.integer(n), name(ends[0]), name(ends[1]))
-            : t.playTitle(fmt.integer(n), places)}
-        </h2>
-        {kiosk && <KioskPlayerName />}
-        {kiosk && !digital && <p className="hint kiosk-note">{t.kioskString}</p>}
-        <p className="hint">
-          {ends
-            ? t.playPathHint(name(ends[0]), name(ends[1]), touch, digital)
-            : digital
-              ? touch
-                ? t.playHintDigitalTouch
-                : t.playHintDigital
-              : touch
-                ? t.playHintTouch
-                : t.playHint}
-        </p>
-        <PlaceLegend board={board} members={puzzle.members} />
-        {board.sphere && (
-          <p className="hint">{worldView === 'globe' ? t.playHintGlobe : t.playHintWorld}</p>
-        )}
-        <dl className="metrics">
-          <dt>{digital ? t.playVisitedPlaces : t.playVisited}</dt>
-          <dd>
-            {fmt.integer(path.length)} / {fmt.integer(n)}
-          </dd>
-          <dt>{ends ? t.playPathLength : digital ? t.tourLengthKm : t.stringLength}</dt>
-          <dd>{digital ? `${km(length, 0)} km` : `${mm(length)} mm`}</dd>
-          <dt>{t.playTime}</dt>
-          <dd>
-            <Timer startedAt={play.startedAt} stoppedMs={play.solvedMs ?? play.revealedMs} />
-          </dd>
-          <dt>{ends ? t.playPathAttempts : t.playAttempts}</dt>
-          <dd>{fmt.integer(play.attempts.length)}</dd>
-        </dl>
-        {play.state.closed && !judged && (
-          <p className="hint">{ends ? t.playPathComputing : t.playComputing}</p>
-        )}
-        {judged &&
-          (last.excessUm === 0 ? (
-            <p className="play-result optimal">{ends ? t.playPathOptimal : t.playOptimal}</p>
-          ) : (
-            <p className="play-result">{longer(last.excessUm)}</p>
-          ))}
-        {play.solvedMs !== null && !judged && (
-          <p className="play-result optimal">{t.playSolvedBefore}</p>
-        )}
-        {play.revealed && optimum && (
+      {computer ? (
+        <ComputerView board={board} puzzle={puzzle} path={ends !== null} />
+      ) : (
+        <section>
+          <h2>
+            {ends
+              ? t.playPathTitle(fmt.integer(n), name(ends[0]), name(ends[1]))
+              : t.playTitle(fmt.integer(n), places)}
+          </h2>
+          {kiosk && <KioskPlayerName />}
+          {kiosk && !digital && <p className="hint kiosk-note">{t.kioskString}</p>}
           <p className="hint">
-            {digital
-              ? (ends ? t.playPathRevealedDigital : t.playRevealedDigital)(
-                  km(optimum.optimalLength, 0),
-                )
-              : (ends ? t.playPathRevealed : t.playRevealed)(mm(optimum.optimalLength))}
+            {ends
+              ? t.playPathHint(name(ends[0]), name(ends[1]), touch, digital)
+              : digital
+                ? touch
+                  ? t.playHintDigitalTouch
+                  : t.playHintDigital
+                : touch
+                  ? t.playHintTouch
+                  : t.playHint}
           </p>
-        )}
-        {play.revealed && (
-          <p className="legend">
-            <span className="legend-line solution" /> {ends ? t.legendPathOptimum : t.legendOptimum}{' '}
-            {path.length > 1 && (
-              <>
-                <span className="legend-line dashed" /> {t.legendOwn}
-              </>
-            )}
-          </p>
-        )}
-        {!play.revealed && play.solvedMs === null && (
-          <NextPlace puzzle={puzzle} board={board} digital={digital} ends={ends} />
-        )}
-        <div className="actions">
-          <button
-            type="button"
-            onClick={() => playUndo(puzzle)}
-            disabled={path.length === 0 || play.revealed}
-          >
-            {t.playUndo}
-          </button>
-          <button type="button" onClick={playRestart} disabled={path.length === 0}>
-            {t.playRestart}
-          </button>
-          {/* After an optimal round trip there is nothing left to show. */}
-          {!play.revealed &&
-            play.solvedMs === null &&
-            (confirmReveal ? (
-              <button
-                type="button"
-                className="primary"
-                disabled={!optimum}
-                onClick={() => {
-                  setConfirmReveal(false);
-                  playReveal(puzzle);
-                }}
-              >
-                {t.playRevealConfirm}
-              </button>
-            ) : (
-              <button type="button" onClick={() => setConfirmReveal(true)} disabled={!optimum}>
-                {t.playReveal}
-              </button>
-            ))}
-          {(play.revealed || play.solvedMs !== null) && (
-            <button type="button" onClick={playNewGame}>
-              {t.playNewGame}
-            </button>
+          <PlaceLegend board={board} members={puzzle.members} />
+          {board.sphere && (
+            <p className="hint">{worldView === 'globe' ? t.playHintGlobe : t.playHintWorld}</p>
           )}
-        </div>
-        {(play.revealed || play.solvedMs !== null) && (
-          <OverlayPicker board={board} puzzle={puzzle} />
-        )}
-        {board.sphere && (
-          <FlightButtons
-            puzzle={puzzle}
-            ends={ends && [puzzle.members[ends[0]]!, puzzle.members[ends[1]]!]}
-          />
-        )}
-      </section>
+          <dl className="metrics">
+            <dt>{digital ? t.playVisitedPlaces : t.playVisited}</dt>
+            <dd>
+              {fmt.integer(path.length)} / {fmt.integer(n)}
+            </dd>
+            <dt>{ends ? t.playPathLength : digital ? t.tourLengthKm : t.stringLength}</dt>
+            <dd>{digital ? `${km(length, 0)} km` : `${mm(length)} mm`}</dd>
+            <dt>{t.playTime}</dt>
+            <dd>
+              <Timer startedAt={play.startedAt} stoppedMs={play.solvedMs ?? play.revealedMs} />
+            </dd>
+            <dt>{ends ? t.playPathAttempts : t.playAttempts}</dt>
+            <dd>{fmt.integer(play.attempts.length)}</dd>
+          </dl>
+          {play.state.closed && !judged && (
+            <p className="hint">{ends ? t.playPathComputing : t.playComputing}</p>
+          )}
+          {judged &&
+            (last.excessUm === 0 ? (
+              <p className="play-result optimal">{ends ? t.playPathOptimal : t.playOptimal}</p>
+            ) : (
+              <p className="play-result">{longer(last.excessUm)}</p>
+            ))}
+          {play.solvedMs !== null && !judged && (
+            <p className="play-result optimal">{t.playSolvedBefore}</p>
+          )}
+          {finished && optimum && (
+            <div className="actions">
+              <button type="button" className="computer-open" onClick={() => openComputer(puzzle)}>
+                {t.computerOpen}
+              </button>
+            </div>
+          )}
+          {play.revealed && optimum && (
+            <p className="hint">
+              {digital
+                ? (ends ? t.playPathRevealedDigital : t.playRevealedDigital)(
+                    km(optimum.optimalLength, 0),
+                  )
+                : (ends ? t.playPathRevealed : t.playRevealed)(mm(optimum.optimalLength))}
+            </p>
+          )}
+          {play.revealed && (
+            <p className="legend">
+              <span className="legend-line solution" />{' '}
+              {ends ? t.legendPathOptimum : t.legendOptimum}{' '}
+              {path.length > 1 && (
+                <>
+                  <span className="legend-line dashed" /> {t.legendOwn}
+                </>
+              )}
+            </p>
+          )}
+          {!play.revealed && play.solvedMs === null && (
+            <NextPlace puzzle={puzzle} board={board} digital={digital} ends={ends} />
+          )}
+          <div className="actions">
+            <button
+              type="button"
+              onClick={() => playUndo(puzzle)}
+              disabled={path.length === 0 || play.revealed}
+            >
+              {t.playUndo}
+            </button>
+            <button type="button" onClick={playRestart} disabled={path.length === 0}>
+              {t.playRestart}
+            </button>
+            {/* After an optimal round trip there is nothing left to show. */}
+            {!play.revealed &&
+              play.solvedMs === null &&
+              (confirmReveal ? (
+                <button
+                  type="button"
+                  className="primary"
+                  disabled={!optimum}
+                  onClick={() => {
+                    setConfirmReveal(false);
+                    playReveal(puzzle);
+                  }}
+                >
+                  {t.playRevealConfirm}
+                </button>
+              ) : (
+                <button type="button" onClick={() => setConfirmReveal(true)} disabled={!optimum}>
+                  {t.playReveal}
+                </button>
+              ))}
+            {(play.revealed || play.solvedMs !== null) && (
+              <button type="button" onClick={playNewGame}>
+                {t.playNewGame}
+              </button>
+            )}
+          </div>
+          {(play.revealed || play.solvedMs !== null) && (
+            <OverlayPicker board={board} puzzle={puzzle} />
+          )}
+          {board.sphere && (
+            <FlightButtons
+              puzzle={puzzle}
+              ends={ends && [puzzle.members[ends[0]]!, puzzle.members[ends[1]]!]}
+            />
+          )}
+        </section>
+      )}
       {kiosk && id ? (
         <DailyScores id={id} title={table ? t.kioskDailyTable(table) : undefined} />
       ) : (

@@ -335,6 +335,34 @@ export const en = {
   playOptimal: 'Optimal! This is the shortest round trip.',
   playLonger: (mm: string) => `Not yet: ${mm} mm of string longer than the shortest round trip.`,
   playRevealed: (mm: string) => `The shortest round trip needs ${mm} mm of string.`,
+  // How the computer does it (roadmap 9.18)
+  computerOpen: 'How the computer does it',
+  computerIntro: (path: boolean) =>
+    `The computer knows a few simple strategies. They are quick, but they do not always find the shortest ${path ? 'path' : 'round trip'}. How much longer are they?`,
+  computerPlayer: (path: boolean) => (path ? 'Your path' : 'Your round trip'),
+  computerNearest: 'Nearest neighbour',
+  computerNearestHint: 'always on to the closest place',
+  computerInsertion: 'Insertion',
+  computerInsertionHint: 'add the places one by one',
+  computerTwoOpt: '2-opt',
+  computerTwoOptHint: 'undo crossings until nothing helps',
+  computerOptimum: (path: boolean) => (path ? 'Shortest path' : 'Shortest round trip'),
+  computerOptimumHint: 'proven by the computer',
+  computerShortest: 'shortest',
+  computerTapRow: 'Tap a row to see its tour on the map.',
+  computerHow: (path: boolean) =>
+    `How the computer finds the shortest ${path ? 'path' : 'round trip'}`,
+  computerWait: 'The computer is still calculating …',
+  computerBack: 'Back',
+  computerSkip: 'Skip',
+  computerTapToSkip: 'Tap the map to skip.',
+  computerQuick:
+    'First a quick idea: from each place always on to the closest place not yet visited.',
+  computerImprove:
+    'Now it gets better: where two legs cross, the computer swaps them – that is always shorter.',
+  computerRound: (round: string, pieces: string) =>
+    `Is that the shortest? The computer checks (round ${round}): it links every place to two neighbours as cheaply as it can. That makes ${pieces} small loops. It forbids them and calculates again.`,
+  computerProven: (path: boolean) => `Proven: no ${path ? 'path' : 'round trip'} is shorter!`,
   playUndo: 'Undo',
   playRestart: 'Start over',
   playReveal: 'Show solution',

@@ -1270,3 +1270,22 @@ Short entries: decision; alternatives considered; reason. Newest last.
   booth guide and the take-away cards as PDFs made by a CLI (logo versions only in
   `local/print/`), 9.20 the incremental test board searched for the largest smallest gap at the
   track. Decisions of each item follow in their own entries.
+- **2026-10-18 "So rechnet der Computer" (roadmap 9.18).** A view in the play panel, opened by
+  a button only after a finished game (solved, a round trip judged, or the solution shown); it
+  replaces the panel's game section, so the map stays visible for the tours. The comparison
+  measures as the game does (string length on boards, plain length for digital puzzles) and
+  shows "how much longer than the shortest" as bars (the optimum's bar is the shortest; bars from
+  zero length would hide differences of a few per cent). Strategies: nearest neighbour from its
+  best start, the insertion heuristic of the overlays, and 2-opt started from that nearest
+  neighbour tour (the animation shows the same tours). The animation chains the teaching mode's
+  frames with fixed time budgets (7 s quick tour, 8 s improvements, 12 s rounds, 3 s proof;
+  shorter steps for large puzzles, at most 30 s), and its rounds use the string model for boards,
+  so the proof ends with the optimum the visitor was judged against (the teaching mode keeps the
+  Euclidean rounds). The rounds are the slow part: a worker computes them as soon as the
+  puzzle's optimum is known (while the visitor plays) and keeps them per puzzle in memory and
+  local storage (40 puzzles), so on the booth laptops they are ready after the first game of a
+  puzzle. The view belongs to one game: a store subscription closes it when the game, the
+  puzzle, the page or the kiosk's screen changes. Alternatives: precomputing the rounds into the
+  puzzle files (only the curated ones, and every rebuild would carry them), a modal dialog over
+  the map (would hide the tours), showing the view automatically after a game (Kevin: never by
+  itself).

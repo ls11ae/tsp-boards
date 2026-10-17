@@ -1717,3 +1717,96 @@ polyline.trace-quality {
     bottom: 4px;
   }
 }
+
+/* "So rechnet der Computer" (roadmap 9.18): the comparison and the animation. */
+.computer-bars {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.computer-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+}
+
+.computer-row.shown {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.computer-bar {
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.computer-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: var(--overlay);
+}
+
+.computer-row.player .computer-bar > span {
+  background: var(--play);
+}
+
+.computer-row.optimum .computer-bar > span {
+  background: var(--tour);
+}
+
+.computer-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.computer-caption {
+  font-size: 1.1rem;
+  min-height: 4.5em;
+}
+
+.computer-caption.proven {
+  font-weight: 700;
+  color: var(--ok);
+}
+
+.computer-view progress {
+  width: 100%;
+}
+
+.play-board .computer-tour,
+.globe .computer-tour {
+  fill: none;
+  stroke: var(--overlay);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.play-board .computer-tour,
+.play-board .teach-edge,
+.play-board .teach-hl,
+.play-board .teach-node {
+  vector-effect: non-scaling-stroke;
+}
+
+.play-board .teach-edge,
+.globe .teach-edge {
+  stroke-width: 3px;
+}
+
+.play-board .teach-hl,
+.globe .teach-hl {
+  stroke-width: 5px;
+}
+
+.play-board .teach-node {
+  stroke-width: 2.5px;
+}

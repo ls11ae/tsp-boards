@@ -51,6 +51,8 @@ export interface GlobeRoute {
   readonly cities: readonly number[];
   readonly closed: boolean;
   readonly className: string;
+  /** Single legs instead of a route (pool indices; the computer's animation, roadmap 9.18). */
+  readonly edges?: readonly (readonly [number, number])[];
 }
 
 export interface Flight {
@@ -360,7 +362,12 @@ export function Globe({
     size.h,
   );
   const routePath = (r: GlobeRoute) =>
-    path({ type: 'MultiLineString', coordinates: legs(lonLat, r.cities, r.closed) }) ?? '';
+    path({
+      type: 'MultiLineString',
+      coordinates: r.edges
+        ? r.edges.map(([a, b]) => [[...lonLat[a]!], [...lonLat[b]!]])
+        : legs(lonLat, r.cities, r.closed),
+    }) ?? '';
   let flightPath = '';
   let marker: Point | null = null;
   if (flight && flown) {

@@ -297,6 +297,7 @@ export function playRestart(): void {
 
 /** Starts the game of this puzzle from scratch (time and attempts too). */
 export function playNewGame(): void {
+  useStore.setState({ computer: null });
   updateGame((p) => ({ ...NEW_GAME, ...(p.places === undefined ? {} : { places: p.places }) }));
 }
 

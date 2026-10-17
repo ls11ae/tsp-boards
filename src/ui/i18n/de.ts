@@ -344,6 +344,33 @@ export const de: Messages = {
   playPathRevealedDigital: (km) => `Der kürzeste Weg ist ${km} km lang.`,
   legendPathOptimum: 'kürzester Weg',
   legendGivenLeg: 'gegebener Flug',
+  computerOpen: 'So rechnet der Computer',
+  computerIntro: (path) =>
+    `Der Computer kennt ein paar einfache Strategien. Sie sind schnell, finden aber nicht immer ${path ? 'den kürzesten Weg' : 'die kürzeste Rundreise'}. Wie viel länger sind sie?`,
+  computerPlayer: (path) => (path ? 'Dein Weg' : 'Deine Rundreise'),
+  computerNearest: 'Nächster Nachbar',
+  computerNearestHint: 'immer zum nächsten Ort',
+  computerInsertion: 'Einfügen',
+  computerInsertionHint: 'die Orte nach und nach einbauen',
+  computerTwoOpt: '2-opt',
+  computerTwoOptHint: 'Kreuzungen auflösen, bis nichts mehr hilft',
+  computerOptimum: (path) => (path ? 'Kürzester Weg' : 'Kürzeste Rundreise'),
+  computerOptimumHint: 'vom Computer bewiesen',
+  computerShortest: 'am kürzesten',
+  computerTapRow: 'Tippe auf eine Zeile, dann siehst du die Tour auf der Karte.',
+  computerHow: (path) =>
+    `So findet der Computer ${path ? 'den kürzesten Weg' : 'die kürzeste Rundreise'}`,
+  computerWait: 'Der Computer rechnet noch …',
+  computerBack: 'Zurück',
+  computerSkip: 'Überspringen',
+  computerTapToSkip: 'Tippe auf die Karte, um zu überspringen.',
+  computerQuick:
+    'Erst eine schnelle Idee: Von jedem Ort immer weiter zum nächsten Ort, der noch fehlt.',
+  computerImprove:
+    'Jetzt wird verbessert: Wo sich zwei Strecken kreuzen, tauscht der Computer sie – so wird es immer kürzer.',
+  computerRound: (round, pieces) =>
+    `Ist das schon die kürzeste? Der Computer rechnet nach (Runde ${round}): Er verbindet jeden Ort mit zwei Nachbarn, so kurz es geht. Dabei entstehen ${pieces} kleine Runden. Die verbietet er und rechnet noch einmal.`,
+  computerProven: (path) => `Bewiesen: ${path ? 'Kein Weg' : 'Keine Rundreise'} ist kürzer!`,
   playUndo: 'Zurück',
   playRestart: 'Neu anfangen',
   playReveal: 'Lösung zeigen',

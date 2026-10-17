@@ -4,6 +4,7 @@
 import { create } from 'zustand';
 import type { BoardPlan } from '../core/board/plan';
 import type { HeuristicKind } from '../core/overlays';
+import type { ComputerState } from './computer';
 import type { TeachingState } from './teaching';
 import type { RobustnessState } from './robustness';
 import type { GroupConstraint, LegendEntry, LocalText, Place, Purpose } from '../core/puzzle-file';
@@ -265,6 +266,8 @@ export interface AppState {
   readonly combining: readonly number[] | null;
   /** A strategy shown step by step (teaching mode), or null. */
   readonly teaching: TeachingState | null;
+  /** "So rechnet der Computer" after a game (roadmap 9.18), or null. */
+  readonly computer: ComputerState | null;
   /** Robustness check of a planned board (rows arrive one by one), or null. */
   readonly robustness: RobustnessState | null;
   /** GeoNames ids the next search must include. */
@@ -377,6 +380,7 @@ export const useStore = create<AppState>()((set) => ({
   placing: false,
   combining: null,
   teaching: null,
+  computer: null,
   robustness: null,
   pinned: [],
   excluded: [],
