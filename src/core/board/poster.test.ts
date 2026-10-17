@@ -15,6 +15,8 @@ import { allTours } from '../tsp/brute-force';
 import type { MipBackend } from '../tsp/exact';
 import { DIN_PAPERS, DIN_SIZES, pageSize } from './paper';
 import {
+  CORNER_CLEAR,
+  NEUTRAL_COLORS,
   drawPoster,
   legendEntries,
   posterPdf,
@@ -288,6 +290,52 @@ describe('Ruhr Innovation Lab poster (roadmap 9.9)', () => {
           // Places, the two named cities of the RIL (or its members as stops) and the names
           // of the groups.
           expect(d.labelBoxes).toHaveLength(v.mode === 'centroid' ? 34 - 1 + 2 + 1 : 37 + 2);
+        }
+  });
+
+  it('keeps every label clearly at its own dot (roadmap 9.11)', () => {
+    // Kevin's case: under the TU header the map is smaller, and Würzburg sat up-left of its dot
+    // between the labels of the Rhine-Main alliance.
+    const header = parseSvgColorLogo('<svg><rect width="600" height="100"/></svg>');
+    const tuLike: PosterTheme = {
+      colors: NEUTRAL_COLORS,
+      header: { logo: header, align: 'left', heightMm: 28, clearSpace: 0.5 },
+      footerLeft: null,
+      footerRight: null,
+      footerHeightMm: 30,
+      sender: '',
+    };
+    const dist = (b: readonly number[], p: Point) =>
+      Math.hypot(Math.max(b[0]! - p[0], 0, p[0] - b[2]!), Math.max(b[1]! - p[1], 0, p[1] - b[3]!));
+    const gap = (a: readonly number[], b: readonly number[]) =>
+      Math.hypot(
+        Math.max(a[0]! - b[2]!, b[0]! - a[2]!, 0),
+        Math.max(a[1]! - b[3]!, b[1]! - a[3]!, 0),
+      );
+    for (const v of variants)
+      for (const language of ['de', 'en'] as const)
+        for (const theme of [null, tuLike]) {
+          const d = drawPoster(input(v, { language, theme, qrUrl: 'https://example.org/#p/x' }));
+          expect(d.unplacedLabels).toBe(0);
+          expect(d.unclearLabels).toBe(0);
+          d.labelInfo.forEach((info, i) => {
+            if (!info.dot) return;
+            const box = d.labelBoxes[i]!;
+            const own = dist(box, info.anchor);
+            // Nearer its own dot than any other dot.
+            for (const other of d.labelInfo)
+              if (other.dot && other.anchor !== info.anchor)
+                expect(dist(box, other.anchor)).toBeGreaterThan(own);
+            // Above, below or at a corner of its dot: other labels keep their distance.
+            const [x, y] = info.anchor;
+            if (y >= box[1] && y <= box[3]) return;
+            const k = x >= box[0] && x <= box[2] ? 1 : CORNER_CLEAR;
+            d.labelInfo.forEach((other, j) => {
+              if (j === i || (other.group !== null && other.group === info.group && !other.dot))
+                return;
+              expect(gap(box, d.labelBoxes[j]!)).toBeGreaterThanOrEqual(k * own - 1e-9);
+            });
+          });
         }
   });
 

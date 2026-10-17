@@ -163,6 +163,11 @@ export interface PlacementProblem {
    * labels may touch and others not, or that a label is clearly closest to its own nail.
    */
   readonly accept?: (index: number, box: Box) => boolean;
+  /**
+   * A further test per pair of labels (indices and candidate ink boxes) that do not overlap,
+   * e.g. that neither label reads as belonging to the other one's place.
+   */
+  readonly acceptPair?: (i: number, a: Box, j: number, b: Box) => boolean;
 }
 
 export interface Placement {
@@ -209,7 +214,11 @@ export function placeLabels(problem: PlacementProblem): Placement {
         const boxA = candidates[i]![a]!.box;
         for (let b = 0; b < k; b++) {
           if (!valid[j * k + b]) continue;
-          if (boxesOverlap(boxA, candidates[j]![b]!.box, options.spacingMm)) {
+          const boxB = candidates[j]![b]!.box;
+          if (
+            boxesOverlap(boxA, boxB, options.spacingMm) ||
+            (problem.acceptPair && !problem.acceptPair(i, boxA, j, boxB))
+          ) {
             conflicts[i * k + a]!.push(j * k + b);
             conflicts[j * k + b]!.push(i * k + a);
           }

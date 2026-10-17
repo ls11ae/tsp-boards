@@ -381,11 +381,11 @@ function report(outputs: readonly Output[], theme: string): string {
       return `| ${v.name} | ${v.stops.length} | ${fmt(t.lengthKm, 1)} km | ${t.secondKm === null ? '–' : `+${fmt(t.secondKm, 1)} km`} | ${runsText(problemRuns(v.stops.length, 1, 'en'))} | ${t.mapAgrees ? 'same' : 'differs'} |`;
     }),
     '',
-    '| file | language | paper | layout | labels overlapping | labels on legs | logo |',
-    '| --- | --- | --- | --- | --- | --- | --- |',
+    '| file | language | paper | layout | labels overlapping | labels on legs | labels unclear | logo |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- |',
     ...outputs.map(
       (o) =>
-        `| ${path.basename(o.base)} | ${o.lang} | ${o.paper} | ${o.drawing.layout === 'band' ? 'facts below' : 'facts beside'} | ${o.drawing.unplacedLabels} | ${o.onLegs} | ${o.drawing.logoBox ? 'yes' : '–'} |`,
+        `| ${path.basename(o.base)} | ${o.lang} | ${o.paper} | ${o.drawing.layout === 'band' ? 'facts below' : 'facts beside'} | ${o.drawing.unplacedLabels} | ${o.onLegs} | ${o.drawing.unclearLabels} | ${o.drawing.logoBox ? 'yes' : '–'} |`,
     ),
     '',
   ];
@@ -562,9 +562,10 @@ async function main(): Promise<void> {
             onLegs,
             suffix: flavour.suffix,
           });
-          if (drawing.unplacedLabels > 0 || onLegs > 0)
+          if (drawing.unplacedLabels > 0 || onLegs > 0 || drawing.unclearLabels > 0)
             console.error(
-              `${path.basename(base)}: ${drawing.unplacedLabels} labels overlap, ${onLegs} on legs`,
+              `${path.basename(base)}: ${drawing.unplacedLabels} labels overlap, ${onLegs} on legs, ` +
+                `${drawing.unclearLabels} unclear`,
             );
           if (withLogos && emphasisLogo && !drawing.logoBox)
             console.error(`${path.basename(base)}: no free space for the logo; its name is shown`);

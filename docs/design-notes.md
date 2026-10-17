@@ -1046,3 +1046,23 @@ Short entries: decision; alternatives considered; reason. Newest last.
   title (would shrink the title, which must stay on one line), embedding the SVG logos as they
   are (the PDF writer has no SVG import; outlines keep one drawing model for PDF, SVG and PNG),
   themes as code (files are easier for Kevin and Maike to change).
+- **2026-10-17 Poster labels clearly at their own dot (roadmap 9.11).** Kevin saw Würzburg
+  up-left of its dot between "Frankfurt am Main" and "Darmstadt" (TU design, whose header makes
+  the map smaller), reading as a fourth city of the Rhine-Main alliance. The old rule only
+  compared distances from the label to dots, and the label was nearer its own dot. What made it
+  ambiguous: only a label beside its dot (E, W) has the dot on its line of text; above or below
+  (N, S) it faces the dot with one side, at a corner (NE, SE, SW, NW) with a corner only, and
+  the labels and outlines along its sides claim it. New rule for poster labels: above or below
+  its dot a label keeps other dots, labels and alliance outlines farther than its own dot, at a
+  corner `CORNER_CLEAR` = 1.5 times as far (a member's label next to its own alliance's name
+  is exempt); for every label, the outline of another alliance counts as a place like a dot
+  (with the existing margin). The label placer gained a pairwise test (`acceptPair`), since
+  the rule depends on where the other labels go; distances to outlines are measured to their
+  edges. 1.5 is the strictest factor with which all 72 posters (six variants, two languages,
+  A1 and A0, three designs) still place every label (1.75 and 2 leave Köln, Bonn, Siegen or the
+  Rhine-Main labels without room). Würzburg now stands above or below-left of its dot, away from
+  the alliance. Drawings report `unclearLabels` (the poster report has a column), and a test
+  checks the rule on the drawings. Boards and the app's screen labels are unchanged (the board
+  placement is a search constraint, where a stricter rule would cost feasibility).
+  Alternatives: preferring E, W, N, S over corners everywhere (changes most labels on uncrowded
+  posters too), a fixed list of exceptions (does not generalize).

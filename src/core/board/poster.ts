@@ -75,6 +75,13 @@ const TOUR: Rgb = [0.78, 0.13, 0.09];
 const GROUP: Rgb = [0.99, 0.9, 0.84];
 const WHITE: Rgb = [1, 1, 1];
 
+/**
+ * A label at a corner of its dot keeps other places (dots, labels, outlines) at least this many
+ * times as far as its dot; a label above or below its dot keeps them farther than its dot
+ * (roadmap 9.11).
+ */
+export const CORNER_CLEAR = 1.5;
+
 /** Lines of colour logos are at least this wide on paper (mm). */
 export const MIN_LOGO_LINE = 0.25;
 
@@ -88,6 +95,14 @@ export interface PosterItem {
     readonly width: number;
     readonly dash?: number[];
   } & StrokeStyle;
+}
+
+export interface LabelInfo {
+  readonly text: string;
+  readonly anchor: Point;
+  readonly dot: boolean;
+  /** The alliance whose outline the label belongs to (its member or its name). */
+  readonly group: string | null;
 }
 
 /** Colours of a poster (roadmap 9.10). */
@@ -139,8 +154,18 @@ export interface PosterDrawing {
   readonly mmPerKm: number;
   /** Labels placed at their preferred position although they overlap (0 if all fit). */
   readonly unplacedLabels: number;
+  /**
+   * Labels above, below or at a corner of their dot with another place (dot, label or outline)
+   * too near (see CORNER_CLEAR; 0 unless the placement is incomplete).
+   */
+  readonly unclearLabels: number;
   /** For checks: the labels' ink boxes, the legs of the tour, the emphasized place's logo. */
   readonly labelBoxes: readonly Box[];
+  /**
+   * For checks, per label (as in labelBoxes): its first line, its anchor (its dot, or an
+   * outline's centre for the outline's name) and whether it names a dot.
+   */
+  readonly labelInfo: readonly LabelInfo[];
   readonly legs: readonly (readonly [Point, Point])[];
   readonly logoBox: Box | null;
 }
@@ -598,6 +623,39 @@ export function roundedHull(points: readonly Point[], r: number): PathCommand[] 
 // --- geometry helpers --------------------------------------------------------------------------
 
 /** Distance from a point to an axis-parallel box (0 inside). */
+/** Distance between a point and the segment ab. */
+function segmentDistance(p: Point, a: Point, b: Point): number {
+  const [dx, dy] = [b[0] - a[0], b[1] - a[1]];
+  const len = dx * dx + dy * dy;
+  const t = len > 0 ? Math.min(1, Math.max(0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / len)) : 0;
+  return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
+}
+
+/** Distance between a box and a closed outline (0 if they meet). */
+function boxOutlineDistance(box: Box, outline: readonly Point[]): number {
+  if (hitsObstacle(box, { kind: 'polygon', points: outline })) return 0;
+  const corners: Point[] = [
+    [box[0], box[1]],
+    [box[2], box[1]],
+    [box[2], box[3]],
+    [box[0], box[3]],
+  ];
+  let best = Infinity;
+  outline.forEach((a, i) => {
+    const b = outline[(i + 1) % outline.length]!;
+    if (segmentMeetsBox(a, b, box)) best = 0;
+    best = Math.min(best, boxDistance(box, a), ...corners.map((c) => segmentDistance(c, a, b)));
+  });
+  return best;
+}
+
+/** Distance between two boxes (0 if they touch or overlap). */
+function boxGap(a: Box, b: Box): number {
+  const dx = Math.max(a[0] - b[2], b[0] - a[2], 0);
+  const dy = Math.max(a[1] - b[3], b[1] - a[3], 0);
+  return Math.hypot(dx, dy);
+}
+
 function boxDistance(box: Box, p: Point): number {
   const dx = Math.max(box[0] - p[0], 0, p[0] - box[2]);
   const dy = Math.max(box[1] - p[1], 0, p[1] - box[3]);
@@ -770,6 +828,8 @@ function linesMetrics(lines: readonly LabelLine[]): TextMetrics {
 
 interface MapResult {
   readonly unplaced: number;
+  readonly unclear: number;
+  readonly labelInfo: readonly LabelInfo[];
   /** Ink boxes of all labels, the legs of the tour and the logo, in page coordinates. */
   readonly labelBoxes: readonly Box[];
   readonly legs: readonly (readonly [Point, Point])[];
@@ -1077,20 +1137,66 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Style): MapResul
     edgeMm: 1.2 * s.halo,
   };
   const anchors = items.map((it) => it.anchor);
-  // A label sits clearly closer to its own dot than to any other (its group's dots aside),
-  // and stays off the outlines of other groups.
+  const isOwn = (it: LabelItem, q: Point) =>
+    q === it.anchor || (q[0] === it.anchor[0] && q[1] === it.anchor[1]);
+  // Only a label beside its dot (E, W) has the dot on its line of text. Above or below (N, S)
+  // it faces the dot with one side, at a corner (NE, SE, SW, NW) with a corner only, and other
+  // places along its sides claim it: Würzburg between the labels of the Rhine-Main alliance
+  // read as a fourth city of it (roadmap 9.11). Such labels keep other dots, labels and
+  // outlines farther than their own dot: N and S as far, corners CORNER_CLEAR times as far.
+  // Outlines' names are exempt (they sit around the outline).
+  const placeLabel = items.map(
+    (it) => !groups.some((g) => g.name === it.group && g.centre === it.anchor),
+  );
+  const clearFactor = (i: number, b: Box): number => {
+    const [x, y] = items[i]!.anchor;
+    if (!placeLabel[i] || (y >= b[1] && y <= b[3])) return 0;
+    return x >= b[0] && x <= b[2] ? 1 : CORNER_CLEAR;
+  };
+  const offLineClear = (i: number, b: Box): boolean => {
+    const k = clearFactor(i, b);
+    if (k === 0) return true;
+    const it = items[i]!;
+    const need = k * boxDistance(b, it.anchor);
+    const own = groups.find((g) => g.name === it.group) ?? null;
+    return (
+      dots.every((q) => isOwn(it, q) || boxDistance(b, q) >= need) &&
+      groups.every((g) => g === own || boxOutlineDistance(b, g.hull) >= need)
+    );
+  };
+  const pairClear = (i: number, a: Box, j: number, b: Box): boolean => {
+    // A member's label next to the name of its own alliance is no confusion.
+    const ii = items[i]!;
+    const jj = items[j]!;
+    if (ii.group !== null && ii.group === jj.group && placeLabel[i] !== placeLabel[j]) return true;
+    const gap = boxGap(a, b);
+    return (
+      gap >= clearFactor(i, a) * boxDistance(a, ii.anchor) &&
+      gap >= clearFactor(j, b) * boxDistance(b, jj.anchor)
+    );
+  };
+  // A label sits clearly closer to its own dot than to any other dot or outline (its group's
+  // dots aside), stays off the outlines of other groups, and keeps clear of other places at a
+  // corner.
   const accept = (i: number, b: Box): boolean => {
     const it = items[i]!;
     const own = groups.find((g) => g.name === it.group) ?? null;
     if (groups.some((g) => g !== own && hitsObstacle(b, { kind: 'polygon', points: g.hull })))
       return false;
     const d0 = boxDistance(b, it.anchor);
-    return dots.every(
-      (q) =>
-        q === it.anchor ||
-        (own !== null && it.anchor === own.centre && own.points.includes(q)) ||
-        (q[0] === it.anchor[0] && q[1] === it.anchor[1]) ||
-        boxDistance(b, q) >= d0 + 0.35 * s.label,
+    const margin = d0 + 0.35 * s.label;
+    return (
+      dots.every(
+        (q) =>
+          isOwn(it, q) ||
+          (own !== null && it.anchor === own.centre && own.points.includes(q)) ||
+          boxDistance(b, q) >= margin,
+      ) &&
+      // The outline of another alliance is a place too (Würzburg left of its dot, near the
+      // Rhine-Main outline).
+      (!placeLabel[i] ||
+        groups.every((g) => g === own || boxOutlineDistance(b, g.hull) >= margin)) &&
+      offLineClear(i, b)
     );
   };
   // Logos of other places replace their labels if the labels still fit with them.
@@ -1123,6 +1229,7 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Style): MapResul
       candidates,
       obstacles,
       accept,
+      acceptPair: pairClear,
       width: box.w,
       height: box.h,
       options,
@@ -1151,6 +1258,10 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Style): MapResul
     if (next.placement.unplaced <= result.placement.unplaced) result = next;
   }
   const { candidates, placement } = result;
+  const chosen = placement.choice.map((choice, i) => candidates[i]![Math.max(0, choice)]!.box);
+  const unclear = chosen.filter(
+    (b, i) => !offLineClear(i, b) || chosen.some((o, j) => j !== i && !pairClear(i, b, j, o)),
+  ).length;
   const labelBoxes: Box[] = [];
   placement.choice.forEach((choice, i) => {
     const cand: LabelCandidate = candidates[i]![Math.max(0, choice)]!;
@@ -1172,6 +1283,13 @@ function drawMap(c: Canvas, input: PosterInput, box: MapBox, s: Style): MapResul
   });
   return {
     unplaced: placement.unplaced,
+    unclear,
+    labelInfo: items.map((it, i) => ({
+      text: it.lines[0]?.text ?? '',
+      anchor: at(it.anchor),
+      dot: placeLabel[i]!,
+      group: it.group,
+    })),
     labelBoxes,
     legs: legs.map(([a, b]) => [at(a), at(b)] as const),
     logoBox: logoBox
@@ -1356,7 +1474,9 @@ export function drawPoster(input: PosterInput): PosterDrawing {
     layout: best.layout,
     mmPerKm: best.scale,
     unplacedLabels: map.unplaced,
+    unclearLabels: map.unclear,
     labelBoxes: map.labelBoxes,
+    labelInfo: map.labelInfo,
     legs: map.legs,
     logoBox: map.logoBox,
   };
