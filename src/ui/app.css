@@ -1468,6 +1468,33 @@ polyline.trace-quality {
 
 .daily-scores li {
   padding: 4px 0;
+  /* A long press removes an entry (staff, roadmap 9.12): no text selection or callout. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.score-remove {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--error);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.score-remove p {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+/* The player's name from the list, with a button for another one. */
+.kiosk-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 4px 0 8px;
+  font-size: 1.1rem;
 }
 
 .daily-scores li span {

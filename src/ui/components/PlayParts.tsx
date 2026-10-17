@@ -1,11 +1,16 @@
-// Parts shared by the play panels: timer, highscores with the name field, sharing consent.
+// Parts shared by the play panels: timer, highscores with the name field, sharing consent, the
+// event mode's name and day's leaderboard.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { ScoreEntry } from '../../core/scores';
 import { useT } from '../i18n';
+import { LONG_PRESS_MS } from '../kiosk';
 import {
   PLAY_DATA_URL,
+  nextKioskPlayer,
   readConsent,
   readNicknameConsent,
+  removeScore,
   scoresFor,
   todaysScores,
   writeConsent,
@@ -28,6 +33,28 @@ export function Timer({
     return () => clearInterval(id);
   }, [startedAt, stoppedMs]);
   return <>{formatDuration(stoppedMs ?? (startedAt === null ? 0 : now - startedAt))}</>;
+}
+
+/**
+ * The player's name in the event mode (roadmap 9.12): from a list, with a button for another
+ * one; free text only with #kiosk?names=free.
+ */
+export function KioskPlayerName() {
+  const t = useT();
+  const name = useStore((s) => s.playerName);
+  const free = useStore((s) => s.kioskFreeNames);
+  useEffect(() => {
+    if (!free && !name) nextKioskPlayer();
+  }, [free, name]);
+  if (free) return <PlayerName />;
+  return (
+    <div className="kiosk-name">
+      <span>{t.playerName}:</span> <strong>{name}</strong>
+      <button type="button" onClick={nextKioskPlayer}>
+        {t.kioskOtherName}
+      </button>
+    </div>
+  );
 }
 
 /** The player's nickname for the scores. */
@@ -138,6 +165,14 @@ export function DailyScores({
   const excess = useExcessText();
   useStore((s) => s.scoresVersion);
   const scores = todaysScores(id).slice(0, limit);
+  // Staff remove an entry (roadmap 9.12): a long press, or Shift+Delete on a focused entry,
+  // then a confirmation. No PIN: the confirmation keeps it from happening by accident.
+  const [removing, setRemoving] = useState<ScoreEntry | null>(null);
+  const press = useRef<number | null>(null);
+  const release = () => {
+    if (press.current !== null) window.clearTimeout(press.current);
+    press.current = null;
+  };
   return (
     <section className="daily-scores">
       <h2>{title ?? t.kioskDaily}</h2>
@@ -146,13 +181,48 @@ export function DailyScores({
       ) : (
         <ol>
           {scores.map((s, i) => (
-            <li key={i} className={s.revealed ? 'revealed' : undefined}>
+            <li
+              key={i}
+              className={s.revealed ? 'revealed' : undefined}
+              tabIndex={0}
+              onPointerDown={() => {
+                release();
+                press.current = window.setTimeout(() => setRemoving(s), LONG_PRESS_MS);
+              }}
+              onPointerUp={release}
+              onPointerLeave={release}
+              onPointerCancel={release}
+              onContextMenu={(e) => e.preventDefault()}
+              onKeyDown={(e) => {
+                if (e.key === 'Delete' && e.shiftKey) setRemoving(s);
+              }}
+            >
               <span className="name">{s.name || '–'}</span>
               <span className="num">{excess(s)}</span>
               <span className="num">{formatDuration(s.ms)}</span>
             </li>
           ))}
         </ol>
+      )}
+      {removing && (
+        <div className="score-remove" role="alertdialog" aria-label={t.kioskRemove}>
+          <p>{t.kioskRemoveAsk(removing.name)}</p>
+          <div className="actions">
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                removeScore(id, removing);
+                setRemoving(null);
+              }}
+            >
+              {t.kioskRemove}
+            </button>
+            <button type="button" onClick={() => setRemoving(null)}>
+              {t.combineCancel}
+            </button>
+          </div>
+        </div>
       )}
     </section>
   );

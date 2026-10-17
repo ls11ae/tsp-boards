@@ -22,7 +22,7 @@ import { useStore } from '../store';
 import { OverlayPicker } from './OverlayPicker';
 import { TOUCH, useMedia } from '../media';
 
-import { DailyScores, Highscores, PlayerName, ShareConsent, Timer } from './PlayParts';
+import { DailyScores, Highscores, KioskPlayerName, ShareConsent, Timer } from './PlayParts';
 
 /**
  * Keyboard play: the next place from a list (unvisited places by name; the start once all
@@ -150,7 +150,7 @@ export function PlayPanel({
     <aside className="panel side">
       <section>
         <h2>{t.playTitle(fmt.integer(n), places)}</h2>
-        {kiosk && <PlayerName />}
+        {kiosk && <KioskPlayerName />}
         {kiosk && !digital && <p className="hint kiosk-note">{t.kioskString}</p>}
         <p className="hint">
           {digital

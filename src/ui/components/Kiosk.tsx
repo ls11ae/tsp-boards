@@ -1,13 +1,15 @@
-// Event mode for a booth (roadmap 9.4), opened with #kiosk: full screen, a start screen with
-// three levels, large touch targets, "Nächste Person", a reset after inactivity, no designer
-// and no links out. #kiosk/scores shows the day's leaderboards large, e.g. on a second screen.
+// Event mode for a booth (roadmap 9.4, 9.12), opened with #kiosk: full screen, a start screen
+// with three levels, large touch targets, "Nächste Person", a reset after inactivity, no
+// designer and no links out. Players get names from a list (free names only with
+// #kiosk?names=free). #kiosk/scores shows the day's leaderboards large, e.g. on a second
+// screen; staff remove an entry by a long press and a confirmation.
 
 import { useEffect, useState } from 'react';
 import type { CollectionEntry } from '../../core/puzzle-file';
 import { useBoard } from '../board';
 import { loadCollection, loadCollectionPuzzle, openDocument } from '../documents';
 import { useFormat, useT } from '../i18n';
-import { playNewGame, recordUnfinishedScore, reloadScores } from '../play';
+import { nextKioskPlayer, playNewGame, recordUnfinishedScore, reloadScores } from '../play';
 import { usePuzzle } from '../puzzle';
 import { useStore, writePlayerName } from '../store';
 import { EntryThumbnail } from './Gallery';
@@ -38,7 +40,7 @@ function StartScreen({ entries }: { readonly entries: readonly CollectionEntry[]
   const open = (e: CollectionEntry) => {
     void loadCollectionPuzzle(e.file).then((doc) => {
       openDocument(doc, 'play');
-      writePlayerName('');
+      nextKioskPlayer();
       useStore.setState({ page: 'app', kiosk: 'play', flight: null });
     });
   };
@@ -128,7 +130,7 @@ function PlayScreen() {
             onClick={() => {
               recordUnfinishedScore();
               playNewGame();
-              writePlayerName('');
+              nextKioskPlayer();
             }}
           >
             {t.kioskNext}

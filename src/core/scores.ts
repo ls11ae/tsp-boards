@@ -69,3 +69,22 @@ export function parseScores(value: unknown): Record<string, ScoreEntry[]> {
   }
   return out;
 }
+
+/** Whether two entries are the same result (stored entries are plain objects). */
+export function sameScore(a: ScoreEntry, b: ScoreEntry): boolean {
+  return (
+    a.name === b.name &&
+    a.excess === b.excess &&
+    a.measure === b.measure &&
+    a.ms === b.ms &&
+    a.revealed === b.revealed &&
+    a.date === b.date &&
+    a.order.join(',') === b.order.join(',')
+  );
+}
+
+/** The entries without one occurrence of `entry` (staff remove a name at the booth, 9.12). */
+export function withoutScore(entries: readonly ScoreEntry[], entry: ScoreEntry): ScoreEntry[] {
+  const i = entries.findIndex((e) => sameScore(e, entry));
+  return i < 0 ? [...entries] : [...entries.slice(0, i), ...entries.slice(i + 1)];
+}

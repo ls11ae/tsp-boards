@@ -10,14 +10,16 @@ import {
   excessValue,
   parseScores,
   rankScores,
+  withoutScore,
   type Measure,
   type ScoreEntry,
 } from '../core/scores';
 import { euclideanLength } from '../core/tsp/tour';
 import { boardInstance, getBoard } from './board';
+import { KIOSK_LEVELS, kioskName } from './kiosk';
 import { linkList } from './lists';
 import type { PuzzleView } from './puzzle';
-import { NEW_GAME, useStore, type PlayUi } from './store';
+import { NEW_GAME, useStore, writePlayerName, type PlayUi } from './store';
 
 /** Where game records go; unset (the default) means nothing is ever sent. */
 export const PLAY_DATA_URL: string | undefined =
@@ -169,15 +171,40 @@ export function reloadScores(): void {
   useStore.setState((s) => ({ scoresVersion: s.scoresVersion + 1 }));
 }
 
-function addScore(id: string, entry: ScoreEntry): void {
-  const all = loadScores();
-  scoresMemory = { ...all, [id]: rankScores([...(all[id] ?? []), entry]) };
+function writeScores(id: string, entries: ScoreEntry[]): void {
+  scoresMemory = { ...loadScores(), [id]: entries };
   try {
     localStorage.setItem(SCORES_KEY, JSON.stringify(scoresMemory));
   } catch {
     // Kept for this page only.
   }
   useStore.setState((s) => ({ scoresVersion: s.scoresVersion + 1 }));
+}
+
+function addScore(id: string, entry: ScoreEntry): void {
+  writeScores(id, rankScores([...scoresFor(id), entry]));
+}
+
+/**
+ * The booth's next player (roadmap 9.12): a name from the list (e.g. "Fuchs 7"), not one on
+ * today's leaderboards; with free names (#kiosk?names=free) an empty field to type in.
+ */
+export function nextKioskPlayer(): void {
+  const { kioskFreeNames, lang } = useStore.getState();
+  if (kioskFreeNames) {
+    writePlayerName('');
+    return;
+  }
+  const ids = KIOSK_LEVELS.flatMap((l) => l.ids);
+  const taken = new Set(ids.flatMap((id) => todaysScores(id).map((s) => s.name)));
+  writePlayerName(kioskName(lang, taken));
+}
+
+/** Removes one entry of a puzzle's list (staff at the booth, roadmap 9.12). */
+export function removeScore(id: string, entry: ScoreEntry): void {
+  // Read again first: the booth's other screen may have added entries meanwhile.
+  scoresMemory = null;
+  writeScores(id, withoutScore(scoresFor(id), entry));
 }
 
 /**

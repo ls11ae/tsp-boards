@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { excessValue, parseScores, rankScores, type ScoreEntry } from './scores';
+import {
+  excessValue,
+  parseScores,
+  rankScores,
+  sameScore,
+  withoutScore,
+  type ScoreEntry,
+} from './scores';
 
 const entry = (name: string, excess: number, ms: number, revealed = false): ScoreEntry => ({
   name,
@@ -42,5 +49,17 @@ describe('highscores', () => {
     expect(Object.keys(parsed)).toEqual(['a']);
     expect(parsed.a!.map((e) => e.name)).toEqual(['ok']);
     expect(parseScores(null)).toEqual({});
+  });
+
+  it('removes one entry by value (the booth staff, roadmap 9.12)', () => {
+    const list = [entry('Fuchs 7', 0, 50), entry('Biber 12', 10, 40), entry('Fuchs 7', 0, 50)];
+    // A copy, as read again from storage.
+    const copy = JSON.parse(JSON.stringify(list[1])) as ScoreEntry;
+    expect(sameScore(copy, list[1]!)).toBe(true);
+    expect(sameScore(list[0]!, list[1]!)).toBe(false);
+    expect(withoutScore(list, copy).map((e) => e.name)).toEqual(['Fuchs 7', 'Fuchs 7']);
+    // Two equal results: one goes.
+    expect(withoutScore(list, list[0]!)).toHaveLength(2);
+    expect(withoutScore(list, entry('Igel 3', 0, 1))).toHaveLength(3);
   });
 });
