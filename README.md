@@ -1,5 +1,7 @@
 # TSP Boards
 
+**Play in the browser: https://ls11ae.github.io/tsp-boards/**
+
 Generator for **TSP puzzle boards**: physical puzzles (a wooden board, nails and a string) on
 which players look for the shortest round trip.
 
@@ -13,7 +15,8 @@ The app is a static web app: all computation, including exact TSP solves with
 TypeScript core also runs in Node for batch experiments.
 
 Status: the map puzzle (search, board export, play mode) and the incremental puzzle (generator,
-board export) are implemented; deployment is prepared (see below). Design notes, benchmarks and open questions are in
+board export) are implemented; the app is deployed on GitHub Pages and works offline after the
+first visit (see below). Design notes, benchmarks and open questions are in
 [`docs/design-notes.md`](docs/design-notes.md).
 
 ## Using the app
@@ -159,21 +162,33 @@ extracted into `src/core/board/font-data.ts` (generated, committed) by `npm run 
 - `src/ui/`: the React web app.
 - `scripts/`: offline data build and font extraction. `public/data/`: generated data.
 - `cli/`: Node entry points for experiments and board export.
-- `server/`: optional reference endpoint for play data.
+- `server/`: reference endpoint for play data (not deployed, off by default).
 - `docs/`: design notes and experiments.
 
 ### Deployment
 
-The build (`npm run build`, or the CI artifact `tsp-boards-dist`) is a static site that runs
-from any sub-path. Server settings, a smoke test and the optional play data endpoint are
-described in [`docs/deployment.md`](docs/deployment.md).
+The app is published on GitHub Pages (https://ls11ae.github.io/tsp-boards/) by
+`.github/workflows/pages.yml` on every push to `main`. A service worker caches the app, the
+solver, the maps and the puzzles, so it works offline after the first visit (the booth). The
+build (`npm run build`, or the CI artifact `tsp-boards-dist`) is a static site that runs from
+any sub-path of any static web server; server settings, the booth setup and a smoke test are in
+[`docs/deployment.md`](docs/deployment.md).
 
-### Play data (optional)
+### Play data (not planned)
 
-Builds with `VITE_PLAY_DATA_URL` set show players a consent box; with consent, one anonymous
-record per game (times, attempts, excess in mm, puzzle hash; no names or ids) is POSTed to that
-URL to calibrate difficulty. Without the variable (the default) nothing is ever sent. The format
-is `PlayRecord` in `src/core/play.ts`.
+The code can send anonymous play records to an endpoint (`VITE_PLAY_DATA_URL`, with the
+player's consent); no endpoint is planned (roadmap 9.17), and without the variable (the default)
+nothing is ever sent. The format is `PlayRecord` in `src/core/play.ts`.
+
+## Links
+
+- The app: https://ls11ae.github.io/tsp-boards/
+- A puzzle of the gallery by its short link: `https://ls11ae.github.io/tsp-boards/#p/<puzzle id>`
+  (e.g. [`#p/deutschland-40`](https://ls11ae.github.io/tsp-boards/#p/deutschland-40); the ids
+  are the file names in `public/puzzles/`), the booth with `#kiosk`.
+- Games of the chair: https://ls11ae.github.io/
+- Ruler of the Plane, games on computational geometry:
+  https://ls11ae.github.io/ruler-of-the-plane/
 
 ## Credits
 

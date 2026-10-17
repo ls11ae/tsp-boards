@@ -28,8 +28,8 @@ what we change and why, benchmark results, and open questions.
   by clicks, judging against the exact string optimum, opt-in play records (off unless the
   build sets `VITE_PLAY_DATA_URL`).
 - Phase 4: deployment prepared (CI artifact `tsp-boards-dist`, `docs/deployment.md`,
-  `.htaccess`, reference play data endpoint `server/play-data.mjs`); the actual upload to the
-  chair server needs access and is the maintainers' step. Incremental puzzle implemented
+  `.htaccess`, reference play data endpoint `server/play-data.mjs`, not planned since 9.17).
+  Incremental puzzle implemented
   (`src/core/incremental/`: Held–Karp with two best values, insertion field, sequence search
   with exact checks, measuring track around the board edge; app mode and `cli/incremental.ts`).
 - Phase 5 "digital features" complete (2026-10-12): puzzle files, library, curated collection
@@ -80,18 +80,22 @@ what we change and why, benchmark results, and open questions.
   Welt" (40 cities, 600 × 300 mm, string gap 7.34 mm; `docs/boards/welt-pazifik/`,
   `cli/world-board.ts`) and its digital version on the globe. 9.16 done 2026-10-17: the app in
   English (English place names from `nameEn`, titles and descriptions as `{ de, en }`).
-  **Next:** the open items of Phase 10: the physical builds (Kevin), the chair server and the
-  play data endpoint. See `docs/roadmap.md`.
-- Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
-  server, play data endpoint, code license; later a physical globe.
+  9.17 (2026-10-18): GitHub Pages is the deployment (no chair server, no play data endpoint),
+  a service worker for the offline booth, table labels for two kiosk laptops
+  (`#kiosk?table=1`), Chrome kiosk setup in `docs/deployment.md`, nails measured 2.0 mm.
+  **Next:** the physical builds (Kevin; re-export the incremental test board once the string
+  is measured). See `docs/roadmap.md`.
+- Phase 10: physical items (test board of the incremental puzzle, later a physical globe).
+  Deployment: GitHub Pages (https://ls11ae.github.io/tsp-boards/, offline after the first
+  visit).
 - License: MIT for code and docs (2026-10-17; `LICENSE`, `AUTHORS`, third-party terms in
   `docs/licensing.md`). Making the repository public is the maintainers' step.
 
 ## Agreed direction
 
-- **Browser-first static web app.** All computation runs client-side (Web Workers). The chair's
-  server only hosts static files (later possibly a tiny endpoint for opt-in play data). No
-  backend compute, no accounts.
+- **Browser-first static web app.** All computation runs client-side (Web Workers). GitHub
+  Pages hosts the static files (a service worker makes them work offline); no play data
+  endpoint, no backend compute, no accounts.
 - **TypeScript** for app and core. The core must also run in Node, so batch experiments can run
   from a CLI.
 - **Exact TSP:** HiGHS compiled to WebAssembly (npm package `highs`), DFJ model with iterative
@@ -148,7 +152,7 @@ what we change and why, benchmark results, and open questions.
 - `src/ui/` the web app.
 - `scripts/` offline data build; `public/data/` generated data (committed, one file per country).
 - `cli/` Node entry points for experiments and exports.
-- `server/` optional reference endpoint for opt-in play data.
+- `server/` reference endpoint for opt-in play data (not planned, off by default).
 - `docs/` design notes, experiments.
 
 ## Conventions
@@ -186,5 +190,5 @@ is in `docs/roadmap.md`:
    review, rotatable globe with an animated round trip, event mode, further review items,
    posters in DIN formats, the Ruhr Innovation Lab poster, QR codes, phone layout and design
    themes, clearer poster labels, gallery categories and the kiosk for the booth (done).
-10. **Physical and public:** incremental test board, deployment to the chair server, play data
-    endpoint, code license; later a physical globe.
+10. **Physical:** incremental test board; later a physical globe. Deployment is GitHub Pages
+    (done); the code license is MIT (done).
