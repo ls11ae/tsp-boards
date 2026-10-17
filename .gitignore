@@ -14,5 +14,6 @@ CLAUDE.local.md
 .claude/settings.local.json
 .claude/worktrees/
 
-# local files that must not be committed (e.g. logos with usage restrictions)
-local/
+# local files that must not be committed (e.g. logos with usage restrictions); a folder, or a
+# link to the shared folder tsp-boards-local (a symlink is no directory, so no trailing slash)
+/local
