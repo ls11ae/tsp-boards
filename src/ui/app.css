@@ -1456,6 +1456,18 @@ polyline.trace-quality {
   margin: 0 0 8px;
 }
 
+/* The booth's table (roadmap 9.17): which leaderboard is this one. */
+.kiosk-table {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
 .kiosk-lead {
   font-size: 1.25rem;
   color: var(--muted);

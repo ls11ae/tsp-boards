@@ -227,6 +227,8 @@ export interface AppState {
   readonly kiosk: 'start' | 'play' | 'scores' | null;
   /** Event mode with free names (#kiosk?names=free, roadmap 9.12); else names from a list. */
   readonly kioskFreeNames: boolean;
+  /** The booth's table (#kiosk?table=1, roadmap 9.17), shown with its leaderboard; or null. */
+  readonly kioskTable: string | null;
   /** Increases when highscores change. */
   readonly scoresVersion: number;
   readonly puzzleType: PuzzleType;
@@ -331,6 +333,7 @@ export const useStore = create<AppState>()((set) => ({
   playerName: readPlayerName(),
   kiosk: null,
   kioskFreeNames: false,
+  kioskTable: null,
   scoresVersion: 0,
   puzzleType:
     typeof window !== 'undefined' && /[#&]m=inc(&|$)/.test(window.location.hash)

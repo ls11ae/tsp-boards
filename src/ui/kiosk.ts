@@ -31,19 +31,35 @@ export const KIOSK_LEVELS: readonly {
   },
 ];
 
-/** The event mode's address: #kiosk or #kiosk/scores, optionally with ?names=free. */
-function parseKioskHash(hash: string): { screen: 'start' | 'scores'; free: boolean } | null {
+/** A table label: letters, digits, spaces and dashes, at most 12 characters. */
+const TABLE = /^[\p{L}\p{N} _-]{1,12}$/u;
+
+/**
+ * The event mode's address: #kiosk or #kiosk/scores, optionally with ?names=free and a table
+ * label ?table=1 (roadmap 9.17: two laptops at the booth, each with its own leaderboard).
+ */
+function parseKioskHash(
+  hash: string,
+): { screen: 'start' | 'scores'; free: boolean; table: string | null } | null {
   const m = /^#kiosk(\/[^?]*)?(?:\?(.*))?$/.exec(hash);
   if (!m) return null;
+  const query = new URLSearchParams(m[2] ?? '');
+  const table = query.get('table')?.trim() ?? '';
   return {
     screen: m[1] === '/scores' ? 'scores' : 'start',
-    free: new URLSearchParams(m[2] ?? '').get('names') === 'free',
+    free: query.get('names') === 'free',
+    table: TABLE.test(table) ? table : null,
   };
 }
 
 /** Whether the page was opened in event mode (#kiosk or #kiosk/scores). */
 export function kioskScreen(hash: string): 'start' | 'scores' | null {
   return parseKioskHash(hash)?.screen ?? null;
+}
+
+/** The booth's table label (#kiosk?table=1, roadmap 9.17), or null. */
+export function kioskTable(hash: string): string | null {
+  return parseKioskHash(hash)?.table ?? null;
 }
 
 /** Free names only with a switch for supervised use (#kiosk?names=free, roadmap 9.12). */

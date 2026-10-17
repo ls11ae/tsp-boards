@@ -106,6 +106,7 @@ export function PlayPanel({
   const fmt = useFormat();
   const play = useStore((s) => s.play);
   const playId = useStore((s) => s.playId);
+  const table = useStore((s) => s.kioskTable);
   const params = useStore((s) => s.params);
   const purpose = useStore((s) => s.doc.purpose);
   const list = useStore((s) => s.list);
@@ -284,7 +285,7 @@ export function PlayPanel({
         )}
       </section>
       {kiosk && id ? (
-        <DailyScores id={id} />
+        <DailyScores id={id} title={table ? t.kioskDailyTable(table) : undefined} />
       ) : (
         <>
           <Highscores />

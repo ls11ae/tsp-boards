@@ -1,7 +1,14 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { KIOSK_ANIMALS, KIOSK_LEVELS, kioskFreeNames, kioskName, kioskScreen } from './kiosk';
+import {
+  KIOSK_ANIMALS,
+  KIOSK_LEVELS,
+  kioskFreeNames,
+  kioskName,
+  kioskScreen,
+  kioskTable,
+} from './kiosk';
 
 describe('event mode', () => {
   it('opens with #kiosk and its leaderboard with #kiosk/scores', () => {
@@ -19,6 +26,17 @@ describe('event mode', () => {
     expect(kioskFreeNames('#kiosk')).toBe(false);
     expect(kioskFreeNames('#kiosk?names=list')).toBe(false);
     expect(kioskFreeNames('#names=free')).toBe(false);
+  });
+
+  it('carries a table label, also with free names (roadmap 9.17)', () => {
+    expect(kioskTable('#kiosk?table=1')).toBe('1');
+    expect(kioskTable('#kiosk/scores?table=2')).toBe('2');
+    expect(kioskScreen('#kiosk/scores?table=2')).toBe('scores');
+    expect(kioskTable('#kiosk?names=free&table=A')).toBe('A');
+    expect(kioskFreeNames('#kiosk?table=1&names=free')).toBe(true);
+    expect(kioskTable('#kiosk')).toBeNull();
+    expect(kioskTable('#kiosk?table=%3Cb%3E')).toBeNull();
+    expect(kioskTable('#kiosk?table=' + 'x'.repeat(13))).toBeNull();
   });
 
   it('names players with an animal and a number, avoiding names already taken', () => {

@@ -36,6 +36,7 @@ function useCollection(): readonly CollectionEntry[] {
 function StartScreen({ entries }: { readonly entries: readonly CollectionEntry[] }) {
   const t = useT();
   const fmt = useFormat();
+  const table = useStore((s) => s.kioskTable);
   const byId = new Map(entries.map((e) => [e.id, e]));
   const open = (e: CollectionEntry) => {
     void loadCollectionPuzzle(e.file).then((doc) => {
@@ -47,6 +48,7 @@ function StartScreen({ entries }: { readonly entries: readonly CollectionEntry[]
   const titles = { easy: t.kioskEasy, medium: t.kioskMedium, hard: t.kioskHard };
   return (
     <main className="kiosk-start">
+      {table && <p className="kiosk-table">{t.kioskTable(table)}</p>}
       <h1>{t.kioskTitle}</h1>
       <p className="kiosk-lead">{t.kioskLead}</p>
       <div className="kiosk-levels">
@@ -86,6 +88,7 @@ function StartScreen({ entries }: { readonly entries: readonly CollectionEntry[]
 function ScoresScreen({ entries }: { readonly entries: readonly CollectionEntry[] }) {
   const t = useT();
   const lang = useStore((s) => s.lang);
+  const table = useStore((s) => s.kioskTable);
   // Another tab (the booth's game) adds results: read them again regularly and on change.
   useEffect(() => {
     const onStorage = () => reloadScores();
@@ -100,7 +103,7 @@ function ScoresScreen({ entries }: { readonly entries: readonly CollectionEntry[
   const shown = ids.flatMap((id) => entries.filter((e) => e.id === id));
   return (
     <main className="kiosk-scores">
-      <h1>{t.kioskDaily}</h1>
+      <h1>{table ? t.kioskDailyTable(table) : t.kioskDaily}</h1>
       <div className="kiosk-score-grid">
         {shown.map((e) => (
           <DailyScores key={e.id} id={e.id} title={localText(e.title, lang)} limit={5} />
