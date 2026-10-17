@@ -21,7 +21,9 @@ back to `variants.json`).
 
 Files: `de/` and `en/` hold `exzellenzstrategie-2027-poster-37-A1.pdf` (print) and `.png`
 (preview at 30 dpi); `report.md` has the order of the round trip and the checks;
-`variants.json` holds the title, legend and game of both languages. The design themes are in
+`variants.json` holds the title, legend and game of both languages. The places come from the
+list `docs/data/curated/exzellenzstrategie-2027.txt` (the two alliances as composite places,
+split into their cities on the poster). The design themes are in
 [`../themes/`](../themes/).
 
 ## What the poster shows
@@ -30,7 +32,9 @@ Files: `de/` and `en/` hold `exzellenzstrategie-2027-poster-37-A1.pdf` (print) a
   Sites of the Excellence Strategy 2026–2033", no subtitle.
 - **The Ruhr Innovation Lab is prominent:** the round trip starts and ends there ("Start und
   Ziel" / "Start and finish", a ring at the first stop); its name is large and bold at its
-  outline; Bochum and Dortmund are named dots inside the outline. With the logo (local
+  outline; Bochum and Dortmund are named dots inside the outline.
+- **München ×2** (English "Munich ×2"): München has two Universities of Excellence (LMU,
+  TUM), so the rings add up to the Universities of Excellence and alliances. With the logo (local
   versions) the RIL logo stands about 100 mm wide (A1) in free space near the outline, over the
   Netherlands, with a thin line to the outline, and replaces the name.
 - **Little text:** "Kürzeste Rundreise unter 1,9 · 10⁴¹ Möglichkeiten:" / "Shortest round trip

@@ -96,6 +96,13 @@ with `--holes cut --edge --hole <diameter>`; the export then also writes a strip
 (0.6 mm below the nail diameter up to it) to find the press fit first. Red cuts the holes,
 orange the board outline. 6 mm holds the nails less well; a backing board helps.
 
+## München ×2 (2026-10-17)
+
+München has two Universities of Excellence (LMU, TUM), so its label reads "München ×2" and the
+14 rings stand for the 15 Universities of Excellence and alliances (roadmap 9.13). The nails
+did not move: re-exported with the same gap, 5.61 mm exact and at the scale, start nail
+Hannover; the label fits at the same position.
+
 ## Re-exporting (measured nails, string, logo)
 
 Without the logo (committed):

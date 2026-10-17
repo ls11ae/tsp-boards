@@ -137,12 +137,12 @@ Exports a puzzle from a permalink (it must contain the selected cities) as laser
 template and solution sheet.
 
 ```bash
-npx tsx cli/export-poster.ts --puzzle public/puzzles/exzellenzstrategie-2027.tsp.json --paper A1 --png 30
+npx tsx cli/export-poster.ts --puzzle public/puzzles/deutschland-40.tsp.json --paper A1 --png 30
 ```
 
 Exports a puzzle as a poster in a DIN format (A4 to A0) with the shortest round trip by
 great-circle distance, its length and facts (PDF, optional PNG preview; PNGs need the dev
-dependency `@resvg/resvg-js`). `--variants` builds several posters and a contact sheet, e.g.
+dependency `@resvg/resvg-js`). `--variants` builds posters from a variants file (and a contact sheet for several), e.g.
 `docs/posters/exzellenzstrategie-2027/`.
 
 ### Board font

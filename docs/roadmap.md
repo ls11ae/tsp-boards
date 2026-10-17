@@ -6,8 +6,9 @@ items done here when they are finished (heading "— done <date>", or "(done)" a
 
 Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
 game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
-9.11 (labels clearly at their own dot, gallery categories) and 9.12 (the kiosk for the booth:
-names from a list, no way out) are done too. Next are the open items of Phase 10.
+9.11 (labels clearly at their own dot, gallery categories), 9.12 (the kiosk for the booth:
+names from a list, no way out) and 9.13 (München ×2, three Excellence puzzles) are done too.
+Next are the open items of Phase 10.
 Earlier status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler
 poster texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB).
 Then the open items of Phase 10.
@@ -771,6 +772,31 @@ designer.
   entry by a 1.5 s press or Shift+Delete plus a confirmation; the back button and other
   addresses stay in the kiosk; `e2e/kiosk.e2e.ts` clicks every visible button on every
   screen; the booth set-up in `docs/deployment.md`.)
+
+### 9.13 Kevin's decisions after the review (2026-10-17) — done 2026-10-17
+
+- **"München ×2":** München has two Universities of Excellence (LMU, TUM), so the number of
+  rings did not match "15 Universities of Excellence and alliances (14 places)". In all
+  Excellence puzzles, the poster and the board, München is labelled "München ×2" (English
+  "Munich ×2") wherever it carries the ring. Re-export the 37 poster (repository and
+  `local/posters/`, all themes) and the board (`docs/boards/exzellenzstrategie-2027/` and the
+  logo laser file in `local/boards/`); the nails do not move: the gap stays 5.61 mm and the
+  label fits.
+- **Fewer Excellence puzzles:** three in Specials, small to large:
+  `exzellenzuniversitaeten-2027-brett` (13 places, title without "(Brett)"),
+  `exzellenzstrategie-2027-brett` (25, the wooden board), `exzellenzstrategie-2027-37` (the
+  poster's QR code). Removed from the collection: `exzellenzuniversitaeten-2027`,
+  `exzellenzuniversitaeten-2027-staedte`, `exzellenzstrategie-2027-22`,
+  `exzellenzstrategie-2027` (34), `exzellenzcluster-2026`, `exzellenzcluster-2026-verbuende`.
+  The kiosk's hard level uses `exzellenzstrategie-2027-37` instead of
+  `exzellenzstrategie-2027`. Delete puzzle files and lists nothing uses any more.
+- **The board stays the 25-place board:** with the 37 cities on 300 × 600 mm the exact string
+  gap is only 1.07 mm (34 places: 1.53 mm).
+- (Done 2026-10-17: a town's own label in place lists (`* München; München ×2`), English
+  boards and posters keep a label's addition to the town's name; the board re-exported with
+  gap 5.61 mm exact and at the scale, start nail Hannover; six puzzle files and three lists
+  removed; the poster now reads the list `exzellenzstrategie-2027.txt`, which stays with the
+  two source lists `exzellenzuniversitaeten-2027.txt` and `exzellenzcluster-2026.txt`.)
 
 ## Phase 10: physical and public
 

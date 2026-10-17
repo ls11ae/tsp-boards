@@ -6,20 +6,21 @@ One place per line (town names of the country data); lines starting with `#` are
 
 | list                              | puzzle                                         | places | purpose |
 | --------------------------------- | ---------------------------------------------- | ------ | ------- |
-| `exzellenzuniversitaeten-2027.txt` | Universities of Excellence and alliances, 2027–2033 | 14 places (2 composite: Rhein-Main-Universitäten, Ruhr Innovation Lab) | digital (string gap 3.24 mm, 0.37 mm with one place per city) |
-| `exzellenzuniversitaeten-2027-brett.txt` | board variant: Bonn/Köln also combined | 13 places (3 composite) | board (string gap 10.15 mm) |
-| `exzellenzcluster-2026.txt`        | Clusters of Excellence, 2026–2032 (70 clusters) | 37 cities | digital (string gap 2.1 mm) |
-| `exzellenzcluster-2026-verbuende.txt` | Clusters of Excellence, neighbouring sites combined | 32 places (4 composite) | digital (string gap 1.14 mm; no nails closer than 25 mm) |
-| `exzellenzstrategie-2027.txt` | Exzellenzstrategie: alle 34 Standorte (roadmap 9.1) | 34 places: universities and alliances (14, marked) and the 20 further cluster sites | digital (string gap 1.14 mm; runner-up +0.06 %) |
+| `exzellenzuniversitaeten-2027.txt` | no puzzle since 2026-10-17 (roadmap 9.13): the source of the universities | 14 places (2 composite: Rhein-Main-Universitäten, Ruhr Innovation Lab) | – |
+| `exzellenzuniversitaeten-2027-brett.txt` | Exzellenzuniversitäten ab 2027: Bonn/Köln also combined | 13 places (3 composite) | board (string gap 10.15 mm) |
+| `exzellenzcluster-2026.txt`        | no puzzle since 2026-10-17 (roadmap 9.13): the source of the 70 Clusters of Excellence 2026–2032 | 37 cities | – |
+| `exzellenzstrategie-2027.txt` | no puzzle since 2026-10-17 (roadmap 9.13): the source of the 37-city poster (`docs/posters/exzellenzstrategie-2027/`, alliances split into their cities) | 34 places: universities and alliances (14, marked) and the 20 further cluster sites | – |
 | `exzellenzstrategie-2027-brett.txt` + `.board.json` | Exzellenzstrategie 2026–2033, the 300 × 600 mm board (roadmap 9.1, files in `docs/boards/exzellenzstrategie-2027/`) | 25 places: universities (14, marked), cluster sites with at least two clusters, all cluster sites in NRW | board (string gap 5.61 mm with 1.6 mm nails and 1 mm string, also at the scale; start nail Hannover) |
 | `exzellenzstrategie-2027-37.txt` | Exzellenzstrategie: alle 37 Städte, the game behind the 37-place poster (roadmap 9.10) | 37 places: as the 34, but the cities of the two alliances as separate places (marked) | digital (string gap 2.09 mm) |
-| `exzellenzstrategie-2027-22.txt` | Exzellenzstrategie: 22 Standorte, the game behind the 22-place poster (roadmap 9.10) | the board list without Düsseldorf, Münster and Siegen | digital (string gap 1.30 mm) |
-| `exzellenzuniversitaeten-2027-staedte.txt` | Exzellenzuniversitäten ab 2027: alle 17 Städte, the game behind the 17-place poster (roadmap 9.10) | 17 places: the universities, the cities of the alliances separate | digital (string gap 0.37 mm) |
 | `ruhrgebiet.txt` | Ruhrgebiet: 11 Städte, a local puzzle for the booth (roadmap 9.5, easy level of the event mode) | the 11 independent cities of the Regionalverband Ruhr (fixed; its four districts left out) | digital (string gap 2.57 mm on the NRW map) |
 
-Lines starting with `*` are marked places (a ring on the board and in the app); the
+Lines starting with `*` are marked places (a ring on the board and in the app); a town's own
+label follows a semicolon: München has two Universities of Excellence (LMU, TUM) and is
+`* München; München ×2` wherever it carries the ring, so that the rings add up to the 15
+Universities of Excellence and alliances (English boards and posters show "Munich ×2"). The
 `.board.json` file holds the board's legend and its preferred start nail
-(`cli/collection.ts list … --board-extras`).
+(`cli/collection.ts list … --board-extras`). Puzzles of the Excellence Strategy removed on
+2026-10-17 (roadmap 9.13) and their lists are in the git history.
 
 Sources (retrieved 2026-10-12; details, universities, cluster names and coordinates in
 `excellence-strategy-2026-10-12.json`):

@@ -14,4 +14,4 @@ Generated 2026-10-17 by `cli/export-poster.ts`, theme neutral.
 ## exzellenzstrategie-2027-poster-37
 
 - The optimum on the flat map (the app's measure) is the same round trip: 2,880.0 km on the map, 2,878.5 km on the sphere.
-- Order: Dortmund → Bochum → Düsseldorf → Aachen → Köln → Bonn → Siegen → Marburg → Gießen → Frankfurt am Main → Mainz → Darmstadt → Heidelberg → Karlsruhe → Stuttgart → Tübingen → Freiburg → Konstanz → Ulm → München → Regensburg → Erlangen → Würzburg → Bayreuth → Jena → Halle (Saale) → Leipzig → Dresden → Berlin → Braunschweig → Hannover → Hamburg → Lübeck → Kiel → Bremen → Oldenburg → Münster
+- Order: Dortmund → Bochum → Düsseldorf → Aachen → Köln → Bonn → Siegen → Marburg → Gießen → Frankfurt am Main → Mainz → Darmstadt → Heidelberg → Karlsruhe → Stuttgart → Tübingen → Freiburg → Konstanz → Ulm → München ×2 → Regensburg → Erlangen → Würzburg → Bayreuth → Jena → Halle (Saale) → Leipzig → Dresden → Berlin → Braunschweig → Hannover → Hamburg → Lübeck → Kiel → Bremen → Oldenburg → Münster

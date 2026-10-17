@@ -1,5 +1,5 @@
 {
-  "_comment": "The Excellence Strategy poster with the Ruhr Innovation Lab emphasized (roadmap 9.9, 9.10): all 37 cities (every city of an alliance a stop of its own), German and English, with a QR code to the game. Build: npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json; themes, A0 and the logo versions into the git-ignored local/posters/ (see README). The other five variants of 9.9 were dropped on 2026-10-17 (in git history).",
+  "_comment": "The Excellence Strategy poster with the Ruhr Innovation Lab emphasized (roadmap 9.9, 9.10): all 37 cities (the 34 sites of docs/data/curated/exzellenzstrategie-2027.txt, every city of an alliance a stop of its own; München with two Universities of Excellence as \"München ×2\"), German and English, with a QR code to the game. Build: npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json; themes, A0 and the logo versions into the git-ignored local/posters/ (see README). The other five variants of 9.9 were dropped on 2026-10-17 (in git history).",
   "paper": "A1",
   "orientation": "portrait",
   "png": 30,
@@ -14,7 +14,8 @@
   "variants": [
     {
       "name": "exzellenzstrategie-2027-poster-37",
-      "puzzle": "public/puzzles/exzellenzstrategie-2027.tsp.json",
+      "list": "docs/data/curated/exzellenzstrategie-2027.txt",
+      "region": "DE",
       "members": "separate",
       "game": "exzellenzstrategie-2027-37",
       "title": {

@@ -13,6 +13,7 @@ import { projectionKind, regionFrame } from '../region';
 import { Rng } from '../rng';
 import { allTours } from '../tsp/brute-force';
 import type { MipBackend } from '../tsp/exact';
+import { readPlaceList } from '../../../cli/lib/place-list';
 import { DIN_PAPERS, DIN_SIZES, pageSize } from './paper';
 import {
   CORNER_CLEAR,
@@ -53,6 +54,11 @@ function puzzleCities(id: string): { cities: City[]; region: string } {
     JSON.parse(readFileSync(path.join(ROOT, `public/puzzles/${id}.tsp.json`), 'utf8')),
   );
   return { cities: listCities(doc.map!.places, towns), region: doc.map!.params.region };
+}
+
+/** The places of a list in docs/data/curated (the sources of the Excellence puzzles). */
+function listPlaces(name: string) {
+  return readPlaceList(readFileSync(path.join(ROOT, `docs/data/curated/${name}.txt`), 'utf8'), de);
 }
 
 const projection = boardProjection(
@@ -116,7 +122,7 @@ describe('poster round trip', () => {
   });
 
   it('gives the figures of the Universities of Excellence (Kevin’s check, 9.7)', () => {
-    const { cities } = puzzleCities('exzellenzuniversitaeten-2027');
+    const cities = listCities(listPlaces('exzellenzuniversitaeten-2027'), towns);
     const stops = posterStops(cities, 'centroid');
     const tour = posterTour(backend, stops, stopPoints(stops, projection));
     expect(stops).toHaveLength(14);
@@ -241,13 +247,10 @@ describe('poster drawing', () => {
 });
 
 describe('Ruhr Innovation Lab poster (roadmap 9.9)', () => {
-  const all = puzzleCities('exzellenzstrategie-2027');
-  const doc = parsePuzzleDoc(
-    JSON.parse(
-      readFileSync(path.join(ROOT, 'public/puzzles/exzellenzstrategie-2027.tsp.json'), 'utf8'),
-    ),
-  );
-  const ril = doc.map!.places.findIndex((p) => p.name === 'Ruhr Innovation Lab');
+  // The poster's source: all 34 sites, the alliances as composite places (roadmap 9.13).
+  const places = listPlaces('exzellenzstrategie-2027');
+  const all = { cities: listCities(places, towns) };
+  const ril = places.findIndex((p) => p.name === 'Ruhr Innovation Lab');
   // A plain rectangle stands in for the logo (logos never enter the repository).
   const logo = {
     path: [['M', 0, 0], ['L', 200, 0], ['L', 200, 100], ['L', 0, 100], ['Z']] as const,

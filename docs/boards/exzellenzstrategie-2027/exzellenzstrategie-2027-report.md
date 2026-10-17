@@ -1,6 +1,6 @@
 # Exzellenzstrategie 2026–2033: board report
 
-Generated 2026-10-16 by `cli/export-board.ts`.
+Generated 2026-10-17 by `cli/export-board.ts`.
 
 - Board 300 × 600 mm, 25 places, nails 1.6 mm, string 1 mm (r_eff 1.30 mm), labels 5 mm, nail holes engraved as pits for drilling, board outline not cut.
 - String gap (optimum to runner-up): 5.61 mm (string-exact).

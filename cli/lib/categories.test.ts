@@ -17,13 +17,12 @@ const entry = (id: string, n: number, over: Partial<Entry> = {}): Entry => ({
   ...over,
 });
 
-describe('collection categories (roadmap 9.11)', () => {
+describe('collection categories (roadmap 9.11, 9.13)', () => {
   it('sorts the categories in order, small to large, a board next to its digital version', () => {
     const ordered = orderCollection([
-      entry('exzellenzcluster-2026', 37),
       entry('exzellenzstrategie-2027-37', 37),
       entry('exzellenzstrategie-2027-brett', 25, { purpose: 'board' }),
-      entry('exzellenzstrategie-2027', 34),
+      entry('exzellenzuniversitaeten-2027-brett', 13, { purpose: 'board' }),
       entry('schritt-12', 12, { kind: 'incremental', region: '', purpose: 'board' }),
       entry('welt-30', 30, { region: 'WO' }),
       entry('europa-30', 30, { region: 'EU', purpose: 'board' }),
@@ -42,11 +41,10 @@ describe('collection categories (roadmap 9.11)', () => {
       'europa-30',
       'welt-30',
       'schritt-12',
-      // The board first, then the puzzle of the posters' QR code, then small to large.
+      // The specials small to large too (roadmap 9.13).
+      'exzellenzuniversitaeten-2027-brett',
       'exzellenzstrategie-2027-brett',
       'exzellenzstrategie-2027-37',
-      'exzellenzstrategie-2027',
-      'exzellenzcluster-2026',
     ]);
     expect(categoryOf(entry('bayern-30', 30, { region: 'DE-BY' }))).toBe('regions');
   });

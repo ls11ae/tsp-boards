@@ -1125,3 +1125,24 @@ Short entries: decision; alternatives considered; reason. Newest last.
   jede Stadt ein eigener Halt") stays, since it explains the symbol. The gallery puzzles made
   for the other posters' QR codes (17 and 22 places) stay in the collection, so their short
   links keep working.
+- **2026-10-17 München ×2 and three Excellence puzzles (roadmap 9.13).** Kevin's decisions.
+  München has two Universities of Excellence (LMU, TUM), so its label reads "München ×2"
+  wherever it carries the ring (the board, the 37 puzzle and the poster; the 13-place puzzle has
+  no rings). Place lists gained a town's own label after a semicolon (`* München; München ×2`,
+  as composite places already had), in the CLI and the app's list editor; `boardLabel` keeps a
+  label's addition to the town's name in English ("Munich ×2"), so no separate English label is
+  needed. The puzzle files got the label directly (two lines each), checked against their lists
+  (identical places); tours, gaps and nails are unchanged, the board re-exported with gap 5.61
+  mm exact and at the scale and the label in the same place. The collection keeps three
+  Excellence puzzles (13, the 25-place board, the 37-city game of the poster), sorted small to
+  large like every category (the special order of 9.11 is gone); six puzzle files and the three
+  lists only they used are deleted. Kept: `exzellenzstrategie-2027.txt`, now the poster's
+  source (the 37 puzzle lists the alliances' cities as plain places, so the poster would lose
+  the Ruhr Innovation Lab outline and the Rhine-Main group), and the two source lists
+  `exzellenzuniversitaeten-2027.txt` and `exzellenzcluster-2026.txt` (universities and the 70
+  clusters, which the remaining lists are derived from). The kiosk's hard level plays the 37
+  puzzle. The board stays the 25-place board: with the 37 cities on 300 × 600 mm the exact
+  string gap is only 1.07 mm (34 places: 1.53 mm). Short links of the removed puzzles (only on
+  the removed posters' QR codes) no longer open a puzzle. Alternatives: a separate English label
+  field in place lists (more syntax for one case), building the poster from the 37 puzzle with
+  composites added to it (would change the game's places).

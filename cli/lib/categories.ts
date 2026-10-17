@@ -1,5 +1,5 @@
-// Categories and order of the curated collection (roadmap 9.11): the gallery shows them with
-// headings, the interesting puzzles first and the Excellence Strategy puzzles at the end.
+// Categories and order of the curated collection (roadmap 9.11, 9.13): the gallery shows them
+// with headings, the interesting puzzles first and the Excellence Strategy puzzles at the end.
 // Within a category from small to large, a board next to its digital version.
 
 import type { CollectionCategory, CollectionEntry } from '../../src/core/puzzle-file';
@@ -11,9 +11,6 @@ export const CATEGORIES: readonly CollectionCategory[] = [
   { id: 'incremental', name: { de: 'Schritt für Schritt', en: 'Step by step' } },
   { id: 'specials', name: { de: 'Specials', en: 'Specials' } },
 ];
-
-/** Specials that lead their category: the board, then the puzzle of the posters' QR code. */
-const SPECIALS_FIRST = ['exzellenzstrategie-2027-brett', 'exzellenzstrategie-2027-37'];
 
 type Entry = Omit<CollectionEntry, 'category'>;
 
@@ -33,22 +30,16 @@ const pairKey = (e: Entry) => e.id.replace(/-brett$/, '');
 export function orderCollection(entries: readonly Entry[]): CollectionEntry[] {
   const withCategory = entries.map((e) => ({ ...e, category: categoryOf(e) }));
   const rank = (c: string) => CATEGORIES.findIndex((x) => x.id === c);
-  // The smallest puzzle of a pair decides its place (the leading specials pair with none).
+  // The smallest puzzle of a pair decides its place.
   const pairN = new Map<string, number>();
   for (const e of withCategory) {
-    if (SPECIALS_FIRST.includes(e.id)) continue;
     const key = pairKey(e);
     pairN.set(key, Math.min(pairN.get(key) ?? Infinity, e.n));
   }
-  const first = (e: CollectionEntry) => {
-    const i = SPECIALS_FIRST.indexOf(e.id);
-    return i >= 0 ? i : SPECIALS_FIRST.length;
-  };
   return withCategory.sort(
     (a, b) =>
       rank(a.category) - rank(b.category) ||
-      first(a) - first(b) ||
-      (pairN.get(pairKey(a)) ?? a.n) - (pairN.get(pairKey(b)) ?? b.n) ||
+      pairN.get(pairKey(a))! - pairN.get(pairKey(b))! ||
       pairKey(a).localeCompare(pairKey(b)) ||
       // The board before its digital version.
       (a.purpose === 'board' ? 0 : 1) - (b.purpose === 'board' ? 0 : 1) ||

@@ -90,6 +90,7 @@
         "name": "München",
         "lat": 48.1374,
         "lon": 11.5755,
+        "label": "München ×2",
         "highlight": true
       },
       {
@@ -290,6 +291,7 @@
           "name": "München",
           "lat": 48.1374,
           "lon": 11.5755,
+          "label": "München ×2",
           "highlight": true
         },
         {

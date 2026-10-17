@@ -71,6 +71,8 @@ what we change and why, benchmark results, and open questions.
   only from `local/`, a link to the shared folder). 9.11 done 2026-10-17: poster labels
   clearly at their own dot, gallery categories. 9.12 done 2026-10-17: the kiosk for the booth
   (names from a list, `#kiosk?names=free`, removing entries, no way out; `e2e/kiosk.e2e.ts`).
+  9.13 done 2026-10-17: "München ×2" (two Universities of Excellence), three Excellence puzzles
+  in Specials (13, the 25-place board, the 37-city poster game), only the 37-city poster.
   **Next:** the open items of Phase 10: the physical builds (Kevin), the
   chair server and the play data endpoint. See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
