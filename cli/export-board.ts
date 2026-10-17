@@ -43,7 +43,7 @@ import { parsePuzzleDoc } from '../src/core/puzzle-file';
 import { checkRobustness } from '../src/core/robustness';
 import { Rng } from '../src/core/rng';
 import { iteratedLocalSearch } from '../src/core/tsp/ils';
-import { euclideanLength, stringLength } from '../src/core/tsp/tour';
+import { euclideanLength, sameTour, stringLength } from '../src/core/tsp/tour';
 import { verifyCandidate } from '../src/core/verify';
 import { loadBackend, loadCountry, ms } from './lib/country';
 
@@ -300,6 +300,62 @@ writeFileSync(
 );
 outputs.push(`${base}-solution.pdf`);
 
+/**
+ * The runner-up for checking the scale (roadmap 9.14): the string runner-up, and if the
+ * runner-up as read at the scale is another tour (the wrap at the start nail differs), that one
+ * too, each with how far before 0 its string ends.
+ */
+function runnerUpSection(
+  p: NonNullable<typeof plan>,
+  stringResult: NonNullable<typeof v.string>,
+): string[] {
+  const { slot, direction } = p.scale;
+  const names = (t: readonly number[]) =>
+    t.map((s) => listName(setup.cities[s]!, params.labelLanguage)).join(' → ');
+  // A round trip from the start nail in the direction that ends nearest to 0 (the shorter
+  // measured length; the calibration winds the optimum in its longer direction).
+  const nearest = (t: readonly number[]) => {
+    const n = t.length;
+    const i = t.indexOf(slot);
+    const forward = Array.from({ length: n }, (_, k) => t[(i + k) % n]!);
+    const backward = [forward[0]!, ...forward.slice(1).reverse()];
+    return measuredLength(setup.inst, backward, slot, direction) <
+      measuredLength(setup.inst, forward, slot, direction)
+      ? backward
+      : forward;
+  };
+  const before = (t: readonly number[]) =>
+    mm(measuredLength(setup.inst, t, slot, direction) - measuredUm);
+  const out: string[] = [];
+  const stringSecond = stringResult.second ? nearest(stringResult.second) : null;
+  const scaleSecond = p.measured.second ? nearest(p.measured.second) : null;
+  const differs =
+    scaleSecond !== null &&
+    stringSecond !== null &&
+    !sameTour(scaleSecond, stringSecond, setup.inst.n);
+  if (scaleSecond && differs)
+    out.push(
+      '## Runner-up at the scale (for checking the scale)',
+      '',
+      `The second-best round trip as read at the scale is not the string runner-up: it ends ${before(scaleSecond)} mm before 0 (the gap at the scale).`,
+      '',
+      names(scaleSecond),
+      '',
+    );
+  if (stringSecond)
+    out.push(
+      differs ? '## String runner-up' : '## Runner-up (for checking the scale)',
+      '',
+      differs
+        ? `The second-shortest round trip by string length; at the scale it ends ${before(stringSecond)} mm before 0.`
+        : `The second-shortest round trip, by string length and as read at the scale: it ends ${before(stringSecond)} mm before 0.`,
+      '',
+      names(stringSecond),
+      '',
+    );
+  return out;
+}
+
 // Report: the figures a builder needs, as Markdown.
 const de = (x: number, d = 2) => x.toFixed(d);
 const report = [
@@ -330,16 +386,7 @@ const report = [
   '',
   tour.map((s) => listName(setup.cities[s]!, params.labelLanguage)).join(' → '),
   '',
-  ...(v.string.second
-    ? [
-        '## Runner-up (for checking the scale: it ends about the gap before 0)',
-        '',
-        calibrationTour(setup.inst, v.string.second, plan.scale.slot, plan.scale.direction)
-          .map((s) => listName(setup.cities[s]!, params.labelLanguage))
-          .join(' → '),
-        '',
-      ]
-    : []),
+  ...runnerUpSection(plan, v.string),
   '## Files',
   '',
   ...outputs.map((f) => `- \`${path.basename(f)}\``),

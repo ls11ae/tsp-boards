@@ -8,6 +8,8 @@ export interface BoardTexts {
   readonly subtitle: (n: number, places: boolean) => string;
   /** Caption along the scale. */
   readonly scaleCaption: string;
+  /** Second line under the label of a preferred start nail (roadmap 9.14). */
+  readonly startFinish: string;
   readonly attribution: string;
   // Print template.
   readonly templateTitle: (region: string) => string;
@@ -38,6 +40,7 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
   de: {
     subtitle: (n, places) => `${n} ${places ? 'Orte' : 'Städte'} · Finde die kürzeste Rundreise!`,
     scaleCaption: 'mm Faden zu viel',
+    startFinish: 'Start und Ziel',
     attribution: 'Städte: GeoNames (CC BY 4.0) · Grenzen: Natural Earth · TSP Boards',
     templateTitle: (region) => `TSP-Brett ${region}: Druckvorlage im Maßstab 1:1`,
     templateSteps: ({ nailMm, pages, paper }) => [
@@ -76,6 +79,7 @@ export const BOARD_TEXTS: Record<LabelLanguage, BoardTexts> = {
   en: {
     subtitle: (n, places) => `${n} ${places ? 'places' : 'cities'} · Find the shortest round trip!`,
     scaleCaption: 'mm of string too many',
+    startFinish: 'Start and finish',
     attribution: 'Cities: GeoNames (CC BY 4.0) · Borders: Natural Earth · TSP Boards',
     templateTitle: (region) => `TSP board ${region}: print template at 1:1 scale`,
     templateSteps: ({ nailMm, pages, paper }) => [

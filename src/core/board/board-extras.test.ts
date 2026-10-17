@@ -24,7 +24,7 @@ import {
   measuredLength,
   outwardBisector,
 } from './measure';
-import { planBoard } from './plan';
+import { PREFERRED_START_MIN_GAP_UM, planBoard } from './plan';
 import { boardPlanInput, boardSetup, drawPuzzleBoard, logoMetrics } from './setup';
 import { pathBounds } from './shapes';
 
@@ -230,7 +230,10 @@ describe('the Excellence Strategy board', () => {
     // The legend box is free of nails, scale and labels, and is drawn.
     expect(plan.legend).not.toBeNull();
     expect(plan.warnings.map((w) => w.kind)).not.toContain('legend-overlap');
-    expect(plan.measured.gapUm).toBeGreaterThanOrEqual(5000);
+    // The Ruhr Innovation Lab is the start nail; its gap at the scale is below the 5 mm target
+    // but above the 4 mm a preferred start nail needs (roadmap 9.14).
+    expect(setup.cities[plan.scale.slot]!.name).toBe('Ruhr Innovation Lab');
+    expect(plan.measured.gapUm).toBeGreaterThanOrEqual(PREFERRED_START_MIN_GAP_UM);
     const drawing = drawPuzzleBoard(setup, plan);
     expect(drawing.width).toBe(300);
     expect(drawing.height).toBe(600);

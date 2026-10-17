@@ -56,7 +56,11 @@ export interface BoardSetup {
     readonly texts: readonly string[];
     readonly metrics: readonly TextMetrics[];
     readonly options: LabelOptions;
+    /** Metrics per slot if that slot is the start: the label with its caption below. */
+    readonly startMetrics?: readonly TextMetrics[];
   } | null;
+  /** "Start und Ziel" under the preferred start nail's label, if that nail is the start. */
+  readonly startCaption: StartCaption | null;
   readonly texts: BoardTexts;
   readonly title: readonly TextLine[];
   readonly footer: TextLine;
@@ -72,6 +76,40 @@ export interface BoardSetup {
   readonly legend: LegendLayout | null;
   /** Preferred start nail (slot; null: the planner's choice). */
   readonly preferredStart: number | null;
+}
+
+/** The second line under a preferred start nail's label (roadmap 9.14). */
+export interface StartCaption {
+  readonly slot: number;
+  readonly text: string;
+  readonly sizeMm: number;
+  /** Baseline of the caption below the label's baseline, mm. */
+  readonly offsetMm: number;
+  /** Width of the label or logo above the caption, mm. */
+  readonly labelWidthMm: number;
+}
+
+/** The caption under a start label, relative to the label size. */
+export const START_CAPTION_SCALE = 0.7;
+
+/** Label metrics with a caption line below (left-aligned), and the caption's baseline offset. */
+export function captionMetrics(
+  label: TextMetrics,
+  caption: string,
+  sizeMm: number,
+): { metrics: TextMetrics; offsetMm: number } {
+  const c = measureText(caption, sizeMm);
+  const offsetMm = label.inkBottom + 0.35 * sizeMm - c.inkTop;
+  return {
+    metrics: {
+      width: Math.max(label.width, c.width),
+      inkLeft: Math.min(label.inkLeft, c.inkLeft),
+      inkRight: Math.max(label.inkRight, c.inkRight),
+      inkTop: label.inkTop,
+      inkBottom: offsetMm + c.inkBottom,
+    },
+    offsetMm,
+  };
 }
 
 export const TITLE_SIZE_MM = 16;
@@ -194,6 +232,25 @@ export function boardSetup(
   const clearance = labels?.options.nailClearanceMm ?? params.nailDiameterMm / 2 + 2.5;
   const startPool = extras.board?.startPlace ?? null;
   const preferred = startPool === null ? -1 : members.indexOf(startPool);
+  // The place the board celebrates as its start nail says so, as on the poster: "Start und
+  // Ziel" under its label or logo.
+  let startCaption: StartCaption | null = null;
+  if (labels && preferred >= 0) {
+    const sizeMm = params.labelSizeMm * START_CAPTION_SCALE;
+    const label = labels.metrics[preferred]!;
+    const { metrics, offsetMm } = captionMetrics(label, texts.startFinish, sizeMm);
+    labels = {
+      ...labels,
+      startMetrics: labels.metrics.map((m, i) => (i === preferred ? metrics : m)),
+    };
+    startCaption = {
+      slot: preferred,
+      text: texts.startFinish,
+      sizeMm,
+      offsetMm,
+      labelWidthMm: label.inkRight - label.inkLeft,
+    };
+  }
   return {
     file,
     params,
@@ -202,6 +259,7 @@ export function boardSetup(
     points,
     inst: new Instance(points, rEffMm(params), citySphere(file, cities, projection)),
     labels,
+    startCaption,
     texts,
     title: [
       { text: title || regionName, sizeMm: TITLE_SIZE_MM },
@@ -244,7 +302,13 @@ export function boardPlanInput(setup: BoardSetup, optimum: StringOptimum): PlanI
     width: params.boardWidthMm,
     height: params.boardHeightMm,
     nailDiameterMm: params.nailDiameterMm,
-    labels: setup.labels ? { metrics: setup.labels.metrics, options: setup.labels.options } : null,
+    labels: setup.labels
+      ? {
+          metrics: setup.labels.metrics,
+          options: setup.labels.options,
+          ...(setup.labels.startMetrics ? { startMetrics: setup.labels.startMetrics } : {}),
+        }
+      : null,
     titleSize: textBlockSize(setup.title),
     // With a legend, the footer is the legend's last line.
     footerSize: setup.legend ? null : textBlockSize([setup.footer]),
@@ -286,6 +350,7 @@ export function drawPuzzleBoard(
       ring: setup.ring,
       labelLogos: setup.labelLogos,
       legend: setup.legend,
+      startCaption: setup.startCaption,
     },
     drawing,
   );

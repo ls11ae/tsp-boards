@@ -57,6 +57,8 @@ export interface PlanInput {
   readonly labels: {
     readonly metrics: readonly TextMetrics[];
     readonly options: LabelOptions;
+    /** Metrics per slot when that slot is the start nail (e.g. a caption below the label). */
+    readonly startMetrics?: readonly TextMetrics[];
   } | null;
   /** Size [w, h] of the title block and of the one-line footer in mm (null: none). */
   readonly titleSize: readonly [number, number] | null;
@@ -68,7 +70,15 @@ export interface PlanInput {
   readonly reserved?: Box | null;
   /** Start nail tried first (slot), e.g. a place the board celebrates. */
   readonly preferredStart?: number | null;
+  /**
+   * The preferred start nail is kept if its measured gap reaches this (µm), even below the
+   * target (roadmap 9.14: the Ruhr Innovation Lab with 4.14 mm at the scale). Default 4 mm.
+   */
+  readonly preferredStartMinGapUm?: number;
 }
+
+/** A preferred start nail is kept with this measured gap (µm) unless the input says otherwise. */
+export const PREFERRED_START_MIN_GAP_UM = 4000;
 
 /** PlanInput as plain data (for workers): the instance is rebuilt from points and r_eff. */
 export type PlanData = Omit<PlanInput, 'inst'> & {
@@ -103,6 +113,8 @@ export interface MeasuredGap {
   readonly boundUm: number;
   /** Measured length of the optimum from the loop to the arrival at s plus the end wrap, µm. */
   readonly lengthUm: number | null;
+  /** The runner-up as read at the scale (slots), if solved exactly. */
+  readonly second?: readonly number[] | null;
 }
 
 export interface PlacedLabel {
@@ -355,7 +367,10 @@ function layout(input: PlanInput, scale: ScalePlan): Layout {
   let complete = true;
   let unplaced = 0;
   if (input.labels) {
-    const { metrics, options } = input.labels;
+    const { options, startMetrics } = input.labels;
+    const metrics = input.labels.metrics.map((m, i) =>
+      i === scale.slot && startMetrics ? startMetrics[i]! : m,
+    );
     const candidates = points.map((p, i) => labelCandidates(p, metrics[i]!, options));
     const placement = placeLabels({ points, candidates, obstacles, width, height, options });
     complete = placement.complete;
@@ -443,6 +458,7 @@ export function planBoard(
           gapUm: check.sameOptimum ? check.gapUm : 0,
           boundUm: candidate.boundUm,
           lengthUm: check.lengthUm,
+          second: check.second,
         };
         if (!check.sameOptimum) warnings.push({ kind: 'optimum-differs' });
       } else {
@@ -466,18 +482,23 @@ export function planBoard(
       warnings,
       examined,
     };
-    // Complete layout first, then reaching the target, then the measured gap.
+    // Complete layout first, then reaching the target (for the preferred start nail its own,
+    // lower bar), then the measured gap.
+    const reaches =
+      measured.gapUm >= input.targetGapUm ||
+      (preferred !== null &&
+        candidate.scale.slot === preferred &&
+        measured.kind === 'exact' &&
+        measured.gapUm >= (input.preferredStartMinGapUm ?? PREFERRED_START_MIN_GAP_UM));
     const score =
       (lay.complete ? 4 : 0) +
       (lay.titleMissing ? 0 : 1) +
-      (measured.gapUm >= input.targetGapUm ? 2 : 0) +
-      Math.min(1, Math.max(0, measured.gapUm) / Math.max(1, 10 * input.targetGapUm));
+      (reaches ? 2 : 0) +
+      (preferred !== null && candidate.scale.slot === preferred && reaches ? 0.5 : 0) +
+      Math.min(0.49, (0.49 * Math.max(0, measured.gapUm)) / Math.max(1, 10 * input.targetGapUm));
     if (!best || score > best.score) best = { plan, score };
     const done =
-      lay.complete &&
-      !lay.titleMissing &&
-      measured.gapUm >= input.targetGapUm &&
-      (measured.kind === 'exact' || !backend);
+      lay.complete && !lay.titleMissing && reaches && (measured.kind === 'exact' || !backend);
     if (done) break;
     if (backend && exactRuns >= maxExact && best.plan.labelsComplete) break;
   }

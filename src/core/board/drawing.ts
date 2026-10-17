@@ -119,6 +119,14 @@ export interface DrawingInput {
   readonly labelLogos?: readonly (Logo | null)[];
   /** Legend, drawn in the plan's legend box. */
   readonly legend?: LegendLayout | null;
+  /** A caption under the label of this slot if it is the start nail ("Start und Ziel"). */
+  readonly startCaption?: {
+    readonly slot: number;
+    readonly text: string;
+    readonly sizeMm: number;
+    readonly offsetMm: number;
+    readonly labelWidthMm: number;
+  } | null;
 }
 
 const SCALE_TEXT_MM = 3.5;
@@ -226,15 +234,19 @@ export function drawBoard(
   if (input.labelTexts && input.labelOptions) {
     const size = input.labelOptions.sizeMm;
     const path: PathCommand[] = [];
+    const caption =
+      input.startCaption && input.startCaption.slot === plan.scale.slot ? input.startCaption : null;
     for (const l of plan.labels) {
       const logo: Logo | null = input.labelLogos?.[l.slot] ?? null;
+      const captioned = caption !== null && l.slot === caption.slot;
+      const [x, y] = l.candidate.baseline;
       if (logo) {
         const [x0, y0, x1] = l.candidate.box;
-        path.push(...placeLogo(logo, x0, y0, x1 - x0));
-        continue;
+        path.push(...placeLogo(logo, x0, y0, captioned ? caption.labelWidthMm : x1 - x0));
+      } else {
+        path.push(...textPath(input.labelTexts[l.slot]!, x, y, size));
       }
-      const [x, y] = l.candidate.baseline;
-      path.push(...textPath(input.labelTexts[l.slot]!, x, y, size));
+      if (captioned) path.push(...textPath(caption.text, x, y + caption.offsetMm, caption.sizeMm));
     }
     items.push({ layer: 'engrave', path, fill: true });
   }
