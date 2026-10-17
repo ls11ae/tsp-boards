@@ -4,7 +4,11 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
+Status 2026-10-17 (late): 9.1–9.15 are done; 9.15 is the world board "Rund um die Welt" with
+the Pacific leg given (40 cities, 600 × 300 mm, string gap 7.34 mm, files in
+`docs/boards/welt-pazifik/`) and its digital version on the globe. Next are the open items of
+Phase 10.
+Earlier status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
 game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
 9.11 (labels clearly at their own dot, gallery categories), 9.12 (the kiosk for the booth:
 names from a list, no way out), 9.13 (München ×2, three Excellence puzzles) and 9.14 (the
@@ -833,7 +837,7 @@ designer.
   ends; both boards and the incremental test board re-exported, the nails of the incremental
   board unchanged.)
 
-### 9.15 A world board with the Pacific leg given (Kevin, 2026-10-17)
+### 9.15 A world board with the Pacific leg given (Kevin, 2026-10-17) — done 2026-10-17
 
 Optional for the open day, after 9.14.
 
@@ -862,6 +866,18 @@ Optional for the open day, after 9.14.
   in the other world puzzles, and the globe flight closing the loop; a `#p/<id>` short link;
   in the gallery under "Europa und die Welt" (the board next to its digital version), and in
   the kiosk's hard level if it plays well.
+- (Done 2026-10-17: open paths as a round trip with a fixed edge in the core (exact solvers in
+  both models, heuristics, gap bounds, search, verification, robustness, overlays), the
+  measurement at the end nail with the string tied at the start; board export with "Start" and
+  "Ziel", the dashed Pacific leg along the great circle out of both map edges, the scale at the
+  end nail, solution sheet, calibration and report for a path. "Rund um die Welt": 40 cities
+  chosen by `cli/world-board.ts` (`docs/experiments/world-board-2026-10-17.md`), string gap
+  7.34 mm, at the scale at Sydney 7.34 mm, robust for r_eff 1.0–2.0 mm (5.58–7.66 mm), the same
+  order on the globe (66,732 km, runner-up 109 km longer); board files in
+  `docs/boards/welt-pazifik/` (`#p/welt-pazifik-brett`), the digital version
+  `#p/welt-pazifik` with the Pacific leg dashed, start and finish marked, lengths in km on the
+  globe and the flight closing the loop; both in "Europa und die Welt", the digital one in the
+  kiosk's hard level; `e2e/world-path.e2e.ts`.)
 
 ## Phase 10: physical and public
 

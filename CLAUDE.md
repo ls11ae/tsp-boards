@@ -75,10 +75,12 @@ what we change and why, benchmark results, and open questions.
   in Specials (13, the 25-place board, the 37-city poster game), only the 37-city poster.
   9.14 done 2026-10-17: the 13-place puzzle digital, the board with 2.0 × 20 mm nails (string
   gap 5.71 mm, 4.14 mm at the scale), start nail Ruhr Innovation Lab ("Start und Ziel"), 1.5 mm
-  pilot holes; the incremental test board re-exported. **Next:** 9.15, a world board with the
-  Pacific leg given (an open path with fixed end points; optional for the open day).
-  **Next:** the open items of Phase 10: the physical builds (Kevin), the
-  chair server and the play data endpoint. See `docs/roadmap.md`.
+  pilot holes; the incremental test board re-exported. 9.15 done 2026-10-17: open paths with a
+  given leg (a fixed edge in the core, the scale at the end nail), the world board "Rund um die
+  Welt" (40 cities, 600 × 300 mm, string gap 7.34 mm; `docs/boards/welt-pazifik/`,
+  `cli/world-board.ts`) and its digital version on the globe. **Next:** the open items of
+  Phase 10: the physical builds (Kevin), the chair server and the play data endpoint. See
+  `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle), deploying to the chair
   server, play data endpoint, code license; later a physical globe.
 - License: MIT for code and docs (2026-10-17; `LICENSE`, `AUTHORS`, third-party terms in
@@ -100,7 +102,8 @@ what we change and why, benchmark results, and open questions.
   used for the screen, for all metrics, and for the printed/lasered board. All physical
   parameters in millimetres (board size, nail diameter, min city distance, min gap in string).
   Exception: world files (`metric: 'sphere'`) measure great-circle distances (in map mm at the
-  map's scale) on an Equal Earth map; their puzzles are digital only.
+  map's scale) on an Equal Earth map; their puzzles are digital, except a world board measured
+  on the flat map (`flatMap`, roadmap 9.15).
 
 ## Domain facts (do not rediscover)
 

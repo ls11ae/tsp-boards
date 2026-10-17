@@ -1172,3 +1172,46 @@ Short entries: decision; alternatives considered; reason. Newest last.
   (0.5–6.5 mm, hex shank) in the Bosch drill, whose chuck starts at 1.5 mm; the M14 nut (DIN 934,
   11 mm) as height gauge. Alternatives: a lower target for the whole board (would also accept
   other start nails with less), a "Start und Ziel" line in the legend (farther from the nail).
+- **2026-10-17 Open paths with a given leg, the world board (roadmap 9.15).** A round trip
+  around the world cannot close on a flat board, so the Pacific leg is given: the string runs
+  from Los Angeles (start nail, string tied) through all places to Sydney (end nail with the
+  scale). Modelled as a round trip with the edge Sydney–Los Angeles fixed, inside `Instance`:
+  its distance is −10⁹ µm (`FIXED_EDGE_UM`) and the turns across it at its two ends are 0, and
+  every tour length adds the 10⁹ back, so tours with the edge cost exactly the path's string
+  length (legs plus the wraps at inner nails) and tours without it cost about 10⁹ more. Every
+  heuristic, the gap bounds, the search, the robustness check and the overlays then keep the
+  edge without changes; the MIP forces its variable to 1 at cost 0 (exact against brute force
+  for n ≤ 9 in both models). The measurement at the end nail is the path's string plus the end
+  wrap around the end nail (arrival continued into the scale's direction), in one direction
+  only (spread 0); the tied knot at the start nail is the same for every path. The scale goes
+  only at the end nail, starting along the arrival direction, rotated if the band hits
+  something; the given leg (the great-circle arc, cut where it leaves the map, as a dashed line
+  on the score layer) is an obstacle for labels, title, footer and scale. "Start" and "Ziel"
+  are second lines under the two labels (as "Start und Ziel" of 9.14). Puzzle files hold the
+  path as indices into their places (`map.path`), links as `pa=<start>.<end>` (ids, or list
+  indices with a place list), and a world board measures on the flat map (`flatMap`, `fm=1`;
+  the app treats it as a board, not as a digital world puzzle). In the app the path's end
+  points are city ids in the document (`doc.path`); play starts at Los Angeles, offers Sydney
+  only last (it closes the loop), draws tours as open paths and the given leg dashed, and the
+  globe flight starts at Los Angeles and closes the loop over the Pacific. The teaching mode
+  shows round trips (its strategies are about closed tours). Alternatives: a dummy node joined
+  to both ends at cost 0 (changes n, the nails and the turn costs at the ends would need
+  special cases), a separate path model in the MIP and every heuristic (much more code),
+  cutting the board's map at another meridian (a round trip across the Atlantic or the Pacific
+  is still cut on any flat map).
+- **2026-10-17 The world board's 40 cities (roadmap 9.15).** Chosen by a search
+  (`cli/world-board.ts`) over the 250 cities with the most Wikipedia editions, Los Angeles and
+  Sydney pinned, nails 2.0 mm, string 1 mm, at least 10 mm apart, 4 mm labels; two sweeps
+  (n = 30–45, 126 exactly checked candidates, `docs/experiments/world-board-2026-10-17.md`).
+  Taken: n = 40 (Kevin: about 40), string gap 7.34 mm, also at the scale at Sydney, the same
+  order on the globe (great circles, 66,732 km, runner-up 109 km longer) and robust for r_eff
+  1.0–2.0 mm. Board and digital version are two files of one list (`welt-pazifik-brett` with
+  `--flat`, `welt-pazifik` on the sphere), titled "Rund um die Welt" both, next to each other in
+  "Europa und die Welt"; the digital one joins the kiosk's hard level (a guided 40-place path on
+  the globe, start and finish given). The solution sheet of a collection puzzle now prints its
+  short link (`#p/<id>`, option `--site`), which was empty for puzzle files. Not adapted to
+  paths: the poster and the classroom worksheet draw closed round trips, so the app hides them
+  for a path (the world board needs neither for the open day). Alternatives: 38 cities with recognizability 0.567 (but 42
+  km on the globe and a smaller board gap), 7.50 mm at recognizability 0.530 (Kingston,
+  Valparaíso, Astana); Pacific legs other than Los Angeles–Sydney were not tried (Kevin's
+  choice).
