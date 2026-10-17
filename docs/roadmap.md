@@ -6,7 +6,8 @@ items done here when they are finished (heading "— done <date>", or "(done)" a
 
 Status 2026-10-17 (night): 9.1–9.10 are done (9.10: simpler poster texts, a QR code to the
 game, the phone layout, design themes for TU Dortmund and RUB; the site is on GitHub Pages).
-Next is 9.11, the kiosk for the booth (no free names, no way out), then the open items of
+Next is 9.11, two items from Kevin's review of 9.10 (labels clearly at their own dot, gallery
+order), then 9.12, the kiosk for the booth (no free names, no way out), then the open items of
 Phase 10. Open in 9.10: the RUB sender line (Maike gives its text).
 Earlier status 2026-10-17, after Kevin's review of 9.9: 9.1–9.9 are done. Next is 9.10: simpler
 poster texts, a QR code to the game, the phone layout, and design themes (TU Dortmund, RUB).
@@ -715,7 +716,28 @@ order; the phone layout matters for the open day too, since visitors may play on
     `local/posters/` has the themes tu and rub, the neutral logo versions and A0, German and
     English.)
 
-### 9.11 Kiosk for the booth (feedback 2026-10-17)
+### 9.11 Review of 9.10 (Kevin, 2026-10-17)
+
+Two items before the kiosk.
+
+- **Würzburg label on the Excellence posters.** It sits up-left of its dot, between "Frankfurt
+  am Main" and "Darmstadt", so it reads like a fourth city of the Rhine-Main alliance.
+  - Place labels so that each is clearly nearer its own dot than any other place (e.g.
+    Würzburg below or right of its dot), and check the other labels the same way.
+  - Re-export the posters (repository and `local/posters/`, all themes).
+- **Gallery order.** The collection starts with nine Excellence puzzles with near-identical
+  thumbnails. Make it clearer and put the interesting puzzles first.
+  - Group the collection into categories with headings (a `category` field in
+    `public/puzzles/index.json`, names in German and English), in this order: Germany
+    (Deutschland 40, Landeshauptstädte, Universitätsstädte, Hansestädte), cities and regions
+    (Ruhrgebiet, NRW, Bayern, Berlin, Hamburg), Europe and the world (with the globe
+    puzzles), step by step, and at the end "Specials" with the Excellence Strategy puzzles
+    (the board first, then the 37-city puzzle of the poster QR code).
+  - Within a category from small to large; a board and its digital version side by side.
+  - The filters keep working across categories; puzzle ids and `#p/<id>` links stay
+    unchanged; the kiosk keeps its own selection.
+
+### 9.12 Kiosk for the booth (feedback 2026-10-17)
 
 For the open day the app runs at the booth in the event mode (`#kiosk`, 9.4). Feedback
 reached Kevin: the leaderboard has a free name field, and from the game one gets into the
