@@ -1,12 +1,63 @@
 // Minimal PDF writer for vector drawings in mm: pages, reusable drawings (form XObjects),
 // paths, strokes, fills, clipping and Flate-compressed streams. Text arrives as outlines
-// (text.ts), so no fonts are embedded. Coordinates are mm with y pointing down, as on the
-// board; every page and form starts with the matching transformation.
+// (text.ts), so no fonts are embedded; where text should be selectable, invisible text with the
+// board font's advances lies over the outlines (as in scanned documents). Coordinates are mm
+// with y pointing down, as on the board; every page and form starts with the matching
+// transformation.
 
 import { zlibSync } from 'fflate';
 import type { Matrix, Path } from './shapes';
+import { measureText } from './text';
 
 const PT_PER_MM = 72 / 25.4;
+
+/** Resource name of the invisible text's font. */
+const TEXT_FONT = 'T1';
+
+/** WinAnsiEncoding codes 0x80–0x9f (unused codes as NUL). */
+const WIN_ANSI_HIGH = '€\0‚ƒ„…†‡ˆ‰Š‹Œ\0Ž\0\0‘’“”•–—˜™š›œ\0žŸ';
+
+let winAnsi: Map<string, number> | null = null;
+
+/** The WinAnsi code of a character, or of a stand-in (its base letter, '-' or '?'). */
+function winAnsiCode(ch: string): number {
+  if (!winAnsi) {
+    winAnsi = new Map();
+    for (let c = 0x20; c <= 0xff; c++) {
+      if (c >= 0x7f && c < 0xa0) {
+        const high = WIN_ANSI_HIGH[c - 0x80];
+        if (high && high !== '\0') winAnsi.set(high, c);
+      } else winAnsi.set(String.fromCharCode(c), c);
+    }
+  }
+  return (
+    winAnsi.get(ch) ??
+    winAnsi.get(ch.normalize('NFD')[0] ?? '') ??
+    (ch === '−' || ch === '‑' ? 0x2d : ch === ' ' ? 0x20 : 0x3f)
+  );
+}
+
+/** A PDF string of WinAnsi codes, ASCII only (other bytes as octal escapes). */
+function pdfString(text: string): string {
+  let out = '(';
+  for (const ch of text) {
+    const code = winAnsiCode(ch);
+    if (code === 0x28 || code === 0x29 || code === 0x5c) out += `\\${String.fromCharCode(code)}`;
+    else if (code < 0x80) out += String.fromCharCode(code);
+    else out += `\\${code.toString(8).padStart(3, '0')}`;
+  }
+  return `${out})`;
+}
+
+/** Advance widths (1/1000 em) of codes 32–255 in the board font, for the invisible text. */
+function textFontWidths(): number[] {
+  const chars = new Map<number, string>();
+  for (let c = 0x20; c <= 0xff; c++) {
+    const ch = c >= 0x80 && c < 0xa0 ? WIN_ANSI_HIGH[c - 0x80]! : String.fromCharCode(c);
+    chars.set(c, ch === '\0' || c === 0x7f ? '?' : ch);
+  }
+  return [...chars.values()].map((ch) => Math.round(measureText(ch, 1).width * 1000));
+}
 
 export type Rgb = readonly [number, number, number];
 
@@ -32,6 +83,8 @@ export class PdfCanvas {
   private readonly ops: string[] = [];
   /** Forms used on this canvas (resource names). */
   readonly forms = new Set<string>();
+  /** Whether the canvas has invisible text (needs the text font). */
+  hasText = false;
 
   save(): this {
     this.ops.push('q');
@@ -112,6 +165,19 @@ export class PdfCanvas {
     return this;
   }
 
+  /**
+   * Invisible text (render mode 3) with its baseline at (x, y) and the board font's advances,
+   * over the same text drawn as outlines: it can then be selected, searched and copied.
+   */
+  invisibleText(text: string, x: number, y: number, sizeMm: number): this {
+    if (text.trim() === '') return this;
+    this.hasText = true;
+    this.ops.push(
+      `BT /${TEXT_FONT} ${num(sizeMm)} Tf 3 Tr 1 0 0 -1 ${num(x)} ${num(y)} Tm ${pdfString(text)} Tj ET`,
+    );
+    return this;
+  }
+
   content(): string {
     return this.ops.join('\n');
   }
@@ -144,6 +210,7 @@ export class PdfDocument {
   private readonly objects: PdfObject[] = [];
   private readonly pageIds: number[] = [];
   private readonly formIds = new Map<string, number>();
+  private fontId: number | null = null;
   private readonly pagesId: number;
   private readonly catalogId: number;
 
@@ -169,13 +236,30 @@ export class PdfDocument {
     return id;
   }
 
+  /**
+   * The invisible text's font: Helvetica in WinAnsiEncoding with the board font's widths, so
+   * every character lies over its outline (it is never painted, so no font is embedded).
+   */
+  private textFontId(): number {
+    if (this.fontId === null) {
+      this.fontId = this.reserve();
+      this.objects[this.fontId - 1]!.dict =
+        `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding` +
+        ` /FirstChar 32 /LastChar 255 /Widths [${textFontWidths().join(' ')}] >>`;
+    }
+    return this.fontId;
+  }
+
   private resources(canvas: PdfCanvas): string {
     const forms = [...canvas.forms].map((name) => {
       const id = this.formIds.get(name);
       if (id === undefined) throw new Error(`PDF: unknown form ${name}`);
       return `/${name} ${id} 0 R`;
     });
-    return forms.length > 0 ? `<< /XObject << ${forms.join(' ')} >> >>` : '<< >>';
+    const parts: string[] = [];
+    if (forms.length > 0) parts.push(`/XObject << ${forms.join(' ')} >>`);
+    if (canvas.hasText) parts.push(`/Font << /${TEXT_FONT} ${this.textFontId()} 0 R >>`);
+    return `<< ${parts.join(' ')}${parts.length > 0 ? ' ' : ''}>>`;
   }
 
   /** A reusable drawing of size w × h mm (y down), referenced by name on pages. */

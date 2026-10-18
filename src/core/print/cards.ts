@@ -1,16 +1,27 @@
 // Take-away cards for the booth (roadmap 9.19): A7 cards, four on an A4 sheet with cut marks,
 // printed on both sides. The front invites to TSP Boards (a mini map with a shortest round trip
 // from one of the puzzles), the back to Ruler of the Plane (castles with their Voronoi regions);
-// both with a QR code and the address, and the logos (TU Dortmund, the faculty, Chair 11) or,
-// without logo files, their names. German only.
+// both with a QR code, the address beside it (top edges aligned), the open day below them, and
+// the logos (TU Dortmund, the faculty, Chair 11) or, without logo files, their names. German only.
 
 import type { Point } from '../geometry';
 import type { Logo } from '../board/logo';
 import type { Rgb } from '../board/pdf';
 import { PdfDocument } from '../board/pdf';
+import { QR_QUIET, qrMatrix } from '../board/qr';
 import { circlePath, polygonPath, polylinePath, rectPath, type PathCommand } from '../board/shapes';
-import { textPath, wrapText } from '../board/text';
-import { A4, INK, MUTED, drawItems, logoItems, qrItem, type Page, type PageItem } from './document';
+import { measureText, wrapText } from '../board/text';
+import {
+  A4,
+  INK,
+  MUTED,
+  drawItems,
+  logoItems,
+  qrItem,
+  textItem,
+  type Page,
+  type PageItem,
+} from './document';
 import { voronoiCells } from './voronoi';
 
 export const CARD: readonly [number, number] = [74, 105];
@@ -29,8 +40,6 @@ export interface MiniMap {
   readonly points: readonly Point[];
   /** The shortest round trip (indices into points). */
   readonly tour: readonly number[];
-  /** What the map shows, e.g. "Deutschland: 40 Städte". */
-  readonly caption: string;
 }
 
 export interface CardsInput {
@@ -41,6 +50,12 @@ export interface CardsInput {
 
 const TOUR: Rgb = [0.72, 0.18, 0.12];
 const SENDER = 'TU Dortmund · Fakultät für Informatik · Lehrstuhl 11 Algorithm Engineering';
+export const EVENT = 'TU Dortmund, Tag der offenen Tür, 7. November 2026';
+/** The QR code (with its quiet zone) below the drawing, the same on both sides. */
+const QR_TOP = 63;
+const QR_SIZE = 24;
+/** Top of the logos, or of the names in the neutral version. */
+const FOOTER_TOP = 91;
 
 /** Card origins on the sheet (2 × 2, centred); the back mirrors the columns (long-edge flip). */
 export function cardOrigins(back: boolean): Point[] {
@@ -75,10 +90,8 @@ function cutMarks(origins: readonly Point[]): PageItem {
   return { path, stroke: { color: [0, 0, 0], width: 0.15 } };
 }
 
-const text = (value: string, x: number, y: number, size: number, color: Rgb = INK): PageItem => ({
-  path: textPath(value, x, y, size),
-  fill: color,
-});
+const text = (value: string, x: number, y: number, size: number, color: Rgb = INK): PageItem =>
+  textItem(value, x, y, size, color);
 
 function lines(value: string, x: number, y: number, size: number, width: number, color: Rgb = INK) {
   return wrapText(value, size, width).map((line, i) =>
@@ -88,14 +101,29 @@ function lines(value: string, x: number, y: number, size: number, width: number,
 
 /** The logos in a row at the bottom of a card, or the names without logo files. */
 function footer(x: number, y: number, logos: readonly (Logo | null)[]): PageItem[] {
-  const [w, h] = CARD;
+  const [w] = CARD;
   const present = logos.filter((l): l is Logo => l !== null);
-  const top = y + h - 14;
+  const top = y + FOOTER_TOP;
   if (present.length === 0) return lines(SENDER, x + 5, top + 7, 2.3, w - 10, MUTED);
   const slot = (w - 10) / present.length;
   return present.flatMap((logo, i) =>
     logoItems(logo, [x + 5 + i * slot + 1, top + 2, x + 5 + (i + 1) * slot - 1, top + 11]),
   );
+}
+
+/**
+ * The QR code at the left below the drawing, the address beside it with its top edge on the
+ * code's top edge (the first row of modules), and the open day below both.
+ */
+function qrRow(x: number, y: number, url: string, address: string, size: number): PageItem[] {
+  const [w] = CARD;
+  const modulesTop = y + QR_TOP + (QR_QUIET * QR_SIZE) / (qrMatrix(url).length + 2 * QR_QUIET);
+  const eventSize = Math.min(2.6, (w - 10) / measureText(EVENT, 1).width);
+  return [
+    qrItem(url, x + 3, y + QR_TOP, QR_SIZE),
+    text(address, x + 28, modulesTop - measureText(address, size).inkTop, size, TOUR),
+    text(EVENT, x + 5, y + QR_TOP + QR_SIZE + 2.5, eventSize),
+  ];
 }
 
 /** The front: TSP Boards with the mini map. */
@@ -125,11 +153,7 @@ export function frontCard(x: number, y: number, input: CardsInput): PageItem[] {
     items.push({ path: circlePath(px, py, 0.7), fill: [1, 1, 1] });
     items.push({ path: circlePath(px, py, 0.7), stroke: { color: INK, width: 0.2 } });
   }
-  items.push(...lines(m.caption, x + 5, y + 65.5, 2.3, w - 10, MUTED));
-  // QR code and address.
-  items.push(qrItem(TSP_URL, x + 3, y + 67, 24));
-  items.push(...lines('Im Browser spielen – auch auf dem Handy:', x + 28, y + 74, 2.8, w - 32));
-  items.push(...lines('ls11ae.github.io/tsp-boards', x + 28, y + 84, 2.8, w - 32, TOUR));
+  items.push(...qrRow(x, y, TSP_URL, 'ls11ae.github.io/tsp-boards', 2.8));
   items.push(...footer(x, y, input.logos));
   return items;
 }
@@ -196,19 +220,7 @@ export function backCard(x: number, y: number, input: CardsInput): PageItem[] {
     items.push({ path: castle(cx, cy + 1.2, 1.1), fill: INK });
   }
   items.push({ path: rectPath(x + 5, y + 22, 64, 40), stroke: { color: INK, width: 0.25 } });
-  items.push(
-    ...lines(
-      'Wem gehört welches Land? Jede Burg herrscht über die Punkte, die ihr am nächsten sind.',
-      x + 5,
-      y + 65.5,
-      2.3,
-      w - 10,
-      MUTED,
-    ),
-  );
-  items.push(qrItem(RULER_URL, x + 3, y + 70, 24));
-  items.push(...lines('Mehr Spiele vom Lehrstuhl:', x + 28, y + 77, 2.8, w - 32));
-  items.push(...lines('ls11ae.github.io/ruler-of-the-plane', x + 28, y + 85, 2.6, w - 32, TOUR));
+  items.push(...qrRow(x, y, RULER_URL, 'ls11ae.github.io/ruler-of-the-plane', 2.6));
   items.push(...footer(x, y, input.logos));
   return items;
 }

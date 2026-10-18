@@ -1317,3 +1317,19 @@ Short entries: decision; alternatives considered; reason. Newest last.
   shift at most 4.0 mm from their marks at r_eff 1.0 or 2.0 mm (5.9 mm before). Alternatives:
   raising the target until no seed works (14 mm was the highest reached; 16 and 18 mm failed
   for all 80 runs), fewer nails (a little more gap, fewer instances to play).
+- **2026-10-18 Print material revised (roadmap 9.21).** Selectable text: the outlines stay (the
+  board font, no embedded font, the same look), and the same text lies over them as invisible
+  text (render mode 3, as in scanned documents) in Helvetica with WinAnsiEncoding and a
+  `/Widths` array taken from the board font's advances, so every character sits over its
+  outline and selections match; characters outside WinAnsi become a stand-in. Commands in the
+  guides shrink a little (down to 2.7 mm) to stay on one line, so they copy as one command;
+  file names and addresses wider than a column break after a hyphen or slash. Alternatives:
+  embedding the board font (a TrueType subset or a Type 3 font from the outlines: much more
+  writer code for the same result), the standard fonts as visible text (a different look from
+  the boards and solution sheets). Cards: with the four lines gone, the QR codes move up into the
+  freed space and sit at the same height on both sides (front 4 mm, back 7 mm higher), so the
+  open-day line fits below them outside the codes' quiet zone; sizes, drawings, titles and
+  addresses are unchanged. Laser values: the user's starting values (xTool's basswood plywood
+  table, a little more for birch) as one table per colour, the test on an offcut and a table to
+  fill in; marked as untested, the test decides. The logo version of the building guide shows
+  the board with its logo; both name the logo -bed.svg in the shared folder as the laser file.

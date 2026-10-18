@@ -1,8 +1,9 @@
 // Printed guides (roadmap 9.19): a small layout engine for A4 documents made of blocks
 // (headings, paragraphs, numbered steps, bullets, check boxes, tables, notes, command lines,
 // figures, QR codes) that flow over pages. Text is set with the board font as outlines (no
-// embedded fonts), as for the solution sheets; the font has no arrows or check marks, so check
-// boxes are drawn. Logos are drawn in their colours (logos come only from local files).
+// embedded fonts), as for the solution sheets, with invisible text over it so it can be selected
+// and copied; the font has no arrows or check marks, so check boxes are drawn. Logos are drawn in
+// their colours (logos come only from local files).
 
 import { isColorLogo } from '../board/logo-color';
 import type { Logo } from '../board/logo';
@@ -39,6 +40,8 @@ export type Block =
       readonly widths: readonly number[];
       /** The first row is a header (shaded). */
       readonly header?: boolean;
+      /** Lines between the columns and around the table, rows at least this high: to fill in. */
+      readonly fillIn?: number;
     }
   /** A command or an address to type, in a shaded box. */
   | { readonly kind: 'code'; readonly text: string }
@@ -67,6 +70,7 @@ const HEADER = 14;
 const FOOTER = 8;
 const BODY = 3.7;
 const SMALL = 3.1;
+const CODE_MIN = 2.7;
 const LINE = 1.32;
 const H1 = 6.2;
 const H2 = 4.7;
@@ -81,6 +85,57 @@ export interface PageItem {
   readonly qr?: string;
   /** Drawn by a figure's own function. */
   readonly draw?: (c: PdfCanvas) => void;
+  /** The text the outlines show, laid over them as invisible text (baseline at x, y). */
+  readonly text?: PageText;
+}
+
+export interface PageText {
+  readonly value: string;
+  readonly x: number;
+  readonly y: number;
+  readonly size: number;
+}
+
+/** Text as outlines with the same text over it, selectable; baseline at (x, y). */
+export function textItem(
+  value: string,
+  x: number,
+  y: number,
+  size: number,
+  color: Rgb = INK,
+  anchor: 'start' | 'end' = 'start',
+): PageItem {
+  const start = anchor === 'end' ? x - measureText(value, size).width : x;
+  return { path: textPath(value, start, y, size), fill: color, text: { value, x: start, y, size } };
+}
+
+const BREAK_AFTER = /[-/\\_.]/;
+
+/**
+ * Wrapped lines: at spaces, and a word wider than the line (a file name, an address) after a
+ * hyphen, slash, underscore or dot, else anywhere.
+ */
+export function wrapLines(value: string, size: number, maxWidth: number): string[] {
+  return wrapText(value, size, maxWidth).flatMap((line) => {
+    const out: string[] = [];
+    let rest = line;
+    while (measureText(rest, size).width > maxWidth && rest.length > 1) {
+      const chars = [...rest];
+      let fit = 1;
+      while (
+        fit < chars.length &&
+        measureText(chars.slice(0, fit + 1).join(''), size).width <= maxWidth
+      )
+        fit++;
+      let cut = fit;
+      while (cut > 1 && !BREAK_AFTER.test(chars[cut - 1]!)) cut--;
+      if (cut <= 1) cut = fit;
+      out.push(chars.slice(0, cut).join(''));
+      rest = chars.slice(cut).join('');
+    }
+    out.push(rest);
+    return out;
+  });
 }
 
 export interface Page {
@@ -136,10 +191,10 @@ export function layoutDocument(doc: PrintDocument): Page[] {
     if (y + h > bottom && y > top) newPage();
   };
   const text = (value: string, x: number, baseline: number, size: number, color = INK) =>
-    page.items.push({ path: textPath(value, x, baseline, size), fill: color });
+    page.items.push(textItem(value, x, baseline, size, color));
   /** Wrapped lines at (x, y), returns the height. */
   const lines = (value: string, x: number, w: number, size: number, color = INK): number => {
-    const list = wrapText(value, size, w);
+    const list = wrapLines(value, size, w);
     let h = 0;
     for (const line of list) {
       room(LINE * size);
@@ -150,7 +205,7 @@ export function layoutDocument(doc: PrintDocument): Page[] {
     return h;
   };
   const height = (value: string, w: number, size: number) =>
-    wrapText(value, size, w).length * LINE * size;
+    wrapLines(value, size, w).length * LINE * size;
 
   doc.blocks.forEach((block, i) => {
     const next = doc.blocks[i + 1];
@@ -186,6 +241,9 @@ export function layoutDocument(doc: PrintDocument): Page[] {
         break;
       }
       case 'p':
+        // A paragraph that introduces what follows (ending in a colon) stays with its start.
+        if (block.text.endsWith(':') && next && next.kind !== 'page')
+          room(height(block.text, width, BODY) + 3 * LINE * BODY);
         lines(block.text, MARGIN_X, width, BODY);
         y += 0.5 * BODY;
         break;
@@ -229,11 +287,14 @@ export function layoutDocument(doc: PrintDocument): Page[] {
       }
       case 'code': {
         const pad = 2.2;
-        const h = height(block.text, width - 2 * pad, SMALL) + 2 * pad;
+        // On one line where it fits at a slightly smaller size, so it copies as one command.
+        const fit = (SMALL * (width - 2 * pad)) / measureText(block.text, SMALL).width;
+        const size = Math.min(SMALL, Math.max(CODE_MIN, fit));
+        const h = height(block.text, width - 2 * pad, size) + 2 * pad;
         room(h);
         page.items.push({ path: rectPath(MARGIN_X, y, width, h, 1), fill: SHADE });
         y += pad;
-        lines(block.text, MARGIN_X + pad, width - 2 * pad, SMALL);
+        lines(block.text, MARGIN_X + pad, width - 2 * pad, size);
         y += pad + 0.6 * BODY;
         break;
       }
@@ -241,8 +302,10 @@ export function layoutDocument(doc: PrintDocument): Page[] {
         const pad = 1.4;
         const cols = block.widths.map((f) => f * width);
         block.rows.forEach((row, r) => {
-          const h =
-            Math.max(...row.map((cell, c) => height(cell, cols[c]! - 2 * pad, SMALL))) + 2 * pad;
+          const h = Math.max(
+            Math.max(...row.map((cell, c) => height(cell, cols[c]! - 2 * pad, SMALL))) + 2 * pad,
+            block.fillIn && !(block.header && r === 0) ? block.fillIn : 0,
+          );
           room(h);
           if (block.header && r === 0)
             page.items.push({ path: rectPath(MARGIN_X, y, width, h), fill: SHADE });
@@ -250,19 +313,30 @@ export function layoutDocument(doc: PrintDocument): Page[] {
           const rowTop = y;
           row.forEach((cell, c) => {
             y = rowTop + pad;
-            for (const line of wrapText(cell, SMALL, cols[c]! - 2 * pad)) {
+            for (const line of wrapLines(cell, SMALL, cols[c]! - 2 * pad)) {
               text(line, x + pad, y + FONT_METRICS.ascender * SMALL, SMALL);
               y += LINE * SMALL;
             }
             x += cols[c]!;
           });
           y = rowTop + h;
+          const rules: PathCommand[] = [
+            ['M', MARGIN_X, y],
+            ['L', MARGIN_X + width, y],
+          ];
+          if (block.fillIn) {
+            // The top of the first row on a page, and the column lines.
+            if (r === 0 || rowTop === top)
+              rules.push(['M', MARGIN_X, rowTop], ['L', MARGIN_X + width, rowTop]);
+            let cx = MARGIN_X;
+            for (const w of [0, ...cols]) {
+              cx += w;
+              rules.push(['M', cx, rowTop], ['L', cx, y]);
+            }
+          }
           page.items.push({
-            path: [
-              ['M', MARGIN_X, y],
-              ['L', MARGIN_X + width, y],
-            ],
-            stroke: { color: RULE, width: 0.25 },
+            path: rules,
+            stroke: { color: block.fillIn ? MUTED : RULE, width: 0.25 },
           });
         });
         y += 0.8 * BODY;
@@ -309,15 +383,12 @@ export function layoutDocument(doc: PrintDocument): Page[] {
         ]),
       );
     if (!logos?.left && !logos?.right)
-      p.items.push({ path: textPath(doc.header, MARGIN_X, MARGIN_TOP + 2, SMALL), fill: MUTED });
+      p.items.push(textItem(doc.header, MARGIN_X, MARGIN_TOP + 2, SMALL, MUTED));
     const footY = H - MARGIN_BOTTOM + 2;
-    p.items.push({ path: textPath(doc.footer, MARGIN_X, footY, SMALL), fill: MUTED });
-    p.items.push({
-      path: textPath(`Seite ${k + 1} von ${pages.length}`, W - MARGIN_X, footY, SMALL, {
-        anchor: 'end',
-      }),
-      fill: MUTED,
-    });
+    p.items.push(textItem(doc.footer, MARGIN_X, footY, SMALL, MUTED));
+    p.items.push(
+      textItem(`Seite ${k + 1} von ${pages.length}`, W - MARGIN_X, footY, SMALL, MUTED, 'end'),
+    );
   });
   return pages;
 }
@@ -326,9 +397,11 @@ export function layoutDocument(doc: PrintDocument): Page[] {
 export function drawItems(c: PdfCanvas, items: readonly PageItem[]): void {
   for (const item of items) {
     if (item.draw) item.draw(c);
-    if (item.path.length === 0) continue;
-    if (item.fill) c.fill(item.path, item.fill);
-    if (item.stroke) c.stroke(item.path, item.stroke.color, item.stroke.width, item.stroke.dash);
+    if (item.path.length > 0) {
+      if (item.fill) c.fill(item.path, item.fill);
+      if (item.stroke) c.stroke(item.path, item.stroke.color, item.stroke.width, item.stroke.dash);
+    }
+    if (item.text) c.invisibleText(item.text.value, item.text.x, item.text.y, item.text.size);
   }
 }
 

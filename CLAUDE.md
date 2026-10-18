@@ -88,6 +88,9 @@ what we change and why, benchmark results, and open questions.
   building guide, booth guide and take-away cards (`cli/print.ts`, `docs/print/`, logo versions
   only in `local/print/`). 9.20 done 2026-10-18: the incremental test board with 14.9 mm at the
   track (seed 32, `cli/incremental-gap.ts`, `docs/experiments/incremental-gap-2026-10-18.md`).
+  9.21 done 2026-10-18: cards without the extra lines (address aligned with the QR code, the
+  open day below), laser starting values and a test for the xTool P2S in the building guide,
+  selectable text in the print PDFs (invisible text over the outlines).
   **Next:** the physical builds (Kevin; re-export the incremental test board once the string
   is measured). See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle, later a physical globe).

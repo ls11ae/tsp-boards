@@ -1,10 +1,12 @@
-// Guides and cards for the open day (roadmap 9.19), as A4 PDFs from the repository:
+// Guides and cards for the open day (roadmap 9.19, 9.21), as A4 PDFs from the repository:
 //   - Bauanleitung: building the Excellence board, the world board and the incremental test
 //     board (figures from the laser files, numbers from the puzzle files and board reports),
 //   - Messestand: the booth with two laptops per game, and what the app contains,
 //   - Karten: A7 take-away cards (four per sheet, both sides) with QR codes.
 // Neutral versions go to docs/print/; versions with logos (TU Dortmund, the faculty, Chair 11,
-// read from local/ as for the posters) only to local/print/, never into the repository.
+// read from local/ as for the posters) only to local/print/, never into the repository. The logo
+// version of the building guide also shows the Excellence board's logo laser file from
+// local/boards/.
 // Usage: npx tsx cli/print.ts [--out docs/print] [--logo-dir local] [--logo-out local/print]
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -33,6 +35,10 @@ const LOGO_DIR = arg('logo-dir', 'local');
 const LOGO_OUT = arg('logo-out', 'local/print');
 /** Today in local time (YYYY-MM-DD). */
 const TODAY = new Date().toLocaleDateString('sv-SE');
+/** The Excellence board's laser file with the logo, in the shared folder (never in the repository). */
+const EX_LOGO_BED = 'exzellenzstrategie-2027-logo-bed.svg';
+const EX_LOGO_BOARD = 'local/boards/exzellenzstrategie-2027-logo.svg';
+const XTOOL_SETTINGS = 'https://uk.xtool.com/pages/material-settings';
 
 /** German number with a decimal comma. */
 const de = (x: number, digits = 1) =>
@@ -196,7 +202,11 @@ function figure(file: string, width: number, caption: string): Block {
 
 // --- the building guide -------------------------------------------------------------------------
 
-function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
+/**
+ * The building guide; `exFigure` is the Excellence board's laser file shown as a figure (the
+ * logo version shows the one with the logo).
+ */
+function buildingGuide(logos: PrintDocument['logos'], exFigure: string): PrintDocument {
   const ex = mapBoard(
     'exzellenzstrategie-2027-brett',
     'docs/boards/exzellenzstrategie-2027',
@@ -224,12 +234,7 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
       widths: [0.25, 0.25, 0.25, 0.25],
       rows: [
         ['', 'Exzellenzstrategie', 'Rund um die Welt', 'Schritt für Schritt'],
-        [
-          'Laserdatei',
-          'exzellenzstrategie-2027.svg (hochkant gedreht: …-bed.svg)',
-          'welt-pazifik.svg',
-          'tsp-incremental-12-test.svg',
-        ],
+        ['Laserdatei', EX_LOGO_BED, 'welt-pazifik.svg', 'tsp-incremental-12-test.svg'],
         ['Größe', ex.size, wo.size, inc.size],
         ['Nägel', `${ex.places} Orte`, `${wo.places} Orte`, `${inc.nails} Nägel + 4 Eckstifte`],
         [
@@ -263,6 +268,15 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
       kind: 'p',
       text: 'Fadenabstand heißt: Die zweitkürzeste Rundreise braucht so viel mehr Faden als die kürzeste. Genau diesen Unterschied sehen die Spielenden an der Skala.',
     },
+    { kind: 'h2', text: 'Die Laserdateien' },
+    {
+      kind: 'bullets',
+      items: [
+        `Exzellenzstrategie: ${EX_LOGO_BED} mit dem Logo des Ruhr Innovation Lab, im gemeinsamen Ordner unter local/boards/ (nicht im Repository). Das Brett ist ${ex.size} im Hochformat; die Datei ist für das Bett des P2S (600 × 305 mm) um 90° ins Querformat gedreht, also 600 × 300 mm. Ersatz ohne Logo (Schriftzug „Ruhr Innovation Lab“ statt Logo): exzellenzstrategie-2027-bed.svg in docs/boards/exzellenzstrategie-2027/, ebenfalls quer.`,
+        `Rund um die Welt: welt-pazifik.svg in docs/boards/welt-pazifik/ (${wo.size}, schon quer).`,
+        `Schritt für Schritt: tsp-incremental-12-test.svg in docs/boards/incremental-test/ (${inc.size}); vor dem Lasern mit der gemessenen Fadendicke neu exportieren.`,
+      ],
+    },
     { kind: 'h1', text: 'Material und Werkzeug' },
     {
       kind: 'bullets',
@@ -283,52 +297,100 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
     {
       kind: 'steps',
       items: [
-        'Ein Stück zuerst als Probebrett verwenden: Leistung, Bohrtiefe und Öl daran ausprobieren.',
+        'Ein Reststück desselben Holzes als Probestück verwenden: die Laserwerte (Abschnitt 2), die Bohrtiefe und das Öl daran ausprobieren.',
         'Die Oberfläche ganz mit Kreppband oder Transferband abkleben (Bahnen leicht überlappend, ohne Blasen). Das Band schützt vor Rauchflecken und wird nach dem Lasern abgezogen.',
         'Die Stücke sind 1–2 mm schmaler als 300 mm: Die Datei bleibt bei 300 mm und wird mittig aufs Holz gelegt (die Karte hält 12–15 mm Abstand vom Rand).',
       ],
     },
-    { kind: 'h2', text: '2. Laserdatei in xTool Creative Space' },
+    { kind: 'h2', text: '2. Laserwerte für den xTool P2S (55 W)' },
+    {
+      kind: 'note',
+      text: 'Ungetestete Startwerte: Die Werte unten sind nicht ausprobiert. Der Test auf einem Reststück entscheidet; das erste Brett erst mit den getesteten Werten lasern.',
+    },
+    {
+      kind: 'p',
+      text: `Grundlage ist die Materialtabelle von xTool für P2 und P2S, Lindensperrholz (basswood plywood) 3–12 mm: Ritzen 12 % bei 160 mm/s, Vektorgravur 10 % bei 200 mm/s mit 100 Linien/cm (Quelle: ${XTOOL_SETTINGS}). Birke ist dichter als Linde, deshalb hier etwas mehr Leistung.`,
+    },
     {
       kind: 'table',
       header: true,
-      widths: [0.22, 0.28, 0.5],
+      widths: [0.18, 0.205, 0.205, 0.205, 0.205],
       rows: [
-        ['Farbe in der SVG', 'Bearbeitung', 'Was'],
         [
+          'Farbe in der SVG',
           'Schwarz (Fläche)',
-          'Gravieren',
-          'Titel, Ortsnamen, Ringe, Legende, Zahlen und Zielmarke der Skala',
-        ],
-        [
           'Magenta (Fläche)',
-          'Gravieren, tiefer (mehr Leistung oder 2–3 Durchgänge)',
-          'je ein 1-mm-Punkt an jedem Nagel: die Bohrpunkte',
-        ],
-        [
           'Blau (Linie)',
-          'Ritzen',
-          'innere Grenzen, Nachbarländer, Skalenstriche, gestrichelter Pazifikflug',
+          'Grün (Linie)',
         ],
-        ['Grün (Linie)', 'Ritzen mit mehr Leistung', 'Umriss des Landes oder der Kontinente'],
         [
-          'Rot, Orange',
-          '–',
-          'nicht in diesen Dateien: Das Holz ist zugeschnitten, die Löcher werden gebohrt',
+          'Was',
+          'Titel, Ortsnamen, Ringe, Legende, Zahlen und Zielmarke der Skala',
+          'je ein 1-mm-Punkt an jedem Nagel: die Bohrmulden',
+          'innere Grenzen, Nachbarländer, Skalenstriche, gestrichelter Pazifikflug',
+          'Küsten und Umriss des Landes oder der Kontinente',
         ],
+        [
+          'Bearbeitung',
+          'Gravieren (Füllung)',
+          'Gravieren (Füllung), Mulde etwa 0,5–1 mm tief',
+          'Ritzen',
+          'Ritzen, stärker',
+        ],
+        ['Leistung', '15 % (18 % durch Kreppband)', '40 %', '15 %', '22 %'],
+        ['Geschwindigkeit', '200 mm/s', '100 mm/s', '160 mm/s', '160 mm/s'],
+        ['Linien/cm', '100', '100', '–', '–'],
+        ['Durchgänge', '1', '3', '1', '1'],
       ],
+    },
+    {
+      kind: 'p',
+      text: 'Für alle Farben: Material „Benutzerdefiniert“ (custom material) mit Dicke 12 mm, Autofokus, Luftunterstützung (Air Assist) an, Absaugung an, das Brett liegt flach auf der Arbeitsfläche. Reihenfolge: Gravieren (schwarz), Bohrmulden (magenta), Ritzen (blau), Umriss (grün). Rot und Orange (Schneiden) kommen in diesen Dateien nicht vor: Das Holz ist zugeschnitten, die Löcher werden gebohrt.',
+    },
+    {
+      kind: 'p',
+      text: 'Test auf einem Reststück (12 mm Birke, abgeklebt wie das Brett) mit dem Material-Testarray (material test array) von xTool Creative Space:',
     },
     {
       kind: 'steps',
       items: [
-        'Die SVG-Datei importieren und prüfen, dass sie in Originalgröße (Millimeter) liegt: 300 × 600 mm, 600 × 300 mm oder 300 × 300 mm.',
-        'Jeder Farbe die Bearbeitung aus der Tabelle zuweisen. Die Reihenfolge: Gravieren, Bohrpunkte, Ritzen, Umriss.',
-        'Auf einem Reststück testen: Gravur gut lesbar, Bohrpunkte deutlich tiefer als die Gravur, Ritzlinien sichtbar, aber nicht durchgebrannt. Die Werte notieren.',
-        'Das Holzstück in den Laser legen und die Datei mit der Kamera mittig darauf ausrichten (gleich viel Rand links und rechts bzw. oben und unten). Mit „Rahmen“ die Umrandung abfahren lassen.',
-        'Lasern. Das Exzellenzstrategie-Brett liegt quer im P2S: Dafür gibt es die um 90° gedrehte Datei exzellenzstrategie-2027-bed.svg.',
+        'Gravieren: Leistung 10–30 % in Schritten von 5 % (10, 15, 20, 25, 30 %) gegen die Geschwindigkeiten 150, 200 und 250 mm/s, 100 Linien/cm, durch das Kreppband. Gesucht: dunkel und scharf, ohne Brandränder.',
+        'Ritzen: Linien mit 10, 15, 20 und 25 % bei 160 mm/s. Gesucht: eine feine, gut sichtbare Linie für Blau und eine kräftigere für Grün, beide nicht durchgebrannt.',
+        'Bohrmulde: einen Kreis von 1 mm Durchmesser (Füllung) bei 40 % und 100 mm/s je einmal mit 1, 2 und 3 Durchgängen. Gesucht: eine Mulde von etwa 0,5–1 mm Tiefe, die die Spitze des 1,5-mm-Bohrers sicher führt (mit dem Bohrer oder dem Tiefenmaß eines Messschiebers prüfen).',
+        'Das Band abziehen, die besten Werte in die Tabelle eintragen und für alle Bretter verwenden.',
       ],
     },
-    { kind: 'h2', text: '3. Bohren' },
+    {
+      kind: 'table',
+      header: true,
+      fillIn: 9,
+      widths: [0.18, 0.205, 0.205, 0.205, 0.205],
+      rows: [
+        [
+          'Getestet',
+          'Schwarz: Gravieren',
+          'Magenta: Bohrmulden',
+          'Blau: Ritzen',
+          'Grün: Ritzen stark',
+        ],
+        ['Leistung (%)', '', '', '', ''],
+        ['Geschwindigkeit (mm/s)', '', '', '', ''],
+        ['Linien/cm', '', '', '–', '–'],
+        ['Durchgänge', '', '', '', ''],
+        ['Bemerkung', '', '', '', ''],
+      ],
+    },
+    { kind: 'h2', text: '3. Laserdatei in xTool Creative Space' },
+    {
+      kind: 'steps',
+      items: [
+        'Die SVG-Datei importieren und prüfen, dass sie in Originalgröße (Millimeter) liegt: 600 × 300 mm für das Exzellenzstrategie-Brett (die quer gedrehte -bed.svg) und das Weltbrett, 300 × 300 mm für das Testbrett.',
+        'Jeder Farbe die Bearbeitung und die getesteten Werte aus der Tabelle zuweisen, in der Reihenfolge Gravieren, Bohrmulden, Ritzen, Umriss.',
+        'Das Holzstück quer in den Laser legen und die Datei mit der Kamera mittig darauf ausrichten (gleich viel Rand links und rechts bzw. oben und unten). Mit „Rahmen“ die Umrandung abfahren lassen.',
+        `Lasern. Das Exzellenzstrategie-Brett liegt quer im P2S, weil ${EX_LOGO_BED} schon ins Querformat gedreht ist.`,
+      ],
+    },
+    { kind: 'h2', text: '4. Bohren' },
     {
       kind: 'steps',
       items: [
@@ -338,7 +400,7 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
         'Beim Testbrett auch die vier Eckstifte der Messstrecke bohren.',
       ],
     },
-    { kind: 'h2', text: '4. Schleifen und Ölen' },
+    { kind: 'h2', text: '5. Schleifen und Ölen' },
     {
       kind: 'steps',
       items: [
@@ -346,7 +408,7 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
         'Ölen und trocknen lassen, bevor die Nägel kommen (sonst sammelt sich das Öl an den Nägeln).',
       ],
     },
-    { kind: 'h2', text: '5. Nägel setzen' },
+    { kind: 'h2', text: '6. Nägel setzen' },
     {
       kind: 'steps',
       items: [
@@ -354,7 +416,7 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
         'Die Mutter M14 (11 mm hoch) neben den Nagel stellen und schlagen, bis der Kopf mit der Mutter abschließt. So stehen alle Nägel gleich hoch und senkrecht.',
       ],
     },
-    { kind: 'h2', text: '6. Faden kalibrieren' },
+    { kind: 'h2', text: '7. Faden kalibrieren' },
     {
       kind: 'p',
       text: 'Das Lösungsblatt jedes Bretts (…-solution.pdf, nicht den Spielenden zeigen) nennt die Reihenfolge und die Fadenlänge.',
@@ -367,7 +429,7 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
         'Schritt für Schritt: eine lockere Schlaufe um Nagel 1, die kürzeste Rundreise durch alle 12 Nägel wickeln, zurück um Nagel 1 zur nächsten Ecke und im Uhrzeigersinn um die Eckstifte an der Messstrecke entlang; an der Marke „12“ markieren und abschneiden.',
       ],
     },
-    { kind: 'h2', text: '7. Prüfen' },
+    { kind: 'h2', text: '8. Prüfen' },
     {
       kind: 'bullets',
       items: [
@@ -394,9 +456,9 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
     { kind: 'page' },
     { kind: 'h1', text: 'Die Bretter' },
     figure(
-      ex.svg,
+      exFigure,
       170,
-      `Exzellenzstrategie 2026–2033: ${ex.places} Orte auf ${ex.size}, Start und Ziel Ruhr Innovation Lab (Laserdatei, Farben wie in der Tabelle).`,
+      `Exzellenzstrategie 2026–2033: ${ex.places} Orte auf ${ex.size}, Start und Ziel Ruhr Innovation Lab (Laserdatei, Farben wie in der Tabelle; zum Lasern quer gedreht).`,
     ),
     figure(
       wo.svg,
@@ -413,10 +475,10 @@ function buildingGuide(logos: PrintDocument['logos']): PrintDocument {
       kind: 'checks',
       items: [
         'Nägel und Faden gemessen, Brett-Dateien neu exportiert (Testbrett: gleicher Seed)',
-        'Probebrett: Laserwerte notiert, Bohrtiefe passt, Öl getestet',
-        'Holz abgeklebt, Datei in Originalgröße, Farben zugewiesen',
+        'Reststück: Testarray gelasert, beste Werte in die Tabelle eingetragen, Bohrtiefe und Öl getestet',
+        'Holz abgeklebt, Datei in Originalgröße, Farben mit den getesteten Werten zugewiesen',
         'Datei mit der Kamera mittig ausgerichtet, Rahmen abgefahren',
-        'Graviert, Bohrpunkte tiefer, geritzt, Umriss',
+        'Graviert, Bohrmulden, geritzt, Umriss',
         'Band abgezogen, alle Löcher 1,5 mm und etwa 9 mm tief gebohrt (Testbrett: auch die Eckstifte)',
         'Geschliffen, geölt, getrocknet',
         'Nägel mit der Mutter M14 auf 11 mm gesetzt, alle senkrecht',
@@ -578,7 +640,6 @@ function miniMap(id: string): MiniMap {
     lines,
     points: setup.points,
     tour: map.results!.tour,
-    caption: `${localText(doc.title, 'de')} – die kürzeste Rundreise`,
   };
 }
 
@@ -600,14 +661,23 @@ function main(): void {
   const faculty = readLogo('fakultaet-informatik.svg');
   const ae = readLogo('ae-logo.svg');
   const map = miniMap('deutschland-40');
-  const variants: { dir: string; logos: PrintDocument['logos']; cards: (Logo | null)[] }[] = [
-    { dir: OUT, logos: undefined, cards: [] },
-  ];
+  const exBoard = 'docs/boards/exzellenzstrategie-2027/exzellenzstrategie-2027.svg';
+  const variants: {
+    dir: string;
+    logos: PrintDocument['logos'];
+    cards: (Logo | null)[];
+    exFigure: string;
+  }[] = [{ dir: OUT, logos: undefined, cards: [], exFigure: exBoard }];
   if (tu || faculty || ae)
-    variants.push({ dir: LOGO_OUT, logos: { left: tu, right: ae }, cards: [tu, faculty, ae] });
+    variants.push({
+      dir: LOGO_OUT,
+      logos: { left: tu, right: ae },
+      cards: [tu, faculty, ae],
+      exFigure: existsSync(EX_LOGO_BOARD) ? EX_LOGO_BOARD : exBoard,
+    });
   else console.error(`no logos in ${LOGO_DIR}: only the neutral versions`);
   for (const v of variants) {
-    write(v.dir, 'bauanleitung.pdf', documentPdf(buildingGuide(v.logos)).pdf);
+    write(v.dir, 'bauanleitung.pdf', documentPdf(buildingGuide(v.logos, v.exFigure)).pdf);
     write(v.dir, 'messestand.pdf', documentPdf(boothGuide(v.logos)).pdf);
     write(v.dir, 'karten.pdf', cardsPdf({ map, logos: v.cards }).pdf);
   }

@@ -1044,6 +1044,42 @@ logos only in `local/print/`, logos from `local/` as for the posters.
   the re-export note (`--seed 32 --gap 14 --max-checks 1000`, measured string first), report
   in `docs/experiments/incremental-gap-2026-10-18.md`, building guide regenerated.)
 
+### 9.21 Print material: cards, building guide, laser values (Maike, 2026-10-18) — done 2026-10-18
+
+Changes to the print material of 9.19 (`docs/print/` and the logo versions in `local/print/`).
+
+- **Take-away cards** (both sides): remove the lines "Deutschland: 40 Städte – die kürzeste
+  Rundreise", "Im Browser spielen – auch auf dem Handy:", "Wem gehört welches Land? …" and
+  "Mehr Spiele vom Lehrstuhl:"; keep the drawings, titles, QR codes and URLs. Each URL's top
+  edge aligned with the top edge of its QR code. A line "TU Dortmund, Tag der offenen Tür, 7. November 2026" below the QR code and the URL on both sides (above the logos, or the chair
+  line in the neutral version). Still A7, four per sheet with cut marks.
+- **Building guide, small fixes:** name the Excellence board's laser file with the logo
+  (`local/boards/exzellenzstrategie-2027-logo-bed.svg`, in the shared folder), the neutral file
+  as the fallback; the -bed.svg is turned to landscape for the P2S bed (not "hochkant"); keep
+  the text selectable where possible in all PDFs (at least the commands and URLs in the booth
+  guide).
+- **Laser settings** for the xTool P2S (55 W) in xTool Creative Space, as starting values for
+  12 mm birch plywood (from xTool's P2/P2S table for basswood plywood 3–12 mm: score 12 % at
+  160 mm/s, vector engrave 10 % at 200 mm/s, 100 lines/cm; birch is denser, hence a little
+  more): black (fill engrave) 15 % (18 % through masking tape), 200 mm/s, 100 lines/cm, 1 pass;
+  magenta (pits, fill engrave) 40 %, 100 mm/s, 100 lines/cm, 3 passes, a pit about 0.5–1 mm
+  deep; blue (score) 15 %, 160 mm/s, 1 pass; green (score, stronger) 22 %, 160 mm/s, 1 pass. For
+  all: custom material, 12 mm, auto focus, air assist, exhaust, the board flat; order engrave,
+  pits, score, outline. A test on an offcut with the material test array (engraving 10–30 % in
+  steps of 5 against 150/200/250 mm/s with tape; scoring 10/15/20/25 % at 160 mm/s; a 1 mm pit at
+  40 %, 100 mm/s with 1, 2 and 3 passes), a table to fill in by hand, clearly marked as untested
+  starting values, crediting xTool's material settings page
+  (https://uk.xtool.com/pages/material-settings).
+- Regenerate all print PDFs with `cli/print.ts`; check the QR codes in the tests as before.
+- (Done 2026-10-18: the cards without the four lines, the QR codes moved up into the freed space
+  (the same height on both sides) with the address beside them, its top on the code's first row
+  of modules, and the open day below; the building guide with a section on the laser files (the
+  logo -bed.svg turned to landscape, 600 × 300 mm, the neutral one as fallback), the laser values
+  as a table per colour, the test on an offcut and a table to fill in, the logo version showing
+  the board with its logo; all text of the guides and cards selectable (invisible text over the
+  outlines, `PdfCanvas.invisibleText`), commands set on one line where they fit; QR codes,
+  the address alignment and the text layer checked in `src/core/print/print.test.ts`.)
+
 ## Phase 10: physical and public
 
 - Test board of the incremental puzzle with the prototype dimensions; deployment (GitHub Pages
