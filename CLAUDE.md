@@ -84,8 +84,9 @@ what we change and why, benchmark results, and open questions.
   a service worker for the offline booth, table labels for two kiosk laptops
   (`#kiosk?table=1`), Chrome kiosk setup in `docs/deployment.md`, nails measured 2.0 mm.
   9.18 done 2026-10-18: "So rechnet der Computer" after a game (comparison with the strategies,
-  an animation of the exact solver's rounds; `src/core/computer.ts`). Open: 9.19 (guides and
-  cards), 9.20 (the incremental board with a larger gap).
+  an animation of the exact solver's rounds; `src/core/computer.ts`). 9.19 done 2026-10-18:
+  building guide, booth guide and take-away cards (`cli/print.ts`, `docs/print/`, logo versions
+  only in `local/print/`). Open: 9.20 (the incremental board with a larger gap).
   **Next:** the physical builds (Kevin; re-export the incremental test board once the string
   is measured). See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle, later a physical globe).

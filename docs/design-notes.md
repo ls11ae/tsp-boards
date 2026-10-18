@@ -1289,3 +1289,21 @@ Short entries: decision; alternatives considered; reason. Newest last.
   puzzle files (only the curated ones, and every rebuild would carry them), a modal dialog over
   the map (would hide the tours), showing the view automatically after a game (Kevin: never by
   itself).
+- **2026-10-18 Guides and cards as PDFs from the repository (roadmap 9.19).** A small layout
+  engine (`src/core/print/document.ts`: headings, paragraphs, steps, bullets, check boxes,
+  tables, notes, command lines, figures, QR codes, flowing over A4 pages with page numbers) on
+  the existing PDF writer, with the board font as outlines, so the guides need no fonts and look
+  like the solution sheets. The font has no arrows, check marks or "≥": check boxes are drawn,
+  the texts avoid the others. The building guide takes its numbers from the puzzle files and the
+  board reports (gaps, robustness, runner-up, string length) and its figures from the laser SVGs
+  in their layer colours (parsed with the colour logo parser), so a re-export followed by
+  `npx tsx cli/print.ts` keeps it right; where the runner-up differs from the optimum is found
+  by comparing both orders (the report lists it in the direction that ends nearest to 0). The
+  cards are A7 portrait, four per A4 sheet with 10 mm gutters for the cut marks (eight A7 fill
+  A4 exactly and leave no room for marks or the printer's margin); the backs are mirrored for
+  printing on both sides. Ruler of the Plane's drawing is computed (castles with their Voronoi
+  regions, `src/core/print/voronoi.ts`). Every QR code is checked by rasterising the drawn
+  modules and decoding them with jsQR. Logo versions are written only to `local/print/`.
+  Alternatives: Markdown converted by a tool outside the repository (no figures from the board
+  files, not reproducible here), screenshots in the booth guide (the PDF writer has no raster
+  images; the guide describes the screens instead).

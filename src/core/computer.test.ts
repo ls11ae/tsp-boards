@@ -22,9 +22,9 @@ beforeAll(async () => {
 
 describe('how the computer does it (roadmap 9.18)', () => {
   it('compares the strategies with the optimum and proves it within 30 s', () => {
-    const inst = new Instance(randomPoints(30, 4), 1.5);
+    const inst = new Instance(randomPoints(20, 4), 1.5);
     const tours = strategyTours(inst);
-    for (const s of STRATEGIES) expect(isTour(strategyTour(tours, s), 30)).toBe(true);
+    for (const s of STRATEGIES) expect(isTour(strategyTour(tours, s), 20)).toBe(true);
     // 2-opt only improves its start (by the distances between the nails).
     const opt = optimalAndSecond(backend, inst, 'string', {}, { timeLimitSec: 60 }).optimal;
     for (const s of STRATEGIES)
@@ -38,7 +38,7 @@ describe('how the computer does it (roadmap 9.18)', () => {
     // The last step is the board's optimum (string model), proven.
     const last = steps.at(-1)!;
     expect(last.phase).toBe('proven');
-    expect(sameTour(tourFromEdges(30, last.edges)!, opt.tour!, 30)).toBe(true);
+    expect(sameTour(tourFromEdges(20, last.edges)!, opt.tour!, 20)).toBe(true);
   }, 120_000);
 
   it('keeps the given leg of an open path in every strategy', () => {

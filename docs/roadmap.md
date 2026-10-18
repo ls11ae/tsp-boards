@@ -4,8 +4,10 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-18 (later): 9.1–9.18 are done (9.18: "So rechnet der Computer" after a game).
-Next: 9.19 (guides and cards), 9.20 (the incremental board with a larger gap).
+Status 2026-10-18 (evening): 9.1–9.19 are done (9.19: building guide, booth guide and
+take-away cards as PDFs in `docs/print/`). Next: 9.20 (the incremental board with a larger gap).
+Earlier status 2026-10-18 (later): 9.1–9.18 are done (9.18: "So rechnet der Computer" after a
+game).
 Earlier status 2026-10-18: 9.1–9.17 are done (9.17: GitHub Pages with a service worker for the offline
 booth, table labels for two kiosk laptops, the world board with London and Africa). Next: 9.18
 (how the computer solves it), 9.19 (guides and cards), 9.20 (the incremental board with a larger
@@ -982,7 +984,7 @@ finished game.
   with "Zurück", a new game, the next person, the inactivity reset and any change of the kiosk's
   screen; `src/core/computer.ts`, `e2e/computer.e2e.ts`.)
 
-### 9.19 Guides and cards (Kevin, 2026-10-18)
+### 9.19 Guides and cards (Kevin, 2026-10-18) — done 2026-10-18
 
 PDF, A4, made by a CLI from the repository; neutral versions in `docs/print/`, versions with
 logos only in `local/print/`, logos from `local/` as for the posters.
@@ -1010,6 +1012,14 @@ logos only in `local/print/`, logos from `local/` as for the posters.
   with a shortest round trip from one of the puzzles, for Ruler of the Plane a simple drawing in
   code (e.g. a few castles with their Voronoi regions or a room lit by torches); only German.
   Check every QR code by decoding it in a test.
+- (Done 2026-10-18: `cli/print.ts` writes `docs/print/bauanleitung.pdf` (7 pages: the three boards
+  in a table with their numbers from the puzzle files and reports, material, the steps from
+  taping to checking with the runner-up, the template, the laser files as figures in their layer
+  colours, a checklist), `messestand.pdf` (3 pages) and `karten.pdf` (four A7 cards per sheet,
+  both sides, cut marks; a mini map of "Deutschland: 40 Städte" with its shortest round trip and
+  castles with their Voronoi regions); versions with the TU, faculty and Chair 11 logos only in
+  `local/print/`; the layout engine in `src/core/print/`, every QR code decoded in
+  `src/core/print/print.test.ts`.)
 
 ### 9.20 Incremental test board with a larger gap (Kevin, 2026-10-18)
 
