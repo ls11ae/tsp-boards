@@ -32,22 +32,28 @@ No red or orange layers: the piece is cut to size and the holes are drilled.
 ## The puzzle
 
 - 12 nails, all 10 instances 1–3 … 1–12 with a unique shortest round trip; the gap to the
-  second-shortest is at least 7.4 mm of string, and at least 6.5 mm as read at the track
-  (exact, with 2.0 mm nails and 1 mm string, r_eff 1.5 mm; the nails are where they were with
-  1.6 mm nails, only the marks moved). Generated with seed 2 (seeds 1, 3
-  and 4 also work, with 5.0–5.7 mm at the track).
+  second-shortest is at least **19.0 mm** of string, and at least **14.9 mm as read at the
+  track** (exact, with 2.0 mm nails and 1 mm string, r_eff 1.5 mm). Seed 32, chosen on
+  2026-10-18 (roadmap 9.20) as the board with the largest smallest gap at the track among 40
+  seeds (38 of them reach 10 mm; `docs/experiments/incremental-gap-2026-10-18.md`); the first
+  test board (seed 2) had 6.5 mm and is in the git history.
 - Every new nail changes the round trip beyond inserting it (from 1–5 on), and later nails
   keep clear of the earlier round trips, so the earlier answers do not give away the next.
 
 ## Robustness: measure nails and string first
 
 With other nails or string (r_eff from 1.0 to 2.0 mm) all optima stay the same and every gap
-at the track stays at least 6.2 mm. But the **marks** are placed for r_eff 1.5 mm. After
-calibrating the string on the full round trip, the other string ends move away from their
-marks by up to 0.6 mm if r_eff is off by 0.05 mm, 2.9 mm at 1.25 or 1.75 mm and 5.9 mm at 1.0
-or 2.0 mm (see the report). That is more than on the map board, which reads only one gap. So **measure the
-nails and the string and re-export before lasering** (below); with measured values the ends
-land within a millimetre of their marks.
+at the track stays at least 13.6 mm (the report marks r_eff 2.0 mm because 1–10 then falls
+below the 14 mm target the board was generated with; 13.6 mm is still clear). But the
+**marks** are placed for r_eff 1.5 mm. After calibrating the string on the full round trip, the
+other string ends move away from their marks by up to 2.0 mm at r_eff 1.25 or 1.75 mm and
+4.0 mm at 1.0 or 2.0 mm (see the report). That is more than on the map board, which reads only
+one gap.
+
+**The board must be re-exported with the measured string thickness (and nail diameter) before
+lasering, with the same seed (32)**, since its marks depend on them (below); with measured
+values the ends land within a millimetre of their marks. Nails were measured on 2026-10-18:
+2.0 mm, as exported; the string's thickness follows.
 
 ## Building
 
@@ -66,9 +72,10 @@ least the gap before it.
 ## Re-exporting with measured nails and string
 
 ```bash
-npx tsx cli/incremental.ts --n 12 --seed 2 --board 300x300 --margin 35 --min-dist 25 --nail 2 --string 1 --holes pit --no-edge --out docs/boards/incremental-test/tsp-incremental-12-test.json --export docs/boards/incremental-test --name tsp-incremental-12-test
+npx tsx cli/incremental.ts --n 12 --seed 32 --gap 14 --max-checks 1000 --board 300x300 --margin 35 --min-dist 25 --nail 2 --string 1 --holes pit --no-edge --out docs/boards/incremental-test/tsp-incremental-12-test.json --export docs/boards/incremental-test --name tsp-incremental-12-test
 ```
 
 Replace `--nail` and `--string` with the measured values. If the generator no longer finds
-the board with seed 2 (the conditions are checked again for the new r_eff), try `--seed 1`,
-`3` or `4`. For laser-cut holes in 6 mm plywood use `--holes cut` and leave out `--no-edge`.
+the board with seed 32 and `--gap 14` (the conditions are checked again for the new r_eff), try
+`--gap 12` with the same seed, or seed 8 or 9 (14.7 and 14.1 mm at r_eff 1.5 mm); then
+`npx tsx cli/print.ts` updates the building guide. For laser-cut holes in 6 mm plywood use `--holes cut` and leave out `--no-edge`.

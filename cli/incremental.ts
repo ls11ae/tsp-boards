@@ -4,6 +4,7 @@
 //   nail plus half the string) [--out file.json] [--export dir] [--name base] [--lang de|en]
 //   [--holes cut|mark|pit] [--no-edge] (drill pits and no outline cut for boards cut to size)
 //   [--radii 1,1.25,1.5,1.75,2] (r_eff values of the robustness check, mm; with --export)
+//   [--max-checks 400] [--tries 4] (budget of exact checks, and per step before backtracking)
 // --export writes the laser SVG, the print template (A4), the solution sheet and a report
 // with the figures per instance and the robustness over r_eff.
 
@@ -45,6 +46,8 @@ const params: IncrementalParams = {
   targetGapMm: Number(arg('gap', String(DEFAULT_INCREMENTAL.targetGapMm))),
   spacingMm: Number(arg('spacing', String(DEFAULT_INCREMENTAL.spacingMm))),
   minDistanceMm: Number(arg('min-dist', String(DEFAULT_INCREMENTAL.minDistanceMm))),
+  maxChecks: Number(arg('max-checks', String(DEFAULT_INCREMENTAL.maxChecks))),
+  triesPerStep: Number(arg('tries', String(DEFAULT_INCREMENTAL.triesPerStep))),
 };
 
 const backend = await loadBackend();

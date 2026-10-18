@@ -5,68 +5,68 @@
     "heightMm": 300,
     "marginMm": 35,
     "minDistanceMm": 25,
-    "targetGapMm": 5,
+    "targetGapMm": 14,
     "spacingMm": 10,
     "rEffMm": 1.5,
     "clearanceMm": 4,
     "trackInsetMm": 15,
     "rasterMm": 5,
-    "seed": 2,
+    "seed": 32,
     "triesPerStep": 4,
-    "maxChecks": 400
+    "maxChecks": 1000
   },
   "found": true,
   "reached": 12,
-  "checks": 10,
-  "ms": 848,
+  "checks": 142,
+  "ms": 3861,
   "points": [
     [
-      40,
-      220
+      185,
+      35
     ],
     [
-      155,
-      165
-    ],
-    [
-      140,
-      45
-    ],
-    [
-      265,
-      70
-    ],
-    [
-      215,
-      255
-    ],
-    [
-      195,
-      105
-    ],
-    [
-      205,
-      155
+      160,
+      140
     ],
     [
       260,
-      180
-    ],
-    [
-      200,
       195
     ],
     [
-      165,
-      205
+      40,
+      75
     ],
     [
-      140,
+      85,
       260
     ],
     [
-      50,
+      255,
+      60
+    ],
+    [
+      175,
+      95
+    ],
+    [
+      105,
       35
+    ],
+    [
+      105,
+      95
+    ],
+    [
+      95,
+      130
+    ],
+    [
+      35,
+      145
+    ],
+    [
+      140,
+      90
     ]
   ],
   "steps": [
@@ -77,7 +77,7 @@
         2,
         3
       ],
-      "stringMm": 459.39,
+      "stringMm": 408.19,
       "stringGapMm": null,
       "measuredGapMm": null
     },
@@ -85,13 +85,13 @@
       "k": 4,
       "tour": [
         1,
+        3,
         2,
-        4,
-        3
+        4
       ],
-      "stringMm": 611.28,
-      "stringGapMm": 47.77,
-      "measuredGapMm": 46.86
+      "stringMm": 587.17,
+      "stringGapMm": 49.24,
+      "measuredGapMm": 45.62
     },
     {
       "k": 5,
@@ -99,174 +99,174 @@
         1,
         2,
         3,
-        4,
-        5
+        5,
+        4
       ],
-      "stringMm": 759.16,
-      "stringGapMm": 10.86,
-      "measuredGapMm": 8.93
+      "stringMm": 762.89,
+      "stringGapMm": 24.24,
+      "measuredGapMm": 23.65
     },
     {
       "k": 6,
       "tour": [
         1,
-        3,
         4,
-        6,
+        5,
         2,
-        5
+        3,
+        6
       ],
-      "stringMm": 780.55,
-      "stringGapMm": 13.04,
-      "measuredGapMm": 11.16
+      "stringMm": 819.84,
+      "stringGapMm": 18.99,
+      "measuredGapMm": 15.19
     },
     {
       "k": 7,
       "tour": [
         1,
-        2,
-        3,
-        4,
         6,
-        7,
-        5
+        3,
+        5,
+        4,
+        2,
+        7
       ],
-      "stringMm": 801.19,
-      "stringGapMm": 7.44,
-      "measuredGapMm": 6.48
+      "stringMm": 846.37,
+      "stringGapMm": 20.44,
+      "measuredGapMm": 18.35
     },
     {
       "k": 8,
       "tour": [
         1,
-        2,
-        7,
         6,
+        7,
+        2,
         3,
+        5,
         4,
-        8,
-        5
+        8
       ],
-      "stringMm": 830.14,
-      "stringGapMm": 21.27,
-      "measuredGapMm": 20.3
+      "stringMm": 872.72,
+      "stringGapMm": 19.38,
+      "measuredGapMm": 15.78
     },
     {
       "k": 9,
       "tour": [
         1,
+        6,
+        3,
+        5,
         2,
         7,
         9,
-        5,
-        8,
         4,
-        6,
-        3
+        8
       ],
-      "stringMm": 859.14,
-      "stringGapMm": 11.92,
-      "measuredGapMm": 11.02
+      "stringMm": 895.19,
+      "stringGapMm": 25.31,
+      "measuredGapMm": 21.11
     },
     {
       "k": 10,
       "tour": [
         1,
-        2,
-        7,
         6,
+        7,
+        2,
         3,
-        4,
-        8,
         5,
+        10,
         9,
-        10
+        4,
+        8
       ],
-      "stringMm": 880.63,
-      "stringGapMm": 11.31,
-      "measuredGapMm": 10.82
+      "stringMm": 921.76,
+      "stringGapMm": 19.1,
+      "measuredGapMm": 14.9
     },
     {
       "k": 11,
       "tour": [
         1,
-        2,
-        10,
-        9,
-        7,
         6,
         3,
+        5,
+        11,
         4,
         8,
-        5,
-        11
+        9,
+        10,
+        2,
+        7
       ],
-      "stringMm": 906.06,
-      "stringGapMm": 14.16,
-      "measuredGapMm": 12.92
+      "stringMm": 957.62,
+      "stringGapMm": 21.63,
+      "measuredGapMm": 20.13
     },
     {
       "k": 12,
       "tour": [
         1,
-        11,
-        5,
-        9,
-        10,
-        2,
-        7,
-        8,
-        4,
         6,
         3,
-        12
+        2,
+        7,
+        12,
+        9,
+        10,
+        5,
+        11,
+        4,
+        8
       ],
-      "stringMm": 1004.19,
-      "stringGapMm": 12.17,
-      "measuredGapMm": 10.26
+      "stringMm": 979.96,
+      "stringGapMm": 20.24,
+      "measuredGapMm": 16.63
     }
   ],
   "marks": [
     {
       "k": 3,
-      "s": 641.62
+      "s": 699.52
     },
     {
       "k": 4,
-      "s": 489.74
+      "s": 521.55
     },
     {
       "k": 5,
-      "s": 339.92
+      "s": 346.84
     },
     {
       "k": 6,
-      "s": 317.62
+      "s": 283.9
     },
     {
       "k": 7,
-      "s": 297.89
+      "s": 261.17
     },
     {
       "k": 8,
-      "s": 268.94
+      "s": 234.23
     },
     {
       "k": 9,
-      "s": 241.87
+      "s": 211.75
     },
     {
       "k": 10,
-      "s": 219.4
+      "s": 185.18
     },
     {
       "k": 11,
-      "s": 192.47
+      "s": 149.91
     },
     {
       "k": 12,
-      "s": 94.64
+      "s": 126.98
     }
   ],
-  "trackEnd": 1124.64
+  "trackEnd": 1156.98
 }
