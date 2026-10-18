@@ -77,7 +77,7 @@ what we change and why, benchmark results, and open questions.
   gap 5.71 mm, 4.14 mm at the scale), start nail Ruhr Innovation Lab ("Start und Ziel"), 1.5 mm
   pilot holes; the incremental test board re-exported. 9.15 done 2026-10-17: open paths with a
   given leg (a fixed edge in the core, the scale at the end nail), the world board "Rund um die
-  Welt" (40 cities, 600 × 300 mm, string gap 7.34 mm; `docs/boards/welt-pazifik/`,
+  Welt" (40 cities, 600 × 300 mm, string gap 7.50 mm since 9.17; `docs/boards/welt-pazifik/`,
   `cli/world-board.ts`) and its digital version on the globe. 9.16 done 2026-10-17: the app in
   English (English place names from `nameEn`, titles and descriptions as `{ de, en }`).
   9.17 (2026-10-18): GitHub Pages is the deployment (no chair server, no play data endpoint),
@@ -86,7 +86,8 @@ what we change and why, benchmark results, and open questions.
   9.18 done 2026-10-18: "So rechnet der Computer" after a game (comparison with the strategies,
   an animation of the exact solver's rounds; `src/core/computer.ts`). 9.19 done 2026-10-18:
   building guide, booth guide and take-away cards (`cli/print.ts`, `docs/print/`, logo versions
-  only in `local/print/`). Open: 9.20 (the incremental board with a larger gap).
+  only in `local/print/`). 9.20 done 2026-10-18: the incremental test board with 14.9 mm at the
+  track (seed 32, `cli/incremental-gap.ts`, `docs/experiments/incremental-gap-2026-10-18.md`).
   **Next:** the physical builds (Kevin; re-export the incremental test board once the string
   is measured). See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle, later a physical globe).

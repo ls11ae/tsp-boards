@@ -1307,3 +1307,13 @@ Short entries: decision; alternatives considered; reason. Newest last.
   Alternatives: Markdown converted by a tool outside the repository (no figures from the board
   files, not reproducible here), screenshots in the booth guide (the PDF writer has no raster
   images; the guide describes the screens instead).
+- **2026-10-18 The incremental test board searched for its gap (roadmap 9.20).** Instead of the
+  first board above the 5 mm target, `cli/incremental-gap.ts` runs the generator for many seeds
+  with targets from high to low (18, 16, 14, 12, 10, 8 mm) and keeps the first board found per
+  seed, with 1000 exact checks per run (the CLI got `--max-checks` and `--tries` to reproduce
+  it). The thesis' conditions stay unchanged. With 12 nails 38 of 40 seeds reach 10 mm at the
+  track and the best has 14.90 mm (seed 32); 10 or 11 nails gain at most 0.8 mm, so the board
+  keeps 12 nails. A larger target also helps against wrong string thickness: the string ends
+  shift at most 4.0 mm from their marks at r_eff 1.0 or 2.0 mm (5.9 mm before). Alternatives:
+  raising the target until no seed works (14 mm was the highest reached; 16 and 18 mm failed
+  for all 80 runs), fewer nails (a little more gap, fewer instances to play).

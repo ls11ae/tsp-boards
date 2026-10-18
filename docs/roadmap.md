@@ -4,8 +4,11 @@ Source of truth for open work (see `CLAUDE.md`, "Working mode"). Work through th
 order, record decisions in the decision log of `docs/design-notes.md` (Section 11), and mark
 items done here when they are finished (heading "— done <date>", or "(done)" after a bullet).
 
-Status 2026-10-18 (evening): 9.1–9.19 are done (9.19: building guide, booth guide and
-take-away cards as PDFs in `docs/print/`). Next: 9.20 (the incremental board with a larger gap).
+Status 2026-10-18 (night): 9.1–9.20 are done (9.20: the incremental test board with 14.9 mm at
+the track). Next: the physical builds (Kevin; re-export the incremental board once the string is
+measured).
+Earlier status 2026-10-18 (evening): 9.1–9.19 are done (9.19: building guide, booth guide and
+take-away cards as PDFs in `docs/print/`).
 Earlier status 2026-10-18 (later): 9.1–9.18 are done (9.18: "So rechnet der Computer" after a
 game).
 Earlier status 2026-10-18: 9.1–9.17 are done (9.17: GitHub Pages with a service worker for the offline
@@ -1021,7 +1024,7 @@ logos only in `local/print/`, logos from `local/` as for the posters.
   `local/print/`; the layout engine in `src/core/print/`, every QR code decoded in
   `src/core/print/print.test.ts`.)
 
-### 9.20 Incremental test board with a larger gap (Kevin, 2026-10-18)
+### 9.20 Incremental test board with a larger gap (Kevin, 2026-10-18) — done 2026-10-18
 
 - Search for the largest smallest gap at the track instead of taking the first board above the
   5 mm target: try many seeds (and, if it helps, 10 or 11 nails instead of 12), with the thesis'
@@ -1033,6 +1036,13 @@ logos only in `local/print/`, logos from `local/` as for the posters.
   update the README and the report.
 - Note in the README that the board must be re-exported with the measured string thickness
   before lasering (same seed), since its marks depend on it.
+- (Done 2026-10-18: `cli/incremental-gap.ts` searched 40 seeds with 12 nails and 20 each with
+  11 and 10 (targets from 18 down to 8 mm): 38 of 40 twelve-nail boards reach 10 mm at the
+  track, the best 14.90 mm (seed 32); 10 or 11 nails gain little (15.69 and 14.92 mm). The test
+  board is now seed 32 with 12 nails: smallest gap at the track 14.90 mm, string gap 18.99 mm,
+  the same optima for r_eff 1.0–2.0 mm (13.56–16.23 mm at the track); re-exported, README with
+  the re-export note (`--seed 32 --gap 14 --max-checks 1000`, measured string first), report
+  in `docs/experiments/incremental-gap-2026-10-18.md`, building guide regenerated.)
 
 ## Phase 10: physical and public
 
