@@ -90,7 +90,8 @@ what we change and why, benchmark results, and open questions.
   track (seed 32, `cli/incremental-gap.ts`, `docs/experiments/incremental-gap-2026-10-18.md`).
   9.21 done 2026-10-18: cards without the extra lines (address aligned with the QR code, the
   open day below), laser starting values and a test for the xTool P2S in the building guide,
-  selectable text in the print PDFs (invisible text over the outlines).
+  selectable text in the print PDFs (invisible text over the outlines). 9.22 done 2026-10-21:
+  posters also in B0–B2 (the 37 poster in B1 in `local/posters/`).
   **Next:** the physical builds (Kevin; re-export the incremental test board once the string
   is measured). See `docs/roadmap.md`.
 - Phase 10: physical items (test board of the incremental puzzle, later a physical globe).

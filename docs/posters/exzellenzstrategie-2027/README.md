@@ -4,8 +4,8 @@ A poster for the corridors of Chair 11 (TU Dortmund) and of the Chair of Algorit
 that celebrates the Ruhr Innovation Lab (RIL) (roadmap 9.7, 9.9, 9.10): the shortest round
 trip through all 37 cities of the Excellence Strategy, starting and ending at the RIL, in
 German (`de/`) and English (`en/`), DIN A1 portrait as vector PDF with a PNG preview, with a
-QR code to the same puzzle in the game. A0 and the versions with logos (the RIL logo, the TU
-Dortmund and RUB designs) are built locally (below), never committed.
+QR code to the same puzzle in the game. A0, B1 and the versions with logos (the RIL logo, the
+TU Dortmund and RUB designs) are built locally (below), never committed.
 
 ![The German poster](de/exzellenzstrategie-2027-poster-37-A1.png)
 
@@ -82,8 +82,10 @@ Logos at the top and in the footer keep their colours, fills and strokes (lines 
 ## Printing
 
 Vector PDF, text as outlines, white margin of 18 mm on A1 (no bleed needed). Type and lines
-scale with the paper, so A0 is A1 enlarged by √2: on A1 the title has a cap height of about
-17 mm and the length about 25 mm, readable from 3 m or more.
+scale with the paper's short side, so A0 is A1 enlarged by √2 and B1 (707 × 1000 mm, between A1
+and A0) is A1 enlarged by 707/594 ≈ 1.19: on A1 the title has a cap height of about 17 mm and
+the length about 25 mm, readable from 3 m or more. The app and the CLI offer A4 to A0 and B2 to
+B0.
 
 ## Rebuilding
 
@@ -95,20 +97,20 @@ npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/var
 
 The local versions go into the git-ignored `local/posters/` (a link to the shared folder
 `tsp-boards-local`; the logo files are in `local/`, see `local/LIESMICH-logo.txt`; never
-commit them or files containing them). The TU Dortmund and RUB designs with the RIL logo, A1
-and A0:
+commit them or files containing them). The TU Dortmund and RUB designs with the RIL logo, A1,
+A0 and B1:
 
 ```bash
-npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json --out local/posters --paper A1,A0 --theme tu,rub --logo "Ruhr Innovation Lab=local/ruhr-innovation-lab-textur.svg"
+npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json --out local/posters --paper A1,A0,B1 --theme tu,rub --logo "Ruhr Innovation Lab=local/ruhr-innovation-lab-textur.svg"
 ```
 
-This writes `local/posters/<de|en>/exzellenzstrategie-2027-poster-37-<A1|A0>-<tu|rub>.pdf`
+This writes `local/posters/<de|en>/exzellenzstrategie-2027-poster-37-<A1|A0|B1>-<tu|rub>.pdf`
 (and `.png`) and `report-tu.md`, `report-rub.md`. The
 neutral design with the RIL logo and the TU logo at the bottom right (`-logo`), and the neutral
-A0 without logos:
+A0 and B1 without logos:
 
 ```bash
-npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json --out local/posters --paper A1,A0 --also-plain --suffix -logo --logo "Ruhr Innovation Lab=local/ruhr-innovation-lab-textur.svg" --corner-logo local/tu-dortmund.svg
+npx tsx cli/export-poster.ts --variants docs/posters/exzellenzstrategie-2027/variants.json --out local/posters --paper A1,A0,B1 --also-plain --suffix -logo --logo "Ruhr Innovation Lab=local/ruhr-innovation-lab-textur.svg" --corner-logo local/tu-dortmund.svg
 ```
 
 A missing logo file is reported, and the posters are built without it.

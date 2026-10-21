@@ -1080,6 +1080,20 @@ Changes to the print material of 9.19 (`docs/print/` and the logo versions in `l
   outlines, `PdfCanvas.invisibleText`), commands set on one line where they fit; QR codes,
   the address alignment and the text layer checked in `src/core/print/print.test.ts`.)
 
+### 9.22 Posters also in B formats (Maike, 2026-10-21) — done 2026-10-21
+
+- Add B0, B1 and B2 (ISO 216: 1000 × 1414, 707 × 1000, 500 × 707 mm) to the paper sizes
+  (`src/core/board/paper.ts` and wherever A0–A4 are listed: the app's poster panel, the CLI
+  help), with the same scaling by the short side as now.
+- Re-export the 37 poster in B1 into `local/posters/` in all versions as for A1 and A0 (plain,
+  -logo, -tu, -rub; German and English); update `docs/posters/exzellenzstrategie-2027/README.md`
+  (the commands with `--paper A1,A0,B1`).
+- (Done 2026-10-21: B0–B2 in `DIN_SIZES`, the app's poster panel lists every size with its
+  millimetres, the CLI accepts them (`--paper A1,A0,B1`), the texts in the app, the README and
+  the booth guide name A4 to A0 and B2 to B0; the 37 poster re-exported with `--paper
+A1,A0,B1` in all four versions and both languages into `local/posters/` (B1: no
+  overlapping, leg-crossing or unclear labels); the size test covers both series.)
+
 ## Phase 10: physical and public
 
 - Test board of the incremental puzzle with the prototype dimensions; deployment (GitHub Pages

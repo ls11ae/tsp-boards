@@ -1333,3 +1333,10 @@ Short entries: decision; alternatives considered; reason. Newest last.
   table, a little more for birch) as one table per colour, the test on an offcut and a table to
   fill in; marked as untested, the test decides. The logo version of the building guide shows
   the board with its logo; both name the logo -bed.svg in the shared folder as the laser file.
+- **2026-10-21 Posters also in B formats (roadmap 9.22).** B0, B1 and B2 join the paper sizes
+  (`DIN_SIZES`, ISO 216) and scale like the A sizes by the short side (B1 = A1 × 707/594), so
+  every poster layout rule (margins, type, the label checks) carries over unchanged; the poster
+  tests already run every size in both orientations. The app lists each size with its
+  millimetres, since B sizes are less familiar. The 37 poster is re-exported in A1, A0 and B1 in
+  one run per command, so the local reports cover all three. Alternatives: a separate
+  `IsoBPaper` type (every caller would need both), only B1 (the user asked for B0–B2).
