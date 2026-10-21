@@ -602,7 +602,7 @@ function boothGuide(logos: PrintDocument['logos']): PrintDocument {
         'Galerie: alle fertigen Puzzles nach Kategorien (Deutschland, Städte und Regionen, Europa und die Welt, Schritt für Schritt, Specials), als Brett oder digital, mit Bestleistungen in diesem Browser.',
         'Am Handy spielen: Die QR-Codes auf den Plakaten und Karten öffnen ein Puzzle direkt, z. B. ls11ae.github.io/tsp-boards/#p/deutschland-40 (#p/ und die Puzzle-Kennung).',
         'Puzzle-Designer („Karten-Puzzle“): Land und Region wählen, die Suche erzeugt neue Puzzles mit großem Abstand zur zweitbesten Rundreise; eigene Ortslisten, Orte festlegen oder ausschließen, Orte zusammenfassen.',
-        'Export: das Brett (SVG für den Laser, Druckvorlage, Lösungsblatt), Plakate von A4 bis A0 und ein Arbeitsblatt für den Unterricht.',
+        'Export: das Brett (SVG für den Laser, Druckvorlage, Lösungsblatt), Plakate in A4 bis A0 und B2 bis B0 und ein Arbeitsblatt für den Unterricht.',
         'Lehrmodus „Strategien ansehen“: nächster Nachbar, Einfügen, kürzeste Kanten zuerst, 2-opt und der exakte Löser Schritt für Schritt.',
         'Globus und Weltpuzzles: Rundreisen auf der Kugel (Großkreise), ein drehbarer Globus und ein Flug entlang der Rundreise.',
         'Schritt für Schritt: das inkrementelle Puzzle (Nägel 1–3, 1–4, … nacheinander).',

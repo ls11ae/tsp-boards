@@ -143,7 +143,7 @@ template and solution sheet.
 npx tsx cli/export-poster.ts --puzzle public/puzzles/deutschland-40.tsp.json --paper A1 --png 30
 ```
 
-Exports a puzzle as a poster in a DIN format (A4 to A0) with the shortest round trip by
+Exports a puzzle as a poster in a DIN format (A4 to A0, B2 to B0) with the shortest round trip by
 great-circle distance, its length and facts (PDF, optional PNG preview; PNGs need the dev
 dependency `@resvg/resvg-js`). `--variants` builds posters from a variants file (and a contact sheet for several), e.g.
 `docs/posters/exzellenzstrategie-2027/`.

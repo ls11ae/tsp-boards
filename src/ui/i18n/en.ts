@@ -136,7 +136,7 @@ export const en = {
   worksheetPaper: 'Paper',
   poster: 'Poster',
   posterHint:
-    'A poster (PDF, DIN A4 to A0) with the shortest round trip as the crow flies, its length and a few figures. It shows the solution.',
+    'A poster (PDF, DIN A4 to A0 or B2 to B0) with the shortest round trip as the crow flies, its length and a few figures. It shows the solution.',
   posterPaper: 'Size',
   posterOrientation: 'Orientation',
   portrait: 'Portrait',

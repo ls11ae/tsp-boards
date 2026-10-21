@@ -1,4 +1,5 @@
-// Poster export (roadmap 9.7, 9.9): one page in a DIN format (A4 to A0, portrait or landscape)
+// Poster export (roadmap 9.7, 9.9): one page in a DIN format (A4 to A0 or B2 to B0, portrait or
+// landscape)
 // with the map scaled to fit, the shortest round trip drawn as a strong line on top, the places
 // as dots with labels, the problem in one line and the length as the answer in large type. A
 // poster is not a puzzle: the solution is shown, lengths are great-circle kilometres
@@ -15,8 +16,8 @@
 // the map stay one colour; logos at the top, in the footer and in the legend keep their colours.
 //
 // Everything is vector, text as outlines (as on the boards), with a white margin and no bleed.
-// Typography and lines scale with the paper: A1 is the reference (A0 is A1 enlarged by √2), and
-// title and length are readable from about 3 m there.
+// Typography and lines scale with the paper's short side: A1 is the reference (A0 is A1 enlarged
+// by √2, B1 by 707/594), and title and length are readable from about 3 m there.
 
 import type { CountryFile, LabelLanguage } from '../data';
 import type { Point } from '../geometry';

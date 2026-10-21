@@ -131,7 +131,7 @@ export const de: Messages = {
   worksheetPaper: 'Papier',
   poster: 'Plakat',
   posterHint:
-    'Ein Plakat (PDF, DIN A4 bis A0) mit der kürzesten Rundreise nach Luftlinie, ihrer Länge und ein paar Zahlen. Es zeigt die Lösung.',
+    'Ein Plakat (PDF, DIN A4 bis A0 oder B2 bis B0) mit der kürzesten Rundreise nach Luftlinie, ihrer Länge und ein paar Zahlen. Es zeigt die Lösung.',
   posterPaper: 'Format',
   posterOrientation: 'Ausrichtung',
   portrait: 'Hochformat',

@@ -80,15 +80,20 @@ describe('poster paper', () => {
       A2: [420, 594],
       A3: [297, 420],
       A4: [210, 297],
+      B0: [1000, 1414],
+      B1: [707, 1000],
+      B2: [500, 707],
     });
     for (const p of DIN_PAPERS) {
       const [w, h] = pageSize(p, 'portrait');
       expect(pageSize(p, 'landscape')).toEqual([h, w]);
-      // Each size is half the next larger one (within the rounding of ISO 216).
-      expect(
-        Math.abs(w * h - (DIN_SIZES.A0[0] * DIN_SIZES.A0[1]) / 2 ** Number(p[1])),
-      ).toBeLessThan(0.02 * w * h);
+      // Each size is half the next larger one of its series (within the rounding of ISO 216).
+      const [w0, h0] = DIN_SIZES[p[0] === 'B' ? 'B0' : 'A0'];
+      expect(Math.abs(w * h - (w0 * h0) / 2 ** Number(p[1]))).toBeLessThan(0.02 * w * h);
+      expect(h / w).toBeCloseTo(Math.SQRT2, 2);
     }
+    // B1 lies between A1 and A0 (its sides are the geometric means).
+    expect(DIN_SIZES.B1[0]).toBeCloseTo(Math.sqrt(DIN_SIZES.A1[0] * DIN_SIZES.A0[0]), -1);
   });
 });
 

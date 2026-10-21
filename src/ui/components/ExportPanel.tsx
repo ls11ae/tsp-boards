@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { BoardPlan, PlanWarning } from '../../core/board/plan';
-import { DIN_PAPERS } from '../../core/board/paper';
+import { DIN_PAPERS, DIN_SIZES } from '../../core/board/paper';
 import { localText, type LegendEntry } from '../../core/puzzle-file';
 import { pathCities, usePathCities, type BoardModel } from '../board';
 import type { ExportKind } from '../export';
@@ -254,7 +254,7 @@ function Poster({
         >
           {DIN_PAPERS.map((p) => (
             <option key={p} value={p}>
-              {p}
+              {p} ({DIN_SIZES[p].join(' × ')} mm)
             </option>
           ))}
         </select>

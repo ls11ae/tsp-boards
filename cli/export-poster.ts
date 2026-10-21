@@ -5,7 +5,8 @@
 //   npx tsx cli/export-poster.ts --puzzle public/puzzles/<id>.tsp.json [options]
 //   npx tsx cli/export-poster.ts --list docs/data/curated/<name>.txt [--region DE] [options]
 //   npx tsx cli/export-poster.ts --variants docs/posters/<dir>/variants.json [options]
-// Options: [--paper A1] (A0 to A4, or a list such as A1,A0) [--orientation portrait|landscape]
+// Options: [--paper A1] (A0 to A4 or B0 to B2, or a list such as A1,A0,B1)
+//   [--orientation portrait|landscape]
 //   [--members centroid|separate] (a composite place as one stop at its centroid, or each
 //   member as a stop of its own) [--without 'A,B'] (leave places out, by name)
 //   [--title …] [--subtitle …] [--lang de|en] (or a list: de,en) [--legend file.json] (legend
@@ -138,7 +139,7 @@ function localized<T>(value: Localized<T> | undefined, lang: LabelLanguage): T |
 
 const paperOf = (v: string): DinPaper => {
   const p = v.toUpperCase() as DinPaper;
-  if (!DIN_PAPERS.includes(p)) throw new Error(`unknown paper ${v} (A0 to A4)`);
+  if (!DIN_PAPERS.includes(p)) throw new Error(`unknown paper ${v} (A0 to A4, B0 to B2)`);
   return p;
 };
 
